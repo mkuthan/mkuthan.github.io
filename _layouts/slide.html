@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{ page.title }}</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="/assets/reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="/assets/reveal.js/css/theme/{{ page.reveal.theme }}.css">
+    <link rel="stylesheet" href="/assets/reveal.js/lib/css/zenburn.css">
+    <script>
+      // If the query includes 'print-pdf' we'll use the PDF print sheet
+      document.write( '<link rel="stylesheet" href="/_assets/reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="state-background"></div>
+      
+      <div class="slides">
+          {{ content }}
+      </div>
+
+      <div class="progress"><span></span></div>
+    </div>
+
+    <script src="/assets/reveal.js/lib/js/head.min.js"></script>
+    <script src="/assets/reveal.js/js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js.js#configuration
+      Reveal.initialize({
+      controls: {{ page.reveal.controls }},
+      progress: {{ page.reveal.progress }},
+      history: {{ page.reveal.history }},
+      transition: Reveal.getQueryHash().transition || '{{ page.reveal.transition }}', // default/cube/page/concave/linear(2d)
+
+      // Optional libraries used to extend on reveal.js
+      dependencies: [
+        { src: '/_assets/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { window.hljs.initHighlightingOnLoad(); } },
+        { src: '/_assets/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } }
+      ]
+
+      });
+
+    </script>
+  </body>
+</html>
