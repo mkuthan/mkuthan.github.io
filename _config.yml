@@ -1,8 +1,7 @@
 # Site settings
-title: Passionate Developer - Marcin Kuthan
+title: Passionate Developer ~ Marcin Kuthan
 email: marcin.kuthan@gmail.com
-description: "Memory is unreliable like a software ... so make my thoughts more persistent and my software more reliable."
-baseurl: ""
+description: "Memory is unreliable like a software, so make my thoughts more persistent and my software more reliable."
 url: "http://mkuthan.github.io"
 
 # Build settings
