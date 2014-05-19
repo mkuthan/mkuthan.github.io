@@ -4,10 +4,8 @@
     <title>{{ page.title }}</title>
     <meta charset="utf-8"/>
 
-    <link rel="stylesheet"
-          href="http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/css/reveal.css">
-    <link rel="stylesheet"
-          href="http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/css/theme/{{ page.reveal.theme }}.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/css/theme/{{ page.reveal.theme }}.css">
 
     <!-- For syntax highlighting -->
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/lib/css/zenburn.css">
@@ -50,8 +48,10 @@
 
         transition: Reveal.getQueryHash().transition || '{{ page.reveal.transition }}',
         dependencies : [
+            { src: 'http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/lib/js/classList.js', condition: function () { return !document.body.classList;} },
             { src: 'http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/plugin/highlight/highlight.js', async: true, callback: function () { window.hljs.initHighlightingOnLoad();} },
-            { src: 'http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/lib/js/classList.js', condition: function () { return !document.body.classList;} }
+            { src: 'http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: 'http://cdnjs.cloudflare.com/ajax/libs/reveal.js/2.6.2/plugin/zoom-js/zoom.js', condition: function() { return !!document.body.classList; } }
         ]
     });
 </script>
