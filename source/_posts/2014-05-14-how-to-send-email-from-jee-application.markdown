@@ -5,14 +5,13 @@ date: 2014-05-14
 categories: [JMS, smtp, spring]
 ---
 
-Sending email notifications from enterprise application is very common
-scenario. I know several methods to solve this requirement, below you can find
-short summary.  
+Sending email notifications from enterprise application is very common scenario. 
+I know several methods to solve this puzzle, below you can find short summary.  
   
-Because release application binary (e.g: WAR file) should be portable across
-environments (integration, QA, staging, production) configuration must be
-externalized. Environment variables or JNDI entries can be used to configure
-application.  
+To send an email from the application at least SMTP server address must be configured. 
+Because released application binary (e.g: WAR file) should be portable across environments (integration, QA, staging, 
+production) configuration must be externalized.  
+Below I present code snippets to configure SMTP server address as JNDI entry.  
   
 Sample JNDI entry for JBoss:  
 
@@ -43,22 +42,25 @@ Sample JNDI entry for Tomcat:
 </Context>  
 ```
 
-If you are using Spring Framework mail session could be configure as follows:
+When mail session is configured as JNDI resource, it can be easily utilized by Spring Framework mail sender:
 
 ``` xml
-<jee:jndi-lookup id="mailSession" jndi-name="mail/mailSession" />   
+<jee:jndi-lookup id="mailSession" jndi-name="mail/mailSession" />
+
 <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">  
   <property name="session" ref="mailSession"/>  
 </bean>  
 ```
 
-Now it is time for more tough part, how to use mail session correctly? There
-are at least four options, choose the best one for you:  
+Now it is time for more tough part, how to use mail sender correctly? 
+There are at least four options, choose the best one for you:  
 
-* _Direct (Sync)_ \- use mail session directly from the application service in the web request thread.
-* _Direct (Async)_ \- use mail session directly from the application service using `@Async` Spring annotation.
-* _Database Queue_ \- save messages into db table and create cron job to send the emails.
-* _JMS Queue_ \- put messages into JMS queue and create listener to send the emails.
+* _Direct (Sync)_ Use mail session directly from the application service in the web request thread.
+* _Direct (Async)_ Use mail session directly from the application service using `@Async` Spring annotation.
+* _Database Queue_ Save messages into database table and create cron job to send the emails periodically.
+* _JMS Queue_ Put messages into JMS queue and attach JMS listener to process and send emails.
+
+I collected a few non-functional and functional common requirements together with short categorization for each method. 
 
 |                                           |Direct (Sync)|Direct (Async)|Database Queue|JMS Queue
 |-------------------------------------------|:-----------:|:------------:|:------------:|:-------:
@@ -69,10 +71,10 @@ are at least four options, choose the best one for you:
 |Redelivery policy, do not lost messages if SMTP is down |no|no|limited|yes
 |Monitoring                                 |no|no|yes|yes
   
-I would start with "Database Queue" approach, if JMS is not already used in
-the project. "Direct" method is not an option at all IMHO.  
+I would start with "Database Queue" approach, at least if JMS is not already used in the project or you do not have to send thousands of emails. 
+"Direct" method is not an option at all IMHO.  
   
 Separate part of the subject is to how to create email body. In most situation
-I have been using some template engine, like _Freemarker_ or _Thymeleaf_. The
+I used some template engine, like _Freemarker_ or _Thymeleaf_. The
 template can be defined as internal WAR resource or can be loaded from
 database if the template needs to be adjusted on runtime.

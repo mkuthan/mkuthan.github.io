@@ -6,3 +6,27 @@ article {
     padding-left: 3em;
   }
 }
+
+table td, table th {
+  padding: 0.25em 0.5em;
+}
+
+table th {
+  font-weight: bold;
+}
+
+table tr {
+  border-bottom: 1px solid #808080;
+}
+
+table tbody tr:nth-last-child(1) {
+  border-bottom: 0px;
+}
+
+table tr:nth-child(2n) {
+  background-color: #eeeeee;
+}
+
+table {
+  margin-bottom: 2em;
+}
