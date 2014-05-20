@@ -15,18 +15,18 @@ cannot tune application if you don't know what should be improved.
   
 Get basic information about OS where _Artifactory_ is deployed and run:  
   
-{% highlight console %}
+``` console
 $cat /proc/cpuinfo | grep processor  
 processor       : 0  
 processor       : 1  
 processor       : 2  
 processor       : 3  
-{% endhighlight %}    
+```
 
-{% highlight console %}
+``` console
 $cat /proc/meminfo |grep MemTotal  
 MemTotal:      8163972 kB  
-{% endhighlight %}    
+```
       
 Collect HTTP requests statistics from Apache logs (Apache is configured in front of _Artifactory_):  
   
@@ -35,21 +35,21 @@ s1600/screenshot2.png)
 
 Verify current JVM version and parameters:  
 
-{% highlight console %}
+``` console
 $java -version  
 java version "1.6.0_45"  
 Java(TM) SE Runtime Environment (build 1.6.0_45-b06)  
 Java HotSpot(TM) 64-Bit Server VM (build 20.45-b01, mixed mode)  
-{% endhighlight %}    
+```
     
-{% highlight console %}
+``` console
 -server -Xms2048m -Xmx2048m -Xss256k \  
 -XX:PermSize=256m -XX:MaxPermSize=256m \  
 -XX:NewSize=768m -XX:MaxNewSize=768m \  
 -XX:+UseParallelGC -XX:+UseParallelOldGC \  
 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:$CATALINA_HOME/logs/gc.log \  
 -Dartifactory.home=$ARTIFACTORY_HOME  
-{% endhighlight %}    
+```
     
 * _-server_ Force server mode for VM (instead of client mode.
 * _-Xms2048m -Xmx2048m_ Set up initial and total heap size to 2GB, it is recommended to set heap to fixed size. Default settings are too low for web applications (64MB if I remember).

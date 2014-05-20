@@ -16,23 +16,23 @@ I prefer the second one, it is less obtrusive and follows general unix  principl
 
 Let's start and install environment managers (for _Java_, _Ruby_ and _node.js_) into your home directory:
 
-{% highlight console %}
+``` console
 git clone https://github.com/gcuisinier/jenv.git ~/.jenv
 git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
 git clone https://github.com/OiNutter/nodenv.git ~/.nodenv
-{% endhighlight %}
+```
 
 For `rbenv` and `nodenv` you can install plugins that provide `rbenv install` and `nodenv install` commands to compile and install runtimes automatically.
 
-{% highlight console %}
+``` console
 git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 git clone https://github.com/OiNutter/node-build.git ~/.nodenv/plugins/node-build
-{% endhighlight %}
+```
 
 Add environment managers to the `PATH` and initialize them to get command auto completion.
 Append the following snippet at the end of `.bashrc` file.
 
-{% highlight bash %}
+``` bash
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
  
@@ -41,34 +41,34 @@ eval "$(rbenv init -)"
  
 export PATH="$HOME/.nodenv/bin:$PATH"
 eval "$(nodenv init -)"
-{% endhighlight %}
+```
 
 Install runtimes using environment managers (Java needs to be installed manually):
 
-{% highlight console %}
+``` console
 jenv add /path/to/installed/jdk
 rbenv install 1.9.3-p448
 nodenv install 0.10.12
-{% endhighlight %} 
+```
 
 Install build tools (_maven_, _gradle_, _sbt_, etc.), create symbolic links, and configure path in `.profile` file:
 
-{% highlight bash %}
+``` bash
 APPS="$HOME/apps"
 export PATH="$APPS/apache-maven/bin:$APPS/gradle/bin:$APPS/sbt/bin:$PATH"
-{% endhighlight %}
+```
 
 Make build tools _jenv_ aware:
 
-{% highlight console %}
+``` console
 jenv enable-plugin maven
 jenv enable-plugin gradle
 jenv enable-plugin sbt
-{% endhighlight %}
+```
 
 Finally add shell helper functions for JVM configuration to `.profile` file:
 
-{% highlight bash %}
+``` bash
 function jdebug_set() {
     jenv shell-options "$JENV_OPTIONS -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n"
 }
@@ -100,4 +100,4 @@ function jprofiler_set() {
 function jprofiler_unset() {
     jenv shell-options --unset
 }
-{% endhighlight %}
+```

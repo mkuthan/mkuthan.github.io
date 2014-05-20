@@ -16,7 +16,7 @@ application.
   
 Sample JNDI entry for JBoss:  
 
-{% highlight xml %}    
+``` xml
 <?xml version="1.0" encoding="UTF-8"?>  
 <server>  
   <mbean code="org.jboss.mail.MailService" name="jboss:service=mailSession">  
@@ -29,11 +29,11 @@ Sample JNDI entry for JBoss:
     <depends>jboss:service=Naming</depends>  
   </mbean>  
 </server>  
-{% endhighlight %}     
+```
 
 Sample JNDI entry for Tomcat:
 
-{% highlight xml %}        
+``` xml
 <?xml version="1.0" encoding="UTF-8"?>  
 <Context>  
   <Resource name="mail/mailSession"   
@@ -41,16 +41,16 @@ Sample JNDI entry for Tomcat:
     type="javax.mail.Session"   
     mail.smtp.host="smtp.company.com"/>      
 </Context>  
-{% endhighlight %} 
+```
 
 If you are using Spring Framework mail session could be configure as follows:
 
-{% highlight xml %}    
+``` xml
 <jee:jndi-lookup id="mailSession" jndi-name="mail/mailSession" />   
 <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">  
   <property name="session" ref="mailSession"/>  
 </bean>  
-{% endhighlight %}     
+```
 
 Now it is time for more tough part, how to use mail session correctly? There
 are at least four options, choose the best one for you:  
