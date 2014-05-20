@@ -2,7 +2,7 @@
 layout: post
 title: "Development Environment Setup"
 date: 2014-05-09
-categories: linux bash ruby java node.js
+categories: [linux, bash, ruby, java, node.js]
 ---
 
 This document is a manual how to configure flexible development environment for _Java_, _JavaScript_ and _Ruby_.

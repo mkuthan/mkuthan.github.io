@@ -2,6 +2,7 @@
 layout: post
 title: "How to fail a software project fast and efficient?"
 date: 2014-05-19
+categories: [craftsmanship]
 ---
 
 Based on excellent Thomas Sundberg [presentation](http://s3-eu-west-1.amazonaws.com/presentations2012/41_presentation.pdf).

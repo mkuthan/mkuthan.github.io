@@ -2,7 +2,8 @@
 layout: post
 title: "How to document your professional experiences"
 date: 2014-05-15
---
+categories: [craftsmanship]
+---
 
 Have you considered what is important for prospective employer? What is the
 most valuable information source about your professional experience? How to
