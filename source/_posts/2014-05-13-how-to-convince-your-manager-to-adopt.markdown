@@ -9,7 +9,7 @@ Distributed Concurrent Versions Systems (DCVSs) like Git or Mercurial has
 changed software delivery processes significantly. I would not want to go back
 to the mid ages of Subversion, and I'm able to convince almost any developer
 to use DCVS. Convincing managers is much more tough task. Below I collected
-some insights about DVCS which could help.  
+some insights about DVCS which could help.
   
 [Gartner - DVCS Begins to Come of
 Age](http://blogs.gartner.com/tom_murphy/2012/05/10/dvcs-begins-to-come-of-
@@ -43,11 +43,9 @@ and the best ways of working on a project need to emerge. Tools that enforce
 high ceremony around things like check in just get in the way and kill
 productivity.
 
-![](http://4.bp.blogspot.com/-zYVpn4EPk88/U3HZMgHUXQI/AAAAAAAAV5o/dHGCrRi_zIA/
-s1600/radar-tools-july-2011.jpg)
+{% img https://lh4.googleusercontent.com/-RCjnnI3YBR8/U3usDDBQVTI/AAAAAAAAV9s/YbgJ-lD1D5M/s619/radar-tools-july-2011.jpg %} 
   
-[Wikipedia](http://en.wikipedia.org/wiki/Distributed_Concurrent_Versions_Syste
-m)  
+[Wikipedia](http://en.wikipedia.org/wiki/Distributed_Concurrent_Versions_System)  
 
 > _String support for non-linear development_  
 Git supports rapid branching and merging, and includes specific tools for
@@ -65,9 +63,7 @@ repository can be one hundred times faster than fetching it from the remote
 server. In particular, Git does not get slower as the project history grows
 larger.
 
-[From SVN to Git - Atlassian Case Study](http://blogs.atlassian.com/2013/01
-/svn-to-git-how-atlassian-made-the-switch-without-sacrificing-active-
-development/)  
+[From SVN to Git - Atlassian Case Study](http://blogs.atlassian.com/2013/01/svn-to-git-how-atlassian-made-the-switch-without-sacrificing-active-development/)  
 
 > If Subversion has met my version control needs for many years, why should I
 change? To me, that is the wrong question. The real question is, "How can DVCS
