@@ -7,7 +7,7 @@ categories: [linux, virtual box]
 
 Virtual Disk Image (_VDI_) is a Virtual Box container format for guest hard
 disk. I found that _VDI_ files on the host system grows over the time. If your
-VDI file on the host system is much bigger than used spaces on guest partition
+_VDI_ file on the host system is much bigger than used spaces on guest partition
 it is time for compaction:
 
 1. Install zerofree tool (`apt-get install zerofree`).
@@ -21,3 +21,4 @@ it is time for compaction:
 That's all, after the maintenance VDI file size on the host system should be
 very close to the used space on the guest partition.
 
+Oh, I forgot to mention: you shoud have a backup before start ;-)
