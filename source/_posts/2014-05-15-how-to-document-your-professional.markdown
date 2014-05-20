@@ -5,9 +5,9 @@ date: 2014-05-15
 categories: [craftsmanship]
 ---
 
-Have you considered what is important for prospective employer? What is the
-most valuable information source about your professional experience? How to
-document that you are an expert in software engineering?  
+Have you considered what is important for prospective employer? 
+What is the most valuable information source about your professional experience?
+How to document that you are an expert in software engineering?  
   
 Below you can find some of my tricks:  
   
