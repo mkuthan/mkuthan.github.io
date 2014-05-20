@@ -5,14 +5,15 @@ date: 2014-05-09
 categories: [linux, bash, ruby, java, node.js]
 ---
 
-This document is a manual how to configure flexible development environment for _Java_, _JavaScript_ and _Ruby_.
-Even if the runtimes installation with `apt-get` is trivial task, there is limited control over installed version.
-The goal is to configure environment where you can easily change _Java_, _Ruby_ or _node.js_ versions.
+This document is a manual how to configure flexible development environment for _Java_, _JavaScript_ and _Ruby_ - my primary set of tools.
+Even if the runtimes installation with `apt-get` seems to be a trivial task, there is limited control over installed version of the runtime.
+The goal is to configure environment where you can easily change _Java_, _Ruby_ or _node.js_ versions. 
+Where you can define the runtime version on project level.
 
-The most convenient way to configure and manage runtimes is to use environment manager.
+The most convenient way to configure and manage runtimes is to use environment managers.
 Environment manager is nothing more than shell script, the script intercepts executed commands using shim executables injected into your `PATH`.
 There are two flavours of the environment managers: `rvm` and `rbenv` like.
-I prefer the second one, it is less obtrusive and follows general unix  principle: "do one thing and do it well".
+I prefer the second one, it is less obtrusive and follows general unix principle: "do one thing and do it well".
 
 Let's start and install environment managers (for _Java_, _Ruby_ and _node.js_) into your home directory:
 
@@ -23,13 +24,13 @@ git clone https://github.com/OiNutter/nodenv.git ~/.nodenv
 ```
 
 For `rbenv` and `nodenv` you can install plugins that provide `rbenv install` and `nodenv install` commands to compile and install runtimes automatically.
+For Java you have to download and install JVM manually.
 
 ``` console
-git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-git clone https://github.com/OiNutter/node-build.git ~/.nodenv/plugins/node-build
+$git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+$git clone https://github.com/OiNutter/node-build.git ~/.nodenv/plugins/node-build
 ```
-
-Add environment managers to the `PATH` and initialize them to get command auto completion.
+Add environment managers to the `PATH` variable and initialize them to get command auto completion.
 Append the following snippet at the end of `.bashrc` file.
 
 ``` bash
@@ -46,12 +47,12 @@ eval "$(nodenv init -)"
 Install runtimes using environment managers (Java needs to be installed manually):
 
 ``` console
-jenv add /path/to/installed/jdk
-rbenv install 1.9.3-p448
-nodenv install 0.10.12
+$jenv add /path/to/already/installed/jdk
+$rbenv install 1.9.3-p448
+$nodenv install 0.10.12
 ```
 
-Install build tools (_maven_, _gradle_, _sbt_, etc.), create symbolic links, and configure path in `.profile` file:
+Install build tools (_maven_, _gradle_, _sbt_, etc.), create symbolic links, and configure `PATH` in `.profile` file:
 
 ``` bash
 APPS="$HOME/apps"
@@ -61,12 +62,12 @@ export PATH="$APPS/apache-maven/bin:$APPS/gradle/bin:$APPS/sbt/bin:$PATH"
 Make build tools _jenv_ aware:
 
 ``` console
-jenv enable-plugin maven
-jenv enable-plugin gradle
-jenv enable-plugin sbt
+$jenv enable-plugin maven
+$jenv enable-plugin gradle
+$jenv enable-plugin sbt
 ```
 
-Finally add shell helper functions for JVM configuration to `.profile` file:
+Finally add shell helper functions for JVM configuration to the `.profile` file:
 
 ``` bash
 function jdebug_set() {
@@ -101,3 +102,5 @@ function jprofiler_unset() {
     jenv shell-options --unset
 }
 ```
+
+The last step is to read environment manager manual. As long as all three managers are very similar it should not take more than one evening. 
