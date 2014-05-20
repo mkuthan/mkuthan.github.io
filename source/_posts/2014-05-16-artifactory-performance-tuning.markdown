@@ -14,7 +14,7 @@ In this blog post I would like to show _Artifactory_ memory utilization
 analysis. Before you start any tuning you have to gather some statistics. You
 cannot tune application if you don't know what should be improved.  
   
-Get basic information about OS where _Artifactory_ is deployed and run:  
+Get basic information about OS where _Artifactory_ is deployed and run using Linux `/proc` subsystem:  
   
 ``` console
 $cat /proc/cpuinfo | grep processor
@@ -29,11 +29,11 @@ $cat /proc/meminfo |grep MemTotal
 MemTotal:      8163972 kB
 ```
 
-Collect HTTP requests statistics from Apache logs (Apache is configured in front of _Artifactory_):  
+Collect HTTP requests statistics from Apache request logs (Apache is configured in front of _Artifactory_):  
 
-{% img http://4.bp.blogspot.com/-6GBLIi2Guqo/U3Wyn9hcYvI/AAAAAAAAV68/SD_7RP3jcJE/s1600/screenshot2.png %}
+{% img https://lh6.googleusercontent.com/-1QXK_PIAtiw/U3uby5sPEmI/AAAAAAAAV9U/1GADfkf9a2w/s521/screenshot2.png %}
 
-Verify current JVM version and parameters:  
+Verify current JVM version and startup parameters:  
 
 ``` console
 $java -version
@@ -43,6 +43,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 20.45-b01, mixed mode)
 ```
 
 ``` console
+$ps awx | grep java
 -server -Xms2048m -Xmx2048m -Xss256k \
 -XX:PermSize=256m -XX:MaxPermSize=256m \
 -XX:NewSize=768m -XX:MaxNewSize=768m \
@@ -51,31 +52,43 @@ Java HotSpot(TM) 64-Bit Server VM (build 20.45-b01, mixed mode)
 -Dartifactory.home=$ARTIFACTORY_HOME
 ```
 
-* _-server_ Force server mode for VM (instead of client mode.
-* _-Xms2048m -Xmx2048m_ Set up initial and total heap size to 2GB, it is recommended to set heap to fixed size. Default settings are too low for web applications (64MB if I remember).
-* _-Xss256k_ Set stack memory size (256kB for each thread!)
-* _-XX:PermSize=256m -XX:MaxPermSize=256m_ Set permanent generation size in similar way to heap size. Default settings are too low for web applications (64MB if I remember).
-* _-XX:NewSize=768m -XX:MaxNewSize=768m_ One of the most important settings, increase young generation part of heap for short living objects, by default it is 1/4 or even 1/8 of total heap size. Web application creates a huge number of short living objects.
-* _-XX:+UseParallelGC -XX:+UseParallelOldGC_ Utilize multiple CPUs for garbage collection, it should decrease GC time.
-* _-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:$CATALINA_HOME/logs/gc.log_ Log all GC activities for further analysis.
+Let me explain JVM parameters:
 
-Check GC log statistics with HPjmeter:  
+`-server` Force server mode for VM (instead of client mode.
 
-{% img http://2.bp.blogspot.com/-_GyvkTbLzhM/U3W4TETIadI/AAAAAAAAV7I/mSUz0SyHYOM/s1600/screenshot.png %}
+`-Xms2048m -Xmx2048m` Set up initial and total heap size to 2GB, it is recommended to set heap to fixed size. Default settings are too low for web applications (64MB if I remember).
 
-In the summary tab, you can find the average interval between GCs and average
-GC times. GC for young generation is called on every 95s for 35ms. Full GC
-takes 2.25s, but fortunately it is called only ~three times per day (33 029
-seconds). Great outcomes, you rather don't have a chance to recognize GC "stop
-the world" pauses.  
+`-Xss256k` Set stack memory size (256kB for each thread!)
+
+`-XX:PermSize=256m -XX:MaxPermSize=256m` Set permanent generation size in similar way to heap size. Default settings are too low for web applications (64MB if I remember).
+
+`-XX:NewSize=768m -XX:MaxNewSize=768m` One of the most important settings, increase young generation part of heap for short living objects, by default it is 1/4 or even 1/8 of total heap size. Web application creates a huge number of short living objects.
+
+`-XX:+UseParallelGC -XX:+UseParallelOldGC` Utilize multiple CPUs for garbage collection, it should decrease GC time.
+
+`-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:$CATALINA_HOME/logs/gc.log` Log all GC activities for further analysis.
+
+Check GC log statistics with HPjmeter:
+
+{% img https://lh5.googleusercontent.com/-cS4M5fHVa94/U3uH-obLfVI/AAAAAAAAV80/BNJpz9vfIX4/s648/screenshot.png %}
+
+In the summary tab, you can find the average interval between GCs and average GC times. 
+GC for young generation is called on every 95s for 35ms. 
+Full GC takes 2.25s, but fortunately it is called only ~three times per day (33 029
+seconds). 
+Great outcomes, you rather don't have a chance to recognize GC "stop the world" pauses.  
 
 {% img http://4.bp.blogspot.com/-Ydc1fO1ZefE/U3W4s-tciyI/AAAAAAAAV7Q/VUoj5cpXr_E/s1600/screenshot1.png %}
 
-Based on the graph above, I could say that there is no memory leaks in
-_Artifactory_. After each full GC memory is freed to the same level (more on
-less). The peaks on the graph come from nightly jobs executed internally by
-_Artifactory_ (indexer and backup).  
+Based on the above graph, I could say that there is no memory leaks in
+_Artifactory_. 
+After each full GC memory is freed to the same level. 
+The peaks on the graph come from nightly jobs executed internally by _Artifactory_ (indexer and backup).  
 
-In general, heap size for young generation is enough to handle business hours
-requests without full GC!!! And the GC pauses for young generation are very
-short (30ms). No further _Artifactory_ tuning is needed :-)
+If you are interesting how memory leaks look like, below you can find example from [JIRA](https://www.jfrog.com/jira/browse/RTFACT-4464) issue reported by me:
+
+{% img https://lh4.googleusercontent.com/-DB5uA7jCfZ4/U3ulPaafZsI/AAAAAAAAV9g/TqYDEZ-6-p8/s1152/Heap%2520Usage%2520After%2520GC.jpg %}
+
+In general, heap size for young generation is enough to handle business hours requests without full GC!!! 
+And the GC pauses for young generation are very short (30ms). 
+After gathering baseline statistics I recognized that no further _Artifactory_ tuning is needed :-)
