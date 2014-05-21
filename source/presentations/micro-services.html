@@ -46,27 +46,103 @@ reveal:
     </section>
     <section>
         <h4>Micro Services Architecture</h4>
+        <h2>SOA done right</h2>
+    </section>
+    <section>
+        <h4>Micro Services Architecture</h4>
         <h2>Small enough to fit in your head</h2>
     </section>
     <section>
         <h4>Micro Services Architecture</h4>
         <h2>Does one thing well</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Unix philosophy.</li>
+                <li>Sigle Responsibility Principle in OO.</li>
+            </ul>
+        </aside>
     </section>
     <section>
         <h4>Micro Services Architecture</h4>
-        <h2>Polyglot</h2>
+        <h2>Right tool for the job</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Polyglot.</li>
+                <li>Rich reusable toolset instead of written standards.</li>
+            </ul>
+        </aside>
     </section>
     <section>
         <h4>Micro Services Architecture</h4>
-        <h2>Loosely coupled and independent</h2>
+        <h2>Smart endpoints, dumb pipes</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Receiving a request, applying logic as appropriate and producing a response.</li>
+            </ul>
+        </aside>
+    </section>
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Loosely coupled</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Simple text based protocols like REST.</li>
+                <li>Tolerant Reader, Consumer Driven Contract</li>
+            </ul>
+        </aside>
+    </section>
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Favor service choreography over orchestration</h2>
+    </section>
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Design for failure</h2>
+    </section>
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Independent</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Independently replaceable and upgradeable.</li>
+            </ul>
+        </aside>
     </section>
     <section>
         <h4>Micro Services Architecture</h4>
         <h2>You build it, you run it</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Organized around business capability.</li>
+                <li>Product not project</li>
+            </ul>
+        </aside>
     </section>
     <section>
         <h4>Micro Services Architecture</h4>
-        <h2>Rewrite over maintain</h2>
+        <h2>Two Pizza Team</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Amazon limit of the team size.</li>
+            </ul>
+        </aside>
+    </section>
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Small enough that you can throw it away</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Rewrite over maintain.</li>
+            </ul>
+        </aside>
     </section>
 </section>
 
@@ -506,7 +582,6 @@ class RegistrationsApplication {
         <ul>
             <li class="fragment">How to decompose the domain?</li>
             <li class="fragment">How to accept eventual consistency?</li>
-            <!-- TODO -->
         </ul>
     </section>
 
@@ -515,12 +590,12 @@ class RegistrationsApplication {
         <h2>Accidental Complexity</h2>
 
         <ul>
+            <li class="fragment">How to test the system?</li>
             <li class="fragment">How to setup infrastructure?</li>
             <li class="fragment">How to avoid 2PC transactions?</li>
             <li class="fragment">How to implement Composite UI?</li>
             <li class="fragment">How to monitor asynchronous communication?</li>
-            <li class="fragment">How to release and deploy moving parts?</li>
-            <!-- TODO -->
+            <li class="fragment">How to version, release and deploy moving parts?</li>
         </ul>
     </section>
 
