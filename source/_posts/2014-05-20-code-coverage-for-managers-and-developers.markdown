@@ -8,7 +8,7 @@ categories: [craftsmanship]
 
 From time to time, people ask me what code coverage by tests should be. Does 60% mean that project is healthy? Or maybe the goal should be 70% or 80%?
 
-_I don't know, it depends on your role in the project _
+_I don't know, it depends on your role in the project_
 
 If you are a manager, Excel is your friend. Manager likes numbers, columns and charts. So the following rules are perfect for them:
 
