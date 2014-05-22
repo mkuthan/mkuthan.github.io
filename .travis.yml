@@ -7,11 +7,11 @@ rvm:
 - 1.9.3
 before_script:
 - export REPO_URL="https://$GH_TOKEN@github.com/$GH_REPO.git"
-- rake setup_github_pages[$REPO_URL]
+- bundle exec rake setup_github_pages[$REPO_URL]
 script:
-- rake generate
+- bundle exec rake generate
 after_script:
-- rake deploy
+- bundle exec rake deploy
 env:
   global:
   - GH_REPO="mkuthan/mkuthan.github.com"
