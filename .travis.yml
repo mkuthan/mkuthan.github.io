@@ -1,5 +1,18 @@
+---
+branches:
+  only:
+  - source
 language: ruby
 rvm:
-  - 2.0.0
-  - 1.9.3
-script: bundle exec rake install; bundle exec rake generate
+- 1.9.3
+before_script:
+- export REPO_URL="https://$GH_TOKEN@github.com/$GH_REPO.git"
+- rake setup_github_pages[$REPO_URL]
+script:
+- rake generate
+after_script:
+- rake deploy
+env:
+  global:
+  - GH_REPO="mkuthan/mkuthan.github.com"
+  - secure: "Vv+PCFELtSU8nQaXRK/p8jzoBMxzdS8HRNHs26uaEfbPUTfyvcdENSL3tM6XCo2LgqGyGs98o2GUgHKhm3tFBK6bzPx+dTInHhJMlnzY8G03SbyWcVnJBppI7e8G2lhqi1yYgEaTN9sdfum4YaWf/JhBOZCcaeIuv+CyS66p0c4="
