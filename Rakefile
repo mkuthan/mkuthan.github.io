@@ -253,7 +253,7 @@ multitask :push do
   puts "## Deploying branch to Github Pages "
   puts "## Pulling any updates from Github Pages "
   cd "#{deploy_dir}" do 
-    system "git pull"
+    system "git pull origin #{deploy_branch}"
   end
   (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }
   Rake::Task[:copydot].invoke(public_dir, deploy_dir)
@@ -330,7 +330,7 @@ task :setup_github_pages, :repo do |t, args|
       # If this is a user/organization pages repository, add the correct origin remote
       # and checkout the source branch for committing changes to the blog source.
       system "git remote add origin #{repo_url}"
-      puts "Added remote as origin" # don't put repo_url in travis-ci as it may contains token
+      puts "Added remote as origin"
       system "git config branch.master.remote origin"
       puts "Set origin as default remote"
       system "git branch -m master source"
@@ -362,7 +362,7 @@ task :setup_github_pages, :repo do |t, args|
       f.write rakefile
     end
   end
-  puts "\n---\n## Now you can deploy to #{repo_url} with `rake deploy` ##"
+  puts "\n---\n## Now you can deploy to with `rake deploy` ##"
 end
 
 def ok_failed(condition)
