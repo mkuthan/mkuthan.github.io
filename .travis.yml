@@ -6,6 +6,8 @@ language: ruby
 rvm:
 - 1.9.3
 before_script:
+- git config --global user.name "Marcin Kuthan"
+- git config --global user.email "marcin.kuthan@gmail.com"
 - export REPO_URL="https://$GH_TOKEN@github.com/$GH_REPO.git"
 - bundle exec rake setup_github_pages[$REPO_URL]
 script:
@@ -14,5 +16,5 @@ after_script:
 - bundle exec rake deploy
 env:
   global:
-  - GH_REPO="mkuthan/mkuthan.github.com"
-  - secure: "Vv+PCFELtSU8nQaXRK/p8jzoBMxzdS8HRNHs26uaEfbPUTfyvcdENSL3tM6XCo2LgqGyGs98o2GUgHKhm3tFBK6bzPx+dTInHhJMlnzY8G03SbyWcVnJBppI7e8G2lhqi1yYgEaTN9sdfum4YaWf/JhBOZCcaeIuv+CyS66p0c4="
+  - GH_REPO="mkuthan/mkuthan.github.io"
+  - secure: "qdI5/uPJOKDeAwevmHXjZbJh9Rdgarxnbz4Z03ljsM3Vp/7o8waRreh6Ur93zCOFacBWC23wJfXfSGu2Kf8KDFGFKnZchBw/8Ju1Y4R1oGF5rNvByP/2lJUf0Oe7GOIG7T+j5XyiV4vfyN0jWM54ebdmROeS1yjAuLy6Y1mve3U="
