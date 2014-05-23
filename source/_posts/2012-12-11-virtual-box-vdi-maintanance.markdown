@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Virtual Box VDI maintanance"
-date: 2014-05-12
+date: 2012-12-11
 categories: [linux, virtual box]
 ---
 

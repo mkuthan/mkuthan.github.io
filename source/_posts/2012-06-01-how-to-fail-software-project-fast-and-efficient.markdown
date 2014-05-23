@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "How to fail a software project fast and efficient?"
-date: 2014-05-19
+date: 2012-06-01
 categories: [craftsmanship]
 ---
 

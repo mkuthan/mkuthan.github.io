@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Artifactory Performance Tuning"
-date: 2014-05-16
+date: 2011-03-10
 categories: [artifactory, jvm, performance, linux]
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Pure JEE or Spring Framework"
-date: 2014-05-22 08:00:40 +0200
+date: 2012-05-31
 comments: true
 categories: java, spring, JEE
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Development Environment Setup"
-date: 2014-05-09
+date: 2013-10-09
 categories: [linux, bash, ruby, java, node.js]
 ---
 

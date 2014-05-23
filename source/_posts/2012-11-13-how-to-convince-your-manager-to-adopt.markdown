@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "How to convince your manager to adopt Git"
-date: 2014-05-13
+date: 2012-11-13
 categories: [DVCS, git]
 ---
 

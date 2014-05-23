@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Code coverage for managers and developers"
-date: 2014-05-20 16:13:08 +0200
+date: 2012-12-03
 comments: true
 categories: [craftsmanship]
 ---

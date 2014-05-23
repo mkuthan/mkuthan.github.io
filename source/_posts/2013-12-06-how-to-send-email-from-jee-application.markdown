@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "How to send email from JEE application"
-date: 2014-05-14
+date: 2013-12-06
 categories: [JMS, smtp, spring]
 ---
 

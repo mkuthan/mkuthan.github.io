@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "How to document your professional experiences"
-date: 2014-05-15
+date: 2013-03-21
 categories: [craftsmanship]
 ---
 
