@@ -1,12 +1,14 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
 
+//
 article {
   ol, ul {
-    padding-left: 3em;
+    padding-left: 2em;
   }
 }
 
+//
 table td, table th {
   padding: 0.25em 0.5em;
 }
@@ -29,4 +31,10 @@ table tr:nth-child(2n) {
 
 table {
   margin-bottom: 2em;
+}
+
+//
+
+.highlight table {
+  margin-bottom: 0;
 }
