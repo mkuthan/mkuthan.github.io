@@ -7,9 +7,10 @@ categories: architecture
 ---
 
 During my studies about "Micro Services" I found comprehensive (but short) document about _Twelve-Factor App_ methodology
-for building software-as-a-service applications.
+for building software-as-a-service applications. The orginal paper is published at [12factor.net](http://12factor.net/).
  
 Below you can find a short summary of my experiences for the first part of the document.
+There is also a (second part)[/blog/2014/05/27/the-twelve-factor-app-part2/] of this blog post.
 
 ## 1. Codebase
 
