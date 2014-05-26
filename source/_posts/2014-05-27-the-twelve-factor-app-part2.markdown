@@ -12,7 +12,7 @@ This blog post is a continuation of (The Twelve-Factor App - part 1)[/blog/2014/
 
 > The twelve-factor app is completely self-contained and does not rely on runtime injection of a webserver into the execution environment to create a web-facing service.
 
-I developed self-containded web application once, with embedded Jetty server. 
+I developed self-contained web application once, with embedded Jetty server. 
 There are many product with embedded web server on the market, e.g: Artifactory.
 Now most of my POC (Proof of Concept) use Spring Boot, when you can run web application as regular system process. 
 After hell of JBoss class loader issues it seems to be the correct way to run the application.
