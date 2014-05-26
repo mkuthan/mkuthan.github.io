@@ -6,7 +6,7 @@ comments: true
 categories: architecture
 ---
 
-This blog post is a continuation of (The Twelve-Factor App - part 1)[/blog/2014/05/26/the-twelve-factor-app-part1/].
+This blog post is a continuation of [first part](http://mkuthan.github.io/blog/2014/05/26/the-twelve-factor-app-part1/) of this blog series.
 
 ## 7. Port Binding
 
