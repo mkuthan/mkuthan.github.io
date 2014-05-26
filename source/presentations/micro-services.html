@@ -743,7 +743,7 @@ class SeatsAvailability {
         <h4>How to start?</h4>
         <h2>Event Bus (1)</h2>
 
-        <p><em>Don't call us, we'll call you.<br>Publish events to communicate with other modules.</em></p>
+        <p><em>Don't call us, we'll call you.</em></p>
 
         <pre class="fragment"><code data-trim class="java">
 @Aspect
@@ -766,7 +766,7 @@ class EventsPublishingAspect {
         <h4>How to start?</h4>
         <h2>Event Bus (2)</h2>
 
-        <p><em>Don't rely on _Unit of Work_ but still handle events in the caller thread.</em></p>
+        <p><em>Don't rely on "Unit of Work" but still handle events in the caller thread.</em></p>
 
         <pre class="fragment"><code data-trim class="java">
 @Component
@@ -787,9 +787,25 @@ public class EventBusBeanPostProcessor implements BeanPostProcessor {
 
     <section>
         <h4>How to start?</h4>
-        <h2>Event Bus (2)</h2>
+        <h2>Event Bus (3)</h2>
 
         <p><em>Process events asynchronously, eventually.</em></p>
+
+        <pre class="fragment"><code data-trim class="java">
+@Bean(destroyMethod = "shutdown")
+public Executor taskExecutor() {
+  ThreadFactory threadFactory = new ThreadFactoryBuilder()
+    .setNameFormat("MyTaskExecutor-%d")
+    .build()
+
+  return Executors.newScheduledThreadPool(
+    environment.getRequiredProperty("scheduling.taskExecutorCorePoolSize"),
+    threadFactory)
+}
+
+@Autowired
+Environment environment
+        </code></pre>
     </section>
 
     <section>
@@ -805,9 +821,16 @@ public class EventBusBeanPostProcessor implements BeanPostProcessor {
 
         <p><em>Manage complexity by separating write and read models.</em></p>
     </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Keep trying</h2>
+
+        <p><em>Expect challenges.</em></p>
+    </section>
 </section>
 
 <section>
     <h1>The End</h1>
-    <p><small>Created by <a href="http://mkuthan.github.io">Marcin Kuthan</a></small></p>
+    <p><small>Visit my blog: <a href="http://mkuthan.github.io">mkuthan.github.io</a></small></p>
 </section>
