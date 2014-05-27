@@ -50,8 +50,10 @@ reveal:
 <section>
     <section>
         <h2>Micro Services Architecture</h2>
-        <p><small><a href="http://www.addsimplicity.com/downloads/eBaySDForum2006-11-29.pdf">The eBay Architecture (2006)</a></small></p>
-        <p><small><a href="http://www.slideshare.net/InfoQ/micro-services-java-the-unix-way">Micro Services, Java the Unix way (2012)</a></small></p>
+
+        <p class="fragment"><a href="http://www.addsimplicity.com/downloads/eBaySDForum2006-11-29.pdf">The eBay Architecture</a></p>
+        <p class="fragment"><a href="http://www.slideshare.net/fredgeorge/micro-service-architecure">MicroService Architecture, personal journey of discovery</a></p>
+        <p class="fragment"><a href="http://www.slideshare.net/InfoQ/micro-services-java-the-unix-way">Micro Services, Java the Unix way</a></p>
     </section>
 
     <!-- general characteristics -->
@@ -184,6 +186,11 @@ reveal:
             Amazon limit of the team size.
         </aside>
     </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Any comments?</h2>
+    </section>
 </section>
 
 <section>
@@ -204,6 +211,10 @@ reveal:
     <section>
         <h4>Contoso Conference Management System</h4>
         <h2>Domain</h2>
+
+        <aside class="notes">
+            Have you registered to the conference recently?
+        </aside>
     </section>
 
     <section>
@@ -299,6 +310,8 @@ reveal:
 
     <section>
         <h4>Decomposing the domain</h4>
+        <h2>Summary</h2>
+
         <img src="http://yuml.me/diagram/scruffy;dir:RL;scale:120/class/[note: core domain]-[Orders and Registrations],[Orders and Registrations]-[Payments],[Orders and Registrations]-[Conference Management]" />
     </section>
 </section>
@@ -337,7 +350,7 @@ class SeatType {
   int quantity
   BigDecimal priceAmount
   String priceCurrency
-  ... // validity period, rule based pricing
+  ... // rule based pricing
 }
         </code></pre>
     </section>
@@ -528,7 +541,7 @@ void on(SeatTypeUpdated event) {
         <h2>Business Processes (1)</h2>
         <pre><code data-trim class="java">
 @SagaEventHandler
-void handle(OrderPlaced event) {
+void on(OrderPlaced event) {
   makeSeatsReservation = new MakeSeatsReservation(
             event.getOrderId(), event.getConferenceId(), event.getSeats())
   commandGateway.send(makeSeatsReservation)
@@ -637,6 +650,10 @@ class RegistrationsApplication {
 <section>
     <section>
         <h2>Architecture Challenges</h2>
+
+        <aside class="notes">
+            Micro Services Architecture dark side
+        </aside>
     </section>
 
     <section>
@@ -662,6 +679,12 @@ class RegistrationsApplication {
             <li class="fragment">How to version, release and deploy moving parts?</li>
         </ul>
     </section>
+</section>
+
+<section>
+    <section>
+        <h2>Distributed Architecture</h2>
+    </section>
 
     <section>
         <h4>Martin Fowler’s First Law of Distribution</h4>
@@ -671,6 +694,7 @@ class RegistrationsApplication {
 
     <section>
         <h2>Fallacies of Distributed Computing</h2>
+
         <p><small><a href="http://www.rgoarchitects.com/Files/fallacies.pdf">http://www.rgoarchitects.com/Files/fallacies.pdf</a></small></p>
 
         <ul>
@@ -704,12 +728,14 @@ class RegistrationsApplication {
 
         <p><em>Don't develop monoliths, decompose application.</em></p>
 
-        <ul class="fragment">
-            <li>Use strategic design from Domain Driven Design book.</li>
-            <li>Use Java packages.</li>
-            <li>Use Maven or Gradle modules.</li>
-            <li>Use separate projects.</li>
-        </ul>
+        <aside class="notes">
+            <ul>
+                <li>Use strategic design from Domain Driven Design book.</li>
+                <li>Use Java packages.</li>
+                <li>Use Maven or Gradle modules.</li>
+                <li>Use separate projects.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
@@ -718,11 +744,13 @@ class RegistrationsApplication {
 
         <p><em>Don't expose module internals, for every package define published language.</em></p>
 
-        <ul class="fragment">
-            <li>JAR artifacts</li>
-            <li>XML, JSON Schema</li>
-            <li>API console</li>
-        </ul>
+        <aside class="notes">
+            <ul>
+                <li>JAR artifacts</li>
+                <li>XML, JSON Schema</li>
+                <li>API console</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
@@ -819,7 +847,7 @@ Environment environment
         <h4>How to start?</h4>
         <h2>Event Sourcing</h2>
 
-        <p><em>Manage complexity by separating write and read models.</em></p>
+        <p><em>Manage domain complexity by separating write and read models.</em></p>
     </section>
 
     <section>
