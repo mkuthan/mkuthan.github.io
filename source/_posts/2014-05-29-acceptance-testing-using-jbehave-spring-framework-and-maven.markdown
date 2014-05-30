@@ -12,9 +12,9 @@ Best practices materialized into working [project](https://github.com/mkuthan/ex
 After the lecture you will know:
 
 * How to implement automated acceptance tests and avoid common traps.
-* How to organize project build using Maven.
-* How to configure project and glue everything together using Spring Framework.
-* How to write test scenarios using JBehave.
+* How to organize project build using _Maven_.
+* How to configure project and glue everything together using _Spring Framework_.
+* How to write test scenarios using _JBehave_.
 * Finally how to run tests from command line and from your favourite IDE.
 
 ## Automated acceptance tests
@@ -22,13 +22,13 @@ After the lecture you will know:
 Automated acceptance test suite is a system documentation, the real single source of truth. 
 The best documentation I've ever seen: always up-to-date, unambiguous and precise.
  
-But I found at least two traps when I was trying to apply acceptance tests automation n practice.
+But I found many traps when I was trying to apply acceptance tests automation n practice.
 
 > Acceptance Testing is about collaboration not tools
 
 You will get much better results if you will collaborate closely with product owner, users and customer. 
 You could write test scenario only by yourself but perhaps you will fail. 
-When you are able to work on test scenarios together you could think about tools and automation.
+When you are able to work on test scenarios together, you could think about tools and automation.
 Do not let that tools interfere in collaboration.
 
 > Acceptance Testing needs to be done using user interface
@@ -337,10 +337,11 @@ public @interface Converter {
 The last tests infrastructure element is a base class for stories. 
 _JBehave_ provides plenty of integration methods with _Spring Framework_ and I spent a lot of time to select the best one.
 
-I have only two requirements:
+I have following requirements:
 
 * The ability to run single story from my IDE.
 * Meet Open Close Principle. When I add new story I do not want to modify any existing file. I want to add new one(s).
+* Have a full control over _JBehave_ configuration.
 
 To meet my requirements some base class for all tests must be defined.
 I do not like the idea to use inheritance here but I did not find better way. 
@@ -442,12 +443,12 @@ private ParameterControls parameterControls() {
 
 The configuration how the steps parameters will be handled.
 
-## Test scenarios
+## Test scenarios definition
 
-Test scenarios are rather straightforward if you are familiar with BDD and Gherkin like syntax. If not please read 
+Test scenarios are rather straightforward, if you are familiar with BDD and Gherkin like syntax. If not please read 
 [BDD Concepts](http://jbehave.org/reference/stable/concepts.html) short definition.
 
-Look, there is nothing specific to the application user interface in the scenarios. 
+Look, in the scenarios there is nothing specific to the application user interface. 
 It is not important how product price editor looks like, and how the shopping basket is presented.
 
 ```
@@ -479,4 +480,200 @@ When products are added to the shopping cart:
 
 Then the number of products in shopping cart is 2
 And total price is 95 EUR
+```
+
+## Test steps implementation
+
+Test steps are implemented in Java classes annotated with `@Steps`. 
+The common mistake is to develop steps only for single story. 
+The steps should be reusable across many user stories if feasible. 
+With reusable steps you will find that writing next user stories are much cheaper. 
+You can just use existing steps implementation to define new user story.
+
+For example steps for product catalog and product prices are defined in `SharedSteps` class.
+The repositories are used to manage products and prices. 
+In real application, perhaps you should use application service and it's public API.
+Please imagine steps implementation complexity using user interface. Even with design (anti-)pattern like Page Objects.
+ 
+``` java
+@Steps
+public class SharedSteps {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private PriceRepository priceRepository;
+
+    @Given("product $name with SKU $sku")
+    public void product(String name, StockKeepingUnit sku) {
+        productRepository.save(new Product(sku, name));
+    }
+
+    @Given("product $name price is $price")
+    public void price(String name, Money price) {
+        Product product = productRepository.findByName(name);
+        priceRepository.save(product.getSku(), price);
+    }
+}
+```
+
+You could ask, how does _JBehave_ know about `StockKeepingUnit` and `Money` classes?
+You will have provide converters but it is much more convenient to use well defined API instead of dozen of `String` based values.
+
+``` java MoneyConverter.class
+@Converter
+public class MoneyConverter {
+
+    @AsParameterConverter
+    public Money convertPercent(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+
+        String[] tokens = value.split("\\s");
+        if (tokens.length != 2) {
+            throw new ParameterConverters.ParameterConvertionFailed("Expected 2 tokens (amount and currency) but got " + tokens.length + ", value: " + value + ".");
+        }
+
+        return new Money(tokens[0], tokens[1]);
+    }
+}
+```
+
+The class `MoneyConverter` is annotated with `@Converter` annotation defined before. 
+`StringUtils` is a utility class from _Spring Framework_, look at the API documentation how many helpful utils classes are implemented in the framework.
+If the value cannot be converted, _JBehave_ `ParameterConvertionFailed` exception is thrown.
+
+## Running tests
+
+For every user story definition, one test class is defined. The test class is only the marker and does not define any logic.
+I could move `@RunWith` and `@AcceptanceTest` to the superclass but I want to define them directly in the test class. 
+I don't want to look into superclass to understand the current test class.
+
+``` java LearnJBehaveStory.java
+@RunWith(SpringJUnit4ClassRunner.class)
+@AcceptanceTest
+public class LearnJbehaveStory extends AbstractSpringJBehaveStory {
+}
+```
+
+The test can be executed directly from your favourite IDE, at least if the IDE provides support for JUnit runner.
+
+The second way to execute tests is to use _Maven_ from command line. 
+As long as tests are executed by regular _Maven Surefire Plugin_ the tests are executed exactly the same way like any other tests.
+
+``` console
+mvn -pl example-jbehave-tests -am test
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] example-jbehave
+[INFO] example-jbehave-app
+[INFO] example-jbehave-tests
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building example-jbehave 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building example-jbehave-app 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ example-jbehave-app ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ example-jbehave-app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ example-jbehave-app ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/marcin/projects/example-jbehave/example-jbehave-app/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ example-jbehave-app ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ example-jbehave-app ---
+[INFO] No tests to run.
+[INFO] Surefire report directory: /home/marcin/projects/example-jbehave/example-jbehave-app/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+
+Results :
+
+Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building example-jbehave-tests 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- jbehave-maven-plugin:3.9.2:unpack-view-resources (unpack-view-resources) @ example-jbehave-tests ---
+[INFO] Unpacked /home/marcin/.m2/repository/org/jbehave/jbehave-core/3.9.2/jbehave-core-3.9.2-resources.zip to /home/marcin/projects/example-jbehave/example-jbehave-tests/target/jbehave/view
+[INFO] Unpacked /home/marcin/.m2/repository/org/jbehave/site/jbehave-site-resources/3.1.1/jbehave-site-resources-3.1.1.zip to /home/marcin/projects/example-jbehave/example-jbehave-tests/target/jbehave/view
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ example-jbehave-tests ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 3 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ example-jbehave-tests ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ example-jbehave-tests ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/marcin/projects/example-jbehave/example-jbehave-tests/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ example-jbehave-tests ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.17:test (default-test) @ example-jbehave-tests ---
+[INFO] Surefire report directory: /home/marcin/projects/example-jbehave/example-jbehave-tests/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running example.jbehave.tests.stories.LearnJbehaveStory
+09:40:44.511 [main] INFO  o.s.test.context.TestContextManager - Could not instantiate TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener]. Specify custom listener classes or make the default listener classes (and their required dependencies) available. Offending class: [javax/servlet/ServletContext]
+09:40:44.523 [main] INFO  o.s.test.context.TestContextManager - Could not instantiate TestExecutionListener [org.springframework.test.context.transaction.TransactionalTestExecutionListener]. Specify custom listener classes or make the default listener classes (and their required dependencies) available. Offending class: [org/springframework/transaction/interceptor/TransactionAttribute]
+09:40:44.918 [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@3234e239: startup date [Fri May 30 09:40:44 CEST 2014]; root of context hierarchy
+Processing system properties {}
+Using controls EmbedderControls[batch=false,skip=false,generateViewAfterStories=true,ignoreFailureInStories=false,ignoreFailureInView=true,verboseFailures=false,verboseFiltering=false,storyTimeoutInSecs=120,failOnStoryTimeout=false,threads=1]
+Running story example/jbehave/tests/stories/learn_jbehave_story.story
+Generating reports view to '/home/marcin/projects/example-jbehave/example-jbehave-tests/target/jbehave' using formats '[stats, ide_console, txt, html]' and view properties '{navigator=ftl/jbehave-navigator.ftl, views=ftl/jbehave-views.ftl, reports=ftl/jbehave-reports-with-totals.ftl, nonDecorated=ftl/jbehave-report-non-decorated.ftl, decorated=ftl/jbehave-report-decorated.ftl, maps=ftl/jbehave-maps.ftl}'
+Reports view generated with 1 stories (of which 1 pending) containing 2 scenarios (of which 1 pending)
+09:40:46.980 [main] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@3234e239: startup date [Fri May 30 09:40:44 CEST 2014]; root of context hierarchy
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.619 sec - in example.jbehave.tests.stories.LearnJbehaveStory
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] example-jbehave ................................... SUCCESS [0.005s]
+[INFO] example-jbehave-app ............................... SUCCESS [2.637s]
+[INFO] example-jbehave-tests ............................. SUCCESS [6.153s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 9.173s
+[INFO] Finished at: Fri May 30 09:40:47 CEST 2014
+[INFO] Final Memory: 8M/116M
+[INFO] ------------------------------------------------------------------------ 
+```
+
+The convenient way to execute single test from command line is to use _Surefire_ `test` property.
+
+``` console
+mvn -pl example-jbehave-tests -am test -Dtest=LearnJbehaveStory
+...
 ```
