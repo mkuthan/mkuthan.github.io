@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Rrelease It! - book summary
+title: Rrelease It! - book review
 date: 2014-06-21
 comments: true
 categories: books
