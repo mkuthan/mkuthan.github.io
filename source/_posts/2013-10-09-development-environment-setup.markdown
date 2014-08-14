@@ -2,12 +2,12 @@
 layout: post
 title: "Development Environment Setup"
 date: 2013-10-09
-categories: [linux, bash, ruby, java, node.js]
+categories: [linux, bash, ruby, java, node.js, python]
 ---
 
-This document is a manual how to configure flexible development environment for _Java_, _JavaScript_ and _Ruby_ - my primary set of tools.
+This document is a manual how to configure flexible development environment for _Java_, _JavaScript_, _Ruby_ and _Python_ - my primary set of tools.
 Even if the runtimes installation with `apt-get` seems to be a trivial task, there is limited control over installed version of the runtime.
-The goal is to configure environment where you can easily change _Java_, _Ruby_ or _node.js_ versions. 
+The goal is to configure environment where you can easily change _Java_, _Ruby_ , _node.js_ and _python_ versions. 
 Where you can define the runtime version on project level.
 
 The most convenient way to configure and manage runtimes is to use environment managers.
@@ -15,12 +15,13 @@ Environment manager is nothing more than shell script, the script intercepts exe
 There are two flavours of the environment managers: `rvm` and `rbenv` like.
 I prefer the second one, it is less obtrusive and follows general unix principle: "do one thing and do it well".
 
-Let's start and install environment managers (for _Java_, _Ruby_ and _node.js_) into your home directory:
+Let's start and install environment managers (for _Java_, _Ruby_, _node.js_ and _Python_) into your home directory:
 
 ``` console
 git clone https://github.com/gcuisinier/jenv.git ~/.jenv
 git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
 git clone https://github.com/OiNutter/nodenv.git ~/.nodenv
+git clone https://github.com/yyuu/pyenv.git .pyenv
 ```
 
 For `rbenv` and `nodenv` you can install plugins that provide `rbenv install` and `nodenv install` commands to compile and install runtimes automatically.
@@ -31,7 +32,7 @@ $git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-b
 $git clone https://github.com/OiNutter/node-build.git ~/.nodenv/plugins/node-build
 ```
 Add environment managers to the `PATH` variable and initialize them to get command auto completion.
-Append the following snippet at the end of `.bashrc` file.
+Append the following snippet at the end of `.bashrc` (or `.bash_profile` on Mac) file.
 
 ``` bash
 export PATH="$HOME/.jenv/bin:$PATH"
@@ -42,6 +43,9 @@ eval "$(rbenv init -)"
  
 export PATH="$HOME/.nodenv/bin:$PATH"
 eval "$(nodenv init -)"
+
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
 ```
 
 Install runtimes using environment managers (Java needs to be installed manually):
@@ -50,6 +54,7 @@ Install runtimes using environment managers (Java needs to be installed manually
 $jenv add /path/to/already/installed/jdk
 $rbenv install 1.9.3-p448
 $nodenv install 0.10.12
+$pyenv install 3.4.1
 ```
 
 Install build tools (_maven_, _gradle_, _sbt_, etc.), create symbolic links, and configure `PATH` in `.profile` file:
@@ -103,4 +108,4 @@ function jprofiler_unset() {
 }
 ```
 
-The last step is to read environment manager manual. As long as all three managers are very similar it should not take more than one evening. 
+The last step is to read environment managers manual. As long as all four managers are very similar it should not take more than one evening. 
