@@ -28,19 +28,19 @@ Below you can find short but quite comprehensive summary (based on [Ilias Tsagkl
 I would add my $.02:
 
 * Not everything is portable across AS (or different version of AS from single vendor). 
-I migrated JEE applictions several times, mainly due to AS end of support. Springframework provides necessary abstraction.
+I migrated JEE applications several times, mainly due to AS end of support. Spring framework provides necessary abstraction.
 
-* JEE lifecycle is extremally long, you have to wait for the new standard, than for the vendor to apply 
+* JEE lifecycle is extremely long, you have to wait for the new standard, than for the vendor to apply 
 the changes to the AS, than for the infrastructure team to engineer new AS version. Based on my corporate experience, 
 it takes ~4 years from the initial release provided by Spring Framework.
  
 * Developer productivity is higher if they can run application on the lightweight container like Jetty or Tomcat.
 You can even consider to avoid Servlet container at all and run your application as regular system process.
 
-* Springframework enchantments are driven by real use cases not by vendor marketing team or mad scientist. 
+* Spring Framework enhancements are driven by real use cases not by vendor marketing team or mad scientist. 
 Did you try to use JPA2 Criteria? Or maybe do you prefer Query DSL instead?
-
+Fix 
 * One size does not fit all, that's the point. Pure JEE is very limited but Spring Framework ecosystem is extraordinary rich.
 
-I attended JEE evangelists sessions on several conferences around the world. And I can confirm, they do great speaks. 
+I attended JEE evangelists sessions on several conferences around the world. And I can confirm, they did great speaks. 
 It seams that pure JEE works for them, what is strange that it does not work for other specialists I know ;-)  
