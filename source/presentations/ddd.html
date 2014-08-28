@@ -12,17 +12,23 @@ reveal:
 <section>
     <section>
         <h1>{{ page.title }}</h1>
-        <h3>from the trenches for practictioners</h3>
 
-        <p><small>Created by <a href="http://mkuthan.github.io">Marcin Kuthan</a></small></p>
+        <h3>from the trenches for practitioners</h3>
+
+        <p>
+            <small>Created by <a href="http://mkuthan.github.io">Marcin Kuthan</a></small>
+        </p>
     </section>
     <section>
         <h1>About me</h1>
+
         <h3>Marcin Kuthan</h3>
 
-        <img src="https://secure.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5" alt="Marcin Kuthan" style="border: 1px; border-radius: 20px">
+        <img src="https://secure.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5" alt="Marcin Kuthan"
+             style="border: 1px; border-radius: 20px">
 
         <p>Software engineer at Grupa Allegro</p>
+
         <p><i class="fa fa-github"></i>&nbsp;<a href="http://mkuthan.github.io">mkuthan.github.io</a></p>
     </section>
     <section>
@@ -32,81 +38,273 @@ reveal:
             <li class="fragment"></li>
         </ul>
     </section>
+</section>
 
+<section>
+    <h2>Anemic domain model rot over time</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>More complex fragments of the application degrade regardless of effort put on quality.</li>
+            <li>Verified on several green-field projects.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Rich domain model is expensive</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>More complex building blocks and patterns.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Anemic and rich domain model works together</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>Use anemic model for CRUD like bounded contexts, e.g: admin panels, mdm.</li>
+            <li>Use rich domain model for core / complex bounded contexts.</li>
+            <li>Do not mix anemic and rich domain in single bounded context.</li>
+            <li>Make your architecture decision available for everyone in the team.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
     <section>
-        <h2>Bounded context</h2>
-
-        Driven by behaviours.
-        Avoid super global model (product example).
+        <h2>Bounded context is highly cohesive.</h2>
     </section>
 
     <section>
-        <h2>Relationships</h2>
+        <h2>Low cohesive model example</h2>
 
-        Upstream - Downstream
+        <pre><code data-trim class="groovy">
+class Product {
+  id
+  externalId
+  name
+  description
+  photos
+  opinions
+  categories
+  packages
+  prices
+  discounts
+  availability
+  reservations
+  merchants
+  seo
+  (...)
+}
+        </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Bounded context should have all information to complete tasks.</li>
+                <li>Bounded context should not have information irrelevant to tasks.</li>
+            </ul>
+        </aside>
+    </section>
+</section>
+
+<section>
+    <h2>Model behaviours not state</h2>
+
+    <pre><code data-trim class="groovy">
+package com.acme.ecommerce.inventory
+
+addInventoryEntry(productId, numberAvailable, ...)
+makeReservation(productId, numberRequested, ...)
+    </code></pre>
+
+    <pre><code data-trim class="groovy">
+package com.acme.ecommerce.order
+
+addOrderLine(productId, productName, price, quantity, ...)
+    </code></pre>
+
+    <aside class="notes">
+        <ul>
+            <li>Driven by business operations not UI views.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Published language</h2>
+
+    <ul>
+        <li class="fragment">Swagger for REST API</li>
+        <li class="fragment">Separate Gradle/Maven module + code reviews</li>
+        <li class="fragment">Separate Java package + code reviews</li>
+    </ul>
+
+    <aside class="notes">
+        <ul>
+            <li>Do not integrate using database at all costs.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <section>
+        <h2>Encapsulate domain</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Do not expose your domain data structures.</li>
+                <li>Use DTO, Commands, Queries, etc.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
-        <h2>Shared kernels</h2>
+        <h2>Domain example</h2>
 
-        Examples: units, money, ect.
+        <pre><code data-trim class="groovy">
+package com.acme.ecommerce.order.domain
+
+class Order {
+  OrderId id
+  List&lt;OrderLine&gt; lines
+}
+
+class OrderLine {
+  ProductSummary product
+  Quantity quantity
+  Money price
+}
+        </code></pre>
     </section>
 
     <section>
-        <h2>Anti corruption layer</h2>
+        <h2>API example</h2>
 
-        Package structure and dependency analysis.
-        Influence of legacy / 3rd party systems.
+        <pre><code data-trim class="groovy">
+package com.acme.ecommerce.order.rest
+
+class AddOrderLineCommand {
+  String productId
+  int quantity
+  int amount // cents, grosze
+  String currency
+}
+
+class OrderController {
+  @Autowired orderService
+
+  addOrderLine(addOrderLineCommand) {
+    // convert command into OrderService API
+    orderService.addOrderLine(productId, quantity, price)
+  }
+}
+        </code></pre>
     </section>
+</section>
 
-    <section>
-        <h2>Identifier generator strategies</h2>
+<!-- TODO -->
 
-        Technical vs. Business keys
-        How and where to generate identifiers.
-    </section>
 
-    <section>
-        <h2>Non transactional data sources</h2>
+<section>
+    <h2>Relationships</h2>
 
-        Messagging middleware (persistent queues).
-    </section>
+    Upstream - Downstream
+</section>
 
-    <section>
-        <h2>At least one message</h2>
+<section>
+    <h2>Shared kernels</h2>
 
-        Idempotent receiver, deduplication.
-    </section>
+    Examples: units, money, ect.
+</section>
 
-    <section>
-        <h2>Message ordering</h2>
+<section>
+    <h2>Anti corruption layer</h2>
 
-        Total order for aggregate, consistent hashing.
-    </section>
+    Package structure and dependency analysis.
+    Influence of legacy / 3rd party systems.
+</section>
 
-    <section>
-        <h2>Repositories</h2>
+<section>
+    <h2>Infrastructure</h2>
 
-        API
-        Locking strategies.
-    </section>
+    Thin, integration tests only.
+</section>
 
-    <section>
-        <h2>CQRS</h2>
+<section>
+    <h2>Identifier generator strategies</h2>
 
-        To keep domain model focused on business logic not presentation.
-    </section>
+    Technical vs. Business keys
+    How and where to generate identifiers.
+</section>
 
-    <section>
-        <h2>Aggregate roots</h2>
+<section>
+    <h2>Non transactional data sources</h2>
 
-        Driven by use cases and actors (concurrency).
-    </section>
+    Messagging middleware (persistent queues).
+</section>
 
-    <section>
-        <h2>Value objects</h2>
+<section>
+    <h2>At least one message</h2>
 
-        No more *Utils.
-    </section>
+    Idempotent receiver, deduplication.
+</section>
+
+<section>
+    <h2>Message ordering</h2>
+
+    Total order for aggregate, consistent hashing.
+</section>
+
+<section>
+    <h2>Eventual consistency</h2>
+
+    Around us every day.
+</section>
+
+<section>
+    <h2>Repositories</h2>
+
+    API
+    Locking strategies.
+</section>
+
+<section>
+    <h2>CQRS</h2>
+
+    To keep domain model focused on business logic not presentation.
+</section>
+
+<section>
+    <h2>Aggregate roots</h2>
+
+    Driven by use cases and actors (concurrency).
+</section>
+
+
+
+<section>
+    <h2>Value objects</h2>
+
+    No more *Utils.
+</section>
+
+<section>
+    <h2>Application vs. Domain services</h2>
+
+    orchestration vs. domain
+    constructor injection vs. field injection
+    e2e/acceptance tests, vs. unit tests
+</section>
+
+<section>
+    <h2>Acceptance tests</h2>
+
+    Avoid UI tests.
+    Given, Then - service layer
+    When - UI
 </section>
 
