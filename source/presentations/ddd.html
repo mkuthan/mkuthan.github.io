@@ -122,7 +122,7 @@ makeReservation(productId, numberRequested, ...)
     </code></pre>
 
     <pre><code data-trim class="groovy">
-package com.acme.ecommerce.order
+package com.acme.ecommerce.ordermanagement
 
 addOrderLine(productId, productName, price, quantity, ...)
     </code></pre>
@@ -135,7 +135,7 @@ addOrderLine(productId, productName, price, quantity, ...)
 </section>
 
 <section>
-    <h2>Published language</h2>
+    <h2>Publish domain "language"</h2>
 
     <ul>
         <li class="fragment">Swagger for REST API</li>
@@ -166,7 +166,7 @@ addOrderLine(productId, productName, price, quantity, ...)
         <h2>Domain example</h2>
 
         <pre><code data-trim class="groovy">
-package com.acme.ecommerce.order.domain
+package com.acme.ecommerce.ordermanagement.domain.orders
 
 class Order {
   OrderId id
@@ -185,7 +185,7 @@ class OrderLine {
         <h2>API example</h2>
 
         <pre><code data-trim class="groovy">
-package com.acme.ecommerce.order.rest
+package com.acme.ecommerce.ordermanagement.rest
 
 class AddOrderLineCommand {
   String productId
@@ -206,8 +206,90 @@ class OrderController {
     </section>
 </section>
 
-<!-- TODO -->
+<section>
+    <h2>Micro shared kernel</h2>
 
+    <ul>
+        <li class="fragment">Shared kernel coordination effort is too high</li>
+        <li class="fragment">Only for general purpose classes (e.g: Money)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Organize packages around domain</h2>
+
+    <pre><code data-trim>
+com
+└── acme
+    └── ecommerce
+        └── ordermanagement
+            └── domain
+                ├── orders
+                ├── channels
+                │   ├── allegro
+                │   └── ceneo
+                ├── payments
+                │   ├── cod
+                │   └── payu
+                └── delivery
+                   ├── inpost
+                   └── dhl
+            </code></pre>
+
+    <aside class="notes">
+        <ul>
+            <li>Go to the domain expert / product owner and explain packages responsibilities.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Organize classes around domain</h2>
+
+    <pre><code data-trim class="groovy">
+package com.acme.ecommerce.ordermanagement.domain.orders
+
+interface OrderRepository {} // repository
+class OrderFactory {} // factory
+class Order {} // aggregate root
+class OrderLine {} // value object
+class ProductSummary {} // value object
+class TaxCalculator {} // domain service
+interface TaxRatesProvider{} // domain service
+class OrderPaymentAcceptedEvent{} // domain event
+    </code></pre>
+
+    <aside class="notes">
+        <ul>
+            <li>One change request - single package needs to be modified.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Organized infrastructure around frameworks</h2>
+
+    <pre><code data-trim class="groovy">
+package com.acme.ecommerce.ordermanagement.infrastructure.mongo
+
+class MongoOrderRepository implements OrderRepository {}
+// all Mongo related implementations
+
+package com.acme.ecommerce.ordermanagement.infrastructure.rest
+
+class RestTaxRatesProvider implements TaxRatesProvider {}
+// all REST related implementations
+    </code></pre>
+
+    <aside class="notes">
+        <ul>
+            <li>Infrastructure defines cross cutting features.</li>
+            <li>Integration tests configuration is framework specific and should be shared.</li>
+        </ul>
+    </aside>
+</section>
+
+<!-- TODO -->
 
 <section>
     <h2>Relationships</h2>
@@ -215,11 +297,6 @@ class OrderController {
     Upstream - Downstream
 </section>
 
-<section>
-    <h2>Shared kernels</h2>
-
-    Examples: units, money, ect.
-</section>
 
 <section>
     <h2>Anti corruption layer</h2>
