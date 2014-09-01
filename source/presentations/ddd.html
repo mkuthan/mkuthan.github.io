@@ -76,7 +76,7 @@ reveal:
 
 <section>
     <section>
-        <h2>Bounded context is highly cohesive.</h2>
+        <h2>Bounded context is highly cohesive</h2>
     </section>
 
     <section>
@@ -117,14 +117,18 @@ class Product {
     <pre><code data-trim class="groovy">
 package com.acme.ecommerce.inventory
 
-addInventoryEntry(productId, numberAvailable, ...)
-makeReservation(productId, numberRequested, ...)
+class InventoryService {
+  addInventoryEntry(productId, numberAvailable, ...) {}
+  makeReservation(productId, numberRequested, ...) {}
+}
     </code></pre>
 
     <pre><code data-trim class="groovy">
 package com.acme.ecommerce.ordermanagement
 
-addOrderLine(productId, productName, price, quantity, ...)
+class OrderService {
+  addOrderLine(productId, productName, price, quantity, ...) {}
+}
     </code></pre>
 
     <aside class="notes">
@@ -139,8 +143,8 @@ addOrderLine(productId, productName, price, quantity, ...)
 
     <ul>
         <li class="fragment">Swagger for REST API</li>
-        <li class="fragment">Separate Gradle/Maven module + code reviews</li>
-        <li class="fragment">Separate Java package + code reviews</li>
+        <li class="fragment">Separate Gradle/Maven modules + code reviews</li>
+        <li class="fragment">Separate Java packages + code reviews</li>
     </ul>
 
     <aside class="notes">
@@ -207,11 +211,14 @@ class OrderController {
 </section>
 
 <section>
-    <h2>Micro shared kernel</h2>
+    <h2>Avoid shared kernel</h2>
 
     <ul>
-        <li class="fragment">Shared kernel coordination effort is too high</li>
-        <li class="fragment">Only for general purpose classes (e.g: Money)</li>
+        <li class="fragment">Shared kernel coordination effort is too high.</li>
+        <li class="fragment">Coupling is too high.</li>
+        <li class="fragment">Consider "micro" or "nano" shared kernel.</li>
+        <li class="fragment">Only for general purpose classes (e.g: Money).</li>
+        <li class="fragment">Opensource your kernel.</li>
     </ul>
 </section>
 
@@ -238,7 +245,7 @@ com
 
     <aside class="notes">
         <ul>
-            <li>Go to the domain expert / product owner and explain packages responsibilities.</li>
+            <li>Go to the domain expert / product owner and try to explain packages responsibilities.</li>
         </ul>
     </aside>
 </section>
@@ -273,12 +280,14 @@ class OrderPaymentAcceptedEvent{} // domain event
 package com.acme.ecommerce.ordermanagement.infrastructure.mongo
 
 class MongoOrderRepository implements OrderRepository {}
-// all Mongo related implementations
+// all Mongo repositories
+    </code></pre>
 
+    <pre><code data-trim class="groovy">
 package com.acme.ecommerce.ordermanagement.infrastructure.rest
 
 class RestTaxRatesProvider implements TaxRatesProvider {}
-// all REST related implementations
+// all REST clients
     </code></pre>
 
     <aside class="notes">
@@ -287,6 +296,105 @@ class RestTaxRatesProvider implements TaxRatesProvider {}
             <li>Integration tests configuration is framework specific and should be shared.</li>
         </ul>
     </aside>
+</section>
+
+<section>
+    <section>
+        <h2>Be pragmatic in testing</h2>
+    </section>
+
+    <section>
+        <h2>Application service</h2>
+
+        <pre><code data-trim class="groovy">
+class OrderService {
+  @Autowired orderRepository, taxCalculator, orderLineValidator, ...
+
+  @Transactional @PreAuthorized
+  addOrderLine(orderId, productId, productName, quantity, ...) {
+     order = orderRepository.load(orderId)
+
+     orderLineValidator.validate(...)
+     tax = taxCalculator.calculate(...)
+     order.addOrderLine(...)
+
+     orderRepository.save(order)
+  }
+}
+        </code></pre>
+
+        <p class="fragment">No unit tests, consider acceptance tests on service level</p>
+
+        <aside class="notes">
+            <ul>
+                <li>Use case realization.</li>
+                <li>Delegates to domain.</li>
+                <li>Many dependencies.</li>
+                <li>Place for transactional and security aspects.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Domain service</h2>
+
+        <pre><code data-trim class="groovy">
+class Order {
+  Order(orderId, customerId, ...) {}
+
+  addOrderLine(...) {
+    if (isOrderLineExist(...)) {
+      orderLines.update(...)
+      pendingEvents.add(new OrderLineUpdated(...))
+    } else {
+      orderLines.add(...)
+      pendingEvents.add(new OrderLineAdded(...))
+    }
+  }
+
+  List&lt;DomainEvent&gt; pendingEvents = []
+}
+        </code></pre>
+
+        <p class="fragment">Only unit tests, sometimes with mocks, no Spring context</p>
+
+        <aside class="notes">
+            <ul>
+                <li>Business logic realization.</li>
+                <li>No dependencies (or only few).</li>
+                <li>Pure Java/Groovy/Scala/... no magic.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+      <h2>Infrastructure</h2>
+
+      <pre><code data-trim class="groovy">
+@ContextConfiguration("classpath:/testContext-infrastructure-jms.xml")
+@Test(singleThreaded = true)
+class JmsQueueTest extends AbstractTestNGSpringContextTests {
+  static final JmsTestMessage ANY_MESSAGE = new JmsTestMessage()
+  static final int RECEIVE_TIMEOUT = 10000
+
+  @Autowired JmsTemplate jmsTemplate
+  @Autowired JmsTestListener listener // mock
+
+  public void listenerShouldHandleMessage() {
+    jmsTemplate.convertAndSend(ANY_MESSAGE)
+    verify(listener, timeout(RECEIVE_TIMEOUT)).handleMessage(eq(ANY_MESSAGE))
+  }
+}
+      </code></pre>
+
+      <p class="fragment">Only integration tests on production like environment, sometimes unit tests for assemblers/converters</p>
+
+      <aside class="notes">
+        <ul>
+            <li>Technical complexity realization.</li>
+        </ul>
+      </aside>
+    </section>
 </section>
 
 <!-- TODO -->
@@ -305,11 +413,6 @@ class RestTaxRatesProvider implements TaxRatesProvider {}
     Influence of legacy / 3rd party systems.
 </section>
 
-<section>
-    <h2>Infrastructure</h2>
-
-    Thin, integration tests only.
-</section>
 
 <section>
     <h2>Identifier generator strategies</h2>
@@ -361,20 +464,10 @@ class RestTaxRatesProvider implements TaxRatesProvider {}
     Driven by use cases and actors (concurrency).
 </section>
 
-
-
 <section>
     <h2>Value objects</h2>
 
     No more *Utils.
-</section>
-
-<section>
-    <h2>Application vs. Domain services</h2>
-
-    orchestration vs. domain
-    constructor injection vs. field injection
-    e2e/acceptance tests, vs. unit tests
 </section>
 
 <section>
