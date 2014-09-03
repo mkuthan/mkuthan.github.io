@@ -35,7 +35,9 @@ reveal:
         <h2>The Talk</h2>
 
         <ul>
-            <li class="fragment"></li>
+            <li class="fragment">What I learnt about DDD by the hard way</li>
+            <li class="fragment">What I almost missed in blue book</li>
+            <li class="fragment">Do not expect quick DDD guide</li>
         </ul>
     </section>
 </section>
@@ -56,7 +58,8 @@ reveal:
 
     <aside class="notes">
         <ul>
-            <li>More complex building blocks and patterns.</li>
+            <li>Complex building blocks and patterns.</li>
+            <li>High learning curve</li>
         </ul>
     </aside>
 </section>
@@ -66,17 +69,18 @@ reveal:
 
     <aside class="notes">
         <ul>
+            <li>There is no single valid architecture for whole system.</li>
             <li>Use anemic model for CRUD like bounded contexts, e.g: admin panels, mdm.</li>
             <li>Use rich domain model for core / complex bounded contexts.</li>
             <li>Do not mix anemic and rich domain in single bounded context.</li>
-            <li>Make your architecture decision available for everyone in the team.</li>
+            <li>Make your architecture decision clear for everyone in the team.</li>
         </ul>
     </aside>
 </section>
 
 <section>
     <section>
-        <h2>Bounded context is highly cohesive</h2>
+        <h2>Bounded context should be highly cohesive</h2>
     </section>
 
     <section>
@@ -134,17 +138,19 @@ class OrderService {
     <aside class="notes">
         <ul>
             <li>Driven by business operations not UI views.</li>
+            <li>UI is a composite of many bounded contexts.</li>
         </ul>
     </aside>
 </section>
 
+<!--
 <section>
     <h2>Publish domain "language"</h2>
 
     <ul>
-        <li class="fragment">Swagger for REST API</li>
-        <li class="fragment">Separate Gradle/Maven modules + code reviews</li>
-        <li class="fragment">Separate Java packages + code reviews</li>
+        <li class="fragment">Swagger for REST API for distributed application (micro services).</li>
+        <li class="fragment">Separate Gradle/Maven module</li>
+        <li class="fragment">Separate Java package</li>
     </ul>
 
     <aside class="notes">
@@ -153,6 +159,7 @@ class OrderService {
         </ul>
     </aside>
 </section>
+-->
 
 <section>
     <section>
@@ -160,6 +167,7 @@ class OrderService {
 
         <aside class="notes">
             <ul>
+                <li>Do you like integration using database?</li>
                 <li>Do not expose your domain data structures.</li>
                 <li>Use DTO, Commands, Queries, etc.</li>
             </ul>
@@ -178,11 +186,18 @@ class Order {
 }
 
 class OrderLine {
-  ProductSummary product
+  ProductSummary product // id, name
   Quantity quantity
-  Money price
+  Money price // amount, currency
 }
         </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Rich, complex model.</li>
+                <li>Many small classes with well defined responsibilities (SRP).</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
@@ -199,27 +214,47 @@ class AddOrderLineCommand {
 }
 
 class OrderController {
-  @Autowired orderService
+  @Autowired OrderService orderService
 
-  addOrderLine(addOrderLineCommand) {
+  addOrderLine(AddOrderLineCommand command) {
     // convert command into OrderService API
     orderService.addOrderLine(productId, quantity, price)
   }
 }
         </code></pre>
     </section>
+
+    <aside class="notes">
+        <ul>
+            <li>Simple data types, interoperable, easy to marshall.</li>
+            <li>Focused on use cases or caller needs.</li>
+            <li>Do not try automagic mappers (e.g Dozer).</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
-    <h2>Avoid shared kernel</h2>
+    <section>
+        <h2>Avoid shared kernel</h2>
 
-    <ul>
-        <li class="fragment">Shared kernel coordination effort is too high.</li>
-        <li class="fragment">Coupling is too high.</li>
-        <li class="fragment">Consider "micro" or "nano" shared kernel.</li>
-        <li class="fragment">Only for general purpose classes (e.g: Money).</li>
-        <li class="fragment">Opensource your kernel.</li>
-    </ul>
+        <ul>
+            <li class="fragment">Coupling is too high.</li>
+            <li class="fragment">Coordination effort is too high.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Shared domain code</h2>
+
+        <p>"Micro" or "Nano" shared kernel for general purpose classes (e.g: Money)</p>
+    </section>
+
+    <section>
+        <h2>Shared infrastructure code</h2>
+
+        <p>Opensource your kernel</p>
+    </section>
+
 </section>
 
 <section>
@@ -292,7 +327,7 @@ class RestTaxRatesProvider implements TaxRatesProvider {}
 
     <aside class="notes">
         <ul>
-            <li>Infrastructure defines cross cutting features.</li>
+            <li>Infrastructure provide cross cutting domain features.</li>
             <li>Integration tests configuration is framework specific and should be shared.</li>
         </ul>
     </aside>
@@ -336,7 +371,7 @@ class OrderService {
     </section>
 
     <section>
-        <h2>Domain service</h2>
+        <h2>Domain entity or service</h2>
 
         <pre><code data-trim class="groovy">
 class Order {
@@ -371,46 +406,78 @@ class Order {
       <h2>Infrastructure</h2>
 
       <pre><code data-trim class="groovy">
-@ContextConfiguration("classpath:/testContext-infrastructure-jms.xml")
-@Test(singleThreaded = true)
-class JmsQueueTest extends AbstractTestNGSpringContextTests {
-  static final JmsTestMessage ANY_MESSAGE = new JmsTestMessage()
-  static final int RECEIVE_TIMEOUT = 10000
+class RestTaxesProvider implements TaxesProvider {
+  @Autowired RestTemplate restTemplate
+  @Autowired TaxRateAssembler taxRateAssembler
 
-  @Autowired JmsTemplate jmsTemplate
-  @Autowired JmsTestListener listener // mock
-
-  public void listenerShouldHandleMessage() {
-    jmsTemplate.convertAndSend(ANY_MESSAGE)
-    verify(listener, timeout(RECEIVE_TIMEOUT)).handleMessage(eq(ANY_MESSAGE))
+  @Cacheable
+  List&lt;TaxRate&gt; fetchTaxRates() {
+    List&lt;StrangeStructure&gt; results = restTemplate.getForObject(...)
+    return taxRateAssembler.assembly(results)
   }
 }
       </code></pre>
 
-      <p class="fragment">Only integration tests on production like environment, sometimes unit tests for assemblers/converters</p>
+      <p class="fragment">Integration tests on production like environment, sometimes unit tests for assemblers</p>
 
       <aside class="notes">
         <ul>
             <li>Technical complexity realization.</li>
+            <li>Anti corruption layer (data assembly, exceptions mapping).</li>
         </ul>
       </aside>
     </section>
 </section>
 
 <!-- TODO -->
+<section>
+    <h2>Use events for communication</h2>
+</section>
 
 <section>
-    <h2>Relationships</h2>
+    <h2>Be fine with "eventual consistency"</h2>
 
-    Upstream - Downstream
+    <p>Not a problem at all</p>
+</section>
+
+<section>
+    <h2>Assume "at least one message delivery guarantee"</h2>
+
+    <ul>
+        <li class="fragment">Idempotent receiver</li>
+        <li class="fragment">Deduplication</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Handle out of order messages</h2>
+
+    <ul>
+        <li class="fragment">Consistent hashing</li>
+        <li class="fragment">Re-sequencing messages</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Configure redelivery policy and DLQ</h2>
 </section>
 
 
 <section>
-    <h2>Anti corruption layer</h2>
+    <h2>Summary</h2>
 
-    Package structure and dependency analysis.
-    Influence of legacy / 3rd party systems.
+    <ul>
+        <li class="fragment">DDD comprehensively develop your skills.</li>
+        <!-- TODO -->
+        <li class="fragment">Be careful with asynchronous communication.</li>
+    </ul>
+</section>
+
+<!-- ideas -->
+<section>
+    <h2>Relationships</h2>
+
+    Upstream - Downstream
 </section>
 
 
@@ -425,24 +492,6 @@ class JmsQueueTest extends AbstractTestNGSpringContextTests {
     <h2>Non transactional data sources</h2>
 
     Messagging middleware (persistent queues).
-</section>
-
-<section>
-    <h2>At least one message</h2>
-
-    Idempotent receiver, deduplication.
-</section>
-
-<section>
-    <h2>Message ordering</h2>
-
-    Total order for aggregate, consistent hashing.
-</section>
-
-<section>
-    <h2>Eventual consistency</h2>
-
-    Around us every day.
 </section>
 
 <section>
