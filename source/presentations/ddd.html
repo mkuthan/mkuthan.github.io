@@ -429,9 +429,71 @@ class RestTaxesProvider implements TaxesProvider {
     </section>
 </section>
 
-<!-- TODO -->
 <section>
-    <h2>Use events for communication</h2>
+    <section>
+        <h2>Domain events for bounded contexts integration</h2>
+
+        <p>Disclaimer: I'm not fully convinced :-)</p>
+    </section>
+
+    <section>
+        <h2>Traditional way</h2>
+
+        <pre><code data-trim class="groovy">
+class OrderService {
+  void placeOrder(...) {
+    order = orderFactory.createOrder(...)
+    orderRepository.save(order)
+
+    emailNotificationService.notifyCustomer(...)
+    inventoryService.makeReservation(...)
+    paymentService.sendPayment(...)
+  }
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>It sucks</h2>
+
+        <ul>
+            <li class="fragment">Temporal coupling</li>
+            <li class="fragment">Degraded availability</li>
+            <li class="fragment">Non-transactional services</li>
+            <li class="fragment">Broken domain model encapsulation</li>
+            <li class="fragment">Business logic drift from domain to application service</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Domain event way</h2>
+
+        <pre><code data-trim class="groovy">
+class Order implements AggragateRoot {
+  List&lt;DomainEvent&gt; pendingEvents = []
+}
+        </code></pre>
+
+        <pre><code data-trim class="groovy">
+@AfterReturning(pointcut = "execution(public * *.Repository+.save(..)) && args(aggregateRoot)")
+void publishPendingEvents(AggregateRoot aggregateRoot) {
+  for (DomainEvent event : aggregateRoot.getPendingEvents()) {
+    eventPublisher.publish(event)
+  }
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>It works</h2>
+        <ul>
+            <li class="fragment">No temporal coupling</li>
+            <li class="fragment">Availability == messaging middleware availability</li>
+            <li class="fragment">Semi transactional</li>
+            <li class="fragment">Domain model encapsulated</li>
+            <li class="fragment">Business logic in domain model</li>
+        </ul>
+    </section>
 </section>
 
 <section>
@@ -462,18 +524,21 @@ class RestTaxesProvider implements TaxesProvider {
     <h2>Configure redelivery policy and DLQ</h2>
 </section>
 
+<section>
+    <h2>Configure message middleware management and monitoring tools</h2>
+</section>
 
+<!-- TODO -->
 <section>
     <h2>Summary</h2>
 
     <ul>
         <li class="fragment">DDD comprehensively develop your skills.</li>
-        <!-- TODO -->
         <li class="fragment">Be careful with asynchronous communication.</li>
     </ul>
 </section>
 
-<!-- ideas -->
+<!-- remaining ideas -->
 <section>
     <h2>Relationships</h2>
 
