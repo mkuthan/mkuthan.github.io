@@ -9,6 +9,16 @@ reveal:
   transition: default
 ---
 
+<!--
+<div style="background: url('/images/jpiknik.jpeg');
+            position: absolute;
+            bottom: 0%;
+            right: 0%;
+            width: 144px;
+            height: 157px;">
+</div>
+-->
+
 <section>
     <section>
         <h1>{{ page.title }}</h1>
@@ -18,6 +28,13 @@ reveal:
         <p>
             <small>Created by <a href="http://mkuthan.github.io">Marcin Kuthan</a></small>
         </p>
+
+        <aside class="notes">
+            <ul>
+                <li>Domain Driven Design is a comprehensive methodology in software engineering.</li>
+                <li>For DDD practitioners or techies after Eric and Vernon studies who want to practice.</li>
+            </ul>
+        </aside>
     </section>
     <section>
         <h1>About me</h1>
@@ -27,18 +44,51 @@ reveal:
         <img src="https://secure.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5" alt="Marcin Kuthan"
              style="border: 1px; border-radius: 20px">
 
-        <p>Software engineer at Grupa Allegro</p>
+        <p>Technical leader at Grupa Allegro</p>
 
         <p><i class="fa fa-github"></i>&nbsp;<a href="http://mkuthan.github.io">mkuthan.github.io</a></p>
     </section>
     <section>
         <h2>The Talk</h2>
 
-        <ul>
-            <li class="fragment">What I learnt about DDD by the hard way</li>
-            <li class="fragment">What I almost missed in blue book</li>
-            <li class="fragment">Do not expect quick DDD guide</li>
-        </ul>
+        <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+            <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+
+            <g>
+                <title>Layer 1</title>
+                <ellipse transform="rotate(-34.2011, 194.958, 221.312)" ry="130.01426" rx="159.257901" id="svg_9" cy="221.311844" cx="194.957273" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#cccccc"/>
+                <polyline id="svg_1" fill="none" stroke-width="3" stroke="#000000" points="11.689258354391939,256.23974609375 304.9715783835527,255.23973083496094 598.2539138450666,254.23973083496094 "/>
+                <polyline id="svg_2" transform="rotate(90, 299.254, 240.059)" fill="none" stroke-width="3" stroke="#000000" points="93.19846177524596,241.0601043701172 299.2551190463164,240.0601043701172 505.31177631738683,239.0601043701172 "/>
+                <text xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_5" y="55.465136" x="455.348843" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">obvious</text>
+                <text xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_6" y="53.139554" x="166.976733" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">vague</text>
+                <text transform="rotate(-90, 25.6977, 349.651)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_7" y="357.790743" x="25.697649" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">important</text>
+                <text transform="rotate(-90, 26.279, 154.884)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_8" y="163.023283" x="26.279045" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">essential</text>
+                <text transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_11" y="157.494742" x="497.369667" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">ubiquitous language</text>
+                <text id="svg_12" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="512.305179" x="293.064104" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">factories</text>
+                <text id="svg_15" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="559.476925" x="477.784334" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">repositories</text>
+                <text id="svg_17" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="463.820367" x="457.035307" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">entities</text>
+                <text id="svg_21" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="396.951654" x="284.730119" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">value objects</text>
+                <text transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="207.860751" x="22.49777" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_3">aggregates</text>
+                <text id="svg_4" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="122.406196" x="-26.770124" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">bounded contexts</text>
+                <text transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="409.678926" x="-76.038028" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_10">application services</text>
+                <text transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="606.042556" x="-18.823697" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_13">domain services</text>
+                <text id="svg_14" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="293.858373" x="389.298151" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">layered architecture</text>
+                <text transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="622.002179" x="293.338744" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_16">specifications</text>
+                <text id="svg_18" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="291.497113" x="-144.377371" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">domain events</text>
+                <text transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="90.222017" x="274.869489" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_19">context map</text>
+                <text id="svg_20" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="486.04256" x="-12.466549" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">shared kernel</text>
+                <text transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="296.951659" x="47.926362" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_22">cohesion</text>
+                <text id="svg_23" transform="matrix(0.629213, 0, 0, 0.55, 207.858, 64.1454)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="222.949286" x="384.530289" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">core domain</text>
+            </g>
+        </svg>
+
+        <aside class="notes">
+            <ul>
+                <li class="fragment">What I learnt about DDD by the hard way.</li>
+                <li class="fragment">What I almost missed in blue book.</li>
+                <li class="fragment">Do not expect quick DDD guide.</li>
+            </ul>
+        </aside>
     </section>
 </section>
 
@@ -58,8 +108,8 @@ reveal:
 
     <aside class="notes">
         <ul>
+            <li>High learning curve.</li>
             <li>Complex building blocks and patterns.</li>
-            <li>High learning curve</li>
         </ul>
     </aside>
 </section>
@@ -81,12 +131,21 @@ reveal:
 <section>
     <section>
         <h2>Bounded context should be highly cohesive</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Should have all information needed by operations.</li>
+                <li>Should not have information irrelevant to operations.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
-        <h2>Low cohesive model example</h2>
+        <h2>Low cohesive bounded context model</h2>
 
-        <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
+package com.acme.ecommerce.shared
+
 class Product {
   id
   externalId
@@ -99,67 +158,85 @@ class Product {
   prices
   discounts
   availability
-  reservations
-  merchants
-  seo
   (...)
 }
         </code></pre>
 
         <aside class="notes">
             <ul>
-                <li>Bounded context should have all information to complete tasks.</li>
-                <li>Bounded context should not have information irrelevant to tasks.</li>
+                <li>Hypothetical core entity for e-commerce platform.</li>
+                <li>"Noun" based design.</li>
             </ul>
         </aside>
     </section>
-</section>
 
-<section>
-    <h2>Model behaviours not state</h2>
+    <section>
+        <h2>Model behaviours not state</h2>
 
-    <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 package com.acme.ecommerce.inventory
 
 class InventoryService {
   addInventoryEntry(productId, numberAvailable, ...) {}
   makeReservation(productId, numberRequested, ...) {}
 }
-    </code></pre>
+        </code></pre>
 
-    <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 package com.acme.ecommerce.ordermanagement
 
 class OrderService {
   addOrderLine(productId, productName, price, quantity, ...) {}
 }
-    </code></pre>
+        </code></pre>
 
-    <aside class="notes">
-        <ul>
-            <li>Driven by business operations not UI views.</li>
-            <li>UI is a composite of many bounded contexts.</li>
-        </ul>
-    </aside>
+        <aside class="notes">
+            <ul>
+                <li>Forget about data structures, focus on behaviours.</li>
+                <li>Product attributes are disjoint.</li>
+                <li>For inventory product is "inventory item", for order management "product summary".</li>
+                <li>Driven by business operations not UI views, UI is a composite of many bounded contexts.</li>
+            </ul>
+        </aside>
+    </section>
 </section>
 
-<!--
 <section>
-    <h2>Publish domain "language"</h2>
+    <section>
+        <h2>Aggregate should be highly cohesive</h2>
+    </section>
 
-    <ul>
-        <li class="fragment">Swagger for REST API for distributed application (micro services).</li>
-        <li class="fragment">Separate Gradle/Maven module</li>
-        <li class="fragment">Separate Java package</li>
-    </ul>
+    <section>
+        <h2>Low cohesive aggregate</h2>
 
-    <aside class="notes">
+        <pre><code data-trim class="java">
+class Product {
+  void updateDetails(...) // name, description, features
+  void updatePrice(...) // amount, currency, validity period
+  void makeReservation(...) // how many, how long
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Look for aggregate actors</h2>
+
         <ul>
-            <li>Do not integrate using database at all costs.</li>
+            <li class="fragment">Content Manager: <code>updateDetails()</code></li>
+            <li class="fragment">Marketing Director: <code>updatePrice()</code></li>
+            <li class="fragment">Customer: <code>makeReservation()</code></li>
         </ul>
-    </aside>
+
+        <aside class="notes">
+            <ul>
+                <li>Single actor per aggregate.</li>
+                <li>Content Manager: tiny concurrency, optimistic locking.</li>
+                <li>Marketing Director: no concurrency.</li>
+                <li>Customer: high concurrency, pessimistic locking.</li>
+            </ul>
+        </aside>
+    </section>
 </section>
--->
 
 <section>
     <section>
@@ -177,7 +254,7 @@ class OrderService {
     <section>
         <h2>Domain example</h2>
 
-        <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 package com.acme.ecommerce.ordermanagement.domain.orders
 
 class Order {
@@ -194,7 +271,7 @@ class OrderLine {
 
         <aside class="notes">
             <ul>
-                <li>Rich, complex model.</li>
+                <li>Rich, complex model with strong invariants.</li>
                 <li>Many small classes with well defined responsibilities (SRP).</li>
             </ul>
         </aside>
@@ -203,7 +280,7 @@ class OrderLine {
     <section>
         <h2>API example</h2>
 
-        <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 package com.acme.ecommerce.ordermanagement.rest
 
 class AddOrderLineCommand {
@@ -222,39 +299,15 @@ class OrderController {
   }
 }
         </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Simple data types, interoperable, easy to marshall.</li>
+                <li>Focused on use cases or caller needs.</li>
+                <li>Do not try automagic mappers (e.g Dozer).</li>
+            </ul>
+        </aside>
     </section>
-
-    <aside class="notes">
-        <ul>
-            <li>Simple data types, interoperable, easy to marshall.</li>
-            <li>Focused on use cases or caller needs.</li>
-            <li>Do not try automagic mappers (e.g Dozer).</li>
-        </ul>
-    </aside>
-</section>
-
-<section>
-    <section>
-        <h2>Avoid shared kernel</h2>
-
-        <ul>
-            <li class="fragment">Coupling is too high.</li>
-            <li class="fragment">Coordination effort is too high.</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>Shared domain code</h2>
-
-        <p>"Micro" or "Nano" shared kernel for general purpose classes (e.g: Money)</p>
-    </section>
-
-    <section>
-        <h2>Shared infrastructure code</h2>
-
-        <p>Opensource your kernel</p>
-    </section>
-
 </section>
 
 <section>
@@ -263,20 +316,20 @@ class OrderController {
     <pre><code data-trim>
 com
 └── acme
-    └── ecommerce
-        └── ordermanagement
-            └── domain
-                ├── orders
-                ├── channels
-                │   ├── allegro
-                │   └── ceneo
-                ├── payments
-                │   ├── cod
-                │   └── payu
-                └── delivery
-                   ├── inpost
-                   └── dhl
-            </code></pre>
+└── ecommerce
+└── ordermanagement
+└── domain
+├── orders
+├── channels
+│   ├── allegro
+│   └── ceneo
+├── payments
+│   ├── cod
+│   └── payu
+└── delivery
+   ├── inpost
+   └── dhl
+    </code></pre>
 
     <aside class="notes">
         <ul>
@@ -288,7 +341,7 @@ com
 <section>
     <h2>Organize classes around domain</h2>
 
-    <pre><code data-trim class="groovy">
+    <pre><code data-trim class="java">
 package com.acme.ecommerce.ordermanagement.domain.orders
 
 interface OrderRepository {} // repository
@@ -304,6 +357,7 @@ class OrderPaymentAcceptedEvent{} // domain event
     <aside class="notes">
         <ul>
             <li>One change request - single package needs to be modified.</li>
+            <li>Consider Spring Framework with all exception classes in single package.</li>
         </ul>
     </aside>
 </section>
@@ -311,14 +365,14 @@ class OrderPaymentAcceptedEvent{} // domain event
 <section>
     <h2>Organized infrastructure around frameworks</h2>
 
-    <pre><code data-trim class="groovy">
+    <pre><code data-trim class="java">
 package com.acme.ecommerce.ordermanagement.infrastructure.mongo
 
 class MongoOrderRepository implements OrderRepository {}
 // all Mongo repositories
     </code></pre>
 
-    <pre><code data-trim class="groovy">
+    <pre><code data-trim class="java">
 package com.acme.ecommerce.ordermanagement.infrastructure.rest
 
 class RestTaxRatesProvider implements TaxRatesProvider {}
@@ -341,12 +395,12 @@ class RestTaxRatesProvider implements TaxRatesProvider {}
     <section>
         <h2>Application service</h2>
 
-        <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 class OrderService {
   @Autowired orderRepository, taxCalculator, orderLineValidator, ...
 
   @Transactional @PreAuthorized
-  addOrderLine(orderId, productId, productName, quantity, ...) {
+  void addOrderLine(orderId, productId, productName, quantity, ...) {
      order = orderRepository.load(orderId)
 
      orderLineValidator.validate(...)
@@ -358,7 +412,7 @@ class OrderService {
 }
         </code></pre>
 
-        <p class="fragment">No unit tests, consider acceptance tests on service level</p>
+        <p class="fragment"><i class="fa fa-check"></i> No unit tests, consider acceptance tests on service level</p>
 
         <aside class="notes">
             <ul>
@@ -373,12 +427,12 @@ class OrderService {
     <section>
         <h2>Domain entity or service</h2>
 
-        <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 class Order {
   Order(orderId, customerId, ...) {}
 
-  addOrderLine(...) {
-    if (isOrderLineExist(...)) {
+  void addOrderLine(...) {
+    if (isOrderLineForProductExist(...)) {
       orderLines.update(...)
       pendingEvents.add(new OrderLineUpdated(...))
     } else {
@@ -391,11 +445,11 @@ class Order {
 }
         </code></pre>
 
-        <p class="fragment">Only unit tests, sometimes with mocks, no Spring context</p>
+        <p class="fragment"><i class="fa fa-check"></i> Only unit tests, sometimes with mocks, no Spring context</p>
 
         <aside class="notes">
             <ul>
-                <li>Business logic realization.</li>
+                <li>Business logic.</li>
                 <li>No dependencies (or only few).</li>
                 <li>Pure Java/Groovy/Scala/... no magic.</li>
             </ul>
@@ -405,7 +459,7 @@ class Order {
     <section>
       <h2>Infrastructure</h2>
 
-      <pre><code data-trim class="groovy">
+      <pre><code data-trim class="java">
 class RestTaxesProvider implements TaxesProvider {
   @Autowired RestTemplate restTemplate
   @Autowired TaxRateAssembler taxRateAssembler
@@ -418,12 +472,13 @@ class RestTaxesProvider implements TaxesProvider {
 }
       </code></pre>
 
-      <p class="fragment">Integration tests on production like environment, sometimes unit tests for assemblers</p>
+      <p class="fragment"><i class="fa fa-check"></i> Spring integration tests using production like environment</p>
 
       <aside class="notes">
         <ul>
             <li>Technical complexity realization.</li>
             <li>Anti corruption layer (data assembly, exceptions mapping).</li>
+            <li>Place for caching aspect.</li>
         </ul>
       </aside>
     </section>
@@ -431,23 +486,46 @@ class RestTaxesProvider implements TaxesProvider {
 
 <section>
     <section>
+        <h2>Avoid shared kernel for integration</h2>
+
+        <p class="fragment"><i class="fa fa-exchange"></i> Coupling is too high </p>
+        <p class="fragment"><i class="fa fa-group"></i> Coordination effort is also high</p>
+    </section>
+
+    <section>
+        <h2>Shared domain code</h2>
+
+        <p>"Micro" or "Nano" shared kernel for general purpose classes (e.g: Money)</p>
+    </section>
+
+    <section>
+        <h2>Shared infrastructure code</h2>
+
+        <p>Opensource your kernel <i class="fa fa-github"></i></p>
+    </section>
+</section>
+
+<section>
+    <section>
         <h2>Domain events for bounded contexts integration</h2>
 
-        <p>Disclaimer: I'm not fully convinced :-)</p>
+        <p><em>Disclaimer: I'm not fully convinced <i class="fa fa-meh-o"></i></em></p>
     </section>
 
     <section>
         <h2>Traditional way</h2>
 
-        <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 class OrderService {
   void placeOrder(...) {
     order = orderFactory.createOrder(...)
     orderRepository.save(order)
 
     emailNotificationService.notifyCustomer(...)
+    indexerService.updateIndex(...)
     inventoryService.makeReservation(...)
     paymentService.sendPayment(...)
+    (...)
   }
 }
         </code></pre>
@@ -459,37 +537,44 @@ class OrderService {
         <ul>
             <li class="fragment">Temporal coupling</li>
             <li class="fragment">Degraded availability</li>
-            <li class="fragment">Non-transactional services</li>
+            <li class="fragment">Not atomic operation</li>
             <li class="fragment">Broken domain model encapsulation</li>
             <li class="fragment">Business logic drift from domain to application service</li>
         </ul>
     </section>
 
     <section>
-        <h2>Domain event way</h2>
+        <h2>Integration using domain events</h2>
 
-        <pre><code data-trim class="groovy">
+        <pre><code data-trim class="java">
 class Order implements AggragateRoot {
+  void addOrderLine(...) {
+    orderLines.add(new OrderLine(...))
+    pendingEvents.add(new OrderLineAddedEvent(...))
+  }
+
   List&lt;DomainEvent&gt; pendingEvents = []
 }
         </code></pre>
 
-        <pre><code data-trim class="groovy">
-@AfterReturning(pointcut = "execution(public * *.Repository+.save(..)) && args(aggregateRoot)")
+        <pre><code data-trim class="java">
+@AfterReturning(pointcut = "execution(public * *.Repository+.save(..))")
 void publishPendingEvents(AggregateRoot aggregateRoot) {
   for (DomainEvent event : aggregateRoot.getPendingEvents()) {
     eventPublisher.publish(event)
   }
 }
         </code></pre>
+
+        <p><small><a href="https://github.com/mkuthan/example-ddd-cqrs-server/blob/master/src/main/java/example/scrumboard/infrastructure/jpa/spring/EventsPublishingAspect.java">EventsPublishingAspect.java</a> <i class="fa fa-github"></i></small></p>
     </section>
 
     <section>
-        <h2>It works</h2>
+        <h2>Seams to work</h2>
         <ul>
             <li class="fragment">No temporal coupling</li>
             <li class="fragment">Availability == messaging middleware availability</li>
-            <li class="fragment">Semi transactional</li>
+            <li class="fragment">Almost atomic</li>
             <li class="fragment">Domain model encapsulated</li>
             <li class="fragment">Business logic in domain model</li>
         </ul>
@@ -497,38 +582,47 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
 </section>
 
 <section>
+    <h2>But ...</h2>
+</section>
+
+<section>
     <h2>Be fine with "eventual consistency"</h2>
 
-    <p>Not a problem at all</p>
+    <p>Your order cancellation request has been accepted ...</p>
+
+    <aside class="notes">
+        <ul>
+            <li class="fragment">Not a problem at all.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
     <h2>Assume "at least one message delivery guarantee"</h2>
 
-    <ul>
-        <li class="fragment">Idempotent receiver</li>
-        <li class="fragment">Deduplication</li>
-    </ul>
+    <p class="fragment"><i class="fa fa-inbox"></i> Idempotent receiver</p>
+    <p class="fragment"><i class="fa fa-copy"></i> Deduplication</p>
 </section>
 
 <section>
     <h2>Handle out of order messages</h2>
 
-    <ul>
-        <li class="fragment">Consistent hashing</li>
-        <li class="fragment">Re-sequencing messages</li>
-    </ul>
+    <p class="fragment"><i class="fa fa-gears"></i> Consistent hashing</p>
+    <p class="fragment"><i class="fa fa-rotate-left"></i> Re-sequencing messages</p>
 </section>
 
 <section>
-    <h2>Configure redelivery policy and DLQ</h2>
+    <h2>Configure redelivery policy</h2>
+
+    <p class="fragment"><i class="fa fa-bar-chart-o"></i> Exponential back off</p>
+    <p class="fragment"><i class="fa fa-clock-o"></i> TTL</p>
+    <p class="fragment"><i class="fa fa-envelope"></i> Dead Letter Queue</p>
 </section>
 
 <section>
-    <h2>Configure message middleware management and monitoring tools</h2>
+    <h2>Master message middleware management and monitoring tools</h2>
 </section>
 
-<!-- TODO -->
 <section>
     <h2>Summary</h2>
 
@@ -538,57 +632,6 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
     </ul>
 </section>
 
-<!-- remaining ideas -->
 <section>
-    <h2>Relationships</h2>
-
-    Upstream - Downstream
+    <h2>Q &amp; A</h2>
 </section>
-
-
-<section>
-    <h2>Identifier generator strategies</h2>
-
-    Technical vs. Business keys
-    How and where to generate identifiers.
-</section>
-
-<section>
-    <h2>Non transactional data sources</h2>
-
-    Messagging middleware (persistent queues).
-</section>
-
-<section>
-    <h2>Repositories</h2>
-
-    API
-    Locking strategies.
-</section>
-
-<section>
-    <h2>CQRS</h2>
-
-    To keep domain model focused on business logic not presentation.
-</section>
-
-<section>
-    <h2>Aggregate roots</h2>
-
-    Driven by use cases and actors (concurrency).
-</section>
-
-<section>
-    <h2>Value objects</h2>
-
-    No more *Utils.
-</section>
-
-<section>
-    <h2>Acceptance tests</h2>
-
-    Avoid UI tests.
-    Given, Then - service layer
-    When - UI
-</section>
-
