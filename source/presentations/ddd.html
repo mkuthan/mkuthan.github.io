@@ -9,16 +9,6 @@ reveal:
   transition: default
 ---
 
-<!--
-<div style="background: url('/images/jpiknik.jpeg');
-            position: absolute;
-            bottom: 0%;
-            right: 0%;
-            width: 144px;
-            height: 157px;">
-</div>
--->
-
 <section>
     <section>
         <h1>{{ page.title }}</h1>
@@ -260,6 +250,11 @@ package com.acme.ecommerce.ordermanagement.domain.orders
 class Order {
   OrderId id
   List&lt;OrderLine&gt; lines
+
+  Order(OrderId id, ...) {
+    this.id = requireNotNull(id)
+    (...)
+  }
 }
 
 class OrderLine {
@@ -316,19 +311,19 @@ class OrderController {
     <pre><code data-trim>
 com
 └── acme
-└── ecommerce
-└── ordermanagement
-└── domain
-├── orders
-├── channels
-│   ├── allegro
-│   └── ceneo
-├── payments
-│   ├── cod
-│   └── payu
-└── delivery
-   ├── inpost
-   └── dhl
+    └── ecommerce
+        └── ordermanagement
+            └── domain
+                └── orders
+                    ├── channels
+                    │   ├── allegro
+                    │   └── ceneo
+                    ├── payments
+                    │   ├── cod
+                    │   └── payu
+                    └── delivery
+                        ├── inpost
+                        └── dhl
     </code></pre>
 
     <aside class="notes">
@@ -350,7 +345,7 @@ class Order {} // aggregate root
 class OrderLine {} // value object
 class ProductSummary {} // value object
 class TaxCalculator {} // domain service
-interface TaxRatesProvider{} // domain service
+interface TaxRatesProvider{} // domain service (external)
 class OrderPaymentAcceptedEvent{} // domain event
     </code></pre>
 
@@ -464,8 +459,8 @@ class RestTaxesProvider implements TaxesProvider {
   @Autowired RestTemplate restTemplate
   @Autowired TaxRateAssembler taxRateAssembler
 
-  @Cacheable
   List&lt;TaxRate&gt; fetchTaxRates() {
+    // authentication
     List&lt;StrangeStructure&gt; results = restTemplate.getForObject(...)
     return taxRateAssembler.assembly(results)
   }
@@ -478,7 +473,6 @@ class RestTaxesProvider implements TaxesProvider {
         <ul>
             <li>Technical complexity realization.</li>
             <li>Anti corruption layer (data assembly, exceptions mapping).</li>
-            <li>Place for caching aspect.</li>
         </ul>
       </aside>
     </section>
@@ -507,7 +501,7 @@ class RestTaxesProvider implements TaxesProvider {
 
 <section>
     <section>
-        <h2>Domain events for bounded contexts integration</h2>
+        <h2>Consider domain events for bounded contexts integration</h2>
 
         <p><em>Disclaimer: I'm not fully convinced <i class="fa fa-meh-o"></i></em></p>
     </section>
@@ -548,12 +542,22 @@ class OrderService {
 
         <pre><code data-trim class="java">
 class Order implements AggragateRoot {
-  void addOrderLine(...) {
-    orderLines.add(new OrderLine(...))
-    pendingEvents.add(new OrderLineAddedEvent(...))
+  void placeOrder(...) {
+    (...)
+    pendingEvents.add(new OrderPlacedEvent(...))
   }
 
   List&lt;DomainEvent&gt; pendingEvents = []
+}
+        </code></pre>
+
+        <pre><code data-trim class="java">
+class OrderService {
+    void placeOrder(...) {
+      order = orderFactory.createOrder(...)
+      order.placeOrder(...)
+      orderRepository.save(order)
+    }
 }
         </code></pre>
 
@@ -565,8 +569,6 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
   }
 }
         </code></pre>
-
-        <p><small><a href="https://github.com/mkuthan/example-ddd-cqrs-server/blob/master/src/main/java/example/scrumboard/infrastructure/jpa/spring/EventsPublishingAspect.java">EventsPublishingAspect.java</a> <i class="fa fa-github"></i></small></p>
     </section>
 
     <section>
@@ -575,8 +577,7 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
             <li class="fragment">No temporal coupling</li>
             <li class="fragment">Availability == messaging middleware availability</li>
             <li class="fragment">Almost atomic</li>
-            <li class="fragment">Domain model encapsulated</li>
-            <li class="fragment">Business logic in domain model</li>
+            <li class="fragment">Domain model stays encapsulated</li>
         </ul>
     </section>
 </section>
@@ -588,27 +589,13 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
 <section>
     <h2>Be fine with "eventual consistency"</h2>
 
-    <p>Your order cancellation request has been accepted ...</p>
+    <p class="fragment">Your order cancellation request has been accepted ...</p>
 
     <aside class="notes">
         <ul>
-            <li class="fragment">Not a problem at all.</li>
+            <li>Not a problem at all.</li>
         </ul>
     </aside>
-</section>
-
-<section>
-    <h2>Assume "at least one message delivery guarantee"</h2>
-
-    <p class="fragment"><i class="fa fa-inbox"></i> Idempotent receiver</p>
-    <p class="fragment"><i class="fa fa-copy"></i> Deduplication</p>
-</section>
-
-<section>
-    <h2>Handle out of order messages</h2>
-
-    <p class="fragment"><i class="fa fa-gears"></i> Consistent hashing</p>
-    <p class="fragment"><i class="fa fa-rotate-left"></i> Re-sequencing messages</p>
 </section>
 
 <section>
@@ -620,16 +607,51 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
 </section>
 
 <section>
+    <h2>Assume "at least one message delivery guarantee"</h2>
+
+    <p class="fragment"><i class="fa fa-inbox"></i> Idempotent receiver</p>
+    <p class="fragment"><i class="fa fa-copy"></i> Deduplication</p>
+</section>
+
+<section>
+    <h2>Handle out of order domain events</h2>
+
+    <p class="fragment"><i class="fa fa-gears"></i> Consistent hashing</p>
+    <p class="fragment"><i class="fa fa-rotate-left"></i> Re-sequencing messages</p>
+</section>
+
+<section>
+    <h2>Apply versioning to domain events</h2>
+</section>
+
+<section>
     <h2>Master message middleware management and monitoring tools</h2>
+</section>
+
+<section>
+    <h2>Look further</h2>
+
+    <p class="fragment">Command Query Responsibility Segregation (CQRS)</p>
+    <p class="fragment">Event Sourcing (ES)</p>
 </section>
 
 <section>
     <h2>Summary</h2>
 
     <ul>
-        <li class="fragment">DDD comprehensively develop your skills.</li>
-        <li class="fragment">Be careful with asynchronous communication.</li>
+        <li class="fragment">DDD comprehensively develops your skills</li>
+        <li class="fragment">DDD helps in building complex systems using micro-services / SOA architecture</li>
+        <li class="fragment">DDD helps in building scalable distributed systems</li>
     </ul>
+
+    <aside class="notes">
+        <ul>
+            <li>DDD is not about frameworks and programming languages - it is general purpose methodology.</li>
+            <li>Bounded contexts ~ decoupled and autonomous Micro Service.</li>
+            <li>Aggregate roots play nicely without ACID.</li>
+            <li>Domain Events is a natural way to distribute your system.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
