@@ -84,8 +84,9 @@ reveal:
 
         <aside class="notes">
             <ul>
-                <li class="fragment">DDD essentials not so easy to understand and apply.</li>
-                <li class="fragment">Do not expect quick DDD guide.</li>
+                <li>My private DDD map.</li>
+                <li>Talk about DDD essentials, parts not so easy to understand and apply.</li>
+                <li>Do not expect quick DDD guide.</li>
             </ul>
         </aside>
     </section>
@@ -108,8 +109,9 @@ reveal:
 
     <aside class="notes">
         <ul>
-            <li>Complex building blocks and patterns.</li>
+            <li>Journey to DDD.</li>
             <li>High learning curve.</li>
+            <li>Complex building blocks and patterns.</li>
         </ul>
     </aside>
 </section>
@@ -120,7 +122,7 @@ reveal:
     <aside class="notes">
         <ul>
             <li>There is no single valid architecture for whole system.</li>
-            <li>Use anemic model for CRUD like bounded contexts, e.g: admin panels, master data management.</li>
+            <li>Use anemic model for CRUD like bounded contexts.</li>
             <li>Use rich domain model for core / complex bounded contexts.</li>
             <li>Do not mix anemic and rich domain in single bounded context.</li>
             <li>Make your architecture decision clear for everyone in the team.</li>
@@ -134,6 +136,7 @@ reveal:
 
         <aside class="notes">
             <ul>
+                <li>Fragment of the application with single well defined responsibility.</li>
                 <li>Must have all needed data.</li>
                 <li>Should not have data irrelevant to operations.</li>
             </ul>
@@ -166,6 +169,7 @@ class Product {
             <ul>
                 <li>Hypothetical core entity for e-commerce platform.</li>
                 <li>"Noun" based design.</li>
+                <li>"Put everything related to Product to this entity" approach.</li>
             </ul>
         </aside>
     </section>
@@ -193,9 +197,9 @@ class OrderService {
         <aside class="notes">
             <ul>
                 <li>Forget about data structures, focus on behaviours.</li>
-                <li>Product attributes are disjoint.</li>
+                <li>Inventory and Order bounded contexts.</li>
+                <li>APIs use different product traits.</li>
                 <li>For inventory product is "inventory item", for order management "product summary".</li>
-                <li>Driven by business operations not UI views, UI is a composite of many bounded contexts.</li>
             </ul>
         </aside>
     </section>
@@ -204,6 +208,14 @@ class OrderService {
 <section>
     <section>
         <h2>Aggregate should be highly cohesive</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Entity, guard of invariants.</li>
+                <li>Must have all needed data.</li>
+                <li>Should not have data irrelevant to operations.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
@@ -216,6 +228,10 @@ class Product {
   void makeReservation(...) // how many, how long
 }
         </code></pre>
+
+        <aside class="notes">
+            <ul>Operations are disjoint.</ul>
+        </aside>
     </section>
 
     <section>
@@ -238,80 +254,15 @@ class Product {
 </section>
 
 <section>
-    <section>
-        <h2>Encapsulate domain</h2>
+    <h2>Encapsulate domain</h2>
 
-        <aside class="notes">
-            <ul>
-                <li>Do you like integration using database?</li>
-                <li>Do not expose your domain data structures.</li>
-                <li>Use DTO, Commands, Queries, etc.</li>
-            </ul>
-        </aside>
-    </section>
-
-    <section>
-        <h2>Domain example</h2>
-
-        <pre><code data-trim class="java">
-package com.acme.ecommerce.ordermanagement.domain.orders
-
-class Order {
-  OrderId id
-  List&lt;OrderLine&gt; lines
-
-  Order(OrderId id, ...) {
-    this.id = requireNotNull(id)
-    (...)
-  }
-}
-
-class OrderLine {
-  ProductSummary product // id, name
-  Quantity quantity
-  Money price // amount, currency
-}
-        </code></pre>
-
-        <aside class="notes">
-            <ul>
-                <li>Rich, complex model with strong invariants.</li>
-                <li>Many small classes with well defined responsibilities (SRP).</li>
-            </ul>
-        </aside>
-    </section>
-
-    <section>
-        <h2>API example</h2>
-
-        <pre><code data-trim class="java">
-package com.acme.ecommerce.ordermanagement.rest
-
-class AddOrderLineCommand {
-  String productId
-  int quantity
-  int amount // cents, grosze
-  String currency
-}
-
-class OrderController {
-  @Autowired OrderService orderService
-
-  addOrderLine(AddOrderLineCommand command) {
-    // convert command into OrderService API
-    orderService.addOrderLine(productId, quantity, price)
-  }
-}
-        </code></pre>
-
-        <aside class="notes">
-            <ul>
-                <li>Simple data types, interoperable, easy to marshall.</li>
-                <li>Focused on use cases or caller needs.</li>
-                <li>Do not try automagic mappers (e.g Dozer).</li>
-            </ul>
-        </aside>
-    </section>
+    <aside class="notes">
+        <ul>
+            <li>Do you like integration using database?</li>
+            <li>Do not expose your domain data structures.</li>
+            <li>Use DTO, Commands, Queries, etc.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
@@ -337,7 +288,8 @@ com
 
     <aside class="notes">
         <ul>
-            <li>Go to the domain expert / product owner and try to explain packages responsibilities.</li>
+            <li>Describe orders sample.</li>
+            <li>Test: go to the domain expert / product owner and try to explain packages responsibilities.</li>
         </ul>
     </aside>
 </section>
@@ -367,33 +319,12 @@ class OrderPaymentAcceptedEvent{} // domain event
 </section>
 
 <section>
-    <h2>Organized infrastructure around frameworks</h2>
-
-    <pre><code data-trim class="java">
-package com.acme.ecommerce.ordermanagement.infrastructure.mongo
-
-class MongoOrderRepository implements OrderRepository {}
-// all Mongo repositories
-    </code></pre>
-
-    <pre><code data-trim class="java">
-package com.acme.ecommerce.ordermanagement.infrastructure.rest
-
-class RestTaxRatesProvider implements TaxRatesProvider {}
-// all REST clients
-    </code></pre>
-
-    <aside class="notes">
-        <ul>
-            <li>Infrastructure provide cross cutting domain features.</li>
-            <li>Integration tests configuration is framework specific and might be shared.</li>
-        </ul>
-    </aside>
-</section>
-
-<section>
     <section>
         <h2>Be pragmatic in testing</h2>
+
+        <aside class="notes">
+            <ul>DDD improves your code testability.</ul>
+        </ul>
     </section>
 
     <section>
@@ -418,15 +349,16 @@ class OrderService {
 }
         </code></pre>
 
-        <p class="fragment"><i class="fa fa-check"></i> No unit tests, consider acceptance tests on service level</p>
+        <p class="fragment"><i class="fa fa-check"></i> No unit tests, consider acceptance tests on service layer</p>
 
         <aside class="notes">
             <ul>
-                <li>Use case realization.</li>
+                <li>Facade, use case realization.</li>
                 <li>Prepare input for business operation.</li>
                 <li>Many collaborators.</li>
                 <li>Delegates business operation to domain.</li>
                 <li>Place for transactional and security aspects.</li>
+                <li>How to test?</li>
             </ul>
         </aside>
     </section>
@@ -449,8 +381,6 @@ class Order {
       pendingEvents.add(new OrderLineAdded(...))
     }
   }
-
-  List&lt;DomainEvent&gt; pendingEvents = []
 }
         </code></pre>
 
@@ -458,9 +388,10 @@ class Order {
 
         <aside class="notes">
             <ul>
-                <li>Business logic.</li>
+                <li>Pure Java/Groovy/Scala/... no magic, no aspects, no DI, no frameworks.</li>
                 <li>No dependencies (or only few).</li>
-                <li>Pure Java/Groovy/Scala/... no magic.</li>
+                <li>You will be surprised how much logic could be implemened in domain layer!</li>
+                <li>How to test?</li>
             </ul>
         </aside>
     </section>
@@ -471,14 +402,13 @@ class Order {
       <h2>Infrastructure</h2>
 
       <pre><code data-trim class="java">
-class RestTaxesProvider implements TaxesProvider {
-  @Autowired RestTemplate restTemplate
-  @Autowired TaxRateAssembler taxRateAssembler
+class RestTaxRatesProvider implements TaxRatesProvider {
+  @Autowired restTemplate, taxRatesAssembler
 
   List&lt;TaxRate&gt; fetchTaxRates() {
     // authentication
     List&lt;StrangeStructure&gt; results = restTemplate.getForObject(...)
-    return taxRateAssembler.assembly(results)
+    return taxRatesAssembler.assembly(results)
   }
 }
       </code></pre>
@@ -487,10 +417,22 @@ class RestTaxesProvider implements TaxesProvider {
 
       <aside class="notes">
         <ul>
-            <li>Technical complexity realization.</li>
+            <li>Realization of tax rates provider.</li>
+            <li>Technical complexity realization, no logic.</li>
             <li>Anti corruption layer (data assembly, exceptions mapping).</li>
+            <li>How to test?</li>
         </ul>
       </aside>
+    </section>
+
+    <section>
+        <h2>Be pragmatic in testing</h2>
+
+        <ul>
+            <li>Acceptance tests on service layer</li>
+            <li>Unit tests for domain</li>
+            <li>Integration tests for infrastructure</li>
+        </ul>
     </section>
 </section>
 
@@ -498,24 +440,15 @@ class RestTaxesProvider implements TaxesProvider {
     <section>
         <h2>Avoid shared kernel</h2>
 
-        <p class="fragment"><i class="fa fa-exchange"></i> Coupling is too high</p>
-        <p class="fragment"><i class="fa fa-group"></i> Coordination effort is also high</p>
-    </section>
+        <p>Coupling and coordination effort is too high</p>
 
-    <section>
-        <h4>Avoid shared kernel</h4>
-
-        <h2>Shared domain code</h2>
-
-        <p>"Micro" or "Nano" shared kernel for general purpose classes (e.g: Money)</p>
-    </section>
-
-    <section>
-        <h4>Avoid shared kernel</h4>
-
-        <h2>Shared infrastructure code</h2>
-
-        <p>Opensource your kernel <i class="fa fa-github"></i></p>
+        <aside class="notes">
+            <ul>
+                <li>Sometimes some duplication is better.</li>
+                <li>Shared kernel tends to grow in unexpected manner.</li>
+                <li>Consider micro/nano kernel, e.g: general purpose classes like Money.</li>
+            </ul>
+        </aside>
     </section>
 </section>
 
@@ -524,6 +457,12 @@ class RestTaxesProvider implements TaxesProvider {
         <h2>Domain events for bounded contexts integration</h2>
 
         <p><em>Dragons are there <i class="fa fa-warning"></i></em></p>
+
+        <aside class="notes">
+            <ul>
+                <li>The most complex part.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
@@ -543,6 +482,13 @@ class OrderService {
   }
 }
         </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Save an order.</li>
+                <li>Perform N additional operations.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
@@ -554,12 +500,20 @@ class OrderService {
             <li class="fragment">Lack of atomicity</li>
             <li class="fragment">Business logic drifts from domain</li>
         </ul>
+
+        <aside class="notes">
+            <ul>
+                <li>Threads pools - boom!.</li>
+                <li>Roll of the dice != failure probabilities are dependant.</li>
+                <li>What if the last but one operation fails?</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
         <h2>Integration using domain events</h2>
 
-        <pre><code data-trim class="java">
+        <pre class="fragment"><code data-trim class="java">
 class Order implements AggragateRoot {
   void placeOrder(...) {
     (...)
@@ -569,7 +523,7 @@ class Order implements AggragateRoot {
 }
         </code></pre>
 
-        <pre><code data-trim class="java">
+        <pre class="fragment"><code data-trim class="java">
 class OrderService {
     void placeOrder(...) {
       order = orderFactory.createOrder(...)
@@ -579,7 +533,7 @@ class OrderService {
 }
         </code></pre>
 
-        <pre><code data-trim class="java">
+        <pre class="fragment"><code data-trim class="java">
 @AfterReturning(pointcut = "execution(public * *.Repository+.save(..))")
 void publishPendingEvents(AggregateRoot aggregateRoot) {
   for (DomainEvent event : aggregateRoot.getPendingEvents()) {
@@ -587,32 +541,59 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
   }
 }
         </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>My proposal how to implement integration using domain events.</li>
+                <li>Entity of domain service publish domain events.</li>
+                <li>Application service is dumb.</li>
+                <li>Simple aspect publishes pending events to middleware.</li>
+                <li>Several listeners do the job eventually.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
         <h2>Seems to work</h2>
+
         <ul>
             <li class="fragment">No temporal coupling</li>
             <li class="fragment">Availability == messaging middleware availability</li>
             <li class="fragment">Almost atomic</li>
             <li class="fragment">Domain model stays encapsulated</li>
         </ul>
+
+        <aside class="notes">
+            <ul>
+                <li>Publish/Subscribe instead of Request/Reply.</li>
+                <li>It is easier to achieve messaging middleware high availability.</li>
+                <li>What "almost" means here? Postpone this discussion ...</li>
+                <li>Domain events are created by aggregates or domain services.</li>
+            </ul>
+        </aside>
     </section>
 </section>
 
 <section>
     <h2>But ...</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>It looks bright in theory.</li>
+            <li>Dark side in practice.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
     <h2>Be fine with "eventual consistency"</h2>
 
-    <p class="fragment">Your order cancellation request has been accepted ...</p>
-
     <aside class="notes">
         <ul>
-            <li class="fragment">Usually not a problem at all</li>
-            <li class="fragment">Sometimes requires creativity</li>
+            <li>Asynchronous communication is not Request/Reply.</li>
+            <li>Usually not a problem at all.</li>
+            <li>Sometimes requires creativity.</li>
+            <li>Example: publishing app, where is my publication?</li>
         </ul>
     </aside>
 </section>
@@ -622,6 +603,15 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
 
     <p class="fragment"><i class="fa fa-inbox"></i> Idempotent receiver</p>
     <p class="fragment"><i class="fa fa-copy"></i> Deduplication</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Message has not been lost.</li>
+            <li>But you could receive duplicates.</li>
+            <li>Idempotent receiver - the best method.</li>
+            <li>Deduplication on client - requires state.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
@@ -630,6 +620,16 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
     <p class="fragment"><i class="fa fa-gears"></i> Consistent hashing</p>
     <p class="fragment"><i class="fa fa-sort-alpha-asc"></i> Total order</p>
     <p class="fragment"><i class="fa fa-rotate-left"></i> Re-sequencing messages</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Usually order is important.</li>
+            <li>Cut the red wire ... but before cut the green one.</li>
+            <li>Consistent hashing - total order for single aggregate, e.g Order.</li>
+            <li>Total Order - degrade performance, not so easy to achieve.</li>
+            <li>Re-sequence messages for client.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
@@ -638,10 +638,25 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
     <p class="fragment"><i class="fa fa-bar-chart-o"></i> Exponential back off</p>
     <p class="fragment"><i class="fa fa-clock-o"></i> TTL</p>
     <p class="fragment"><i class="fa fa-envelope"></i> Dead Letter Queue</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Utilize middleware redelivery to handle 3rd party failures.</li>
+            <li>Exponential back off - the best way.</li>
+            <li>TTL - no throttling control.</li>
+            <li>Collects problematic messages, e.g: 1M $ order from Warren Buffett.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
     <h2>Apply versioning strategy</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>Messages are flying around us for some time.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
@@ -649,6 +664,14 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
 
     <p class="fragment"><i class="fa fa-clock-o"></i> Look for the most aged messages</p>
     <p class="fragment"><i class="fa fa-envelope"></i> Manage messages in DLQs</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Debugging problems in async system is really hard.</li>
+            <li>Look for the most aged messages, why they were not processed.</li>
+            <li>Maintain your DLQs.</li>
+        </ul>
+    </aside>
 </section>
 
 <section>
@@ -659,9 +682,9 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
     <aside class="notes">
         <ul>
             <li>DDD is not about frameworks and programming languages - it is general purpose methodology</li>
-            <li>Bounded contexts ~ decoupled and autonomous Micro Service.</li>
+            <li>Bounded contexts ~ Micro Service.</li>
             <li>Aggregate roots play nicely without ACID.</li>
-            <li>Domain Events is a natural way to distribute your system.</li>
+            <li>How to build distibuted system?</li>
         </ul>
     </aside>
 </section>
