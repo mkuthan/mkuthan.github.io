@@ -16,7 +16,7 @@ reveal:
         <h3>from the trenches for practitioners</h3>
 
         <p>
-            <small>Created by <a href="http://mkuthan.github.io">Marcin Kuthan</a></small>
+            <small>j.Piknik Warszawa 2014</small>
         </p>
 
         <aside class="notes">
@@ -86,6 +86,7 @@ reveal:
             <ul>
                 <li>My private DDD map.</li>
                 <li>Talk about DDD essentials, parts not so easy to understand and apply.</li>
+                <li>Parts most influential for me.</li>
                 <li>Do not expect quick DDD guide.</li>
             </ul>
         </aside>
@@ -117,7 +118,7 @@ reveal:
 </section>
 
 <section>
-    <h2>Anemic and rich domain models work together</h2>
+    <h2>Anemic and rich domain models interact with each other</h2>
 
     <aside class="notes">
         <ul>
@@ -144,10 +145,10 @@ reveal:
     </section>
 
     <section>
-        <h2>Low cohesive bounded context model</h2>
+        <h2>Lack of cohesion example</h2>
 
         <pre><code data-trim class="java">
-package com.acme.ecommerce.shared
+package com.acme.ecommerce.model
 
 class Product {
   id
@@ -161,6 +162,7 @@ class Product {
   prices
   discounts
   availability
+  reservations
   (...)
 }
         </code></pre>
@@ -168,8 +170,8 @@ class Product {
         <aside class="notes">
             <ul>
                 <li>Hypothetical core entity for e-commerce platform.</li>
-                <li>"Noun" based design.</li>
                 <li>"Put everything related to Product to this entity" approach.</li>
+                <li>"Noun" based design.</li>
             </ul>
         </aside>
     </section>
@@ -196,7 +198,7 @@ class OrderService {
 
         <aside class="notes">
             <ul>
-                <li>Forget about data structures, focus on behaviours.</li>
+                <li>Tip: Forget about data structures, focus on behaviours.</li>
                 <li>Inventory and Order bounded contexts.</li>
                 <li>APIs use different product traits.</li>
                 <li>For inventory product is "inventory item", for order management "product summary".</li>
@@ -211,7 +213,7 @@ class OrderService {
 
         <aside class="notes">
             <ul>
-                <li>Entity, guard of invariants.</li>
+                <li>Agregate, entity - guard of invariants.</li>
                 <li>Must have all needed data.</li>
                 <li>Should not have data irrelevant to operations.</li>
             </ul>
@@ -219,7 +221,7 @@ class OrderService {
     </section>
 
     <section>
-        <h2>Low cohesive aggregate</h2>
+        <h2>Lack of cohesion example</h2>
 
         <pre><code data-trim class="java">
 class Product {
@@ -230,7 +232,12 @@ class Product {
         </code></pre>
 
         <aside class="notes">
-            <ul>Operations are disjoint.</ul>
+            <ul>
+                <li>Operations are disjoint.</li>
+                <li>What about concurrency?</li>
+                <li>When someone updates details, someone else makes a reservation.</li>
+                <li>Concurrency issues should be independent.</li>
+            </ul>
         </aside>
     </section>
 
@@ -243,7 +250,6 @@ class Product {
 
         <aside class="notes">
             <ul>
-                <li>Concurrency issues should be independent.</li>
                 <li>Single actor per aggregate.</li>
                 <li>Content Editor: tiny concurrency, optimistic locking.</li>
                 <li>Marketing Director: no concurrency.</li>
@@ -289,7 +295,7 @@ com
     <aside class="notes">
         <ul>
             <li>Describe orders sample.</li>
-            <li>Test: go to the domain expert / product owner and try to explain packages responsibilities.</li>
+            <li>Test: go to the domain expert / product owner and ask for explanation.</li>
         </ul>
     </aside>
 </section>
@@ -313,7 +319,7 @@ class OrderPaymentAcceptedEvent{} // domain event
     <aside class="notes">
         <ul>
             <li>Flat structure for single business concept.</li>
-            <li>Consider Spring Framework with all exception classes in single package.</li>
+            <li>Too many classes - too complex domain - split.</li>
         </ul>
     </aside>
 </section>
@@ -323,8 +329,10 @@ class OrderPaymentAcceptedEvent{} // domain event
         <h2>Be pragmatic in testing</h2>
 
         <aside class="notes">
-            <ul>DDD improves your code testability.</ul>
-        </ul>
+            <ul>
+                <li>DDD improves your code testability.</li>
+            </ul>
+        </aside>
     </section>
 
     <section>
@@ -349,7 +357,7 @@ class OrderService {
 }
         </code></pre>
 
-        <p class="fragment"><i class="fa fa-check"></i> No unit tests, consider acceptance tests on service layer</p>
+        <p class="fragment"><i class="fa fa-check"></i> No unit tests, acceptance tests on service layer</p>
 
         <aside class="notes">
             <ul>
@@ -388,9 +396,8 @@ class Order {
 
         <aside class="notes">
             <ul>
-                <li>Pure Java/Groovy/Scala/... no magic, no aspects, no DI, no frameworks.</li>
-                <li>No dependencies (or only few).</li>
-                <li>You will be surprised how much logic could be implemened in domain layer!</li>
+                <li>Pure Java/Groovy/Scala/... no magic, no aspects, almost no DI, no frameworks.</li>
+                <li>You will be surprised how much logic could be implemented in domain layer!</li>
                 <li>How to test?</li>
             </ul>
         </aside>
@@ -433,22 +440,6 @@ class RestTaxRatesProvider implements TaxRatesProvider {
             <li>Unit tests for domain</li>
             <li>Integration tests for infrastructure</li>
         </ul>
-    </section>
-</section>
-
-<section>
-    <section>
-        <h2>Avoid shared kernel</h2>
-
-        <p>Coupling and coordination effort is too high</p>
-
-        <aside class="notes">
-            <ul>
-                <li>Sometimes some duplication is better.</li>
-                <li>Shared kernel tends to grow in unexpected manner.</li>
-                <li>Consider micro/nano kernel, e.g: general purpose classes like Money.</li>
-            </ul>
-        </aside>
     </section>
 </section>
 
@@ -514,7 +505,7 @@ class OrderService {
         <h2>Integration using domain events</h2>
 
         <pre class="fragment"><code data-trim class="java">
-class Order implements AggragateRoot {
+class Order implements Aggragate {
   void placeOrder(...) {
     (...)
     pendingEvents.add(new OrderPlacedEvent(...))
@@ -535,8 +526,8 @@ class OrderService {
 
         <pre class="fragment"><code data-trim class="java">
 @AfterReturning(pointcut = "execution(public * *.Repository+.save(..))")
-void publishPendingEvents(AggregateRoot aggregateRoot) {
-  for (DomainEvent event : aggregateRoot.getPendingEvents()) {
+void publishPendingEvents(Aggregate aggregate) {
+  for (DomainEvent event : aggregate.getPendingEvents()) {
     eventPublisher.publish(event)
   }
 }
@@ -608,7 +599,7 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
         <ul>
             <li>Message has not been lost.</li>
             <li>But you could receive duplicates.</li>
-            <li>Idempotent receiver - the best method.</li>
+            <li>Idempotent receiver - the best method - sample with counter.</li>
             <li>Deduplication on client - requires state.</li>
         </ul>
     </aside>
@@ -655,6 +646,7 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
     <aside class="notes">
         <ul>
             <li>Messages are flying around us for some time.</li>
+            <li>Distributed system can not be updated in one shot.</li>
         </ul>
     </aside>
 </section>
@@ -677,14 +669,15 @@ void publishPendingEvents(AggregateRoot aggregateRoot) {
 <section>
     <h2>Summary</h2>
 
-    <p class="fragment">Holistic approach to design complex, scalable and distributed systems</p>
+    <p>Holistic approach to design complex, scalable and distributed systems</p>
 
     <aside class="notes">
         <ul>
-            <li>DDD is not about frameworks and programming languages - it is general purpose methodology</li>
+            <li>DDD is not about frameworks and programming languages - it is general purpose methodology.</li>
+            <li>How to build complex systems.</li>
+            <li>How to build maintainable systems.</li>
+            <li>How to build distibuted systems.</li>
             <li>Bounded contexts ~ Micro Service.</li>
-            <li>Aggregate roots play nicely without ACID.</li>
-            <li>How to build distibuted system?</li>
         </ul>
     </aside>
 </section>
