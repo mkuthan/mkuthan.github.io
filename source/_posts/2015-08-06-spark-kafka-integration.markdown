@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Spark and Kafka integration patterns"
+date: 2015-08-06
+comments: true
+categories: [spark, kafka, scala]
+---
+
+I published post on the [allegro.tech](http://allegro.tech/) blog, how to integrate Spark Streaming and Kafka.
+In the blog post you will find how to avoid `java.io.NotSerializableException` exception
+when Kafka producer is used for publishing results of the Spark Streaming processing.
+
+[http://allegro.tech/spark-kafka-integration.html](http://allegro.tech/spark-kafka-integration.html)
+
+Happy reading :-)
