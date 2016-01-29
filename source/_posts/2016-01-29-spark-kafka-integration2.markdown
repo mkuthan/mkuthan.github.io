@@ -16,11 +16,12 @@ integration for sending processing result back to Kafka.
 This blog post aims to fill this gap in the Spark ecosystem.
 
 In the [first part](http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/) of the series
-you learned how to manage Kafka producer using Scala lazy evaluation feature.
-And how to reuse single Kafka producer instance on Spark executor.
+you learned how to manage Kafka producer using Scala lazy evaluation feature
+and how to reuse single Kafka producer instance on Spark executor.
 
-I this blog post you will be learn how to publish stream processing results to Apache Kafka in reliable way.
-First you will be learn how Kafka Producer is working, how to configure Kafka producer and how to setup Kafka cluster to achieve desired reliability.
+In this blog post you will learn how to publish stream processing results to Apache Kafka in reliable way.
+First you will learn how Kafka Producer is working, 
+how to configure Kafka producer and how to setup Kafka cluster to achieve desired reliability.
 In the second part of the blog post, 
 I will present how to implement convenient library for sending continuous sequence of RDDs 
 ([DStream](https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.streaming.dstream.DStream)) 
@@ -87,7 +88,7 @@ The `flush()` method makes all buffered messages ready to send, and blocks on th
 The `close()` method is like the `flush()` method but also closes the producer.
 
 The `flush()` method could be very handy if the Streaming framework wants to ensure that all messages have been sent before processing next part of the stream.
-With `flush()` method streaming framework is able flush the messages to Kafka brokers to simulate commit behaviour.
+With `flush()` method streaming framework is able to flush the messages to Kafka brokers to simulate commit behaviour.
 
 Method `flush()` was added in Kafka 0.9 release ([KIP-8](https://cwiki.apache.org/confluence/display/KAFKA/KIP-8+-+Add+a+flush+method+to+the+producer+API)). 
 Before Kafka 0.9, the only safe and straightforward way to flush messages from Kafka producer internal buffer was to close the producer.
@@ -99,7 +100,7 @@ It needs to be done independently of chosen streaming framework.
 
 Kafka producer buffers messages in memory before sending.
 When our memory buffer is exhausted, Kafka producer must either stop accepting new records (block) or throw errors.
-By default Kafka producer is blocking and this behavior is legitimate for stream processing. 
+By default Kafka producer blocks and this behavior is legitimate for stream processing. 
 The processing should be delayed if Kafka producer memory buffer is full and could not accept new messages.
 Ensure that `block.on.buffer.full` Kafka producer configuration property is set.
 
