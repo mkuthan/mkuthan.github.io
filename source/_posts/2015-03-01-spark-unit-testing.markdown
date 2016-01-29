@@ -9,11 +9,14 @@ categories: [spark, TDD, scala]
 When you develop distributed system, it is crucial to make it easy to test.
 Execute tests in controlled environment, ideally from your IDE.
 Long develop-test-develop cycle for complex systems could kill your productivity.
-Below you find my testing strategy for Spark and Spark Streaming application.
+Below you find my testing strategy for Spark and Spark Streaming applications.
 
 ## Unit or integration tests, that is the question
 
-Our hypothetical Spark application pulls data from Apache Kafka, apply transformations using RDDs and DStreams
+Our hypothetical Spark application pulls data from Apache Kafka, apply transformations using 
+[RDDs](https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.rdd.RDD) 
+and 
+[DStreams](https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.streaming.dstream.DStream)
 and persist outcomes into Cassandra or Elastic Search database.
 On production Spark application is deployed on YARN or Mesos cluster, and everything is glued with ZooKeeper.
 Big picture of the stream processing architecture is presented below:
@@ -28,8 +31,8 @@ Spark claims, that it is friendly to unit testing with any popular unit test fra
 To be strict, Spark supports rather lightweight integration testing, not unit testing, IMHO.
 But still it is much more convenient to test transformation logic locally, than deploying all parts on YARN.
 
-There is a pull request [Add Kafka real unit test #1751](https://github.com/apache/spark/pull/1751) that adds "unit tests" support for Apache Kafka streams.
-Should we follow that way? Embedded ZooKeeper, embedded Apache Kafka are needed, the test fixture is complex and cumbersome.
+There is a pull request [SPARK-1751](https://github.com/apache/spark/pull/1751) that adds "unit tests" support for Apache Kafka streams.
+Should we follow that way? Embedded ZooKeeper and embedded Apache Kafka are needed, the test fixture is complex and cumbersome.
 Perhaps tests would be fragile and hard to maintain. This approach makes sense for Spark core team, they want to test Spark and Kafka integration.
 
 ## What should be tested?
@@ -213,7 +216,7 @@ class ClockWrapper(ssc: StreamingContext) {
 Now Spark Streaming test can be implemented in efficient way.
 The test does not have to wait for system clock and test is implemented with millisecond precision.
 You can easily test your windowed scenario from the very beginning to very end.
-With given/when/then structure you should be able to understand tested logic without further explanations.
+With given\when\then structure you should be able to understand tested logic without further explanations.
 
 ``` scala
 "Sample set" should "be counted" in {
