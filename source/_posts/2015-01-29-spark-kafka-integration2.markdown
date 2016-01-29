@@ -8,23 +8,23 @@ categories: [spark, kafka, scala]
 
 In the [world beyond batch](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101), 
 streaming data processing is a future of dig data. 
-Despite of the streaming framework using for data processing, tight integration with replayable source of data like Apache Kafka is often required.
-The streaming data processing applications often use Apache Kafka as a data source, 
-or as a destination for processing results.
+Despite of the streaming framework using for data processing, tight integration with replayable data source like Apache Kafka is often required.
+The streaming applications often use Apache Kafka as a data source, or as a destination for processing results.
 
 Apache Spark distribution has built-in support for reading from Kafka, but surprisingly does not offer any
 integration for sending processing result back to Kafka.
 This blog post aims to fill this gap in the Spark ecosystem.
 
-In the [first part](http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/) of this blog series
+In the [first part](http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/) of the series
 you learned how to manage Kafka producer using Scala lazy evaluation feature.
 And how to reuse single Kafka producer instance on Spark executor.
 
-I this blog post you will be learn how to publish results of the stream processing in reliable way to Apache Kafka.
+I this blog post you will be learn how to publish stream processing results to Apache Kafka in reliable way.
 First you will be learn how Kafka Producer is working, how to configure Kafka producer and how to setup Kafka cluster to achieve desired reliability.
 In the second part of the blog post, 
-I will present how to implement convenient library for sending DStream to Apache Kafka topic, 
-as easy as in the code snippet below.
+I will present how to implement convenient library for sending continuous sequence of RDDs 
+([DStream](https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.streaming.dstream.DStream)) 
+to Apache Kafka topic, as easy as in the code snippet below.
 
 ``` scala
 // enable implicit conversions
@@ -34,31 +34,31 @@ import KafkaDStreamSink._
 dstream.sendToKafka(kafkaProducerConfig, topic)
 ```
 
-## Introduction to Kafka
+## Quick introduction to Kafka
 
 Kafka is a distributed, partitioned, replicated message broker.
-Basic knowledge about Kafka architecture is a prerequisite to understand Spark Streaming and Apache Kafka integration challenges.
+Basic architecture knowledge is a prerequisite to understand Spark and Kafka integration challenges.
 You can safely skip this section, if you are already familiar with Kafka concepts. 
 
 For convenience I copied essential terminology definitions directly from Kafka 
-[documentation](http://kafka.apache.org/documentation.html#introduction).
+[documentation](http://kafka.apache.org/documentation.html#introduction):
  
 * Kafka maintains feeds of messages in categories called topics.
 * We'll call processes that publish messages to a Kafka topic producers.
-* We'll call processes that subscribe to topics and process the feed of published messages consumers..
+* We'll call processes that subscribe to topics and process the feed of published messages consumers.
 * Kafka is run as a cluster comprised of one or more servers each of which is called a broker.
 
 So, at a high level, producers send messages over the network to the Kafka cluster which in turn serves them up to consumers like this:
 
 {% img http://kafka.apache.org/images/producer_consumer.png %}
 
-This is a bare minimum you have to know but I really encourage to read official Kafka documentation more deeply.
+This is a bare minimum you have to know but I really encourage you to read Kafka reference manual thoroughly.
 
 ## Kafka producer API
 
 First we need to know how Kafka producer is working.
 Kafka producer exposes very simple API for sending messages to Kafka topics. 
-Below the most important methods from `KafkaProducer` class are listed:
+The most important methods from `KafkaProducer` class are listed below:
 
 ```java KafkaProducer API
 j.u.c.Future<RecordMetadata> send(ProducerRecord<K,V> record)
@@ -80,13 +80,14 @@ The callback must be also properly synchronized due to [Java memory model](https
 
 If the Kafka producer caller does not check result of the `send()` method using future or callback, 
 it means that if Kafka producer crashed all messages from the internal Kafka producer buffer will be lost. 
-This is the first very important element of the integration with Kafka, we should expect callback handling to avoid data lost and achieve good performance.
+This is the first, very important element of any integration library with Kafka, 
+we should expect callback handling to avoid data lost and achieve good performance.
 
 The `flush()` method makes all buffered messages ready to send, and blocks on the completion of the requests associated with these messages.
 The `close()` method is like the `flush()` method but also closes the producer.
 
 The `flush()` method could be very handy if the Streaming framework wants to ensure that all messages have been sent before processing next part of the stream.
-With `flush()` method streaming framework is able flush the messages to Kafka to simulate commit behaviour.
+With `flush()` method streaming framework is able flush the messages to Kafka brokers to simulate commit behaviour.
 
 Method `flush()` was added in Kafka 0.9 release ([KIP-8](https://cwiki.apache.org/confluence/display/KAFKA/KIP-8+-+Add+a+flush+method+to+the+producer+API)). 
 Before Kafka 0.9, the only safe and straightforward way to flush messages from Kafka producer internal buffer was to close the producer.
@@ -97,9 +98,9 @@ If the message must be reliable published on Kafka cluster, Kafka producer and K
 It needs to be done independently of chosen streaming framework.
 
 Kafka producer buffers messages in memory before sending.
-When our memory buffer is exhausted Kafka producer must either stop accepting new records (block) or throw errors.
+When our memory buffer is exhausted, Kafka producer must either stop accepting new records (block) or throw errors.
 By default Kafka producer is blocking and this behavior is legitimate for stream processing. 
-The processing should be delayed if Kafka producer memory buffer is full and can not accept new messages.
+The processing should be delayed if Kafka producer memory buffer is full and could not accept new messages.
 Ensure that `block.on.buffer.full` Kafka producer configuration property is set.
 
 With default configuration, when Kafka broker (leader of the partition) receive the message, store the message in memory and immediately send acknowledgment to Kafka producer.
@@ -143,9 +144,13 @@ So the minimal recommended Kafka setup for reliable message processing is:
 * `block.on.buffer.full=true` property in the producer configuration
 
 With the above setup your configuration should be resistant to single broker failure, 
-and Kafka consumers will survive new leader election.
+and Kafka consumers will survive new leader election. 
 
-## How to extend Spark API?
+You could also take look at `replica.lag.max.messages` and `replica.lag.time.max.ms` properties 
+for tuning when the follower is removed from ISR by the leader. 
+But this is out of this blog post scope.
+
+## How to expand Spark API?
 
 After this not so short introduction, we are ready to disassembly 
 [integration library](https://github.com/mkuthan/example-spark-kafka) for Spark Streaming and Apache Kafka.
@@ -198,10 +203,10 @@ class KafkaDStreamSink(dstream: DStream[KafkaPayload]) {
 There are two loops, first on wrapped `dstream` and second on `rdd` for every partition.
 Quite standard pattern for Spark programming model.
 Records from every partition are ready to be sent to Kafka topic by Spark executors.
-The topic name is given explicitly as the last parameter of the `sendToKafka()` method.
+The destination topic name is given explicitly as the last parameter of the `sendToKafka()` method.
 
 
-First step in the loop is getting Kafka producer instance from the `KafkaProducerFactory`.
+First step in the inner loop is getting Kafka producer instance from the `KafkaProducerFactory`.
 
 ``` scala
 rdd.foreachPartition { records =>
@@ -211,11 +216,12 @@ rdd.foreachPartition { records =>
 
 The factory creates only single instance of the producer for any given producer configuration.
 If the producer instance has been already created, the existing instance is returned and reused.
-Caching is crucial for the performance reasons, because establishing a connection to the cluster takes time. 
+Kafka producer caching is crucial for the performance reasons, 
+because establishing a connection to the cluster takes time. 
 It is a much more time consuming operation than opening plain socket connection, 
 as Kafka producer needs to discover leaders for all partitions.
 Please refer to [first part](http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/) of this blog post 
-and 
+and `KafkaProducerFactory`
 [source](https://github.com/mkuthan/example-spark-kafka/blob/master/src/main/scala/org/mkuthan/spark/KafkaProducerFactory.scala) 
 for more details about the factory implementation.
 
@@ -238,7 +244,7 @@ You could use any logging framework but the logger itself has to be defined in t
 to avoid weird serialization issues.
 Spark task context will be used to get current partition identifier.
 I don't like static call for getting task context, but this is an official way to do that.
-See pull request [PR-5927](https://github.com/apache/spark/pull/5927) for more details. 
+See pull request [SPARK-5927](https://github.com/apache/spark/pull/5927) for more details. 
 
 
 Before we go further, Kafka producer callback for error handling needs to be introduced.
@@ -288,14 +294,14 @@ rdd.foreachPartition { records =>
 First the callback is examined for registered exception. 
 If one of the previous record could not be sent, the exception is propagated to Spark framework.
 If any redelivery policy is needed it should be configured on Kafka producer level. 
-Look at [Kafka documentation](http://kafka.apache.org/documentation.html) for `retries` and `retry.backoff.ms` configuration properties.
+Look at Kafka producer configuration properties `retries` and `retry.backoff.ms`.
 Finally Kafka producer metadata are collected and materialized by calling `toList()` method.
 At this moment, Kafka producer starts sending records in background I/O thread. 
 To achieve high throughput Kafka producer sends records in batches.
        
-Because we want to achieve natural stream processing back pressure,
+Because we want to achieve natural back pressure for our stream processing,
 next batch needs to be blocked until records from current batch are really acknowledged by the Kafka brokers.
-So for each collected metadata (future), method `get()` is called.
+So for each collected metadata (Java `j.u.c.Future`), method `get()` is called to ensure that record has been sent to the brokers.
 
 ``` scala
 rdd.foreachPartition { records =>
@@ -322,7 +328,7 @@ However if the `get()` call is blocked, it means that there are unsent messages 
 and the processing should be blocked as well.
 
 Finally `sendToKafka()` method should propagate exception recorded by the callback (if any).
-Complete method is presented below.
+Complete method is presented below for reference.
 
 ``` scala sendToKafka
 def sendToKafka(config: Map[String, String], topic: String): Unit = {
@@ -350,14 +356,14 @@ def sendToKafka(config: Map[String, String], topic: String): Unit = {
 }
 ```
 
-The method is not very complex but there are a few important elements, 
-important if you don't want to lose processing results and if you need back pressure mechanism:
+The method is not very complex but there are a few important elements
+if you don't want to lose processing results and if you need back pressure mechanism:
 
 * Method `sendToKafka()` should fail fast if record could not be sent to Kafka. Don't worry Spark will execute failed task again.
-* Method `sendToKafka()` should block Spark processing to implement back pressure properly if Kafka producer slows down.
-* Method `sendToKafka()` should flush records buffered by Kafka producer explicitly to avoid data loss.
+* Method `sendToKafka()` should block Spark processing if Kafka producer slows down.
+* Method `sendToKafka()` should flush records buffered by Kafka producer explicitly, to avoid data loss.
 * Kafka producer needs to be reused by Spark executor to avoid connection to Kafka overhead.
-* Kafka producer needs to be explicitly closed when Spark shutdowns executors to avoid data loss (see: `KafkaProducerFactory` class for more details).
+* Kafka producer needs to be explicitly closed when Spark shutdowns executors to avoid data loss.
 
 ## Summary
 
@@ -367,7 +373,7 @@ You can clone/fork the project and do some experiments by yourself.
 
 There is also alternative library developed by Cloudera 
 [spark-kafka-writer](https://github.com/cloudera/spark-kafka-writer)
-emerged from closed [pull request](https://github.com/apache/spark/pull/2994).
+emerged from closed pull request [SPARK-2994](https://github.com/apache/spark/pull/2994).
 Unfortunately at the time of this writing, 
 the library used obsolete Scala Kafka producer API and did not send processing results in reliable way.
 
