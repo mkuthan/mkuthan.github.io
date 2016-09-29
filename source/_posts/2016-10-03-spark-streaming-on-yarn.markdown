@@ -3,7 +3,7 @@ layout: post
 title: "Long running Spark Streaming jobs on YARN cluster"
 date: 2016-10-03
 comments: true
-categories: [scala, spark, yarn]
+categories: [spark, yarn, hdfs]
 ---
 
 Long running Spark Streaming job, once submitted to YARN cluster should run forever until it will be intentionally stopped.
@@ -199,47 +199,56 @@ And configure spark-submit command:
 
 Spark publishes tons of metrics from driver and executors.
 If I have to choose the most important one, it would be the last received batch records.
-When ```StreamingMetrics.streaming.lastReceivedBatch_records == 0``` it probably means that Spark Streaming job has stopped or failed.
+When ```StreamingMetrics.streaming.lastReceivedBatch_records == 0``` it probably means that Spark Streaming job has been stopped or failed.
 
-Another importants metrics:
-
-```driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay```
-
+Another important metrics are listed below.
 When totalDelay is greater then batch interval latency of the processing pipeline increases.
 
-```executor.threadpool.activeTasks``` 
+    driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
 
 When number of active tasks is lower then number of executors * number of cores, allocated resources are not fully utilized.
 
-```driver.BlockManager.memory.memUsed_MB```
+    executor.threadpool.activeTasks
 
 How much RAM is used for RDD cache.
 
-```driver.BlockManager.disk.diskSpaceUsed_MB```
+    driver.BlockManager.memory.memUsed_MB
 
 When there is not enough RAM for RDD cache, how much data has been spilled on disk. 
 You should consider to boost executor memory or change ```spark.memory.fraction``` Spark property if disk usage is high and processing performance not enough. 
 
-```driver.jvm.heap.used```, ```driver.jvm.non-heap.used```, ```driver.jvm.pools.G1-Old-Gen.used```, ```driver.jvm.pools.G1-Eden-Space.used```, ```driver.jvm.pools.G1-Survivor-Space.used```
+    driver.BlockManager.disk.diskSpaceUsed_MB
 
 What is JVM memory utilization on Spark driver.
 
-```driver.jvm.G1-Old-Generation.time```, ```driver.jvm.G1-Young-Generation.time```
+    driver.jvm.heap.used
+    driver.jvm.non-heap.used
+    driver.jvm.pools.G1-Old-Gen.used
+    driver.jvm.pools.G1-Eden-Space.used
+    driver.jvm.pools.G1-Survivor-Space.used
 
 How much time is spent on GC on Spark driver.
 
-```[0-9]*.jvm.heap.used```, ```[0-9]*.jvm.non-heap.used```, ```[0-9]*.jvm.pools.G1-Old-Gen.used```, ```[0-9]*.jvm.pools.G1-Survivor-Space.used```, ```[0-9]*.jvm.pools.G1-Eden-Space.used```
+    driver.jvm.G1-Old-Generation.time
+    driver.jvm.G1-Young-Generation.time
 
 What is JMV memory utilization on Spark executors.
 
-```[0-9]*.jvm.G1-Old-Generation.time```, ```[0-9]*.jvm.G1-Young-Generation.time```
+    [0-9]*.jvm.heap.used
+    [0-9]*.jvm.non-heap.used
+    [0-9]*.jvm.pools.G1-Old-Gen.used
+    [0-9]*.jvm.pools.G1-Survivor-Space.used
+    [0-9]*.jvm.pools.G1-Eden-Space.used
 
 How much time is spent on GC on Spark executors.
+
+    [0-9]*.jvm.G1-Old-Generation.time
+    [0-9]*.jvm.G1-Young-Generation.time
 
 
 When You configure first Grafana dashboard for Spark job, perhaps the first question will emerge: 
 
-> How to configure Graphite query when every job metrics are reported under its own application id?
+> How to configure Graphite query when metrics for every Spark application run are reported under its own application id?
 
 For driver metrics use wildcard ```.*(application_[0-9]+).*``` instead of fixed 'application id' and ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
@@ -256,7 +265,7 @@ Finally Grafana dashboard for Spark Job might look like:
 If Spark application is restarted frequently, metrics for old, already finished runs should be deleted from Graphite.
 Because Graphite does not compact inactive metrics, old metrics slow down Graphite itself and Grafana queries.
 
-## Gracefull stop
+## Graceful stop
 
 The last puzzle element is how to stop Spark Streaming application deployed on YARN in a graceful way.
 The standard method for stopping (or rather killing) YARN application is using a command ```yarn application -kill [applicationId].
@@ -273,16 +282,16 @@ sys.addShutdownHook {
 ```
 
 Disappointingly shutdown hook is called too late to finish started batch and Spark application is killed almost immediately.
-Moreover there is no guarantee that shutdown hook will be called by JVM.
+Moreover there is no guarantee that shutdown hook will be called by JVM at all.
 
 When I'm writing this blog post the only confirmed way to shutdown gracefully Spark Streaming application on YARN
 is to notify somehow the application about planned shutdown, and then stop streaming context programmatically (but not from shutdown hook).
-```yarn application -kill``` should be used as a last resort if notified application did not stop after defined timeout.
+```yarn application -kill``` should be used only as a last resort if notified application did not stop after defined timeout.
 
 The application can be notified about planned shutdown using marker file on HDFS (the easiest way), 
-or using simple Socket/HTTP endpoint exposed on the driver.
+or using simple Socket/HTTP endpoint exposed on the driver (sophisticated way).
 
-Below you can find shell script pseudo-code for starting / stopping Spark Streaming application using marker file:
+Because I like KISS principle, below you can find shell script pseudo-code for starting / stopping Spark Streaming application using marker file:
 
     start() {
         hdfs dfs -touchz /path/to/marker/file
@@ -305,11 +314,11 @@ Below you can find shell script pseudo-code for starting / stopping Spark Stream
         $force_kill && yarn application -kill ${application_id}
     }
 
-In the Spark Streaming application background thread should monitor ```/path/to/marker/file``` file, 
-and when file does not exist stop the context (```streamingContext.stop(stopSparkContext = true, stopGracefully = true)```).
+In the Spark Streaming application, background thread should monitor ```/path/to/marker/file``` file, 
+and when the file disappears stop the context (```streamingContext.stop(stopSparkContext = true, stopGracefully = true)```).
 
 ## Summary
 
 As you could see, configuration for mission critical Spark Streaming application deployed on YARN is quite complex. 
 It has been long, tedious and iterative process of learning all presented techniques by a few very smart devs. 
-At the end, long running Spark Streaming applications deployed on YARN are extraordinary stable.
+But at the end, long running Spark Streaming applications deployed on highly utilized YARN cluster are extraordinary stable.
