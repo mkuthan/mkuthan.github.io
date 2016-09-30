@@ -6,21 +6,20 @@ comments: true
 categories: [spark, yarn, hdfs]
 ---
 
-Long running Spark Streaming job, once submitted to YARN cluster should run forever until it will be intentionally stopped.
+Long running Spark Streaming job, once submitted to the YARN cluster should run forever until it will be intentionally stopped.
 Any interruption introduces substantial processing delays and could drive to data loss or duplicates.
 Neither YARN nor Apache Spark have not been designed for running long running services.
 But they have been successfully adapted to growing needs of near real-time processing implemented as long running jobs.
 Successfully does not necessarily mean without technological challenges.
 
-This blog post summarizes my experiences in running mission critical long running Spark Streaming jobs 
-on secured YARN cluster.
+This blog post summarizes my experiences in running mission critical, long running Spark Streaming jobs on secured YARN cluster.
 You will learn how to submit Spark Streaming application to the YARN cluster to avoid sleepless nights during on-call hours.
 
 ## Fault tolerance
 
-In YARN cluster mode Spark driver runs in the Application Master, the first container allocated by the application.
+In the YARN cluster mode Spark driver runs in the Application Master, the first container allocated by the application.
 This process is responsible for driving the application and requesting resources (Spark executors) from YARN.
-What is important Application Master eliminates need for any another process that run during application lifecycle.
+What is important, Application Master eliminates need for any another process that run during application lifecycle.
 Even if the edge Hadoop cluster node where the Spark Streaming job was submitted fails, the application stays unaffected. 
 
 To run Spark Streaming application in the cluster mode, ensure that the following parameters are given to spark-submit command:
@@ -30,7 +29,7 @@ To run Spark Streaming application in the cluster mode, ensure that the followin
 Because Spark driver and Application Master share single JVM, any error in Spark driver stops our long running job.
 Fortunately it is possible to configure maximum number of attempts that will be made to re-run the application.
 It is reasonable to set higher value than default 2 (derived from YARN cluster property ```yarn.resourcemanager.am.max-attempts```).
-For me 4 works quite well, bigger value may cause unnecessary restarts even if the reason of the failure is permanent.
+For me 4 works quite well, higher value may cause unnecessary restarts even if the reason of the failure is permanent.
 
     spark-submit --master yarn --deploy-mode cluster \
         --conf spark.yarn.maxAppAttempts=4
@@ -78,7 +77,7 @@ Without separate YARN queue your long running job will be preempted by massive H
 
 
 Another important performance factor for Spark Streaming job is processing time predictability. 
-Batch processing time should stay below batch time to avoid delays. 
+Processing time should stay below batch time to avoid delays. 
 I found that Spark speculative execution helps a lot, especially on busy cluster. 
 Batch processing times are much more stable than when speculative execution is disabled.
 Unfortunately speculative mode can be enabled only if Spark actions are idempotent (like saving results on HDFS but not to Elastic).
@@ -136,12 +135,12 @@ Unfortunately it is not feasible to terminate long running Spark Streaming jobs 
 
 I recommend to install and configure Elastic, Logstash and Kibana (ELK stack).
 ELK installation and configuration is out of this blog post scope,
-but remember to log the following context fields, crucial for searching and digging:
+but remember to log the following context fields:
 
 * YARN application id
 * YARN container hostname
-* Executor id (id of the driver is always 000001)
-* Attempt id (to check how many times driver has been restarted)
+* Executor id (Spark driver is always 000001, Spark executors start from 000002)
+* YARN attempt (to check how many times Spark driver has been restarted, attempts are decreased during application lifecycle accordingly to ```spark.yarn.am.attemptFailuresValidityInterval```)
 
 Log4j configuration with Logstash specific appender and layout definition should be passed to spark-submit command:
  
@@ -170,7 +169,7 @@ Long running job runs 24/7 so it is important to have an insight into historical
 Again, external tools are needed. 
 I recommend to install Graphite for collecting metrics and Grafana for building dashboards.
 
-First Spark needs to be configured to report metrics into Graphite, prepare the metrics.properties file:
+First, Spark needs to be configured to report metrics into Graphite, prepare the ```metrics.properties``` file:
 
     *.sink.graphite.class=org.apache.spark.metrics.sink.GraphiteSink
     *.sink.graphite.host=[hostname]
@@ -201,12 +200,13 @@ Spark publishes tons of metrics from driver and executors.
 If I have to choose the most important one, it would be the last received batch records.
 When ```StreamingMetrics.streaming.lastReceivedBatch_records == 0``` it probably means that Spark Streaming job has been stopped or failed.
 
-Another important metrics are listed below.
-When totalDelay is greater then batch interval latency of the processing pipeline increases.
+Another important metrics are listed below:
+
+When total delay is greater then batch interval, latency of the processing pipeline increases.
 
     driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
 
-When number of active tasks is lower then number of executors * number of cores, allocated resources are not fully utilized.
+When number of active tasks is lower then ```number of executors * number of cores```, allocated resources are not fully utilized.
 
     executor.threadpool.activeTasks
 
@@ -214,8 +214,8 @@ How much RAM is used for RDD cache.
 
     driver.BlockManager.memory.memUsed_MB
 
-When there is not enough RAM for RDD cache, how much data has been spilled on disk. 
-You should consider to boost executor memory or change ```spark.memory.fraction``` Spark property if disk usage is high and processing performance not enough. 
+When there is not enough RAM for RDD cache, how much data has been spilled to disk. 
+You should increase executor memory or change ```spark.memory.fraction``` Spark property to avoid performance degradation. 
 
     driver.BlockManager.disk.diskSpaceUsed_MB
 
@@ -250,11 +250,11 @@ When You configure first Grafana dashboard for Spark job, perhaps the first ques
 
 > How to configure Graphite query when metrics for every Spark application run are reported under its own application id?
 
-For driver metrics use wildcard ```.*(application_[0-9]+).*``` instead of fixed 'application id' and ```aliasSub``` Graphite function to present 'application id' as graph legend:
+For driver metrics use wildcard ```.*(application_[0-9]+).*``` and ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
     aliasSub(stats.analytics.$job_name.*.prod.$dc.*.driver.jvm.heap.used, ".*(application_[0-9]+).*", "heap: \1")
     
-For executor metrics again use wildcard ```.*(application_[0-9]+).*``` instead of fixed 'application id', ```groupByNode``` Graphite function to sum metrics and ```aliasSub``` Graphite function to present 'application id' as graph legend:
+For executor metrics again use wildcard ```.*(application_[0-9]+).*```, ```groupByNode``` Graphite function to sum metrics from all Spark executors and ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
     aliasSub(groupByNode(stats.analytics.$job_name.*.prod.$dc.*.[0-9]*.jvm.heap.used, 6, "sumSeries"), "(.*)", "heap: \1")
 
@@ -268,10 +268,10 @@ Because Graphite does not compact inactive metrics, old metrics slow down Graphi
 ## Graceful stop
 
 The last puzzle element is how to stop Spark Streaming application deployed on YARN in a graceful way.
-The standard method for stopping (or rather killing) YARN application is using a command ```yarn application -kill [applicationId].
+The standard method for stopping (or rather killing) YARN application is using a command ```yarn application -kill [applicationId]```.
 And this command stops the Spark Streaming application but the application might be killed in the middle of the batch.
 So if the job reads data from Kafka, save processing results on HDFS and finally commit Kafka offsets
-you should expect duplicated data on HDFS when job was killed just before committing offsets.
+you should expect duplicated data on HDFS when job was stopped just before committing offsets.
 
 The first attempt to solve graceful shutdown issue was to call Spark streaming context stop method in shutdown hook.
 
@@ -286,7 +286,7 @@ Moreover there is no guarantee that shutdown hook will be called by JVM at all.
 
 When I'm writing this blog post the only confirmed way to shutdown gracefully Spark Streaming application on YARN
 is to notify somehow the application about planned shutdown, and then stop streaming context programmatically (but not from shutdown hook).
-```yarn application -kill``` should be used only as a last resort if notified application did not stop after defined timeout.
+Command ```yarn application -kill``` should be used only as a last resort if notified application did not stop after defined timeout.
 
 The application can be notified about planned shutdown using marker file on HDFS (the easiest way), 
 or using simple Socket/HTTP endpoint exposed on the driver (sophisticated way).
@@ -315,10 +315,10 @@ Because I like KISS principle, below you can find shell script pseudo-code for s
     }
 
 In the Spark Streaming application, background thread should monitor ```/path/to/marker/file``` file, 
-and when the file disappears stop the context (```streamingContext.stop(stopSparkContext = true, stopGracefully = true)```).
+and when the file disappears stop the context calling ```streamingContext.stop(stopSparkContext = true, stopGracefully = true)```.
 
 ## Summary
 
 As you could see, configuration for mission critical Spark Streaming application deployed on YARN is quite complex. 
-It has been long, tedious and iterative process of learning all presented techniques by a few very smart devs. 
+It has been long, tedious and iterative learning process of all presented techniques by a few very smart devs. 
 But at the end, long running Spark Streaming applications deployed on highly utilized YARN cluster are extraordinary stable.
