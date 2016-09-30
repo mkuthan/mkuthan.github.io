@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Long running Spark Streaming jobs on YARN cluster"
+title: "Long-running Spark Streaming jobs on YARN cluster"
 date: 2016-09-30
 comments: true
 categories: [spark, yarn, hdfs]
@@ -63,7 +63,7 @@ By default tasks will be retried 4 times and then job fails.
  
 ## Performance
 
-When Spark Streaming application is submitted to the cluster, YARN queue where the job runs must be defined.
+When a Spark Streaming application is submitted to the cluster, YARN queue where the job runs must be defined.
 I strongly recommend using YARN Capacity Scheduler and submitting long-running jobs to separate queue.
 Without a separate YARN queue your long-running job will be preempted by a massive Hive query sooner or later.
 
@@ -78,7 +78,7 @@ Without a separate YARN queue your long-running job will be preempted by a massi
 
 Another important issue for Spark Streaming job is keeping processing time stable and highly predictable.
 Processing time should stay below batch duration to avoid delays. 
-I've found that Spark speculative execution helps a lot, especially on busy cluster. 
+I've found that Spark speculative execution helps a lot, especially on a busy cluster. 
 Batch processing times are much more stable than when speculative execution is disabled.
 Unfortunately speculative mode can be enabled only if Spark actions are idempotent.
 
@@ -129,7 +129,7 @@ HDFS cache must be disabled. If not, Spark will not be able to read updated toke
 
 ## Logging
 
-The easiest way for Spark jobs to access application logs is to configure Log4j console appender, 
+The easiest way to access Spark application logs is to configure Log4j console appender, 
 wait for application termination and use ```yarn logs -applicationId [applicationId]``` command.
 Unfortunately it is not feasible to terminate long-running Spark Streaming jobs to access the logs.
 
