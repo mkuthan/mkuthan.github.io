@@ -8,7 +8,7 @@ categories: [spark, yarn, hdfs]
 
 A long-running Spark Streaming job, once submitted to the YARN cluster should run forever until it is intentionally stopped.
 Any interruption introduces substantial processing delays and could lead to data loss or duplicates.
-Neither YARN nor Apache Spark have been designed for running long-running services.
+Neither YARN nor Apache Spark have been designed for executing long-running services.
 But they have been successfully adapted to growing needs of near real-time processing implemented as long-running jobs.
 Successfully does not necessarily mean without technological challenges.
 
@@ -204,47 +204,62 @@ Other important metrics are listed below:
 
 * When total delay is greater than batch interval, latency of the processing pipeline increases.
 
-        driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
+```
+driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
+```
 
 * When number of active tasks is lower than ```number of executors * number of cores```, allocated resources are not fully utilized.
 
-        executor.threadpool.activeTasks
+```
+executor.threadpool.activeTasks
+```
 
 * How much RAM is used for RDD cache.
 
-        driver.BlockManager.memory.memUsed_MB
+```
+driver.BlockManager.memory.memUsed_MB
+```
 
 * When there is not enough RAM for RDD cache, how much data has been spilled to disk. 
 You should increase executor memory or change ```spark.memory.fraction``` Spark property to avoid performance degradation. 
 
-        driver.BlockManager.disk.diskSpaceUsed_MB
+```
+driver.BlockManager.disk.diskSpaceUsed_MB
+````
 
 * What is JVM memory utilization on Spark driver.
 
-        driver.jvm.heap.used
-        driver.jvm.non-heap.used
-        driver.jvm.pools.G1-Old-Gen.used
-        driver.jvm.pools.G1-Eden-Space.used
-        driver.jvm.pools.G1-Survivor-Space.used
+```
+driver.jvm.heap.used
+driver.jvm.non-heap.used
+driver.jvm.pools.G1-Old-Gen.used
+driver.jvm.pools.G1-Eden-Space.used
+driver.jvm.pools.G1-Survivor-Space.used
+```
 
 * How much time is spent on GC on Spark driver.
 
-        driver.jvm.G1-Old-Generation.time
-        driver.jvm.G1-Young-Generation.time
+```
+driver.jvm.G1-Old-Generation.time
+driver.jvm.G1-Young-Generation.time
+```
 
 * What is JMV memory utilization on Spark executors.
 
-        [0-9]*.jvm.heap.used
-        [0-9]*.jvm.non-heap.used
-        [0-9]*.jvm.pools.G1-Old-Gen.used
-        [0-9]*.jvm.pools.G1-Survivor-Space.used
-        [0-9]*.jvm.pools.G1-Eden-Space.used
+```
+[0-9]*.jvm.heap.used
+[0-9]*.jvm.non-heap.used
+[0-9]*.jvm.pools.G1-Old-Gen.used
+[0-9]*.jvm.pools.G1-Survivor-Space.used
+[0-9]*.jvm.pools.G1-Eden-Space.used
+```
 
 * How much time is spent on GC on Spark executors.
 
-        [0-9]*.jvm.G1-Old-Generation.time
-        [0-9]*.jvm.G1-Young-Generation.time
-
+```
+[0-9]*.jvm.G1-Old-Generation.time
+[0-9]*.jvm.G1-Young-Generation.time
+```
 
 While you configure first Grafana dashboard for Spark application, the first problem pops up: 
 
@@ -293,26 +308,28 @@ or using simple Socket/HTTP endpoint exposed on the driver (sophisticated way).
 
 Because I like KISS principle, below you can find shell script pseudo-code for starting / stopping Spark Streaming application using marker file:
 
-    start() {
-        hdfs dfs -touchz /path/to/marker/file
-        spark-submit ...
-    }
-    
-    stop() {
-        hdfs dfs -rm /path/to/marker/file
-        force_kill=true
-        application_id=$(yarn application -list | grep -oe "application_[0-9]*_[0-9]*"`)
-        for i in `seq 1 10`; do
-            application_status=$(yarn application -status ${application_id} 2>&1 | grep "State : \(RUNNING\|ACCEPTED\)")
-            if [ -n "$application_status" ]; then
-                sleep 60s
-            else
-                force_kill=false
-                break
-            fi
-        done
-        $force_kill && yarn application -kill ${application_id}
-    }
+``` bash
+start() {
+    hdfs dfs -touchz /path/to/marker/file
+    spark-submit ...
+}
+
+stop() {
+    hdfs dfs -rm /path/to/marker/file
+    force_kill=true
+    application_id=$(yarn application -list | grep -oe "application_[0-9]*_[0-9]*"`)
+    for i in `seq 1 10`; do
+        application_status=$(yarn application -status ${application_id} 2>&1 | grep "State : \(RUNNING\|ACCEPTED\)")
+        if [ -n "$application_status" ]; then
+            sleep 60s
+        else
+            force_kill=false
+            break
+        fi
+    done
+    $force_kill && yarn application -kill ${application_id}
+}
+```
 
 In the Spark Streaming application, background thread should monitor ```/path/to/marker/file``` file, 
 and when the file disappears stop the context calling ```streamingContext.stop(stopSparkContext = true, stopGracefully = true)```.
