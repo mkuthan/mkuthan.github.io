@@ -64,7 +64,7 @@ By default tasks will be retried 4 times and then job fails.
 ## Performance
 
 When Spark Streaming application is submitted to the cluster, YARN queue where the job runs must be defined.
-I strongly recommend to use YARN Capacity Scheduler and separate queue for long-running jobs.
+I strongly recommend using YARN Capacity Scheduler and submitting long-running jobs to separate queue.
 Without a separate YARN queue your long-running job will be preempted by a massive Hive query sooner or later.
 
     spark-submit --master yarn --deploy-mode cluster \
@@ -76,8 +76,8 @@ Without a separate YARN queue your long-running job will be preempted by a massi
         --queue realtime_queue
 
 
-Another important performance factor for Spark Streaming job is processing time predictability. 
-Processing time should stay below batch time to avoid delays. 
+Another important issue for Spark Streaming job is keeping processing time stable and highly predictable.
+Processing time should stay below batch duration to avoid delays. 
 I've found that Spark speculative execution helps a lot, especially on busy cluster. 
 Batch processing times are much more stable than when speculative execution is disabled.
 Unfortunately speculative mode can be enabled only if Spark actions are idempotent.
@@ -197,56 +197,56 @@ And configure spark-submit command:
          --files /path/to/log4j.properties:/path/to/metrics.properties
 
 Spark publishes tons of metrics from driver and executors.
-If I have to choose the most important one, it would be the last received batch records.
+If I were to choose the most important one, it would be the last received batch records.
 When ```StreamingMetrics.streaming.lastReceivedBatch_records == 0``` it probably means that Spark Streaming job has been stopped or failed.
 
 Other important metrics are listed below:
 
-When total delay is greater than batch interval, latency of the processing pipeline increases.
+* When total delay is greater than batch interval, latency of the processing pipeline increases.
 
-    driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
+        driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
 
-When number of active tasks is lower than ```number of executors * number of cores```, allocated resources are not fully utilized.
+* When number of active tasks is lower than ```number of executors * number of cores```, allocated resources are not fully utilized.
 
-    executor.threadpool.activeTasks
+        executor.threadpool.activeTasks
 
-How much RAM is used for RDD cache.
+* How much RAM is used for RDD cache.
 
-    driver.BlockManager.memory.memUsed_MB
+        driver.BlockManager.memory.memUsed_MB
 
-When there is not enough RAM for RDD cache, how much data has been spilled to disk. 
+* When there is not enough RAM for RDD cache, how much data has been spilled to disk. 
 You should increase executor memory or change ```spark.memory.fraction``` Spark property to avoid performance degradation. 
 
-    driver.BlockManager.disk.diskSpaceUsed_MB
+        driver.BlockManager.disk.diskSpaceUsed_MB
 
-What is JVM memory utilization on Spark driver.
+* What is JVM memory utilization on Spark driver.
 
-    driver.jvm.heap.used
-    driver.jvm.non-heap.used
-    driver.jvm.pools.G1-Old-Gen.used
-    driver.jvm.pools.G1-Eden-Space.used
-    driver.jvm.pools.G1-Survivor-Space.used
+        driver.jvm.heap.used
+        driver.jvm.non-heap.used
+        driver.jvm.pools.G1-Old-Gen.used
+        driver.jvm.pools.G1-Eden-Space.used
+        driver.jvm.pools.G1-Survivor-Space.used
 
-How much time is spent on GC on Spark driver.
+* How much time is spent on GC on Spark driver.
 
-    driver.jvm.G1-Old-Generation.time
-    driver.jvm.G1-Young-Generation.time
+        driver.jvm.G1-Old-Generation.time
+        driver.jvm.G1-Young-Generation.time
 
-What is JMV memory utilization on Spark executors.
+* What is JMV memory utilization on Spark executors.
 
-    [0-9]*.jvm.heap.used
-    [0-9]*.jvm.non-heap.used
-    [0-9]*.jvm.pools.G1-Old-Gen.used
-    [0-9]*.jvm.pools.G1-Survivor-Space.used
-    [0-9]*.jvm.pools.G1-Eden-Space.used
+        [0-9]*.jvm.heap.used
+        [0-9]*.jvm.non-heap.used
+        [0-9]*.jvm.pools.G1-Old-Gen.used
+        [0-9]*.jvm.pools.G1-Survivor-Space.used
+        [0-9]*.jvm.pools.G1-Eden-Space.used
 
-How much time is spent on GC on Spark executors.
+* How much time is spent on GC on Spark executors.
 
-    [0-9]*.jvm.G1-Old-Generation.time
-    [0-9]*.jvm.G1-Young-Generation.time
+        [0-9]*.jvm.G1-Old-Generation.time
+        [0-9]*.jvm.G1-Young-Generation.time
 
 
-When you configure first Grafana dashboard for Spark job, perhaps the first question will emerge: 
+While you configure first Grafana dashboard for Spark application, the first problem pops up: 
 
 > How to configure Graphite query when metrics for every Spark application run are reported under its own application id?
 
@@ -269,8 +269,8 @@ Because Graphite does not compact inactive metrics, old metrics slow down Graphi
 
 The last puzzle element is how to stop Spark Streaming application deployed on YARN in a graceful way.
 The standard method for stopping (or rather killing) YARN application is using a command ```yarn application -kill [applicationId]```.
-And this command stops the Spark Streaming application but the application might be killed in the middle of the batch.
-So if the job reads data from Kafka, save processing results on HDFS and finally commit Kafka offsets
+And this command stops the Spark Streaming application but this could happen in the middle of a batch.
+So if the job reads data from Kafka, saves processing results on HDFS and finally commits Kafka offsets
 you should expect duplicated data on HDFS when job was stopped just before committing offsets.
 
 The first attempt to solve graceful shutdown issue was to call Spark streaming context stop method in shutdown hook.
@@ -285,7 +285,7 @@ Disappointingly a shutdown hook is called too late to finish started batch and S
 Moreover there is no guarantee that a shutdown hook will be called by JVM at all.
 
 At the time of writing this blog post the only confirmed way to shutdown gracefully Spark Streaming application on YARN
-is to notify somehow the application about planned shutdown, and then stop streaming context programmatically (but not from shutdown hook).
+is to notifying somehow the application about planned shutdown, and then stop streaming context programmatically (but not from shutdown hook).
 Command ```yarn application -kill``` should be used only as a last resort if notified application did not stop after defined timeout.
 
 The application can be notified about planned shutdown using marker file on HDFS (the easiest way), 
