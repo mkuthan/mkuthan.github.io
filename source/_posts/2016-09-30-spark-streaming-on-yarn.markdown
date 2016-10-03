@@ -273,15 +273,13 @@ If you are lucky and brave enough to use Spark 2.1, pin the application metric i
 
 For Spark older than 2.1, a few tricks with Graphite built-in functions are needed.
 
-Driver metrics use wildcard ```.*(application_[0-9]+).*```
-and ```aliasSub``` Graphite function to present 'application id' as graph legend:
+Driver metrics use wildcard ```.*(application_[0-9]+).*``` and ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
 ```
 aliasSub(stats.analytics.$job_name.*.prod.$dc.*.driver.jvm.heap.used, ".*(application_[0-9]+).*", "heap: \1")
 ```
     
-For executor metrics again use wildcard ```.*(application_[0-9]+).*```, 
-```groupByNode``` Graphite function to sum metrics from all Spark executors
+For executor metrics again use wildcard ```.*(application_[0-9]+).*```, ```groupByNode``` Graphite function to sum metrics from all Spark executors
 and finally ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
 ```
