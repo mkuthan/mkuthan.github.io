@@ -269,26 +269,20 @@ While you configure first Grafana dashboard for Spark application, the first pro
 
 If you are lucky and brave enough to use Spark 2.1, pin the application metric into static application name:
 
- ```
---conf spark.metrics.namespace=my_application_name
-```
+    --conf spark.metrics.namespace=my_application_name
 
 For Spark older than 2.1, a few tricks with Graphite built-in functions are needed.
 
 Driver metrics use wildcard ```.*(application_[0-9]+).*```
 and ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
-```
-aliasSub(stats.analytics.$job_name.*.prod.$dc.*.driver.jvm.heap.used, ".*(application_[0-9]+).*", "heap: \1")
-```
+    aliasSub(stats.analytics.$job_name.*.prod.$dc.*.driver.jvm.heap.used, ".*(application_[0-9]+).*", "heap: \1")
     
 For executor metrics again use wildcard ```.*(application_[0-9]+).*```, 
 ```groupByNode``` Graphite function to sum metrics from all Spark executors
 and finally ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
-```
-aliasSub(groupByNode(stats.analytics.$job_name.*.prod.$dc.*.[0-9]*.jvm.heap.used, 6, "sumSeries"), "(.*)", "heap: \1")
-```
+    aliasSub(groupByNode(stats.analytics.$job_name.*.prod.$dc.*.[0-9]*.jvm.heap.used, 6, "sumSeries"), "(.*)", "heap: \1")
 
 Finally Grafana dashboard for Spark Job might look like:
 
