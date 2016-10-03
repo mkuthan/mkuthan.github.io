@@ -79,7 +79,7 @@ Without a separate YARN queue your long-running job will be preempted by a massi
 Another important issue for Spark Streaming job is keeping processing time stable and highly predictable.
 Processing time should stay below batch duration to avoid delays. 
 I've found that Spark speculative execution helps a lot, especially on a busy cluster. 
-Batch processing times are much more stable than when speculative execution is disabled.
+Batch processing times are much more stable when speculative execution is enabled.
 Unfortunately speculative mode can be enabled only if Spark actions are idempotent.
 
     spark-submit --master yarn --deploy-mode cluster \
@@ -126,6 +126,8 @@ HDFS cache must be disabled. If not, Spark will not be able to read updated toke
          --keytab /path/to/foo.keytab \
          --conf spark.hadoop.fs.hdfs.impl.disable.cache=true
 
+Mark Grover pointed out that those bugs only affect HDFS cluster configured with NameNodes in HA mode. 
+Thanks, Mark.
 
 ## Logging
 
@@ -265,13 +267,28 @@ While you configure first Grafana dashboard for Spark application, the first pro
 
 > How to configure Graphite query when metrics for every Spark application run are reported under its own application id?
 
-For driver metrics use wildcard ```.*(application_[0-9]+).*``` and ```aliasSub``` Graphite function to present 'application id' as graph legend:
+If you are lucky and brave enough to use Spark 2.1, pin the application metric into static application name:
 
-    aliasSub(stats.analytics.$job_name.*.prod.$dc.*.driver.jvm.heap.used, ".*(application_[0-9]+).*", "heap: \1")
+ ```
+--conf spark.metrics.namespace=my_application_name
+```
+
+For Spark older than 2.1, a few tricks with Graphite built-in functions are needed.
+
+Driver metrics use wildcard ```.*(application_[0-9]+).*```
+and ```aliasSub``` Graphite function to present 'application id' as graph legend:
+
+```
+aliasSub(stats.analytics.$job_name.*.prod.$dc.*.driver.jvm.heap.used, ".*(application_[0-9]+).*", "heap: \1")
+```
     
-For executor metrics again use wildcard ```.*(application_[0-9]+).*```, ```groupByNode``` Graphite function to sum metrics from all Spark executors and ```aliasSub``` Graphite function to present 'application id' as graph legend:
+For executor metrics again use wildcard ```.*(application_[0-9]+).*```, 
+```groupByNode``` Graphite function to sum metrics from all Spark executors
+and finally ```aliasSub``` Graphite function to present 'application id' as graph legend:
 
-    aliasSub(groupByNode(stats.analytics.$job_name.*.prod.$dc.*.[0-9]*.jvm.heap.used, 6, "sumSeries"), "(.*)", "heap: \1")
+```
+aliasSub(groupByNode(stats.analytics.$job_name.*.prod.$dc.*.[0-9]*.jvm.heap.used, 6, "sumSeries"), "(.*)", "heap: \1")
+```
 
 Finally Grafana dashboard for Spark Job might look like:
 
@@ -319,7 +336,7 @@ stop() {
     force_kill=true
     application_id=$(yarn application -list | grep -oe "application_[0-9]*_[0-9]*"`)
     for i in `seq 1 10`; do
-        application_status=$(yarn application -status ${application_id} 2>&1 | grep "State : \(RUNNING\|ACCEPTED\)")
+        application_status=$(yarn application -status ${application_id} | grep "State : \(RUNNING\|ACCEPTED\)")
         if [ -n "$application_status" ]; then
             sleep 60s
         else
