@@ -269,7 +269,9 @@ While you configure first Grafana dashboard for Spark application, the first pro
 
 If you are lucky and brave enough to use Spark 2.1, pin the application metric into static application name:
 
-    --conf spark.metrics.namespace=my_application_name
+```
+--conf spark.metrics.namespace=my_application_name
+```
 
 For Spark older than 2.1, a few tricks with Graphite built-in functions are needed.
 
@@ -303,7 +305,7 @@ you should expect duplicated data on HDFS when job was stopped just before commi
 
 The first attempt to solve graceful shutdown issue was to call Spark streaming context stop method in shutdown hook.
 
-``` scala
+```
 sys.addShutdownHook {
     streamingContext.stop(stopSparkContext = true, stopGracefully = true)
 }
@@ -321,7 +323,7 @@ or using simple Socket/HTTP endpoint exposed on the driver (sophisticated way).
 
 Because I like KISS principle, below you can find shell script pseudo-code for starting / stopping Spark Streaming application using marker file:
 
-``` bash
+```
 start() {
     hdfs dfs -touchz /path/to/marker/file
     spark-submit ...
