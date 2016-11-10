@@ -129,8 +129,8 @@ Because provided dependencies are excluded from the runtime classpath, you shoul
 To fix this issue, provided dependencies must be explicitly added to all SBT tasks used for local run, e.g.:
 
 ```
-run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in(Compile, run), runner in(Compile, run)))
-runMain in Compile <<= Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run)))
+run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in(Compile, run), runner in(Compile, run))
+runMain in Compile <<= Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run))
 ```
 
 ## How to exclude Log4j from application assembly?
