@@ -30,6 +30,7 @@ The concept to execute analytical queries (fast SQL on Impala) against whole set
 Cloudera gains mastery in keeping their own technologies alive (e.g: [Apache Flume](https://flume.apache.org/)).
 * [Apache Gearpump](https://gearpump.apache.org/) from Intel has lost its momentum. I really liked idea of distributed streaming framework built on Akka.
 * I was really surprised that CSV format is heavily used and what is even worse, conference speakers still talk about it.
+* Unfortunately there was no session about [Apache Kylin](http://kylin.apache.org/), so sad. 
 
 ## TL;DR
 
