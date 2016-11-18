@@ -11,7 +11,7 @@ The event concentrates around big data projects under [Apache Foundation](https:
 Below you can find my notes from several interesting sessions and overall impression on the conference itself.
 The notes are presented as a short checklists, if some aspect was particularly interesting I put the reference to supplementary materials. 
 
-## TL;DR; Key takeaways
+## Key takeaways
 
 * At [Allegro](http://allegro.tech/) we are on track with our clickstream ingestion platform.
 [Apache Kafka](https://kafka.apache.org/), [Apache Avro](https://avro.apache.org/), [Apache Parquet](https://parquet.apache.org/), [Apache Spark](https://spark.apache.org/), [Apache Hive](https://hive.apache.org/) and last but not least [Apache Druid](http://druid.io/) are key players for us, all hosted under [Apache Foundation](https://www.apache.org/)!
@@ -30,7 +30,9 @@ The concept to execute analytical queries (fast SQL on Impala) against whole set
 Cloudera gains mastery in keeping their own technologies alive (e.g: Apache Flume).
 * [Apache Gearpump](https://gearpump.apache.org/) from Intel has lost its momentum. I really liked idea of distributed streaming framework built on Akka.
 
-## “Stream processing as a foundational paradigm and Apache Flink's approach to it” by Stephan Ewen (Data Artisans)
+## TL;DR
+
+### “Stream processing as a foundational paradigm and Apache Flink's approach to it” by Stephan Ewen (Data Artisans)
 
 * With Flink you don’t have to trade off either latency, throughput, or result accuracy - nice, single sentence to describe the framework.
 * Asynchronous Distributed Snapshot is a key to achieve fault tolerance and avoid “stop the world”. 
@@ -43,13 +45,13 @@ See also:
 See also:
 [http://flink-forward.org/wp-content/uploads/2016/07/Till-Rohrmann-Dynamic-Scaling-How-Apache-Flink-adapts-to-changing-workloads.pdf](http://flink-forward.org/wp-content/uploads/2016/07/Till-Rohrmann-Dynamic-Scaling-How-Apache-Flink-adapts-to-changing-workloads.pdf)
 
-## “Apache Gearpump next-gen streaming engine” by Karol Brejna, Huafeng Wang (Intel)
+### “Apache Gearpump next-gen streaming engine” by Karol Brejna, Huafeng Wang (Intel)
 
 * [Trusted Analytics Platform](http://trustedanalytics.org/) - self service platform for data scientists, developers and system operators.
 * Roadmap: integration with [Apache Beam](http://beam.incubator.apache.org/), materializer for [Akka Streams](http://akka.io/).
 * Oh, I forgot - chinese english is terrible.
 
-## “An overview on optimization in Apache Hive: past, present, future” by Jesus Rodriguez (HortonWorks)
+### “An overview on optimization in Apache Hive: past, present, future” by Jesus Rodriguez (HortonWorks)
 
 * Goals - sub-seconds latency, petabyte scale, ANSI SQL - never ending story.
 * Metastore is often a bottleneck (DataNucleus ORM).
@@ -67,7 +69,7 @@ See more:
 [https://issues.apache.org/jira/browse/HIVE-10459](https://issues.apache.org/jira/browse/HIVE-10459)
 * Roadmap: optimizations based on CPU/MEM/IO costs.
 
-## “Distributed in-database machine learning with Apache MADlib” by Roman Shaposhnik (Pivotal)
+### “Distributed in-database machine learning with Apache MADlib” by Roman Shaposhnik (Pivotal)
 
 * Machine learning algorithms implemented as “distributed UDFs”.
 * Works on PostgreSQL and its forks ([Pivotal Greenplum](http://greenplum.org/), [Apache HAWQ](http://hawq.incubator.apache.org/)).
@@ -76,7 +78,7 @@ See more:
 [https://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf](https://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf)
 * Roadmap: more algorithms, execution on GPU with [CUDA](http://www.nvidia.com/object/cuda_home_new.html).
 
-## “Interactive analytics at scale in Hive using Druid” by Jesus Rodriguez (HortonWorks)
+### “Interactive analytics at scale in Hive using Druid” by Jesus Rodriguez (HortonWorks)
 
 * It works, at least on Jesus laptop with unreleased Hive version.
 * Druid is used as a library (more or less).
@@ -90,14 +92,14 @@ Right now the broker might be a bottleneck.
 See more: 
 [https://cwiki.apache.org/confluence/display/Hive/Druid+Integration](https://cwiki.apache.org/confluence/display/Hive/Druid+Integration)
 
-## “Hadoop at Uber” by Mayank Basal (Uber)
+### “Hadoop at Uber” by Mayank Basal (Uber)
 
 * Fast pace of changes, respect!
 * Shared cluster for batch jobs (YARN) and realtime jobs (Mesos) -> better resources utilization.
 * [Apache Myriad](https://myriad.apache.org/) (YARN on Mesos): static allocation, no global quotas, no global priorities and many more limitations and problems.
 * Unified Scheduler - just the name without any details yet.
 
-## “Spark Performance” by Tim Ellison (IBM)
+### “Spark Performance” by Tim Ellison (IBM)
 
 * Contribution to Spark in IBM way (closed solutions, heavily dependant on IBM JVM and IBM hardware).
 * [Spark-kit](https://www.ibm.com/developerworks/java/jdk/spark/) (e.g custom block manager).
@@ -111,7 +113,7 @@ See more:
 * And much more, low level technical details, look into the presentation by yourself:
 [http://www.slideshare.net/JontheBeach/a-java-implementers-guide-to-boosting-apache-spark-performance-by-tim-ellison](http://www.slideshare.net/JontheBeach/a-java-implementers-guide-to-boosting-apache-spark-performance-by-tim-ellison)
 
-## Apache Calcite and Apache Geode by Christian Tzolov (Pivotal)
+### Apache Calcite and Apache Geode by Christian Tzolov (Pivotal)
 
 * Geode (AKA Gemfire) - distributed hashmap, consistent, transactional, partitioned, replicated, etc.
 * PDX serialization, on field level, type registry.
@@ -122,7 +124,7 @@ See more:
 * Calcite adapter might be implemented gradually (from enumerable to advanced pushdowns/optimizations and bindable generated code).
 * [Linq4j](https://github.com/apache/calcite/tree/master/linq4j) ported from .NET.
 
-## “Data processing pipeline at Trivago” by Clemens Valiente (Trivago)
+### “Data processing pipeline at Trivago” by Clemens Valiente (Trivago)
 
 * Collectors with HDD fallback, Apache Kafka, Camus, CSV.
 * Hive MR jobs prepare aggregates and data subsets for Apache Impala, Apache Oozie as scheduler.
@@ -131,18 +133,18 @@ See more:
 * Roadmap: [Kafka Streams](https://www.confluent.io/product/kafka-streams/), Impala + Kudu, Kylin + HBase.
 * Interesting concept: direct access to Kafka Streams state (queryable [VoltDB](https://www.voltdb.com/)).
 
-## “Implementing BigPetStore in Spark and Flink” by Marton Balasi (Cloudera)
+### “Implementing BigPetStore in Spark and Flink” by Marton Balasi (Cloudera)
 
 * [BigTop](https://github.com/apache/bigtop) - way to build packages or setup big data servers and tools locally.
 * [BigPetStore](https://github.com/apache/bigtop/tree/master/bigtop-bigpetstore) - generates synthethic data + sample stats calculation + sample recommendation (collaborative filtering).
 * MR, Spark, [Flink](https://github.com/bigpetstore/bigpetstore-flink) implementations - nice method to learn Flink if you already know Spark.
 
-## “Introduction to TensorFlow” by Gemma Parreno
+### “Introduction to TensorFlow” by Gemma Parreno
 
 * Global finalist at [NASA Space App Challenge](https://2016.spaceappschallenge.org/challenges/solar-system/near-earth-objects-machine-learning/projects/deep-asteriod), congrats!
 * Extremely interesting session, but I’ve been totally lost :-(
 
-## "Shared Memory Layer and Faster SQL for Spark Applications" by Dmitriy Setrakyan (GridGain)
+### "Shared Memory Layer and Faster SQL for Spark Applications" by Dmitriy Setrakyan (GridGain)
 
 * Apache Ignite is a in-memory data grid, compute grid, service grid, messaging and more.
 * Off heap, [slab allocation](https://en.wikipedia.org/wiki/Slab_allocation)
@@ -159,7 +161,7 @@ See more:
 [https://ignite.apache.org/use-cases/hadoop/hdfs-cache](https://ignite.apache.org/use-cases/hadoop/hdfs-cache)
 * Roadmap: dataframe compatible queries.
 
-## "Apache CouchDB" by Jan Lehnardt (Neighbourhoodie Software)
+### "Apache CouchDB" by Jan Lehnardt (Neighbourhoodie Software)
 
 * Master-master key-value store.
 * HTTP as protocol.
@@ -169,13 +171,13 @@ See more:
 * [Conflict-Free Replicated JSON Datatype](https://arxiv.org/pdf/1608.03960.pdf) was mentioned by Jan during talk, interesting.
 * Roadmap: HTTP2, pluggable storage format, improved protocol for high latency networks.
 
-## “Java memory leaks in modular environment” by Mark Thomas (Pivotal)
+### “Java memory leaks in modular environment” by Mark Thomas (Pivotal)
 
 * Did you remember “OutOfMemoryError: PermGen space” in Tomcat? It is mostly not Tomcat fault.
 * Excellent memory leaks analysis live demo using YourKit profiler (leaks in awt, java2d, rmi, xml).
 [https://github.com/markt-asf/memory-leaks](https://github.com/markt-asf/memory-leaks)
 
-## “Children and the art of coding” by Sebastien Blanc (RedHat)
+### “Children and the art of coding” by Sebastien Blanc (RedHat)
 
 * The best, entertaining session on the conference, IMHO! 
 If you are happy parent, you should watch Sebastien's session.
