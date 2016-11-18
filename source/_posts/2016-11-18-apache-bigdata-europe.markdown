@@ -24,7 +24,7 @@ I hope that the gap to mature RDBMS optimizers will be somehow filled.
 It would be also great to see [Spark Catalyst](http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf) and [Apache Calcite](https://calcite.apache.org/) cooperation, keep your fingers crossed.
 * Stephan Even should improve [Apache Flink](https://flink.apache.org/) keynotes if DataArtisans want to compete with DataBricks. 
 [Apache Flink](https://flink.apache.org/) architecture and overall design is awesome, FTW.
-* Queryable state in stream processing is quite interesting idea to decrease latency in access to pre-aggregated data. 
+* [Queryable state in stream processing](https://www.confluent.io/blog/unifying-stream-processing-and-interactive-queries-in-apache-kafka) is quite interesting idea to decrease latency in access to pre-aggregated data. 
 * [Apache Kudu](https://kudu.apache.org/) and [Apache Impala](https://impala.apache.org/) are on dead end, IMHO. 
 The concept to execute analytical queries (fast SQL on Impala) against whole set of raw data (kept in Kudu) is unrealistic. 
 Cloudera gains mastery in keeping their own technologies alive (e.g: [Apache Flume](https://flume.apache.org/)).
