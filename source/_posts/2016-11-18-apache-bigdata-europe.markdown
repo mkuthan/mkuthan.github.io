@@ -8,7 +8,7 @@ categories: [conferences]
 
 Last week I attended [Apache Big Data Europe](http://events.linuxfoundation.org/events/apache-big-data-europe) held in Sevilla, Spain. 
 The event concentrates around big data projects under [Apache Foundation](https://www.apache.org/) umbrella. 
-Below you can find my notes from several interesting sessions and overall impression on the conference itself.
+Below you can find my overall impression on the conference and notes from several interesting sessions.
 The notes are presented as a short checklists, if some aspect was particularly interesting I put the reference to supplementary materials. 
 
 ## Key takeaways
@@ -27,8 +27,9 @@ It would be also great to see [Spark Catalyst](http://people.csail.mit.edu/matei
 * Queryable state in stream processing is quite interesting idea to decrease latency in access to pre-aggregated data. 
 * [Apache Kudu](https://kudu.apache.org/) and [Apache Impala](https://impala.apache.org/) are on dead end, IMHO. 
 The concept to execute analytical queries (fast SQL on Impala) against whole set of raw data (kept in Kudu) is unrealistic. 
-Cloudera gains mastery in keeping their own technologies alive (e.g: Apache Flume).
+Cloudera gains mastery in keeping their own technologies alive (e.g: [Apache Flume](https://flume.apache.org/)).
 * [Apache Gearpump](https://gearpump.apache.org/) from Intel has lost its momentum. I really liked idea of distributed streaming framework built on Akka.
+* I was really surprised that CSV format is heavily used and what is even worse, conference speakers still talk about it.
 
 ## TL;DR
 
@@ -41,9 +42,8 @@ See also:
 * Application rolling updates with state versioning.
 See also: 
 [http://data-artisans.com/how-apache-flink-enables-new-streaming-applications/](http://data-artisans.com/how-apache-flink-enables-new-streaming-applications/)
-* Roadmap: elastic parallelism (to scale out/in stateful jobs), realtime queries using [Apache Calcite Streaming SQL](https://calcite.apache.org/docs/stream.html).
-See also:
-[http://flink-forward.org/wp-content/uploads/2016/07/Till-Rohrmann-Dynamic-Scaling-How-Apache-Flink-adapts-to-changing-workloads.pdf](http://flink-forward.org/wp-content/uploads/2016/07/Till-Rohrmann-Dynamic-Scaling-How-Apache-Flink-adapts-to-changing-workloads.pdf)
+* Roadmap: [elastic parallelism](http://flink-forward.org/wp-content/uploads/2016/07/Till-Rohrmann-Dynamic-Scaling-How-Apache-Flink-adapts-to-changing-workloads.pdf) (to scale out/in stateful jobs),
+realtime queries using [Apache Calcite Streaming SQL](https://calcite.apache.org/docs/stream.html).
 
 ### “Apache Gearpump next-gen streaming engine” by Karol Brejna, Huafeng Wang (Intel)
 
@@ -58,15 +58,13 @@ See also:
 See also: 
 [https://cwiki.apache.org/confluence/display/Hive/Design#Design-MetastoreArchitecture](https://cwiki.apache.org/confluence/display/Hive/Design#Design-MetastoreArchitecture)
 * Metastore on HBase (Hive 2.x, alpha).
-* Cost Based Optimizer (Apache Calcite), integrated from 0.14, enabled by default from 2.0.
-See also:
-[https://cwiki.apache.org/confluence/display/Hive/Cost-based+optimization+in+Hive](https://cwiki.apache.org/confluence/display/Hive/Cost-based+optimization+in+Hive)
+* [Cost Based Optimizer](https://cwiki.apache.org/confluence/display/Hive/Cost-based+optimization+in+Hive) (Apache Calcite), integrated from 0.14, enabled by default from 2.0.
 * Optimizations: push down projections, push down filtering,
 join reordering ([bushy joins](http://hortonworks.com/blog/hive-0-14-cost-based-optimizer-cbo-technical-overview/)), 
 propagate projections, propagate filtering and more.
 * New feature: materialized views. Cons: up-to-date statistics, optimizer could use view instead of table.
 See more:
-[https://issues.apache.org/jira/browse/HIVE-10459](https://issues.apache.org/jira/browse/HIVE-10459)
+[HIVE-10459](https://issues.apache.org/jira/browse/HIVE-10459)
 * Roadmap: optimizations based on CPU/MEM/IO costs.
 
 ### “Distributed in-database machine learning with Apache MADlib” by Roman Shaposhnik (Pivotal)
@@ -115,19 +113,19 @@ See more:
 
 ### Apache Calcite and Apache Geode by Christian Tzolov (Pivotal)
 
-* Geode (AKA Gemfire) - distributed hashmap, consistent, transactional, partitioned, replicated, etc.
-* PDX serialization, on field level, type registry.
+* Apache Geode (AKA Gemfire) - distributed hashmap, consistent, transactional, partitioned, replicated, etc.
+* [PDX serialization](https://cwiki.apache.org/confluence/display/GEODE/PDX+Serialization+Internals), on field level, type registry.
 * Nested regions.
 * Embeddable.
 * Object Query Language (OQL) ~ SQL.
-* Calcite adapter (work in progress).
-* Calcite adapter might be implemented gradually (from enumerable to advanced pushdowns/optimizations and bindable generated code).
+* Apache Calcite adapter (work in progress).
+The adapter might be implemented gradually (from in-memory enumerable to advanced pushdowns/optimizations and bindable generated code).
 * [Linq4j](https://github.com/apache/calcite/tree/master/linq4j) ported from .NET.
 
 ### “Data processing pipeline at Trivago” by Clemens Valiente (Trivago)
 
-* Collectors with HDD fallback, Apache Kafka, Camus, CSV.
-* Hive MR jobs prepare aggregates and data subsets for Apache Impala, Apache Oozie as scheduler.
+* Separated datacenters, REST collectors with HDD fallback, Apache Kafka, Camus, CSV.
+* Hive MR jobs prepare aggregates and data subsets for Apache Impala, [Apache Oozie](http://oozie.apache.org/) used as scheduler.
 * Problems with memory leaks in Apache Impala.
 * [R/Shiny](http://shiny.rstudio.com/) connected to Impala for analytical purposes.
 * Roadmap: [Kafka Streams](https://www.confluent.io/product/kafka-streams/), Impala + Kudu, Kylin + HBase.
@@ -141,8 +139,8 @@ See more:
 
 ### “Introduction to TensorFlow” by Gemma Parreno
 
-* Global finalist at [NASA Space App Challenge](https://2016.spaceappschallenge.org/challenges/solar-system/near-earth-objects-machine-learning/projects/deep-asteriod), congrats!
-* Extremely interesting session, but I’ve been totally lost :-(
+* Global finalist of [NASA Space App Challenge](https://2016.spaceappschallenge.org/challenges/solar-system/near-earth-objects-machine-learning/projects/deep-asteriod), congrats!
+* Extremely interesting session, but I’ve been totally lost - too much science :-(
 
 ### "Shared Memory Layer and Faster SQL for Spark Applications" by Dmitriy Setrakyan (GridGain)
 
@@ -174,11 +172,12 @@ See more:
 ### “Java memory leaks in modular environment” by Mark Thomas (Pivotal)
 
 * Did you remember “OutOfMemoryError: PermGen space” in Tomcat? It is mostly not Tomcat fault.
+* You should always set `-XX:MaxMetaspaceSize` in production systems.
 * Excellent memory leaks analysis live demo using YourKit profiler (leaks in awt, java2d, rmi, xml).
 [https://github.com/markt-asf/memory-leaks](https://github.com/markt-asf/memory-leaks)
 
 ### “Children and the art of coding” by Sebastien Blanc (RedHat)
 
 * The best, entertaining session on the conference, IMHO! 
-If you are happy parent, you should watch Sebastien's session.
+If you are happy parent, you should watch Sebastien's session (unfortunately sessions were not recorded, AFAIK).
 * Logo, Scratch, Groovy, Arduino and [Makey Makey](http://makeymakey.com/)
