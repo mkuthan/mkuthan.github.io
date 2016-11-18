@@ -155,7 +155,7 @@ If you are happy parent, you should watch Sebastien's session.
 ## Key takeaways
 
 * At [Allegro](http://allegro.tech/) we are on track with our clickstream ingestion platform.
-[Apache Kafka](https://kafka.apache.org/), [Apache Avro](https://avro.apache.org/), [Apache Parquet](https://parquet.apache.org/), [Apache Spark](https://spark.apache.org/), [Apache Hive](https://hive.apache.org/) and last but not least [Apache Druid](http://druid.io/) are key players for us, all hosted by [Apache Foundation](https://www.apache.org/)!
+[Apache Kafka](https://kafka.apache.org/), [Apache Avro](https://avro.apache.org/), [Apache Parquet](https://parquet.apache.org/), [Apache Spark](https://spark.apache.org/), [Apache Hive](https://hive.apache.org/) and last but not least [Apache Druid](http://druid.io/) are key players for us, all hosted under [Apache Foundation](https://www.apache.org/)!
 * [Apache Ignite](https://ignite.apache.org/) might solve many performance issues in Spark jobs (shared RDD) but also in MR jobs (in-memory MR, HDFS cache). 
 Has to be verified during next Allegro internal hackaton, for sure.
 * Integration between [Apache Hive](https://hive.apache.org/) and [Apache Druid](http://druid.io/) looks really promising. 
