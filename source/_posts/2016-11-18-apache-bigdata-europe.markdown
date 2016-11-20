@@ -130,7 +130,7 @@ The adapter might be implemented gradually (from in-memory enumerable to advance
 * Problems with memory leaks in Apache Impala.
 * [R/Shiny](http://shiny.rstudio.com/) connected to Impala for analytical purposes.
 * Roadmap: [Kafka Streams](https://www.confluent.io/product/kafka-streams/), Impala + Kudu, Kylin + HBase.
-* Interesting concept: direct access to Kafka Streams state (queryable [VoltDB](https://www.voltdb.com/)).
+* Interesting concept: direct access to Kafka Streams state (queryable [RocksDB](http://rocksdb.org/)).
 
 ### “Implementing BigPetStore in Spark and Flink” by Marton Balasi (Cloudera)
 
