@@ -47,16 +47,93 @@ or you could continue reading and learn how to optimize the processing with low 
 Let's imagine large e-commerce web based platform with fabulous recommendation and advertisement subsystems.
 Every client during visit gets personalized recommendations and advertisements,
 the conversion is extraordinary high and platform earns additional profits from advertisers.
+To build comprehensive recommendation models, 
+such system needs to know everything about clients traits and their behaviour.
 
-To make it possible, e-commerce platform reports clients activities as unbounded stream of page views and events.
+To make it possible, e-commerce platform reports all clients activities as unbounded stream 
+of page views and events.
 Every time, the client enters web page, so-called page view is sent to Kafka cluster. 
-Page view defines web page related attributes like request URI, referrer URI, user agents, active A/B experiment and many more.
-In addition all important client activities are reported as event, e.g: search, add to cart, checkout.
-Page view and event structures are different so messages are published on separate Kafka topics.
+Page view defines web page attributes like request URI, referrer URI, user agent, active A/B experiments
+and many more.
+In addition to page view all important actions are reported as events, e.g: search, add to cart or checkout.
 To get complete view of the activity stream, collected events need to be enriched by data from page views.
 
-Because most of the processing logic is built around stream from given client, 
-page views and events are partitioned by client identifier.
+## Data Model
+
+Because most of the processing logic is built with context of given client, 
+page views and events are partitioned on Kafka topics by client identifier.
+
+``` scala
+type ClientId = String
+case class ClientKey(clientId: ClientId)
+
+val bob = ClientKey("bob")
+val jim = ClientKey("jim")
+```
+
+Page view and event structures are different so messages are published to separate Kafka topics.
+The topics key is always `ClientKey` and value is either `Pv` or `Ev` presented below.
+For better examples readability page view and event payload is defined as simplified single value field.
+
+``` scala
+type PvId = String
+type EvId = String
+
+case class Pv(pvId: PvId, value: String)
+case class Ev(evId: EvId, value: String, pvId: PvId) 
+```
+
+The following enriched structure `EvPv` is published to output Kafka topic using `ClientKey` as message key.
+This topic is then consumed directly by advertisement and recommendation subsystem.
+
+``` scala
+case class EvPv(evId: EvId, evValue: String, pvId: Option[PvId], pvValue: Option[String])
+```
+
+## Example Scenario
+
+For client "bob" the following messages are collected by the system.
+
+``` scala
+// initial page view
+ClientKey("bob"), Pv("pv0", "/")
+
+// a few events collected almost immediatelly
+ClientKey("bob"), Ev("ev0", "show header", "pv0")
+ClientKey("bob"), Ev("ev1", "show ads", "pv0")
+ClientKey("bob"), Ev("ev2", "show recommendation", "pv0")
+
+// duplicated event, welcome to distributed world
+ClientKey("bob"), Pv("ev1", "show ads", "pv0")
+
+// a dozen seconds later
+ClientKey("bob"), Pv("ev3", "click recommendation", "pv0")
+
+// out of order, early event collected before page view
+ClientKey("bob"), Ev("ev0", "show header", "pv1")
+
+// second page view
+ClientKey("bob"), Pv("pv1", "/item?id=1234&reco=abc")
+
+// event published almost immediatelly
+ClientKey("bob"), Ev("ev1", "show ads", "pv1")
+
+// a dozen minutes later, bob took coffe break before purchase
+ClientKey("bob"), Ev("ev2", "add to cart", "pv1")
+```
+
+For above clickstream the following output is expected.
+
+``` scala
+ClientKey("bob"), EvPv("ev0", "show header", "pv0", "/")
+ClientKey("bob"), EvPv("ev1", "show ads", "pv0", "/") // no duplicates
+ClientKey("bob"), EvPv("ev2", "show recommendation", "pv0", "/")
+ClientKey("bob"), EvPv("ev3", "click recommendation", "pv0", "/")
+
+ClientKey("bob"), EvPv("ev0", "show header", None, None) // page view has not been collected yet
+ClientKey("bob"), EvPv("ev1", "show ads", "pv1", "/item?id=1234&reco=abc")
+ClientKey("bob"), EvPv("ev2", "add to cart", None, None) // late event out of join window :(
+```
 
 ## Kafka Stream DSL
 
