@@ -9,6 +9,8 @@ before_script:
 - git config --global user.name "Marcin Kuthan"
 - git config --global user.email "marcin.kuthan@gmail.com"
 - export REPO_URL="https://$GH_TOKEN@github.com/$GH_REPO.git"
+- export LANG=en_US.UTF-8
+- export LC_ALL=en_US.UTF-8
 - bundle exec rake setup_github_pages[$REPO_URL]
 script:
 - bundle exec rake generate
