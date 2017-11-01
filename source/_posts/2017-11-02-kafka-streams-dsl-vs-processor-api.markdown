@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Kafka Streams DSL vs Processor API"
-date: 2017-11-04
+date: 2017-11-02
 comments: true
-categories: [kafka, streaming, scala]
+categories: [kafka, kafka streams, scala]
 ---
 
 [Kafka Streams](https://docs.confluent.io/current/streams/index.html) is a Java library 
@@ -149,6 +149,7 @@ ClientKey("bob"), EvPv("ev2", "add to cart", None, None)
 Now we are ready to implement above use case with recommended Kafka Streams DSL. 
 The code could be optimized but I would like present canonical way of using DSL
 without thinking about DSL internals.
+All examples are implemented using the latest Kafka Streams 1.0.0 version.
 
 Create two input streams for page views and events 
 connected to "clickstream.events" and "clickstream.page_views" Kafka topics.
@@ -431,7 +432,7 @@ is more detailed that original one. Everything is still within given client cont
 
 As before windowed store for deduplication needs to be configured.
 Because deduplication is done in a very short window (10 seconds or so),
-the logging to backed internal Kafka topic is disable at all.
+the logging to backed internal Kafka topic is disabled at all.
 If one of the stream instance fails, we will get some duplicates during this short window, not a big deal.
 
 ``` scala StoreBuilders
