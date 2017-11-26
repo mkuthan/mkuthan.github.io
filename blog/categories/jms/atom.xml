@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: JMS | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/jms/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to Send Email From JEE Application]]></title>
+    <link href="http://mkuthan.github.io/blog/2013/12/06/how-to-send-email-from-jee-application/"/>
+    <updated>2013-12-06T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2013/12/06/how-to-send-email-from-jee-application</id>
+    <content type="html"><![CDATA[<p>Sending email notifications from enterprise application is very common scenario.
+I know several methods to solve this puzzle, below you can find short summary.</p>
+
+<p>To send an email from the application at least SMTP server address must be configured.
+Because released application binary (e.g: WAR file) should be portable across environments (integration, QA, staging,
+production) configuration must be externalized.<br/>
+Below I present code snippets to configure SMTP server address as JNDI entry.</p>
+
+<p>Sample JNDI entry for JBoss:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;UTF-8&rdquo;?><br/>
+<server><br/>
+  <mbean code="org.jboss.mail.MailService" name="jboss:service=mailSession"></p>
+
+<pre><code>&lt;attribute name="JNDIName"&gt;mail/mailSession&lt;/attribute&gt;  
+&lt;attribute name="Configuration"&gt;  
+  &lt;configuration&gt;  
+    &lt;property name="mail.smtp.host" value="smtp.company.com"/&gt;  
+  &lt;/configuration&gt;  
+&lt;/attribute&gt;  
+&lt;depends&gt;jboss:service=Naming&lt;/depends&gt;  
+</code></pre>
+
+<p>  </mbean><br/>
+</server><br/>
+```</p>
+
+<p>Sample JNDI entry for Tomcat:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;UTF-8&rdquo;?><br/>
+<Context><br/>
+  &lt;Resource name=&ldquo;mail/mailSession&rdquo;</p>
+
+<pre><code>auth="Container"   
+type="javax.mail.Session"   
+mail.smtp.host="smtp.company.com"/&gt;      
+</code></pre>
+
+<p></Context><br/>
+```</p>
+
+<p>When mail session is configured as JNDI resource, it can be easily utilized by Spring Framework mail sender:</p>
+
+<p>``` xml
+&lt;jee:jndi-lookup id=&ldquo;mailSession&rdquo; jndi-name=&ldquo;mail/mailSession&rdquo; /></p>
+
+<p><bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"><br/>
+  <property name="session" ref="mailSession"/><br/>
+</bean><br/>
+```</p>
+
+<p>Now it is time for more tough part, how to use mail sender correctly?
+There are at least four options, choose the best one for you:</p>
+
+<ul>
+<li><em>Direct (Sync)</em> Use mail session directly from the application service in the web request thread.</li>
+<li><em>Direct (Async)</em> Use mail session directly from the application service using <code>@Async</code> Spring annotation.</li>
+<li><em>Database Queue</em> Save messages into database table and create cron job to send the emails periodically.</li>
+<li><em>JMS Queue</em> Put messages into JMS queue and attach JMS listener to process and send emails.</li>
+</ul>
+
+
+<p>I collected a few non-functional and functional common requirements together with short categorization for each method.</p>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th>                                           </th>
+<th align="center">Direct (Sync)</th>
+<th align="center">Direct (Async)</th>
+<th align="center">Database Queue</th>
+<th align="center">JMS Queue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>Application works even if the SMTP is down </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Web request thread is not blocked          </td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Mail aggregation, scheduled sending, etc.  </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">limited</td>
+</tr>
+<tr>
+<td></td>
+<td>Control over SMTP requests throttle        </td>
+<td align="center">no</td>
+<td align="center">limited</td>
+<td align="center">limited</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Redelivery policy, do not lost messages if SMTP is down </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">limited</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Monitoring                                 </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>I would start with &ldquo;Database Queue&rdquo; approach, at least if JMS is not already used in the project or you do not have to send thousands of emails.
+&ldquo;Direct&rdquo; method is not an option at all IMHO.</p>
+
+<p>Separate part of the subject is to how to create email body. In most situation
+I used some template engine, like <em>Freemarker</em> or <em>Thymeleaf</em>. The
+template can be defined as internal WAR resource or can be loaded from
+database if the template needs to be adjusted on runtime.</p>
+]]></content>
+  </entry>
+  
+</feed>

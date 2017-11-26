@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ruby | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Development Environment Setup]]></title>
+    <link href="http://mkuthan.github.io/blog/2013/10/09/development-environment-setup/"/>
+    <updated>2013-10-09T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2013/10/09/development-environment-setup</id>
+    <content type="html"><![CDATA[<p>This document is a manual how to configure flexible development environment for <em>Java</em>, <em>JavaScript</em>, <em>Ruby</em> and <em>Python</em> &ndash; my primary set of tools.
+Even if the runtimes installation with <code>apt-get</code> seems to be a trivial task, there is limited control over installed version of the runtime.
+The goal is to configure environment where you can easily change <em>Java</em>, <em>Ruby</em> , <em>node.js</em> and <em>python</em> versions.
+Where you can define the runtime version on project level.</p>
+
+<p>The most convenient way to configure and manage runtimes is to use environment managers.
+Environment manager is nothing more than shell script, the script intercepts executed commands using shim executables injected into your <code>PATH</code>.
+There are two flavours of the environment managers: <code>rvm</code> and <code>rbenv</code> like.
+I prefer the second one, it is less obtrusive and follows general unix principle: &ldquo;do one thing and do it well&rdquo;.</p>
+
+<p>Let&rsquo;s start and install environment managers (for <em>Java</em>, <em>Ruby</em>, <em>node.js</em> and <em>Python</em>) into your home directory:</p>
+
+<p><code>console
+git clone https://github.com/gcuisinier/jenv.git ~/.jenv
+git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
+git clone https://github.com/OiNutter/nodenv.git ~/.nodenv
+git clone https://github.com/yyuu/pyenv.git .pyenv
+</code></p>
+
+<p>For <code>rbenv</code> and <code>nodenv</code> you can install plugins that provide <code>rbenv install</code> and <code>nodenv install</code> commands to compile and install runtimes automatically.
+For Java you have to download and install JVM manually.</p>
+
+<p><code>console
+$git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+$git clone https://github.com/OiNutter/node-build.git ~/.nodenv/plugins/node-build
+</code>
+Add environment managers to the <code>PATH</code> variable and initialize them to get command auto completion.
+Append the following snippet at the end of <code>.bashrc</code> (or <code>.bash_profile</code> on Mac) file.</p>
+
+<p>``` bash
+export PATH=&ldquo;$HOME/.jenv/bin:$PATH&rdquo;
+eval &ldquo;$(jenv init &ndash;)&rdquo;</p>
+
+<p>export PATH=&ldquo;$HOME/.rbenv/bin:$PATH&rdquo;
+eval &ldquo;$(rbenv init &ndash;)&rdquo;</p>
+
+<p>export PATH=&ldquo;$HOME/.nodenv/bin:$PATH&rdquo;
+eval &ldquo;$(nodenv init &ndash;)&rdquo;</p>
+
+<p>export PATH=&ldquo;$HOME/.pyenv/bin:$PATH&rdquo;
+eval &ldquo;$(pyenv init &ndash;)&rdquo;
+```</p>
+
+<p>Install runtimes using environment managers (Java needs to be installed manually):</p>
+
+<p><code>console
+$jenv add /path/to/already/installed/jdk
+$rbenv install 1.9.3-p448
+$nodenv install 0.10.12
+$pyenv install 3.4.1
+</code></p>
+
+<p>Install build tools (<em>maven</em>, <em>gradle</em>, <em>sbt</em>, etc.), create symbolic links, and configure <code>PATH</code> in <code>.profile</code> file:</p>
+
+<p><code>bash
+APPS="$HOME/apps"
+export PATH="$APPS/apache-maven/bin:$APPS/gradle/bin:$APPS/sbt/bin:$PATH"
+</code></p>
+
+<p>Make build tools <em>jenv</em> aware:</p>
+
+<p><code>console
+$jenv enable-plugin maven
+$jenv enable-plugin gradle
+$jenv enable-plugin sbt
+</code></p>
+
+<p>Finally add shell helper functions for JVM configuration to the <code>.profile</code> file:</p>
+
+<p>``` bash
+function jdebug_set() {</p>
+
+<pre><code>jenv shell-options "$JENV_OPTIONS -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n"
+</code></pre>
+
+<p>}</p>
+
+<p>function jdebug_unset() {</p>
+
+<pre><code>jenv shell-options --unset
+</code></pre>
+
+<p>}</p>
+
+<p>function gc_set() {</p>
+
+<pre><code>jenv shell-options "$JENV_OPTIONS -XX:+PrintGCDetails -Xloggc:gc.log"
+</code></pre>
+
+<p>}</p>
+
+<p>function gc_unset() {</p>
+
+<pre><code>jenv shell-options --unset
+</code></pre>
+
+<p>}</p>
+
+<p>function jrebel_set() {</p>
+
+<pre><code>jenv shell-options "$JENV_OPTIONS -javaagent:$APPS/jrebel/jrebel.jar -noverify"
+</code></pre>
+
+<p>}</p>
+
+<p>function jrebel_unset() {</p>
+
+<pre><code>jenv shell-options --unset
+</code></pre>
+
+<p>}</p>
+
+<p>function jprofiler_set() {</p>
+
+<pre><code>jenv shell-options "$JENV_OPTIONS -javaagent:$APPS/jprofiler/bin/agent.jar"
+</code></pre>
+
+<p>}</p>
+
+<p>function jprofiler_unset() {</p>
+
+<pre><code>jenv shell-options --unset
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The last step is to read environment managers manual. As long as all four managers are very similar it should not take more than one evening.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Architecture | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/architecture/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Programming Language Does Not Matter]]></title>
+    <link href="http://mkuthan.github.io/blog/2014/09/15/programming_language_does_not_matter/"/>
+    <updated>2014-09-15T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2014/09/15/programming_language_does_not_matter</id>
+    <content type="html"><![CDATA[<p>A few days ago I participated in quick presentation of significant e-commerce platform.
+The custom platform implemented mostly in PHP and designed as scalable and distributed system.
+And I was really impressed! Below you can find a short summary of chosen libraries, frameworks and tools.</p>
+
+<p><em>Symfony</em> &ndash; The leading PHP framework to create web applications.
+Very similar to Spring Framework, you will get dependency injection, layered architecture and good support for automated testing.</p>
+
+<p><em>Doctrine</em> &ndash; Object to relational mapper (ORM), part of the Symfony framework.  Very similar to JPA.</p>
+
+<p><em>Composer</em> &ndash; Dependency manager for PHP, very similar to NPM.</p>
+
+<p><em>Gearman</em> &ndash; Generic application framework to farm out work to other machines or processes. Somehow similar to YARN.</p>
+
+<p><em>Varnish</em> &ndash; HTTP reverse proxy.</p>
+
+<p><em>Memcached</em> &ndash; Distributed key value cache.</p>
+
+<p><em>RabbitMQ</em> &ndash; Messaging middleware based on AMPQ protocol. Used for distributed services integration but also for decoupled request reply communication.</p>
+
+<p><em>logstash</em> &ndash; Log manager with tons of plugins to almost everything. The monitoring is really crucial in distributed systems.</p>
+
+<p>The programming language does not really matter if you need scalable, distributed, easy to maintain and enhance system.
+You can apply excellent design using PHP or produce big ball of mud in Java.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Twelve-Factor App - Part 2]]></title>
+    <link href="http://mkuthan.github.io/blog/2014/05/27/the-twelve-factor-app-part2/"/>
+    <updated>2014-05-27T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2014/05/27/the-twelve-factor-app-part2</id>
+    <content type="html"><![CDATA[<p>This blog post is a continuation of <a href="http://mkuthan.github.io/blog/2014/05/26/the-twelve-factor-app-part1/">first part</a> of this blog series.</p>
+
+<h2>7. Port Binding</h2>
+
+<blockquote><p>The twelve-factor app is completely self-contained and does not rely on runtime injection of a webserver into the execution environment to create a web-facing service.</p></blockquote>
+
+<p>I developed self-contained web application once, with embedded Jetty server.
+There are many product with embedded web server on the market, e.g: Artifactory.
+Now most of my POC (Proof of Concept) use Spring Boot, when you can run web application as regular system process.
+After hell of JBoss class loader issues it seems to be the correct way to run the application.</p>
+
+<h2>8. Concurrency</h2>
+
+<blockquote><p>In the twelve-factor app, processes are a first class citizen.</p></blockquote>
+
+<p>Using processes instead of threads is controversial in JVM world.
+But I agree that you can not scale out using threads only.
+What is also interesting, you should never daemonize process or write PID file.
+Just align to the system process management tools like upstart.</p>
+
+<h2>9. Disposability</h2>
+
+<blockquote><p>The twelve-factor app’s processes are disposable, meaning they can be started or stopped at a moment’s notice.</p></blockquote>
+
+<p>I faced disposability issues, when I was developing applications hosted on GAE (Google App Engine).
+Forget about any heavy duty frameworks on GAE, the startup process must be really light.
+In general it is problematic in JVM world.
+Startup time of the JVM is significant itself, and JMV must spin up our application as well.
+If I could compare JVM startup performance to the node.js there is a huge difference.</p>
+
+<p>I also remember how easily you can reconfigure system service when you can send -HUP signal.
+It would be nice to have this possibility for my applications.</p>
+
+<h2>10. Dev/prod parity</h2>
+
+<blockquote><p>The twelve-factor app is designed for continuous deployment by keeping the gap between development and production small.</p></blockquote>
+
+<p>Clear for me, test your production like environment as often as possible to minimize the risk.
+If the production database is Oracle, use Oracle XE for local development, not MySQL or H2.
+If the production applications server is JBoss, use JBoss locally or Apache Tomcat at last resort.
+Use the same JVM with similar memory settings if feasible.
+If you deploy your application on Linux, do not use Windows for local development.
+Virtualization or lightweight containers are your friends.
+And so on &hellip;</p>
+
+<h2>11. Logs</h2>
+
+<blockquote><p>A twelve-factor app never concerns itself with routing or storage of its output stream.</p></blockquote>
+
+<p>Hmm, I would prefer to use any logger (SLF4J) with configured appender instead of stdout.
+Instead file appender I could use Syslog appender and gather logs from all cluster nodes.
+But maybe I&rsquo;m wrong with this. I understand the point, than stdout is a basic common denominator for all runtime platform.</p>
+
+<h2>12. Admin processes</h2>
+
+<blockquote><p>Twelve-factor strongly favors languages which provide a REPL shell out of the box, and which make it easy to run one-off scripts.</p></blockquote>
+
+<p>For almost all my web application, I embedded BSH web servlet (Bean Shell Console). It rescued me out of trouble many times.
+It isn&rsquo;t full fledged REPL like this one from Scala but still usable.
+Oh, I forgot to mention about H2 web servlet, also embedded into most of my application.</p>
+
+<p>Sometimes it is much easier to expose some admin functionality as JMX beans.
+You can use Jolokia as REST JMX connector and easily prepare admin console using a few line of HTML and JavaScript.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Twelve-Factor App - Part 1]]></title>
+    <link href="http://mkuthan.github.io/blog/2014/05/26/the-twelve-factor-app-part1/"/>
+    <updated>2014-05-26T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2014/05/26/the-twelve-factor-app-part1</id>
+    <content type="html"><![CDATA[<p>During my studies about &ldquo;Micro Services&rdquo; I found comprehensive (but short) document about <em>Twelve-Factor App</em> methodology
+for building software-as-a-service applications. The orginal paper is published at <a href="http://12factor.net/">12factor.net</a>.</p>
+
+<p>Below you can find a short summary of my experiences for the first part of the document.
+There is also a <a href="http://mkuthan.github.io/blog/2014/05/27/the-twelve-factor-app-part2/">second part</a> of this blog post series.</p>
+
+<h2>1. Codebase</h2>
+
+<blockquote><p>There is always a one-to-one correlation between the codebase and the app</p></blockquote>
+
+<p>I had the chance to use setup, where Subversion repository was shared for many projects.
+Only once, and I said &ndash; &ldquo;never again&rdquo;.
+I remember problems with release management, setting up access rights, and crazy revision numbers.</p>
+
+<h2>2. Dependencies</h2>
+
+<blockquote><p>A twelve-factor app never relies on implicit existence of system-wide packages</p></blockquote>
+
+<p>I remember a setup where you spent whole day to build all dependencies (a lot of C and C++ code).
+The solution was a repository with compiled and versioned dependencies.
+Almost everything was compiled statically with minimal dependency to the core system libraries like stdc.</p>
+
+<p>Right now I build projects using Maven repositories and artifacts.
+But it is not enough for twelve-factor app, and I fully agree.
+My next step should be using &ldquo;Infrastructure as a code&rdquo; principle in practice.</p>
+
+<h2>3. Config</h2>
+
+<blockquote><p>strict separation of config from code</p></blockquote>
+
+<p>Some time ago my application was deployed on the wrong environment (WAR file prepared for QA environment was deployed on PROD).
+It was one of the worst week in my career to rollback everything back.
+Never again, I fully agree that binary should be environment independent. Keep configuration out of binary artifact.</p>
+
+<h2>4. Backing Services</h2>
+
+<blockquote><p>The code for a twelve-factor app makes no distinction between local and third party services</p></blockquote>
+
+<p>I do not fully understand this chapter.
+What I understood is that I should separate my domain from attached resources (local and third party services).
+And it is what I have done many times:</p>
+
+<ul>
+<li>Externalize connection configuration</li>
+<li>Use Anti Corruption Layer between my domain and infrastructure (e.g: hexagonal architecture)</li>
+<li>Do not mix domain logic with infrastructure code.</li>
+</ul>
+
+
+<h2>5. Build, release, run</h2>
+
+<blockquote><p>The twelve-factor app uses strict separation between the build, release, and run stages</p></blockquote>
+
+<p>The difference between build and release stages is somehow new for me.
+My JEE applications are released and deployed to the Maven repository.
+The deployed WAR files are deployable on any environment, the configuration is externalized and applied during Maven WAR overlay process.
+The outcome of the overlay is not stored as a reference but maybe it should. The question is where to put release?
+Again in the Maven repository or as a Bamboo build artifact?</p>
+
+<p>What I apply during the <em>run stage</em> is the database schema migration using <em>Liquibase</em> or <em>Flyway</em> and it really works.
+I agree with author to keep this stage as small as possible.</p>
+
+<p>And for sure direct changes on the production are prohibited.
+I had to clean up the project when the changes were not checked in to the repository once, never again.</p>
+
+<h2>6. Processes</h2>
+
+<blockquote><p>Twelve-factor processes are stateless and share-nothing.</p></blockquote>
+
+<p>I have never used this concept but I agree with author.
+From the scalability perspective share-nothing architecture of stateless services is good.</p>
+
+<p>Ok, 10 years ago I developed application using CORBA and there were remote calls to fully stateful remote object.
+Bad idea, really.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[DDD Architecture Summary]]></title>
+    <link href="http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/"/>
+    <updated>2013-11-04T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary</id>
+    <content type="html"><![CDATA[<p>In this blog post you can find my general rules for implementing system using <em>Domain Driven Design</em>. Do not use them
+blindly but it is good starting point for DDD practitioners.</p>
+
+<h2><a name="bc"></a>Bounded Context</h2>
+
+<ul>
+<li>Separate bounded context for each important module of the application (important from business partner perspective).</li>
+<li>Independent of each other (if feasible).</li>
+<li>For monolithic application separate <em>Spring Framework</em> context for each bounded context, e.g: <code>applicationContext-domain-crm.xml</code>,
+<code>applicationContext-domain-shipping.xml</code>, etc.</li>
+<li>CRUD like bounded contexts (user management, dictionaries, etc.) should be implemented as <em>Anemic Domain Model</em>.</li>
+</ul>
+
+
+<h2><a name="domain"></a>Domain</h2>
+
+<ul>
+<li>Place for application business logic.</li>
+<li>Must be independent of the technical complexity, move technical complexity into <a href="#infrastructure">infrastructure</a>.</li>
+<li>Must be independent of the particular presentation technology, move presentation related stuff into <a href="#web">web</a>.</li>
+<li>Internal package structure must reflect business concepts (<a href="#bc">bounded contexts</a>), e.g: <code>crm</code>, <code>shipping</code>, <code>sales</code>,
+<code>shared</code>, etc.</li>
+</ul>
+
+
+<h2><a name="dm"></a> Domain Model</h2>
+
+<ul>
+<li>Rich model, place for: entities, domain services, factories, strategies, specifications, etc.</li>
+<li>Best object oriented practices applied (SOLID, GRASP).</li>
+<li>Unit tested heavily (with mocks in the last resort).</li>
+<li>Unit tests executed concurrently (on method or class level).</li>
+<li>Meaningful names for domain services e.g: <code>RebateCalculator</code>, <code>PermissionChecker</code>, not <code>RebateManager</code> or
+<code>SecurityService</code>.</li>
+<li>Domain services dependencies are injected by constructor.</li>
+<li>Having more than 2~3 dependencies is suspicious.</li>
+<li>Entities are not managed by containers.</li>
+<li>Aggregate root entities are domain events publishers (events collectors).</li>
+<li>Aggregates in single bounded context might be strongly referenced (navigation across objects tree).</li>
+<li>Aggregates from different bounded contexts are referenced by business keys (if feasible).</li>
+<li>No security, no transactions, no aspects, no magic, only plain old Java.</li>
+<li>Interfaces for domain services when the service is provided by <a href="#infrastructure">infrastructure</a>.</li>
+<li>No interfaces for domain services implemented in the domain model itself.</li>
+</ul>
+
+
+<h2><a name="as"></a>Application Services</h2>
+
+<ul>
+<li>Orchestrator and facade for actors under Model.</li>
+<li>Place for security handling.</li>
+<li>Place for transactions handling.</li>
+<li>Must not deliver any business logic, move business logic into <a href="#dm">domain model</a>. Almost no conditionals and loops.</li>
+<li>Implemented as transactional script.</li>
+<li>No unit tests.</li>
+<li>Acceptance tests executed against this layer.</li>
+<li>Cglib proxied, proxy must be serialized by session scoped beans in <a href="#web">web</a> layer.</li>
+<li>Dependencies are injected on field level (private fields).</li>
+<li>Ten or more dependencies for single application service is not a problem.</li>
+<li>Application services are also domain event listeners.</li>
+<li>Always stateless.</li>
+<li>No interfaces, just implementation.</li>
+</ul>
+
+
+<h2><a name="ab"></a>Application Bootstrap</h2>
+
+<ul>
+<li>Initial application data.</li>
+<li>Loaded during application startup (fired by <code>BootstrapEvent</code>) if application storage is empty.</li>
+<li>Loading order is defined with Spring <code>Ordered</code> interface.</li>
+<li>Data is loaded within Model API.</li>
+<li>Data might be loaded within <a href="#as">application services</a>, e.g: load sample Excel when application is integrated with
+external world this way.</li>
+<li>No tests, bootstrap is tested during application startup on daily basis.</li>
+</ul>
+
+
+<h2><a name="infrastructure"></a>Infrastructure</h2>
+
+<ul>
+<li>Place for technical services</li>
+<li>Must not deliver any business logic, move business logic into <a href="#domain">domain</a>.</li>
+<li>Internal package structure must reflect technical concepts, e.g: <code>~infrastructure.jpa</code>, <code>~infrastructure.jms</code>,
+<code>~infrastructure.jsf</code>, <code>~infrastructure.freemarker</code>, <code>~infrastructure.jackson</code>, etc.</li>
+<li>Shared for all bounded context of the application. For more complex applications, separate technical services e.g:
+<code>~infrastructure.jpa.crm</code>, <code>~infrastructure.jpa.shipping</code>, etc.</li>
+<li>Class names must reflect technical concepts, e.g.: <code>JpaCustomerRepository</code>, <code>JaksonJsonSerializer</code>,
+not <code>CustomerRepositoryImpl</code>, <code>JsonSerializerImpl</code>.</li>
+<li>Integration tested heavily (with <em>Spring Framework</em> context loaded).</li>
+<li>Integration tests executed by single thread.</li>
+<li>Test execution separated from unit tests within test groups.</li>
+<li>Separate <em>Spring Framework</em> context for each technical concept, e.g: <code>applicationContext-infrastructure-jpa.xml</code>,
+<code>applicationContext-infrastructure-jms.xml</code>, etc.</li>
+<li>Separate and independent Spring test context for each technical module, e.g: <code>testContext-jpa.xml</code>,
+<code>testContext-jms.xml</code>, etc.</li>
+</ul>
+
+
+<h2><a name="web"></a>Web</h2>
+
+<ul>
+<li>Client specific facade (REST, MVC, JSF, etc.)</li>
+<li>Place for UI logic (not applicable for JavaScript client and REST)</li>
+<li>Delegates requests to <a href="#as">application services</a></li>
+<li>No transactions, no method level security, move security and transactions to <a href="#as">application services</a>.</li>
+<li>No business logic, move business logic into <a href="#domain">domain</a>.</li>
+<li>Tested with mocked application services.</li>
+<li>Tested with loaded spring context for MVC controllers (if applicable).</li>
+<li>Serializable session scoped beans (to be safe all beans in this module should be <code>java.io.Serializable</code>).</li>
+<li>Internal package structure must reflect UI organization structure, it might be similar to project <em>sitemap</em>.</li>
+<li>Top level package might reflect technology or architecture e.g: <code>presentation</code>, <code>rest</code>, <code>mvc</code>, <code>jsf</code>, etc.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,739 @@
+<!doctype html>
+<html>
+<head>
+    <title>Domain Driven Design</title>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" href="/assets/reveal.js-2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="/assets/reveal.js-2.6.2/css/theme/sky.css">
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="/assets/reveal.js-2.6.2/lib/css/zenburn.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="/assets/font-awesome-4.1.0/css/font-awesome.css">
+    <style> .reveal i.fa { font-family: FontAwesome; font-style: normal; } </style>
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = '/assets/reveal.js-2.6.2/css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div class="reveal">
+    <div class="state-background"></div>
+
+    <div class="slides">
+        <section>
+    <section>
+        <h1>Domain Driven Design</h1>
+
+        <h3>from the trenches for practitioners</h3>
+
+        <p>
+            <small>j.Piknik Warszawa 2014</small>
+        </p>
+
+        <aside class="notes">
+            <ul>
+                <li>Session for DDD practitioners.</li>
+            </ul>
+        </aside>
+    </section>
+    <section>
+        <h1>About me</h1>
+
+        <h3>Marcin Kuthan</h3>
+
+        <img src="https://secure.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5" alt="Marcin Kuthan"
+             style="border: 1px; border-radius: 20px">
+
+        <p>Technical leader at Allegro Group</p>
+
+        <p><i class="fa fa-github"></i>&nbsp;<a href="http://mkuthan.github.io">mkuthan.github.io</a></p>
+    </section>
+    <section>
+        <h2>The Talk</h2>
+
+        <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+            <g>
+                <title>Layer 1</title>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,229.858,56.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="607.86074" x="-4.52012" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_13">domain services</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,229.858,56.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="564.27461" x="-195.25999" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_24">event sourcing</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,210.85800000000003,31.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="296.95166" x="47.92636" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_22">cohesion</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,210.85800000000003,31.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="289.72422" x="49.49023" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_27">cohesion</text>
+                <ellipse stroke="#000000" transform="rotate(-34.20109939575195 193.4487152099609,182.11390686035153) "
+                         ry="102.6084" rx="156.26669" id="svg_9" cy="182.11392" cx="193.44871" stroke-linecap="null"
+                         stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#cccccc"/>
+                <polyline id="svg_1" fill="none" stroke-width="3" stroke="#000000"
+                          points="11.689258354391939,256.23974609375 304.9715783835527,255.23973083496094 598.2539138450666,254.23973083496094 "/>
+                <polyline id="svg_2" transform="rotate(90 299.25399780273443,240.05900573730472) " fill="none"
+                          stroke-width="3" stroke="#000000"
+                          points="93.19846177524596,241.0601043701172 299.2551190463164,240.0601043701172 505.31177631738683,239.0601043701172 "/>
+                <text xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_5" y="55.46514" x="455.34884" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">evident</text>
+                <text xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_6" y="53.13955" x="166.97673" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">vague</text>
+                <text transform="rotate(-90 25.69770050048834,349.65100097656256) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_7" y="357.79074" x="25.69765" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">important</text>
+                <text transform="rotate(-90 26.278999328613313,154.8840026855469) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_8" y="163.02328" x="26.27904" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">essential</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,209.858,49.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_11" y="112.0402" x="511.67325" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">ubiquitous language</text>
+                <text id="svg_12" transform="matrix(0.629213,0,0,0.55,207.858,64.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="512.30518" x="293.0641" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">factories</text>
+                <text id="svg_15" transform="matrix(0.629213,0,0,0.55,207.858,64.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="559.47693" x="477.78433" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">repositories</text>
+                <text id="svg_17" transform="matrix(0.629213,0,0,0.55,207.858,64.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="463.82037" x="457.03531" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">entities</text>
+                <text id="svg_21" transform="matrix(0.629213,0,0,0.55,207.858,64.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="396.95165" x="284.73012" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">value objects</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,125.858,63.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="193.3153" x="27.26563" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_3">aggregates</text>
+                <text id="svg_4" transform="matrix(0.629213,0,0,0.5499999999999999,220.858,55.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="122.4062" x="-26.77012" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">bounded contexts</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,216.858,64.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="475.13348" x="-144.37737" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_10">application services</text>
+                <text id="svg_14" transform="matrix(0.629213,0,0,0.5499999999999999,220.858,70.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="277.49474" x="382.941" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">layered architecture</text>
+                <text transform="matrix(0.629213,0,0,0.55,207.858,64.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="622.00218" x="293.33874" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_16">specifications</text>
+                <text id="svg_18" transform="matrix(0.629213,0,0,0.55,207.858,64.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="291.49711" x="-144.37737" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">domain events</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,183.858,46.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="90.22202" x="314.60166" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_19">context map</text>
+                <text id="svg_20" transform="matrix(0.629213,0,0,0.5499999999999999,222.858,86.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="473.31529" x="11.37275" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">shared kernel</text>
+                <text id="svg_23" transform="matrix(0.629213,0,0,0.5499999999999999,205.858,56.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="153.85838" x="327.31596" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">core domain</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,229.858,56.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="642.452" x="-163.47084" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_25">CQRS</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,220.858,70.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="180.63378" x="484.95949" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_26">invariant</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,210.85800000000003,31.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="269.72335" x="51.08092" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_28">cohesion</text>
+                <text transform="matrix(0.629213,0,0,0.5499999999999999,205.858,56.145399999999995) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="320.63378" x="47.90779" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000" id="svg_29">supple design</text>
+                <text id="svg_30" transform="matrix(0.629213,0,0,0.5499999999999999,220.858,70.1454) " xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" y="207.90989" x="292.6542" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">immutability</text>
+            </g>
+        </svg>
+
+        <aside class="notes">
+            <ul>
+                <li>How to squeeze into 45 mins?</li>
+                <li>The most influential parts (at least for me).</li>
+                <li>Tha tough parts.</li>
+                <li>Do not expect quick DDD guide.</li>
+            </ul>
+        </aside>
+    </section>
+</section>
+
+<section>
+    <h2>Anemic domain model rot over time</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>More complex fragments of the application degrade regardless of effort put on quality.</li>
+            <li>Verified on several green-field projects.</li>
+            <li>Toolset (entities, dao, services, controllers) is not adequate for complex problems.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Rich domain model is expensive</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>Journey to DDD.</li>
+            <li>High learning curve.</li>
+            <li>Complex building blocks and patterns.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Anemic and rich domain models interact with each other</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>There is no single valid architecture for whole system.</li>
+            <li>Use anemic model for CRUD like bounded contexts.</li>
+            <li>Use rich domain model for core / complex bounded contexts.</li>
+            <li>Do not mix anemic and rich domain in single bounded context.</li>
+            <li>Make your architecture decision clear for everyone in the team.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <section>
+        <h2>Bounded context should be highly cohesive</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Fragment of the application with single well defined responsibility.</li>
+                <li>Must have all needed data.</li>
+                <li>Should not have data irrelevant to operations.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Lack of cohesion example</h2>
+
+        <pre><code data-trim class="java">
+package com.acme.ecommerce.model
+
+class Product {
+  id
+  externalId
+  name
+  description
+  photos
+  opinions
+  categories
+  packages
+  prices
+  discounts
+  availability
+  reservations
+  (...)
+}
+        </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Hypothetical model fragment for e-commerce platform.</li>
+                <li>&#8220;Put everything related to Product to this bag&#8221; approach.</li>
+                <li>&#8220;Noun&#8221; based design.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Model behaviours not state</h2>
+
+        <pre><code data-trim class="java">
+package com.acme.ecommerce.inventory
+
+class InventoryService {
+  addInventoryEntry(productId, numberAvailable, ...) {}
+  makeReservation(productId, numberRequested, ...) {}
+}
+        </code></pre>
+
+        <pre><code data-trim class="java">
+package com.acme.ecommerce.ordermanagement
+
+class OrderService {
+  addOrderLine(productId, productName, price, quantity, ...) {}
+}
+        </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Tip: Forget about data structures, focus on behaviours.</li>
+                <li>Inventory and Order bounded contexts.</li>
+                <li>APIs use different product traits.</li>
+                <li>For inventory product is &#8220;inventory item&#8221;, for order management &#8220;product summary&#8221;.</li>
+            </ul>
+        </aside>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Aggregate should be highly cohesive</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Aggregate, entity - guard of invariants.</li>
+                <li>Must have most of needed data.</li>
+                <li>Should not have data irrelevant to operations.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Lack of cohesion example</h2>
+
+        <pre><code data-trim class="java">
+class Product {
+  void updateDetails(...) // name, description, features
+  void updatePrice(...) // amount, currency, validity period
+  void makeReservation(...) // how many, how long
+}
+        </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Operations are disjoint.</li>
+                <li>What about concurrency?</li>
+                <li>When someone updates details, someone else makes a reservation.</li>
+                <li>Concurrency issues should be independent.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Look for aggregate actors</h2>
+
+        <p class="fragment">Content Editor <code>updateDetails()</code></p>
+        <p class="fragment">Marketing Director <code>updatePrice()</code></p>
+        <p class="fragment">Customer <code>makeReservation()</code></p>
+
+        <aside class="notes">
+            <ul>
+                <li>Single actor per aggregate.</li>
+                <li>Content Editor: tiny concurrency, optimistic locking.</li>
+                <li>Marketing Director: no concurrency.</li>
+                <li>Customer: high concurrency, pessimistic locking.</li>
+            </ul>
+        </aside>
+    </section>
+</section>
+
+<section>
+    <h2>Encapsulate domain</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>Do you like integration using database?</li>
+            <li>Do not expose your domain data structures.</li>
+            <li>Use DTO, Commands, Queries, etc.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Organize packages around domain</h2>
+
+    <pre><code data-trim>
+com
+└── acme
+    └── ecommerce
+        └── ordermanagement
+            └── domain
+                └── orders
+                    ├── channels
+                    │   ├── allegro
+                    │   └── ceneo
+                    ├── payments
+                    │   ├── cod
+                    │   └── payu
+                    └── delivery
+                        ├── inpost
+                        └── dhl
+    </code></pre>
+
+    <aside class="notes">
+        <ul>
+            <li>Describe orders sample.</li>
+            <li>Test: go to the domain expert / product owner and ask for explanation.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Organize classes around domain</h2>
+
+    <pre><code data-trim class="java">
+package com.acme.ecommerce.ordermanagement.domain.orders
+
+interface OrderRepository {} // repository
+class OrderFactory {} // factory
+class Order {} // aggregate root
+class OrderLine {} // value object
+class ProductSummary {} // value object
+class TaxCalculator {} // domain service
+interface TaxRatesProvider{} // external service
+class OrderPaymentAcceptedEvent{} // domain event
+    </code></pre>
+
+    <aside class="notes">
+        <ul>
+            <li>Flat structure for single business concept.</li>
+            <li>Too many classes - too complex domain - split.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <section>
+        <h2>Be pragmatic in testing</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>DDD improves your code testability.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h4>Be pragmatic in testing</h4>
+
+        <h2>Application service</h2>
+
+        <pre><code data-trim class="java">
+class OrderService {
+  @Autowired orderRepository, taxCalculator, orderLineValidator, ...
+
+  @Transactional @PreAuthorized
+  void addOrderLine(orderId, productId, productName, quantity, ...) {
+     order = orderRepository.load(orderId)
+
+     orderLineValidator.validate(...)
+     tax = taxCalculator.calculate(...)
+     order.addOrderLine(...)
+
+     orderRepository.save(order)
+  }
+}
+        </code></pre>
+
+        <p class="fragment"><i class="fa fa-check"></i> No unit tests, acceptance tests on service layer</p>
+
+        <aside class="notes">
+            <ul>
+                <li>Facade, use case realization.</li>
+                <li>Prepare input for business operation.</li>
+                <li>Many collaborators.</li>
+                <li>Delegates business operation to domain.</li>
+                <li>Place for transactional and security aspects.</li>
+                <li>How to test?</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h4>Be pragmatic in testing</h4>
+
+        <h2>Domain entity or service</h2>
+
+        <pre><code data-trim class="java">
+class Order {
+  Order(orderId, customerId, ...) {}
+
+  void addOrderLine(...) {
+    if (isOrderLineForProductExist(...)) {
+      orderLines.update(...)
+      pendingEvents.add(new OrderLineUpdated(...))
+    } else {
+      orderLines.add(...)
+      pendingEvents.add(new OrderLineAdded(...))
+    }
+  }
+}
+        </code></pre>
+
+        <p class="fragment"><i class="fa fa-check"></i> Only unit tests, sometimes with mocks, no Spring context</p>
+
+        <aside class="notes">
+            <ul>
+                <li>Pure Java/Groovy/Scala/&#8230; no magic, no aspects, almost no DI, no frameworks.</li>
+                <li>You will be surprised how much logic could be implemented in domain layer!</li>
+                <li>How to test?</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+      <h4>Be pragmatic in testing</h4>
+
+      <h2>Infrastructure</h2>
+
+      <pre><code data-trim class="java">
+class RestTaxRatesProvider implements TaxRatesProvider {
+  @Autowired restTemplate, taxRatesAssembler
+
+  List&lt;TaxRate&gt; fetchTaxRates() {
+    // authentication
+    List&lt;StrangeStructure&gt; results = restTemplate.getForObject(...)
+    return taxRatesAssembler.assembly(results)
+  }
+}
+      </code></pre>
+
+      <p class="fragment"><i class="fa fa-check"></i> Spring integration tests using production like environment</p>
+
+      <aside class="notes">
+        <ul>
+            <li>Realization of tax rates provider.</li>
+            <li>Technical complexity realization, no logic.</li>
+            <li>Anti corruption layer (data assembly, exceptions mapping).</li>
+            <li>How to test?</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section>
+        <h2>Be pragmatic in testing</h2>
+
+        <ul>
+            <li>Acceptance tests on service layer</li>
+            <li>Unit tests for domain</li>
+            <li>Integration tests for infrastructure</li>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Domain events for bounded contexts integration</h2>
+
+        <p><em>Dragons are there <i class="fa fa-warning"></i></em></p>
+
+        <aside class="notes">
+            <ul>
+                <li>The most complex part.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Traditional way</h2>
+
+        <pre><code data-trim class="java">
+class OrderService {
+  void placeOrder(...) {
+    order = orderFactory.createOrder(...)
+    orderRepository.save(order)
+
+    emailNotificationService.notifyCustomer(...)
+    indexerService.updateIndex(...)
+    inventoryService.makeReservation(...)
+    paymentService.sendPayment(...)
+    (...)
+  }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>Save an order.</li>
+                <li>Perform N additional operations.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>It sucks</h2>
+
+        <ul>
+            <li class="fragment">Temporal coupling</li>
+            <li class="fragment">Degraded availability</li>
+            <li class="fragment">Lack of atomicity</li>
+            <li class="fragment">Business logic drifts from domain</li>
+        </ul>
+
+        <aside class="notes">
+            <ul>
+                <li>Threads pools - boom!.</li>
+                <li>Roll of the dice != failure probabilities are dependant.</li>
+                <li>What if the last but one operation fails?</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Integration using domain events</h2>
+
+        <pre class="fragment"><code data-trim class="java">
+class Order implements Aggragate {
+  void placeOrder(...) {
+    (...)
+    pendingEvents.add(new OrderPlacedEvent(...))
+  }
+  List&lt;DomainEvent&gt; pendingEvents = []
+}
+        </code></pre>
+
+        <pre class="fragment"><code data-trim class="java">
+class OrderService {
+    void placeOrder(...) {
+      order = orderFactory.createOrder(...)
+      order.placeOrder(...)
+      orderRepository.save(order)
+    }
+}
+        </code></pre>
+
+        <pre class="fragment"><code data-trim class="java">
+@AfterReturning(pointcut = "execution(public * *.Repository+.save(..))")
+void publishPendingEvents(Aggregate aggregate) {
+  for (DomainEvent event : aggregate.getPendingEvents()) {
+    eventPublisher.publish(event)
+  }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <ul>
+                <li>My proposal how to implement integration using domain events.</li>
+                <li>Entity of domain service publish domain events.</li>
+                <li>Application service is dumb.</li>
+                <li>Simple aspect publishes pending events to middleware.</li>
+                <li>Several listeners do the job eventually.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h2>Seems to work</h2>
+
+        <ul>
+            <li class="fragment">No temporal coupling</li>
+            <li class="fragment">Availability == messaging middleware availability</li>
+            <li class="fragment">Almost atomic</li>
+            <li class="fragment">Domain model stays encapsulated</li>
+        </ul>
+
+        <aside class="notes">
+            <ul>
+                <li>Publish/Subscribe instead of Request/Reply.</li>
+                <li>It is easier to achieve messaging middleware high availability.</li>
+                <li>What &#8220;almost&#8221; means here? Postpone this discussion &#8230;</li>
+                <li>Domain events are created by aggregates or domain services.</li>
+            </ul>
+        </aside>
+    </section>
+</section>
+
+<section>
+    <h2>But &#8230;</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>It looks bright in theory.</li>
+            <li>Dark side in practice.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Be fine with &#8220;eventual consistency&#8221;</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>Asynchronous communication is not Request/Reply.</li>
+            <li>Usually not a problem at all.</li>
+            <li>Sometimes requires creativity.</li>
+            <li>Example: publishing app, where is my publication?</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Assume &#8220;at least one message delivery guarantee&#8221;</h2>
+
+    <p class="fragment"><i class="fa fa-inbox"></i> Idempotent receiver</p>
+    <p class="fragment"><i class="fa fa-copy"></i> Deduplication</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Message has not been lost.</li>
+            <li>But you could receive duplicates.</li>
+            <li>Idempotent receiver - the best method - sample with counter.</li>
+            <li>Deduplication on client - requires state.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Handle out of order domain events</h2>
+
+    <p class="fragment"><i class="fa fa-gears"></i> Consistent hashing</p>
+    <p class="fragment"><i class="fa fa-sort-alpha-asc"></i> Total order</p>
+    <p class="fragment"><i class="fa fa-rotate-left"></i> Re-sequencing messages</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Usually order is important.</li>
+            <li>Cut the red wire &#8230; but before cut the green one.</li>
+            <li>Consistent hashing - total order for single aggregate, e.g Order.</li>
+            <li>Total Order - degrade performance, not so easy to achieve.</li>
+            <li>Re-sequence messages for client.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Configure redelivery policy</h2>
+
+    <p class="fragment"><i class="fa fa-bar-chart-o"></i> Exponential back off</p>
+    <p class="fragment"><i class="fa fa-clock-o"></i> TTL</p>
+    <p class="fragment"><i class="fa fa-envelope"></i> Dead Letter Queue</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Utilize middleware redelivery to handle 3rd party failures.</li>
+            <li>Exponential back off - the best way.</li>
+            <li>TTL - no throttling control.</li>
+            <li>Collects problematic messages, e.g: 1M $ order from Warren Buffett.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Apply versioning strategy</h2>
+
+    <aside class="notes">
+        <ul>
+            <li>Messages are flying around us for some time.</li>
+            <li>Distributed system can not be updated in one shot.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Master message middleware management and monitoring tools</h2>
+
+    <p class="fragment"><i class="fa fa-clock-o"></i> Look for the most aged messages</p>
+    <p class="fragment"><i class="fa fa-envelope"></i> Manage messages in DLQs</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Debugging problems in async system is really hard.</li>
+            <li>Look for the most aged messages, why they were not processed.</li>
+            <li>Maintain your DLQs.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Summary</h2>
+
+    <p>Holistic approach to design complex systems</p>
+
+    <aside class="notes">
+        <ul>
+            <li>Wake up!</li>
+            <li>How to build better software.</li>
+            <li>How to build complex systems.</li>
+            <li>How to build maintainable systems.</li>
+            <li>Good base for building scalable and distributed systems.</li>
+            <li>Bounded contexts, aggregates.</li>
+        </ul>
+    </aside>
+</section>
+
+<section>
+    <h2>Q &amp; A</h2>
+</section>
+
+    </div>
+
+    <div class="progress"><span></span></div>
+</div>
+
+<script src="/assets/reveal.js-2.6.2/lib/js/head.min.js"></script>
+<script src="/assets/reveal.js-2.6.2/js/reveal.min.js"></script>
+
+<script>
+    Reveal.initialize({
+        controls: false,
+        progress: false,
+        history: true,
+
+        transition: Reveal.getQueryHash().transition || 'default',
+        dependencies : [
+            { src: '/assets/reveal.js-2.6.2/lib/js/classList.js', condition: function () { return !document.body.classList;} },
+            { src: '/assets/reveal.js-2.6.2/plugin/highlight/highlight.js', async: true, callback: function () { window.hljs.initHighlightingOnLoad();} },
+            { src: '/assets/reveal.js-2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: '/assets/reveal.js-2.6.2/plugin/zoom-js/zoom.js', condition: function() { return !!document.body.classList; } }
+        ]
+    });
+</script>
+</body>
+</html>

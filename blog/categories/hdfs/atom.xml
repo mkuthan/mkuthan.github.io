@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Hdfs | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/hdfs/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Long-running Spark Streaming Jobs on YARN Cluster]]></title>
+    <link href="http://mkuthan.github.io/blog/2016/09/30/spark-streaming-on-yarn/"/>
+    <updated>2016-09-30T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2016/09/30/spark-streaming-on-yarn</id>
+    <content type="html"><![CDATA[<p>A long-running Spark Streaming job, once submitted to the YARN cluster should run forever until it is intentionally stopped.
+Any interruption introduces substantial processing delays and could lead to data loss or duplicates.
+Neither YARN nor Apache Spark have been designed for executing long-running services.
+But they have been successfully adapted to growing needs of near real-time processing implemented as long-running jobs.
+Successfully does not necessarily mean without technological challenges.</p>
+
+<p>This blog post summarizes my experiences in running mission critical, long-running Spark Streaming jobs on a secured YARN cluster.
+You will learn how to submit Spark Streaming application to a YARN cluster to avoid sleepless nights during on-call hours.</p>
+
+<h2>Fault tolerance</h2>
+
+<p>In the YARN cluster mode Spark driver runs in the same container as the Application Master,
+the first YARN container allocated by the application.
+This process is responsible for driving the application and requesting resources (Spark executors) from YARN.
+What is important, Application Master eliminates need for any another process that run during application lifecycle.
+Even if an edge Hadoop cluster node where the Spark Streaming job was submitted fails, the application stays unaffected.</p>
+
+<p>To run Spark Streaming application in the cluster mode, ensure that the following parameters are given to spark-submit command:</p>
+
+<p><code>
+spark-submit --master yarn --deploy-mode cluster
+</code></p>
+
+<p>Because Spark driver and Application Master share a single JVM, any error in Spark driver stops our long-running job.
+Fortunately it is possible to configure maximum number of attempts that will be made to re-run the application.
+It is reasonable to set higher value than default 2 (derived from YARN cluster property <code>yarn.resourcemanager.am.max-attempts</code>).
+For me 4 works quite well, higher value may cause unnecessary restarts even if the reason of the failure is permanent.</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code>--conf spark.yarn.maxAppAttempts=4
+</code></pre>
+
+<p>```</p>
+
+<p>If the application runs for days or weeks without restart or redeployment on highly utilized cluster, 4 attempts could be exhausted in few hours.
+To avoid this situation, the attempt counter should be reset on every hour of so.</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code>--conf spark.yarn.maxAppAttempts=4 \
+--conf spark.yarn.am.attemptFailuresValidityInterval=1h
+</code></pre>
+
+<p>```</p>
+
+<p>Another important setting is a maximum number of executor failures before the application fails.
+By default it is <code>max(2 * num executors, 3)</code>, well suited for batch jobs but not for long-running jobs.
+The property comes with corresponding validity interval which also should be set.</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code>--conf spark.yarn.maxAppAttempts=4 \
+--conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+--conf spark.yarn.max.executor.failures={8 * num_executors} \
+--conf spark.yarn.executor.failuresValidityInterval=1h
+</code></pre>
+
+<p>```</p>
+
+<p>For long-running jobs you could also consider to boost maximum number of task failures before giving up the job.
+By default tasks will be retried 4 times and then job fails.</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code>--conf spark.yarn.maxAppAttempts=4 \
+--conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+--conf spark.yarn.max.executor.failures={8 * num_executors} \
+--conf spark.yarn.executor.failuresValidityInterval=1h \
+--conf spark.task.maxFailures=8
+</code></pre>
+
+<p>```</p>
+
+<h2>Performance</h2>
+
+<p>When a Spark Streaming application is submitted to the cluster, YARN queue where the job runs must be defined.
+I strongly recommend using YARN <a href="https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/CapacityScheduler.html">Capacity Scheduler</a>
+and submitting long-running jobs to separate queue.
+Without a separate YARN queue your long-running job will be preempted by a massive Hive query sooner or later.</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code>--conf spark.yarn.maxAppAttempts=4 \
+--conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+--conf spark.yarn.max.executor.failures={8 * num_executors} \
+--conf spark.yarn.executor.failuresValidityInterval=1h \
+--conf spark.task.maxFailures=8 \
+--queue realtime_queue
+</code></pre>
+
+<p>```
+Another important issue for Spark Streaming job is keeping processing time stable and highly predictable.
+Processing time should stay below batch duration to avoid delays.
+I&rsquo;ve found that Spark speculative execution helps a lot, especially on a busy cluster.
+Batch processing times are much more stable when speculative execution is enabled.
+Unfortunately speculative mode can be enabled only if Spark actions are idempotent.</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code>--conf spark.yarn.maxAppAttempts=4 \
+--conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+--conf spark.yarn.max.executor.failures={8 * num_executors} \
+--conf spark.yarn.executor.failuresValidityInterval=1h \
+--conf spark.task.maxFailures=8 \
+--queue realtime_queue \
+--conf spark.speculation=true
+</code></pre>
+
+<p>```</p>
+
+<h2>Security</h2>
+
+<p>On a secured HDFS cluster, long-running Spark Streaming jobs fails due to Kerberos ticket expiration.
+Without additional settings, Kerberos ticket is issued when Spark Streaming job is submitted to the cluster.
+When ticket expires Spark Streaming job is not able to write or read data from HDFS anymore.</p>
+
+<p>In theory (based on documentation) it should be enough to pass Kerberos principal and keytab as spark-submit command:</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code> --conf spark.yarn.maxAppAttempts=4 \
+ --conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+ --conf spark.yarn.max.executor.failures={8 * num_executors} \
+ --conf spark.yarn.executor.failuresValidityInterval=1h \
+ --conf spark.task.maxFailures=8 \
+ --queue realtime_queue \
+ --conf spark.speculation=true \
+ --principal user/hostname@domain \
+ --keytab /path/to/foo.keytab
+</code></pre>
+
+<p>```</p>
+
+<p>In practice, due to several bugs (<a href="https://issues.apache.org/jira/browse/HDFS-9276">HDFS-9276</a>, <a href="https://issues.apache.org/jira/browse/SPARK-11182">SPARK-11182</a>)
+HDFS cache must be disabled. If not, Spark will not be able to read updated token from file on HDFS.</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code> --conf spark.yarn.maxAppAttempts=4 \
+ --conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+ --conf spark.yarn.max.executor.failures={8 * num_executors} \
+ --conf spark.yarn.executor.failuresValidityInterval=1h \
+ --conf spark.task.maxFailures=8 \
+ --queue realtime_queue \
+ --conf spark.speculation=true \
+ --principal user/hostname@domain \
+ --keytab /path/to/foo.keytab \
+ --conf spark.hadoop.fs.hdfs.impl.disable.cache=true
+</code></pre>
+
+<p>```</p>
+
+<p>Mark Grover pointed out that those bugs only affect HDFS cluster configured with NameNodes in
+<a href="https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html">HA mode</a>.
+Thanks, Mark.</p>
+
+<h2>Logging</h2>
+
+<p>The easiest way to access Spark application logs is to configure Log4j console appender,
+wait for application termination and use <code>yarn logs -applicationId [applicationId]</code> command.
+Unfortunately it is not feasible to terminate long-running Spark Streaming jobs to access the logs.</p>
+
+<p>I recommend to install and configure Elastic, Logstash and Kibana (<a href="https://www.elastic.co/">ELK</a> stack).
+ELK installation and configuration is out of this blog post scope,
+but remember to log the following context fields:</p>
+
+<ul>
+<li>YARN application id</li>
+<li>YARN container hostname</li>
+<li>Executor id (Spark driver is always 000001, Spark executors start from 000002)</li>
+<li>YARN attempt (to check how many times Spark driver has been restarted)</li>
+</ul>
+
+
+<p>Log4j configuration with Logstash specific appender and layout definition should be passed to spark-submit command:</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code> --conf spark.yarn.maxAppAttempts=4 \
+ --conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+ --conf spark.yarn.max.executor.failures={8 * num_executors} \
+ --conf spark.yarn.executor.failuresValidityInterval=1h \
+ --conf spark.task.maxFailures=8 \
+ --queue realtime_queue \
+ --conf spark.speculation=true \
+ --principal user/hostname@domain \
+ --keytab /path/to/foo.keytab \
+ --conf spark.hadoop.fs.hdfs.impl.disable.cache=true \
+ --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties \
+ --conf spark.executor.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties \
+ --files /path/to/log4j.properties
+</code></pre>
+
+<p>```</p>
+
+<p>Finally Kibana dashboard for Spark Job might look like:</p>
+
+<p><img src="/images/blog/spark_job_logging.png" title="[spark job logging]" ></p>
+
+<h2>Monitoring</h2>
+
+<p>Long running job runs 24/7 so it is important to have an insight into historical metrics.
+Spark UI keeps statistics only for limited number of batches, and after restart all metrics are gone.
+Again, external tools are needed.
+I recommend to install <a href="https://graphiteapp.org/">Graphite</a> for collecting metrics
+and <a href="http://grafana.org/">Grafana</a> for building dashboards.</p>
+
+<p>First, Spark needs to be configured to report metrics into Graphite, prepare the <code>metrics.properties</code> file:</p>
+
+<p>```
+<em>.sink.graphite.class=org.apache.spark.metrics.sink.GraphiteSink
+</em>.sink.graphite.host=[hostname]
+<em>.sink.graphite.port=[port]
+</em>.sink.graphite.prefix=some_meaningful_name</p>
+
+<p>driver.source.jvm.class=org.apache.spark.metrics.source.JvmSource
+executor.source.jvm.class=org.apache.spark.metrics.source.JvmSource
+```</p>
+
+<p>And configure spark-submit command:</p>
+
+<p>```
+spark-submit &mdash;master yarn &mdash;deploy-mode cluster \</p>
+
+<pre><code> --conf spark.yarn.maxAppAttempts=4 \
+ --conf spark.yarn.am.attemptFailuresValidityInterval=1h \
+ --conf spark.yarn.max.executor.failures={8 * num_executors} \
+ --conf spark.yarn.executor.failuresValidityInterval=1h \
+ --conf spark.task.maxFailures=8 \
+ --queue realtime_queue \
+ --conf spark.speculation=true \
+ --principal user/hostname@domain \
+ --keytab /path/to/foo.keytab \
+ --conf spark.hadoop.fs.hdfs.impl.disable.cache=true \
+ --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties \
+ --conf spark.executor.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties \
+ --files /path/to/log4j.properties:/path/to/metrics.properties
+</code></pre>
+
+<p>```</p>
+
+<h3>Metrics</h3>
+
+<p>Spark publishes tons of metrics from driver and executors.
+If I were to choose the most important one, it would be the last received batch records.
+When <code>StreamingMetrics.streaming.lastReceivedBatch_records == 0</code> it probably means that Spark Streaming job has been stopped or failed.</p>
+
+<p>Other important metrics are listed below:</p>
+
+<ul>
+<li>When total delay is greater than batch interval, latency of the processing pipeline increases.</li>
+</ul>
+
+
+<p><code>
+driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
+</code></p>
+
+<ul>
+<li>When number of active tasks is lower than <code>number of executors * number of cores</code>, allocated YARN resources are not fully utilized.</li>
+</ul>
+
+
+<p><code>
+executor.threadpool.activeTasks
+</code></p>
+
+<ul>
+<li>How much RAM is used for RDD cache.</li>
+</ul>
+
+
+<p><code>
+driver.BlockManager.memory.memUsed_MB
+</code></p>
+
+<ul>
+<li>When there is not enough RAM for RDD cache, how much data has been spilled to disk.
+You should increase executor memory or change <code>spark.memory.fraction</code> Spark property to avoid performance degradation.</li>
+</ul>
+
+
+<p><code>
+driver.BlockManager.disk.diskSpaceUsed_MB
+</code></p>
+
+<ul>
+<li>What is JVM memory utilization on Spark driver.</li>
+</ul>
+
+
+<p><code>
+driver.jvm.heap.used
+driver.jvm.non-heap.used
+driver.jvm.pools.G1-Old-Gen.used
+driver.jvm.pools.G1-Eden-Space.used
+driver.jvm.pools.G1-Survivor-Space.used
+</code></p>
+
+<ul>
+<li>How much time is spent on GC on Spark driver.</li>
+</ul>
+
+
+<p><code>
+driver.jvm.G1-Old-Generation.time
+driver.jvm.G1-Young-Generation.time
+</code></p>
+
+<ul>
+<li>What is JMV memory utilization on Spark executors.</li>
+</ul>
+
+
+<p><code>
+[0-9]*.jvm.heap.used
+[0-9]*.jvm.non-heap.used
+[0-9]*.jvm.pools.G1-Old-Gen.used
+[0-9]*.jvm.pools.G1-Survivor-Space.used
+[0-9]*.jvm.pools.G1-Eden-Space.used
+</code></p>
+
+<ul>
+<li>How much time is spent on GC on Spark executors.</li>
+</ul>
+
+
+<p><code>
+[0-9]*.jvm.G1-Old-Generation.time
+[0-9]*.jvm.G1-Young-Generation.time
+</code></p>
+
+<h3>Grafana</h3>
+
+<p>While you configure first Grafana dashboard for Spark application, the first problem pops up:</p>
+
+<blockquote><p>How to configure Graphite query when metrics for every Spark application run are reported under its own application id?</p></blockquote>
+
+<p>If you are lucky and brave enough to use Spark 2.1, pin the application metric into static application name:</p>
+
+<p><code>
+--conf spark.metrics.namespace=my_application_name
+</code></p>
+
+<p>For Spark versions older than 2.1, a few tricks with Graphite built-in functions are needed.</p>
+
+<p>Driver metrics use wildcard <code>.*(application_[0-9]+).*</code>
+and <code>aliasSub</code> Graphite function to present &lsquo;application id&rsquo; as graph legend:</p>
+
+<p><code>
+aliasSub(stats.analytics.$job_name.*.prod.$dc.*.driver.jvm.heap.used, ".*(application_[0-9]+).*", "heap: \1")
+</code></p>
+
+<p>For executor metrics again use wildcard <code>.*(application_[0-9]+).*</code>,
+<code>groupByNode</code> Graphite function to sum metrics from all Spark executors
+and finally <code>aliasSub</code> Graphite function to present &lsquo;application id&rsquo; as graph legend:</p>
+
+<p><code>
+aliasSub(groupByNode(stats.analytics.$job_name.*.prod.$dc.*.[0-9]*.jvm.heap.used, 6, "sumSeries"), "(.*)", "heap: \1")
+</code></p>
+
+<p>Finally Grafana dashboard for Spark Job might look like:</p>
+
+<p><img src="/images/blog/spark_job_monitoring.png" title="[spark job monitoring]" ></p>
+
+<p>If Spark application is restarted frequently, metrics for old, already finished runs should be deleted from Graphite.
+Because Graphite does not compact inactive metrics, old metrics slow down Graphite itself and Grafana queries.</p>
+
+<h2>Graceful stop</h2>
+
+<p>The last puzzle element is how to stop Spark Streaming application deployed on YARN in a graceful way.
+The standard method for stopping (or rather killing) YARN application is using a command <code>yarn application -kill [applicationId]</code>.
+And this command stops the Spark Streaming application but this could happen in the middle of a batch.
+So if the job reads data from Kafka, saves processing results on HDFS and finally commits Kafka offsets
+you should expect duplicated data on HDFS when job was stopped just before committing offsets.</p>
+
+<p>The first attempt to solve graceful shutdown issue was to call Spark streaming context stop method in a shutdown hook.</p>
+
+<p>```scala
+sys.addShutdownHook {</p>
+
+<pre><code>streamingContext.stop(stopSparkContext = true, stopGracefully = true)
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Disappointingly a shutdown hook is called too late to finish started batch and Spark application is killed almost immediately.
+Moreover there is no guarantee that a shutdown hook will be called by JVM at all.</p>
+
+<p>At the time of writing this blog post the only confirmed way to shutdown gracefully Spark Streaming application on YARN
+is to notifying somehow the application about planned shutdown, and then stop streaming context programmatically (but not from shutdown hook).
+Command <code>yarn application -kill</code> should be used only as a last resort if notified application did not stop after defined timeout.</p>
+
+<p>The application can be notified about planned shutdown using marker file on HDFS (the easiest way),
+or using simple Socket/HTTP endpoint exposed on the driver (sophisticated way).</p>
+
+<p>Because I like KISS principle, below you can find shell script pseudo-code for starting / stopping Spark Streaming application using marker file:</p>
+
+<p>```bash
+start() {</p>
+
+<pre><code>hdfs dfs -touchz /path/to/marker/my_job_unique_name
+spark-submit ...
+</code></pre>
+
+<p>}</p>
+
+<p>stop() {</p>
+
+<pre><code>hdfs dfs -rm /path/to/marker/my_job_unique_name
+force_kill=true
+application_id=$(yarn application -list | grep -oe "application_[0-9]*_[0-9]*"`)
+for i in `seq 1 10`; do
+    application_status=$(yarn application -status ${application_id} | grep "State : \(RUNNING\|ACCEPTED\)")
+    if [ -n "$application_status" ]; then
+        sleep 60s
+    else
+        force_kill=false
+        break
+    fi
+done
+$force_kill &amp;&amp; yarn application -kill ${application_id}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>In the Spark Streaming application, background thread should monitor marker file,
+and when the file disappears stop the context calling <code>streamingContext.stop(stopSparkContext = true, stopGracefully = true)</code>.</p>
+
+<h2>Summary</h2>
+
+<p>As you could see, configuration for mission critical Spark Streaming application deployed on YARN is quite complex.
+It has been long, tedious and iterative learning process of all presented techniques by a few very smart devs.
+But at the end, long-running Spark Streaming applications deployed on highly utilized YARN cluster are extraordinarily stable.</p>
+]]></content>
+  </entry>
+  
+</feed>

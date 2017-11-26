@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Presentations | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/presentations/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to Learn DDD]]></title>
+    <link href="http://mkuthan.github.io/blog/2014/09/22/ddd-how-to-learn/"/>
+    <updated>2014-09-22T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2014/09/22/ddd-how-to-learn</id>
+    <content type="html"><![CDATA[<h2>Books</h2>
+
+<p><a href="https:///show/179133.Domain_Driven_Designwww.goodreads.com/book">Domain Driven Design</a> by Eric Evans.</p>
+
+<p>You have to read this book, period. From the very beginning to very end.
+Do not stop reading after first part of the book, the part about strategic design is much more important.
+Study this book again and again. I did not read this book at once, it would be impossible mission.
+Every time I back to this book I found something new, every single word in this book is important and brings some meaning.</p>
+
+<p><a href="https://www.goodreads.com/book/show/15756865-implementing-domain-driven-design">Implementing Domain Driven Design</a> by Vaughn Vernon.</p>
+
+<p>More practical and easier to digest book than previous one. Not so brilliant but still worth reading.</p>
+
+<p><a href="https://www.goodreads.com/book/show/19086899-exploring-cqrs-and-event-sourcing">Exploring CQRS and Event Sourcing</a></p>
+
+<p>Excellent DDD/CQRS case study with working code on GitHub.
+Real world example how to define bounded context and how to integrate them using domain events.
+Awesome!</p>
+
+<p><a href="https://www.goodreads.com/book/show/434826.Enterprise_Patterns_and_MDA">Enterprise Patterns and MDA</a> by Jim Arlow and Ila Neusandt</p>
+
+<p>Do not reinvent the wheel when you discover your domain model. At least for e-commerce :&ndash;)
+Apply presented archetype patterns wisely and save your ass.</p>
+
+<h2>My examples</h2>
+
+<p><a href="http://mkuthan.github.io/presentations/ddd.html">http://mkuthan.github.io/presentations/ddd.html</a> &ndash; &ldquo;Domain Driven Desing &ndash; from trenches for practitioners&rdquo; presentation.</p>
+
+<p><a href="http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/">http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/</a> &ndash; Blog post &ndash; my DDD check list.</p>
+
+<p><a href="https://github.com/mkuthan/example-ddd-cqrs-server">https://github.com/mkuthan/example-ddd-cqrs-server</a> &ndash; Experiment based on Vernon book.</p>
+
+<p><a href="https://github.com/mkuthan/example-axon">https://github.com/mkuthan/example-axon</a> &ndash; Experiment based on Exploring CQRS and Event Sourcing book.</p>
+
+<h2>Other sources</h2>
+
+<p><a href="http://www.udidahan.com/?blog=true">http://www.udidahan.com/</a> &ndash; Udi Dahan &ndash; one of my mentor in distributed systems and DDD architecture.</p>
+
+<p><a href="https://groups.yahoo.com/neo/groups/domaindrivendesign">https://groups.yahoo.com/neo/groups/domaindrivendesign</a> &ndash; official DDD discussion group, addictive reading for long winter evenings.</p>
+]]></content>
+  </entry>
+  
+</feed>

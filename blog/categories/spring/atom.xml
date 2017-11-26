@@ -1,0 +1,1137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Spring | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/spring/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Acceptance Testing Using JBehave, Spring Framework and Maven]]></title>
+    <link href="http://mkuthan.github.io/blog/2014/05/29/acceptance-testing-using-jbehave-spring-framework-and-maven/"/>
+    <updated>2014-05-29T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2014/05/29/acceptance-testing-using-jbehave-spring-framework-and-maven</id>
+    <content type="html"><![CDATA[<p>This post documents acceptance testing best practices collected in regular projects I was working on.
+Best practices materialized into working <a href="https://github.com/mkuthan/example-jbehave">project</a>, using <em>Jbehave</em>, <em>Spring Framework</em> and <em>Maven</em>.</p>
+
+<p>After the lecture you will know:</p>
+
+<ul>
+<li>How to implement automated acceptance tests and avoid common traps.</li>
+<li>How to organize project build using <em>Maven</em>.</li>
+<li>How to configure project and glue everything together using <em>Spring Framework</em>.</li>
+<li>How to write test scenarios using <em>JBehave</em>.</li>
+<li>Finally how to run tests from command line and from your favourite IDE.</li>
+</ul>
+
+
+<h2>Automated acceptance tests</h2>
+
+<p>Automated acceptance test suite is a system documentation, the real single source of truth.
+The best documentation I&rsquo;ve ever seen: always up-to-date, unambiguous and precise.</p>
+
+<p>But I found many traps when I was trying to apply acceptance tests automation in practice.</p>
+
+<blockquote><p>Acceptance Testing is about collaboration not tools.</p></blockquote>
+
+<p>You will get much better results if you will collaborate closely with product owner, end users and customer.
+You could write test scenario only by yourself but perhaps you will fail.
+When you are able to work on test scenarios together, you could think about tools and automation.
+Do not let that tools interfere in collaboration, all team members must be committed to acceptance tests contribution.</p>
+
+<blockquote><p>Acceptance Testing needs to be done using user interface.</p></blockquote>
+
+<p>In most situation you don&rsquo;t need to implement tests using user interface.</p>
+
+<p>User interface tends to be changed frequently, business logic not so often.
+I don&rsquo;t want to change my tests when business logic stays unchanged, even if user interface has been changed significantly.</p>
+
+<p>User interface tests are very fragile and slow. You will lost one of the automated tests advantages: fast and precise feedback loop.
+It is really hard to setup and maintain the infrastructure for user interface testing.</p>
+
+<blockquote><p>Everything should be tested.</p></blockquote>
+
+<p>Acceptance tests are mainly for happy path scenarios verification.
+Acceptance tests are expensive to maintain, so do not test corner cases, validation and error handling, on that level.
+Focus only on the relevant assertions for the given scenario, do not verify everything only because you can.</p>
+
+<h2>Project build organization</h2>
+
+<p>After bunch of theory it is time to show real code. Let&rsquo;s start with proper project organization.
+I found that acceptance testing is a cross cutting aspect of the application, and should be separated from the application code.
+Acceptance tests build configuration is very specific and I don&rsquo;t want to clutter application build configuration.
+You can also utilize multi module project, to ensure that acceptance tests module is allowed to call application public API only.
+This segregation applies only for acceptance testing, the best place for unit tests is still in an application module under <code>src/test</code> directory.</p>
+
+<p>With <em>Maven</em> (and other build tools like <em>Gradle</em>), application code and acceptance tests code can be located in separate modules.</p>
+
+<p>``` xml Parent module
+<project></p>
+
+<pre><code>&lt;groupId&gt;example&lt;/groupId&gt;
+&lt;artifactId&gt;example-jbehave&lt;/artifactId&gt;
+&lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;packaging&gt;pom&lt;/packaging&gt;
+
+&lt;modules&gt;
+    &lt;module&gt;example-jbehave-app&lt;/module&gt;
+    &lt;module&gt;example-jbehave-tests&lt;/module&gt;
+&lt;/modules&gt;
+</code></pre>
+
+<p></project>
+```</p>
+
+<p>``` xml Web application module
+<project></p>
+
+<pre><code>&lt;parent&gt;
+    &lt;groupId&gt;example&lt;/groupId&gt;
+    &lt;artifactId&gt;example-jbehave&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;artifactId&gt;example-jbehave-app&lt;/artifactId&gt;
+&lt;packaging&gt;war&lt;/packaging&gt;
+</code></pre>
+
+<p></project>
+```</p>
+
+<p>``` xml Tests module
+<project></p>
+
+<pre><code>&lt;parent&gt;
+    &lt;groupId&gt;example&lt;/groupId&gt;
+    &lt;artifactId&gt;example-jbehave&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;artifactId&gt;example-jbehave-tests&lt;/artifactId&gt;
+&lt;packaging&gt;jar&lt;/packaging&gt;
+</code></pre>
+
+<p></project>
+```</p>
+
+<p>The parent module is the best place to define common configuration properties inherited by child modules.</p>
+
+<p>``` xml Configuration properties in parent module
+<properties></p>
+
+<pre><code>&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+
+&lt;maven.compiler.source&gt;1.7&lt;/maven.compiler.source&gt;
+&lt;maven.compiler.target&gt;1.7&lt;/maven.compiler.target&gt;
+
+&lt;jbehave.version&gt;3.9.2&lt;/jbehave.version&gt;
+&lt;logback.version&gt;1.1.1&lt;/logback.version&gt;
+&lt;slf4j.version&gt;1.7.6&lt;/slf4j.version&gt;
+&lt;spring.version&gt;4.0.5.RELEASE&lt;/spring.version&gt;
+</code></pre>
+
+<p></properties>
+```</p>
+
+<p>In the parent module you could also define <em>Spring Framework</em> BOM (Bill Of Materials), to ensure consistent dependency management.
+This is quite new <em>Spring Framework</em> ecosystem feature.</p>
+
+<p>``` xml Dependency management in parent module
+<dependencyManagement></p>
+
+<pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-framework-bom&lt;/artifactId&gt;
+        &lt;version&gt;${spring.version}&lt;/version&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;import&lt;/scope&gt;
+    &lt;/dependency&gt;
+    (...)
+&lt;/dependencies&gt;    
+</code></pre>
+
+<p><dependencyManagement>
+```</p>
+
+<p>Because I prefer <em>SLF4J</em> over <em>Apache Commons Logging</em>, unwanted dependency is excluded globally from <code>spring-core</code> artifact.</p>
+
+<p>``` xml Dependency management in parent module
+<dependencyManagement></p>
+
+<pre><code>&lt;dependencies&gt;
+    (...)    
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+        &lt;version&gt;${spring.version}&lt;/version&gt;
+        &lt;exclusions&gt;
+            &lt;exclusion&gt;
+                &lt;groupId&gt;commons-logging&lt;/groupId&gt;
+                &lt;artifactId&gt;commons-logging&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+        &lt;/exclusions&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p></dependencyManagement>
+```</p>
+
+<p>In the application module declare all application dependencies.
+In real application the list will be much longer.</p>
+
+<p>``` xml Dependency management in application module
+<dependencies></p>
+
+<pre><code>    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+        &lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;
+        &lt;version&gt;${slf4j.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+        &lt;artifactId&gt;jcl-over-slf4j&lt;/artifactId&gt;
+        &lt;version&gt;${slf4j.version}&lt;/version&gt;
+        &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+        &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;
+        &lt;version&gt;${logback.version}&lt;/version&gt;
+        &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p></project>
+```</p>
+
+<p><em>Maven War Plugin</em> must be configured specifically, classes (the content of the WEB-INF/classes directory) must be attached to the project as an additional artifact.
+Acceptance test module depends on this additional artifact. Set <code>attachClasses</code> property to <code>true</code>.</p>
+
+<p>``` java War plugin configuration in application module
+<plugin></p>
+
+<pre><code>&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+&lt;version&gt;2.4&lt;/version&gt;
+&lt;configuration&gt;
+    &lt;attachClasses&gt;true&lt;/attachClasses&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<p></plugin>
+```</p>
+
+<p>Alternatively you can use two separate modules for the application.
+One <em>jar</em> type with domain and infrastructure and separate <em>war</em> type with web layer.
+Then you would declare dependency to your <em>jar</em> application module only.
+In my example I would keep it simple, and use single <em>war</em> type module for all layers in the application.</p>
+
+<p>In the tests module declare all dependencies as well.
+There is also an extra dependency to the application module, additional <em>jar</em> type artifact generated by <em>Maven War Plugin</em>.
+The last two dependencies of <code>zip</code> type are needed to generate <em>JBehave</em> tests report.</p>
+
+<p>``` xml Dependency management in tests module
+<dependencies></p>
+
+<pre><code>    &lt;dependency&gt;
+        &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+        &lt;artifactId&gt;example-jbehave-app&lt;/artifactId&gt;
+        &lt;version&gt;${project.version}&lt;/version&gt;
+        &lt;classifier&gt;classes&lt;/classifier&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.jbehave&lt;/groupId&gt;
+        &lt;artifactId&gt;jbehave-core&lt;/artifactId&gt;
+        &lt;version&gt;${jbehave.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.jbehave&lt;/groupId&gt;
+        &lt;artifactId&gt;jbehave-spring&lt;/artifactId&gt;
+        &lt;version&gt;${jbehave.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.jbehave.site&lt;/groupId&gt;
+        &lt;artifactId&gt;jbehave-site-resources&lt;/artifactId&gt;
+        &lt;version&gt;3.1.1&lt;/version&gt;
+        &lt;type&gt;zip&lt;/type&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.jbehave&lt;/groupId&gt;
+        &lt;artifactId&gt;jbehave-core&lt;/artifactId&gt;
+        &lt;version&gt;${jbehave.version}&lt;/version&gt;
+        &lt;classifier&gt;resources&lt;/classifier&gt;
+        &lt;type&gt;zip&lt;/type&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<p>```</p>
+
+<p>Two <em>Maven</em> plugins must be configured specifically in the tests module: <code>maven-surefire-plugin</code> and <code>jbehave-maven-plugin</code>.</p>
+
+<p>Because we separated tests into it&rsquo;s own module, test classes might be located under <code>src/main</code> as first class citizen.
+<em>Surefire</em> is configured to execute test scenarios under <code>example/jbehave/tests/stories</code> package.</p>
+
+<p>```xml Surefire plugin configuration in tests module
+<plugin></p>
+
+<pre><code>&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+&lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+&lt;version&gt;2.17&lt;/version&gt;
+&lt;configuration&gt;
+    &lt;testSourceDirectory&gt;${basedir}/src/main/java/&lt;/testSourceDirectory&gt;
+    &lt;testClassesDirectory&gt;${project.build.directory}/classes/&lt;/testClassesDirectory&gt;
+    &lt;includes&gt;
+        &lt;include&gt;example/jbehave/tests/stories/**/*.java&lt;/include&gt;
+    &lt;/includes&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<p></plugin>
+```</p>
+
+<p>In my setup <em>JBehave</em> plugin will be responsible only for unpacking resources used by tests report.
+I do not use plugin to run stories at all, I found better way to do that. It will be described later in the post.</p>
+
+<p>``` xml JBehave plugin configuration in tests module
+<plugin></p>
+
+<pre><code>&lt;groupId&gt;org.jbehave&lt;/groupId&gt;
+&lt;artifactId&gt;jbehave-maven-plugin&lt;/artifactId&gt;
+&lt;version&gt;${jbehave.version}&lt;/version&gt;
+&lt;executions&gt;
+    &lt;execution&gt;
+        &lt;id&gt;unpack-view-resources&lt;/id&gt;
+        &lt;phase&gt;generate-resources&lt;/phase&gt;
+        &lt;goals&gt;
+            &lt;goal&gt;unpack-view-resources&lt;/goal&gt;
+        &lt;/goals&gt;
+    &lt;/execution&gt;
+&lt;/executions&gt;
+</code></pre>
+
+<p></plugin>
+```</p>
+
+<h2>Spring Framework configuration</h2>
+
+<p>The application implements shopping basket simplified functionality.
+Do not use my shopping basket implementation on production, it is only for this post educational purposes :&ndash;)</p>
+
+<p>The application is composed from three main packages: <code>domain</code>, <code>infrastructure</code> and <code>web</code>.
+This convention comes from Domain Driven Design, you can read more in my post <a href="http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/">DDD Architecture Summary</a>.</p>
+
+<p>Each package is configured using <em>Spring Framework</em> annotation support.
+In general you should keep the configuration as modular as possible.
+It is very important for testing, with modular configuration you can load only needed context and speed up tests execution.</p>
+
+<p><code>java DomainConfiguration.java
+@Configuration
+@ComponentScan
+public class DomainConfiguration {
+}
+</code></p>
+
+<p><code>java InfrastructureConfiguration.java
+@Configuration
+@ComponentScan
+public class InfrastructureConfiguration {
+}
+</code></p>
+
+<p><code>java WebConfiguration.java
+@Configuration
+@ComponentScan
+public class WebConfiguration {
+}
+</code></p>
+
+<p>If you are interested in application functionality, go to the <a href="https://github.com/mkuthan/example-jbehave/tree/master/example-jbehave-app/src/main/java/example/jbehave/app">source code</a>.
+The application is really simple, just old plain Java.</p>
+
+<p>Much more interesting is <em>Spring Framework</em> configuration in tests module.
+First the meta annotation for acceptance tests is defined.
+This is a new way to avoid repetition in tests definition, introduced in <em>Spring Framework</em> recently.</p>
+
+<p><code>java AcceptanceTest.java
+@ContextConfiguration(classes = AcceptanceTestsConfiguration.class)
+@ImportResource({"classpath:/application.properties", "classpath:/tests.properties"})
+@ActiveProfiles("tests")
+@DirtiesContext
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AcceptanceTest {
+}
+</code></p>
+
+<ol>
+<li>Tests configuration is loaded, again using Java config instead of XML.</li>
+<li>Load application properties and overwrite defaults using tests properties if needed.</li>
+<li>Activate some special <em>Spring Framework</em> profile(s). Another way to customize tests configuration.</li>
+<li>Acceptance tests have side effects typically. Reload context before every story execution.</li>
+</ol>
+
+
+<p>The <code>AcceptanceTestsConfiguration</code> class is again very simple.
+It imports application configurations: domain and infrastructure.
+Because we will implement acceptance tests using service layer, we don&rsquo;t need to load web module or run web container.</p>
+
+<p><code>java AcceptanceTestsConfiguration
+@Configuration
+@Import({DomainConfiguration.class, InfrastructureConfiguration.class})
+@ComponentScan
+public class AcceptanceTestsConfiguration {
+}
+</code></p>
+
+<p>Meta annotation support is also used to define very specific annotations, one for <em>JBehave</em> test steps, second for <em>JBehave</em> converters.
+Well crafted annotations are better than generic <code>@Component</code>, even if they do not provide additional features.</p>
+
+<p><code>java Steps.java
+@Target(value = ElementType.TYPE)
+@Retention(value = RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface Steps {
+}
+</code></p>
+
+<p><code>java Converter.java
+@Target(value = ElementType.TYPE)
+@Retention(value = RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface Converter {
+}
+</code></p>
+
+<h2>JBehave configuration</h2>
+
+<p>The last infrastructure element in tests module is a base class for stories.
+<em>JBehave</em> provides plenty of integration methods with <em>Spring Framework</em> and I spent a lot of time to select the best one.</p>
+
+<p>I have following requirements:</p>
+
+<ul>
+<li>The ability to run single story from my IDE.</li>
+<li>Meet Open Close Principle. When I add new story I do not want to modify any existing file. I want to add new one(s).</li>
+<li>Have a full control over <em>JBehave</em> configuration.</li>
+</ul>
+
+
+<p>To meet my requirements some base class for all tests must be defined.
+I do not like the idea to use inheritance here but I did not find better way.</p>
+
+<p>Let me describe <code>AbstractSpringJBehaveStory</code> step by step:</p>
+
+<p><code>java
+public abstract class AbstractSpringJBehaveStory extends JUnitStory {
+...
+}
+</code></p>
+
+<p><code>JUnitStory</code> is a <em>JBehave</em> class with single test to run single story.
+It means that any subclass of this class can be executed as regular <em>JUnit</em> test.</p>
+
+<p>``` java
+private static final int STORY_TIMEOUT = 120;</p>
+
+<p>public AbstractSpringJBehaveStory() {</p>
+
+<pre><code>Embedder embedder = new Embedder();
+embedder.useEmbedderControls(embedderControls());
+embedder.useMetaFilters(Arrays.asList("-skip"));
+useEmbedder(embedder);
+</code></pre>
+
+<p>}</p>
+
+<p>private EmbedderControls embedderControls() {</p>
+
+<pre><code>return new EmbedderControls()
+        .doIgnoreFailureInView(true)
+        .useStoryTimeoutInSecs(STORY_TIMEOUT);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The constructor initialize <em>JBehave</em> embedder, a fascade to embed <em>JBehave</em> functionality in JUnit runner.</p>
+
+<p>``` java
+@Autowired
+private ApplicationContext applicationContext;</p>
+
+<p>@Override
+public InjectableStepsFactory stepsFactory() {</p>
+
+<pre><code>return new SpringStepsFactory(configuration(), applicationContext);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Configure <em>JBehave</em> to load steps and converters from <em>Spring Framework</em> context.
+What is also important, the steps and converters are managed by <em>Spring Framework</em>, you can inject whatever you want.</p>
+
+<p>``` java
+@Override
+public Configuration configuration() {</p>
+
+<pre><code>return new MostUsefulConfiguration()
+        .useStoryPathResolver(storyPathResolver())
+        .useStoryLoader(storyLoader())
+        .useStoryReporterBuilder(storyReporterBuilder())
+        .useParameterControls(parameterControls());
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The <code>configuration</code> method is surprisingly responsible for <em>JBehave</em> configuration.
+The most useful configuration is used with some customizations.
+Let&rsquo;s check what kind of customization are applied.</p>
+
+<p>``` java
+private StoryPathResolver storyPathResolver() {</p>
+
+<pre><code>return new UnderscoredCamelCaseResolver();
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The story path resolver is responsible for resolving story based on test class name.
+With <code>UnderscoredCamelCaseResolver</code> implementation, story <code>learn_jbehave_story.story</code> will be correlated with <code>LearnJbehaveStory.java</code> class.</p>
+
+<p>``` java
+private StoryLoader storyLoader() {</p>
+
+<pre><code>return new LoadFromClasspath();
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Stories will be resolved and loaded from the current classpath (from <code>src/main/resources</code> to be more specific).</p>
+
+<p>``` java
+private StoryReporterBuilder storyReporterBuilder() {</p>
+
+<pre><code>return new StoryReporterBuilder()
+        .withCodeLocation(CodeLocations.codeLocationFromClass(this.getClass()))
+        .withPathResolver(new ResolveToPackagedName())
+        .withFailureTrace(true)
+        .withDefaultFormats()
+        .withFormats(IDE_CONSOLE, TXT, HTML);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The configuration how the reports will look like.
+Nothing special, please refer to <em>JBehave</em> reference documentation for more details.</p>
+
+<p>``` java
+private ParameterControls parameterControls() {</p>
+
+<pre><code>return new ParameterControls()
+        .useDelimiterNamedParameters(true);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The configuration how the steps parameters will be handled.</p>
+
+<h2>Test scenarios definition</h2>
+
+<p>Test scenarios are rather straightforward, if you are familiar with BDD and Gherkin like syntax. If not please read
+<a href="http://jbehave.org/reference/stable/concepts.html">BDD Concepts</a> short definition.</p>
+
+<p>Look, in the scenarios there is nothing specific to the application user interface.
+It is not important how product price editor looks like, and how the shopping basket is presented.</p>
+
+<p>```
+Narrative:
+In order to learn JBehave
+As a tester
+I want to define sample story for shopping cart</p>
+
+<p>Lifecycle:
+Before:
+Given product Domain Driven Design with SKU 1234
+And product Domain Driven Design price is 35 EUR</p>
+
+<p>Given product Specification By Example with SKU 2345
+And product Specification By Example price is 30 EUR</p>
+
+<p>Scenario: Empty shopping cart</p>
+
+<p>Given empty shopping cart
+Then shopping cart is empty</p>
+
+<p>Scenario: Products are added to empty shopping cart</p>
+
+<p>Given empty shopping cart
+When products are added to the shopping cart:
+|PRODUCT                 |QTY|
+|Domain Driven Design    |  1|
+|Specification By Example|  2|</p>
+
+<p>Then the number of products in shopping cart is 2
+And total price is 95 EUR
+```</p>
+
+<h2>Test steps implementation</h2>
+
+<p>Test steps are implemented in Java classes annotated with <code>@Steps</code>.
+The common mistake is to develop steps only for single story.
+The steps should be reusable across many user stories if feasible.
+With reusable steps you will find, that writing next user stories are much easier and faster.
+You can just use existing steps implementation to define new user story.</p>
+
+<p>For example steps for product catalog and product prices are defined in <code>SharedSteps</code> class.
+The repositories are used to manage products and prices.
+In real application, you should use application service and it&rsquo;s public API instead of direct access to the repositories.
+Please think about steps implementation complexity, if we would need to use user interface, instead of repositories or service API.</p>
+
+<p>``` java
+@Steps
+public class SharedSteps {</p>
+
+<pre><code>@Autowired
+private ProductRepository productRepository;
+
+@Autowired
+private PriceRepository priceRepository;
+
+@Given("product $name with SKU $sku")
+public void product(String name, StockKeepingUnit sku) {
+    productRepository.save(new Product(sku, name));
+}
+
+@Given("product $name price is $price")
+public void price(String name, Money price) {
+    Product product = productRepository.findByName(name);
+    priceRepository.save(product.getSku(), price);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>You could ask, how does <em>JBehave</em> know about <code>StockKeepingUnit</code> and <code>Money</code> classes?
+You will have to implement custom converters but it is much more convenient to use well defined API, instead of dozen of <code>String</code> based values.</p>
+
+<p>``` java MoneyConverter
+@Converter
+public class MoneyConverter {</p>
+
+<pre><code>@AsParameterConverter
+public Money convertPercent(String value) {
+    if (StringUtils.isEmpty(value)) {
+        return null;
+    }
+
+    String[] tokens = value.split("\\s");
+    if (tokens.length != 2) {
+        throw new ParameterConverters.ParameterConvertionFailed("Expected 2 tokens (amount and currency) but got " + tokens.length + ", value: " + value + ".");
+    }
+
+    return new Money(tokens[0], tokens[1]);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The class <code>MoneyConverter</code> is annotated with <code>@Converter</code> annotation defined before.
+<code>StringUtils</code> is a utility class from <em>Spring Framework</em>, look at the API documentation how many helpful utils classes are implemented in the framework.
+If the value cannot be converted, <em>JBehave</em> <code>ParameterConvertionFailed</code> exception is thrown.</p>
+
+<p>The shopping cart related steps are implemented in <code>ShoppingCartSteps</code> class.</p>
+
+<p>``` java ShoppingCartSteps
+@Steps
+public class ShoppingCartSteps {</p>
+
+<pre><code>@Autowired
+private ShoppingCartService shoppingCartService;
+
+@Autowired
+private ProductDao productRepository;
+
+@Given("empty shopping cart")
+public void emptyShoppingCart() {
+    shoppingCartService.createEmptyShoppingCart();
+}
+
+@When("products are added to the shopping cart: $rows")
+public void addProducts(List&lt;ShoppingCartRow&gt; rows) {
+    for (ShoppingCartRow row : rows) {
+        Product product = productRepository.findByName(row.getProductName());
+        shoppingCartService.addProductToShoppingCart(product.getSku(), row.getQuantity());
+    }
+}
+
+@Then("shopping cart is empty")
+public void isEmpty() {
+    ShoppingCart shoppingCart = shoppingCartService.getShoppingCart();
+    assertEquals(0, shoppingCart.numberOfItems());
+}
+
+@Then("the number of products in shopping cart is $numberOfItems")
+public void numberOfItems(int numberOfItems) {
+    ShoppingCart shoppingCart = shoppingCartService.getShoppingCart();
+    assertEquals(numberOfItems, shoppingCart.numberOfItems());
+}
+
+@Then("total price is $price")
+@Pending
+public void totalPrice(Money price) {
+    // TODO: implement missing functionality and enable step
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>There are two interesting elements:</p>
+
+<ul>
+<li>Last step annotated with <code>@Pending</code> annotation.</li>
+<li><code>ShoppingCartRow</code> class used to defined products added to the cart.</li>
+</ul>
+
+
+<p>Typically user story is prepared before implementation.
+In this situation you will have several pending steps, slowly implemented during the sprint.
+Pending step does not mean that acceptance tests have failed, it only means that functionality has not been implemented yet.</p>
+
+<p><code>ShoppingCartRow</code> is a simple bean prepared for tabular parameters definition in the story. Do you remember this step?</p>
+
+<p><code>
+When products are added to the shopping cart:
+|PRODUCT                 |QTY|
+|Domain Driven Design    |  1|
+|Specification By Example|  2|
+</code></p>
+
+<p>Basket presented in tabular form is much easier to read than if it would be defined line by line.
+To use this kind of parameter you have to prepare a class with a few annotations.</p>
+
+<p>``` java ShoppingCartRow
+@AsParameters
+public static class ShoppingCartRow {</p>
+
+<pre><code>@Parameter(name = "PRODUCT")
+private String productName;
+
+@Parameter(name = "QTY")
+private Integer quantity;
+
+public String getProductName() {
+    return productName;
+}
+
+public void setProductName(String productName) {
+    this.productName = productName;
+}
+
+public Integer getQuantity() {
+    return quantity;
+}
+
+public void setQuantity(Integer quantity) {
+    this.quantity = quantity;
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p><em>JBehave</em> uses this annotated class to convert table row from user story to Java object.</p>
+
+<h2>Running tests</h2>
+
+<p>The last part of this post is about running tests.</p>
+
+<p>For every user story definition, one test class is defined.
+The test class is only the marker and does not define any logic.</p>
+
+<p><code>java LearnJBehaveStory.java
+@RunWith(SpringJUnit4ClassRunner.class)
+@AcceptanceTest
+public class LearnJbehaveStory extends AbstractSpringJBehaveStory {
+}
+</code></p>
+
+<p>The test can be executed directly from your favourite IDE, at least if the IDE provides support for JUnit runner.</p>
+
+<p>The second way to execute tests is to use <em>Maven</em> from command line.
+As long as tests are executed by regular <em>Maven Surefire Plugin</em>, the tests are executed exactly the same way like any other tests.
+Run the following command from the project parent directory.
+<em>Maven</em> builds the application module first, add the classes to the reactor classpath and then execute acceptance tests from tests module.</p>
+
+<p><code>console
+mvn -pl example-jbehave-tests -am test
+</code></p>
+
+<p>The convenient way to execute single test from command line is to use regular Java property <code>-Dtest</code> recognized by <em>Surefire</em>.</p>
+
+<p><code>console
+mvn -pl example-jbehave-tests -am test -Dtest=LearnJbehaveStory
+...
+</code></p>
+
+<h2>Summary</h2>
+
+<p>In the post I presented the most important elements from example project.
+The complete project is hosted on <a href="https://github.com/mkuthan/example-jbehave">GitHub</a>, you can clone/fork the project and do some experiments by yourself.
+I configure <a href="https://travis-ci.org/mkuthan/example-jbehave">Travis</a> continuous integration build to ensure that the project really works.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to Send Email From JEE Application]]></title>
+    <link href="http://mkuthan.github.io/blog/2013/12/06/how-to-send-email-from-jee-application/"/>
+    <updated>2013-12-06T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2013/12/06/how-to-send-email-from-jee-application</id>
+    <content type="html"><![CDATA[<p>Sending email notifications from enterprise application is very common scenario.
+I know several methods to solve this puzzle, below you can find short summary.</p>
+
+<p>To send an email from the application at least SMTP server address must be configured.
+Because released application binary (e.g: WAR file) should be portable across environments (integration, QA, staging,
+production) configuration must be externalized.<br/>
+Below I present code snippets to configure SMTP server address as JNDI entry.</p>
+
+<p>Sample JNDI entry for JBoss:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;UTF-8&rdquo;?><br/>
+<server><br/>
+  <mbean code="org.jboss.mail.MailService" name="jboss:service=mailSession"></p>
+
+<pre><code>&lt;attribute name="JNDIName"&gt;mail/mailSession&lt;/attribute&gt;  
+&lt;attribute name="Configuration"&gt;  
+  &lt;configuration&gt;  
+    &lt;property name="mail.smtp.host" value="smtp.company.com"/&gt;  
+  &lt;/configuration&gt;  
+&lt;/attribute&gt;  
+&lt;depends&gt;jboss:service=Naming&lt;/depends&gt;  
+</code></pre>
+
+<p>  </mbean><br/>
+</server><br/>
+```</p>
+
+<p>Sample JNDI entry for Tomcat:</p>
+
+<p>``` xml
+&lt;?xml version=&ldquo;1.0&rdquo; encoding=&ldquo;UTF-8&rdquo;?><br/>
+<Context><br/>
+  &lt;Resource name=&ldquo;mail/mailSession&rdquo;</p>
+
+<pre><code>auth="Container"   
+type="javax.mail.Session"   
+mail.smtp.host="smtp.company.com"/&gt;      
+</code></pre>
+
+<p></Context><br/>
+```</p>
+
+<p>When mail session is configured as JNDI resource, it can be easily utilized by Spring Framework mail sender:</p>
+
+<p>``` xml
+&lt;jee:jndi-lookup id=&ldquo;mailSession&rdquo; jndi-name=&ldquo;mail/mailSession&rdquo; /></p>
+
+<p><bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"><br/>
+  <property name="session" ref="mailSession"/><br/>
+</bean><br/>
+```</p>
+
+<p>Now it is time for more tough part, how to use mail sender correctly?
+There are at least four options, choose the best one for you:</p>
+
+<ul>
+<li><em>Direct (Sync)</em> Use mail session directly from the application service in the web request thread.</li>
+<li><em>Direct (Async)</em> Use mail session directly from the application service using <code>@Async</code> Spring annotation.</li>
+<li><em>Database Queue</em> Save messages into database table and create cron job to send the emails periodically.</li>
+<li><em>JMS Queue</em> Put messages into JMS queue and attach JMS listener to process and send emails.</li>
+</ul>
+
+
+<p>I collected a few non-functional and functional common requirements together with short categorization for each method.</p>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th>                                           </th>
+<th align="center">Direct (Sync)</th>
+<th align="center">Direct (Async)</th>
+<th align="center">Database Queue</th>
+<th align="center">JMS Queue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>Application works even if the SMTP is down </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Web request thread is not blocked          </td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Mail aggregation, scheduled sending, etc.  </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">limited</td>
+</tr>
+<tr>
+<td></td>
+<td>Control over SMTP requests throttle        </td>
+<td align="center">no</td>
+<td align="center">limited</td>
+<td align="center">limited</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Redelivery policy, do not lost messages if SMTP is down </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">limited</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Monitoring                                 </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>I would start with &ldquo;Database Queue&rdquo; approach, at least if JMS is not already used in the project or you do not have to send thousands of emails.
+&ldquo;Direct&rdquo; method is not an option at all IMHO.</p>
+
+<p>Separate part of the subject is to how to create email body. In most situation
+I used some template engine, like <em>Freemarker</em> or <em>Thymeleaf</em>. The
+template can be defined as internal WAR resource or can be loaded from
+database if the template needs to be adjusted on runtime.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[DDD Architecture Summary]]></title>
+    <link href="http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/"/>
+    <updated>2013-11-04T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary</id>
+    <content type="html"><![CDATA[<p>In this blog post you can find my general rules for implementing system using <em>Domain Driven Design</em>. Do not use them
+blindly but it is good starting point for DDD practitioners.</p>
+
+<h2><a name="bc"></a>Bounded Context</h2>
+
+<ul>
+<li>Separate bounded context for each important module of the application (important from business partner perspective).</li>
+<li>Independent of each other (if feasible).</li>
+<li>For monolithic application separate <em>Spring Framework</em> context for each bounded context, e.g: <code>applicationContext-domain-crm.xml</code>,
+<code>applicationContext-domain-shipping.xml</code>, etc.</li>
+<li>CRUD like bounded contexts (user management, dictionaries, etc.) should be implemented as <em>Anemic Domain Model</em>.</li>
+</ul>
+
+
+<h2><a name="domain"></a>Domain</h2>
+
+<ul>
+<li>Place for application business logic.</li>
+<li>Must be independent of the technical complexity, move technical complexity into <a href="#infrastructure">infrastructure</a>.</li>
+<li>Must be independent of the particular presentation technology, move presentation related stuff into <a href="#web">web</a>.</li>
+<li>Internal package structure must reflect business concepts (<a href="#bc">bounded contexts</a>), e.g: <code>crm</code>, <code>shipping</code>, <code>sales</code>,
+<code>shared</code>, etc.</li>
+</ul>
+
+
+<h2><a name="dm"></a> Domain Model</h2>
+
+<ul>
+<li>Rich model, place for: entities, domain services, factories, strategies, specifications, etc.</li>
+<li>Best object oriented practices applied (SOLID, GRASP).</li>
+<li>Unit tested heavily (with mocks in the last resort).</li>
+<li>Unit tests executed concurrently (on method or class level).</li>
+<li>Meaningful names for domain services e.g: <code>RebateCalculator</code>, <code>PermissionChecker</code>, not <code>RebateManager</code> or
+<code>SecurityService</code>.</li>
+<li>Domain services dependencies are injected by constructor.</li>
+<li>Having more than 2~3 dependencies is suspicious.</li>
+<li>Entities are not managed by containers.</li>
+<li>Aggregate root entities are domain events publishers (events collectors).</li>
+<li>Aggregates in single bounded context might be strongly referenced (navigation across objects tree).</li>
+<li>Aggregates from different bounded contexts are referenced by business keys (if feasible).</li>
+<li>No security, no transactions, no aspects, no magic, only plain old Java.</li>
+<li>Interfaces for domain services when the service is provided by <a href="#infrastructure">infrastructure</a>.</li>
+<li>No interfaces for domain services implemented in the domain model itself.</li>
+</ul>
+
+
+<h2><a name="as"></a>Application Services</h2>
+
+<ul>
+<li>Orchestrator and facade for actors under Model.</li>
+<li>Place for security handling.</li>
+<li>Place for transactions handling.</li>
+<li>Must not deliver any business logic, move business logic into <a href="#dm">domain model</a>. Almost no conditionals and loops.</li>
+<li>Implemented as transactional script.</li>
+<li>No unit tests.</li>
+<li>Acceptance tests executed against this layer.</li>
+<li>Cglib proxied, proxy must be serialized by session scoped beans in <a href="#web">web</a> layer.</li>
+<li>Dependencies are injected on field level (private fields).</li>
+<li>Ten or more dependencies for single application service is not a problem.</li>
+<li>Application services are also domain event listeners.</li>
+<li>Always stateless.</li>
+<li>No interfaces, just implementation.</li>
+</ul>
+
+
+<h2><a name="ab"></a>Application Bootstrap</h2>
+
+<ul>
+<li>Initial application data.</li>
+<li>Loaded during application startup (fired by <code>BootstrapEvent</code>) if application storage is empty.</li>
+<li>Loading order is defined with Spring <code>Ordered</code> interface.</li>
+<li>Data is loaded within Model API.</li>
+<li>Data might be loaded within <a href="#as">application services</a>, e.g: load sample Excel when application is integrated with
+external world this way.</li>
+<li>No tests, bootstrap is tested during application startup on daily basis.</li>
+</ul>
+
+
+<h2><a name="infrastructure"></a>Infrastructure</h2>
+
+<ul>
+<li>Place for technical services</li>
+<li>Must not deliver any business logic, move business logic into <a href="#domain">domain</a>.</li>
+<li>Internal package structure must reflect technical concepts, e.g: <code>~infrastructure.jpa</code>, <code>~infrastructure.jms</code>,
+<code>~infrastructure.jsf</code>, <code>~infrastructure.freemarker</code>, <code>~infrastructure.jackson</code>, etc.</li>
+<li>Shared for all bounded context of the application. For more complex applications, separate technical services e.g:
+<code>~infrastructure.jpa.crm</code>, <code>~infrastructure.jpa.shipping</code>, etc.</li>
+<li>Class names must reflect technical concepts, e.g.: <code>JpaCustomerRepository</code>, <code>JaksonJsonSerializer</code>,
+not <code>CustomerRepositoryImpl</code>, <code>JsonSerializerImpl</code>.</li>
+<li>Integration tested heavily (with <em>Spring Framework</em> context loaded).</li>
+<li>Integration tests executed by single thread.</li>
+<li>Test execution separated from unit tests within test groups.</li>
+<li>Separate <em>Spring Framework</em> context for each technical concept, e.g: <code>applicationContext-infrastructure-jpa.xml</code>,
+<code>applicationContext-infrastructure-jms.xml</code>, etc.</li>
+<li>Separate and independent Spring test context for each technical module, e.g: <code>testContext-jpa.xml</code>,
+<code>testContext-jms.xml</code>, etc.</li>
+</ul>
+
+
+<h2><a name="web"></a>Web</h2>
+
+<ul>
+<li>Client specific facade (REST, MVC, JSF, etc.)</li>
+<li>Place for UI logic (not applicable for JavaScript client and REST)</li>
+<li>Delegates requests to <a href="#as">application services</a></li>
+<li>No transactions, no method level security, move security and transactions to <a href="#as">application services</a>.</li>
+<li>No business logic, move business logic into <a href="#domain">domain</a>.</li>
+<li>Tested with mocked application services.</li>
+<li>Tested with loaded spring context for MVC controllers (if applicable).</li>
+<li>Serializable session scoped beans (to be safe all beans in this module should be <code>java.io.Serializable</code>).</li>
+<li>Internal package structure must reflect UI organization structure, it might be similar to project <em>sitemap</em>.</li>
+<li>Top level package might reflect technology or architecture e.g: <code>presentation</code>, <code>rest</code>, <code>mvc</code>, <code>jsf</code>, etc.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Pure JEE or Spring Framework]]></title>
+    <link href="http://mkuthan.github.io/blog/2012/05/31/pure-jee-or-spring-framework/"/>
+    <updated>2012-05-31T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2012/05/31/pure-jee-or-spring-framework</id>
+    <content type="html"><![CDATA[<p>During my career as J2EE and JEE software developer I have been trying to use pure JEE two o three times.
+And I decided to do not repeat this exercise any more, it would be waste of my precious time.</p>
+
+<p>Below you can find short but quite comprehensive summary (based on <a href="http://www.javacodegeeks.com/2012/05/why-i-will-continue-to-use-spring-and.html">Ilias Tsagklis</a>):</p>
+
+<blockquote><p> The strength of Java EE is the open standard established in a documented process by various parties. For this reason building applications for this platform is very popular, although many projects use only a little amount of Java EE API. Another important fact to notice is that every (wise) Java packaged software supplier supports the major Java EE platforms. As a result of all this many larger enterprises host Java EE servers in house anyway. Running Spring applications on Java EE servers is near-by then. This setup may provide benefits for enterprises with many dozens or even hundrets of Java applications in production.</p>
+
+<ol>
+<li>Migrating JEE servers is considerably easier because the applications use less server API <em>directly</em>.</li>
+<li>For the sake of little migration costs, most of the in-house clients will decide to migrate their business applications to current server versions.</li>
+<li>Less server generations in IT landscape, less local development environment generations due to little Java versions in production, simpler ALM solutions &mdash; all in all: manageable complexity and more homogeneous landscape.</li>
+<li>Fast response to new client requirements: if you need new (Spring) features you&rsquo;ll only compile a new version of WAR/EAR files and deploy the stuff to an arbitrary Java runtime.</li>
+<li>The range of potential target runtime environments will be higher compared to Java EE full stack. Which means you may be &ldquo;more&rdquo; plattform independent.</li>
+<li>With Spring you can add smaller peaces of functionality to your applications or server environments (avoids: Snowball-effect).</li>
+<li>Compared to Java EE, the complete innovation cycle is faster (from the feature request to the usage in production).</li>
+<li>Spring enhancements are made according to actual real world client project requirements which ensures their practical applicability.</li>
+<li>Application development teams remain responsible for the application development stack and can decide flexibly which API fits the clients needs.</li>
+</ol>
+
+
+<p>It&rsquo;s difficult to achieve all these benefits in a pure Java EE development stack (some of them address conceptual problems in Java EE). One possible option may be to modularize JEE application server architecture. Modularization as a standard, like in Java SE. It may also be valid to think about the release processes (i.e. JCP).</p></blockquote>
+
+<p>I would add my $.02:</p>
+
+<ul>
+<li><p>Not everything is portable across AS (or different version of AS from single vendor).
+I migrated JEE applications several times, mainly due to AS end of support. Spring framework provides necessary abstraction.</p></li>
+<li><p>JEE lifecycle is extremely long, you have to wait for the new standard, than for the vendor to apply
+the changes to the AS, than for the infrastructure team to engineer new AS version. Based on my corporate experience,
+it takes ~4 years from the initial release provided by Spring Framework.</p></li>
+<li><p>Developer productivity is higher if they can run application on the lightweight container like Jetty or Tomcat.
+You can even consider to avoid Servlet container at all and run your application as regular system process.</p></li>
+<li><p>Spring Framework enhancements are driven by real use cases not by vendor marketing team or mad scientist.
+Did you try to use JPA2 Criteria? Or maybe do you prefer Query DSL instead?</p></li>
+<li><p>One size does not fit all, that&rsquo;s the point. Pure JEE is very limited but Spring Framework ecosystem is extraordinary rich.</p></li>
+</ul>
+
+
+<p>I attended JEE evangelists sessions on several conferences around the world. And I can confirm, they did great speaks.
+It seams that pure JEE works for them, what is strange that it does not work for other specialists I know ;&ndash;)</p>
+]]></content>
+  </entry>
+  
+</feed>

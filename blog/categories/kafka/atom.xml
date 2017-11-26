@@ -1,0 +1,1286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Kafka | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/kafka/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Kafka Streams DSL vs Processor API]]></title>
+    <link href="http://mkuthan.github.io/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/"/>
+    <updated>2017-11-02T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2017/11/02/kafka-streams-dsl-vs-processor-api</id>
+    <content type="html"><![CDATA[<p><a href="https://docs.confluent.io/current/streams/index.html">Kafka Streams</a> is a Java library
+for building real-time, highly scalable, fault tolerant, distributed applications.
+The library is fully integrated with <a href="https://kafka.apache.org/documentation/">Kafka</a> and leverages
+Kafka producer and consumer semantics (e.g: partitioning, rebalancing, data retention and compaction).
+What is really unique, the only dependency to run Kafka Streams application is a running Kafka cluster.
+Even local state stores are backed by Kafka topics to make the processing fault tolerant &ndash; brilliant!</p>
+
+<p>Kafka Streams provides all necessary stream processing primitives like one-record-at-a-time processing,
+event time processing, windowing support and local state management.
+Application developer can choose from three different Kafka Streams APIs: DSL, Processor or KSQL.</p>
+
+<ul>
+<li><p><a href="https://docs.confluent.io/current/streams/developer-guide.html#kafka-streams-dsl">Kafka Streams DSL</a>
+(Domain Specific Language) &ndash; recommended way for most users
+because business logic can be expressed in a few lines of code.
+All stateless and stateful transformations are defined using declarative,
+functional programming style (filter, map, flatMap, reduce, aggregate operations).
+Kafka Stream DSL encapsulates most of the stream processing complexity
+but unfortunately it also hides many useful knobs and switches.</p></li>
+<li><p><a href="https://docs.confluent.io/current/streams/developer-guide.html#processor-api">Kafka Processor API</a>
+provides a low level, imperative way to define stream processing logic.
+At first sight Processor API could look hostile but finally gives much more flexibility to developer.
+With this blog post I would like to demonstrate that hand-crafted stream processors might be a magnitude more efficient
+than a naive implementation using Kafka DSL.</p></li>
+<li><p><a href="https://www.confluent.io/product/ksql/">KSQL</a>
+is a promise that stream processing could be expressed by anyone using SQL as the language.
+It offers an easy way to express stream processing transformations as an alternative to writing
+an application in a programming language such as Java.
+Moreover, processing transformation written in SQL like language can be highly optimized
+by execution engine without any developer effort.
+KSQL was released recently and it is still at very early development stage.</p></li>
+</ul>
+
+
+<p>In the first part of this blog post I&rsquo;ll define simple but still realistic business problem to solve.
+Then you will learn how to implement this use case with Kafka Stream DSL
+and how much the processing performance is affected by this naive solution.
+At this moment you could stop reading and scale-up Kafka cluster ten times to fulfill business requirements
+or you could continue reading and learn how to optimize the processing with low level Kafka Processor API.</p>
+
+<h2>Business Use Case</h2>
+
+<p>Let&rsquo;s imagine a web based e-commerce platform with fabulous recommendation and advertisement systems.
+Every client during visit gets personalized recommendations and advertisements,
+the conversion is extraordinarily high and platform earns additional profits from advertisers.
+To build comprehensive recommendation models,
+such system needs to know everything about clients traits and their behaviour.</p>
+
+<p>To make it possible, e-commerce platform reports all clients activities as an unbounded stream
+of page views and events.
+Every time the client enters web page, a so-called page view is sent to Kafka cluster.
+A page view contains web page attributes like request URI, referrer URI, user agent, active A/B experiments
+and many more.
+In addition to page view all important actions are reported as custom events, e.g: search, add to cart or checkout.
+To get a complete view of the activity stream, collected events need to be enriched with data from page views.</p>
+
+<h2>Data Model</h2>
+
+<p>Because most of the processing logic is built within context of given client,
+page views and events are evenly partitioned on Kafka topics by the client identifier.</p>
+
+<p>``` scala
+type ClientId = String
+case class ClientKey(clientId: ClientId)</p>
+
+<p>val bob = ClientKey(&ldquo;bob&rdquo;)
+val jim = ClientKey(&ldquo;jim&rdquo;)
+```</p>
+
+<p>Page view and event structures are different so messages are published to separate Kafka topics
+using ingestion time as the event time.
+Our system should not rely on page view or event creation time due to high client clocks variance.
+The topic key is always <code>ClientKey</code> and value is either <code>Pv</code> or <code>Ev</code> presented below.
+For better examples readability page view and event payload is defined as simplified single value field.
+Events are uniquely identified by <code>pvId</code> and <code>evId</code> pair, <code>pvId</code> could be a random identifier, <code>evId</code>
+a sequence number.</p>
+
+<p>``` scala
+type PvId = String
+type EvId = String</p>
+
+<p>case class Pv(pvId: PvId, value: String)
+case class Ev(evId: EvId, value: String, pvId: PvId)
+```</p>
+
+<p>Enriched results <code>EvPv</code> is published to output Kafka topic using <code>ClientKey</code> as message key.
+This topic is then consumed directly by advertisement and recommendation systems.</p>
+
+<p><code>scala
+case class EvPv(evId: EvId, evValue: String, pvId: Option[PvId], pvValue: Option[String])
+</code></p>
+
+<h2>Example Scenario</h2>
+
+<p>For client &ldquo;bob&rdquo; the following page views and events are collected by the system.</p>
+
+<p>``` scala
+// Bob enters main page
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;pv0&rdquo;, &ldquo;/&rdquo;)</p>
+
+<p>// A few impression events collected almost immediately
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, &ldquo;pv0&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv0&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev2&rdquo;, &ldquo;show recommendation&rdquo;, &ldquo;pv0&rdquo;)</p>
+
+<p>// There is also single duplicated event, welcome to distributed world
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv0&rdquo;)</p>
+
+<p>// A dozen seconds later Bob clicks on one of the offers presented on the main page
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;ev3&rdquo;, &ldquo;click recommendation&rdquo;, &ldquo;pv0&rdquo;)</p>
+
+<p>// Out of order event collected before page view on the offer page
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, &ldquo;pv1&rdquo;)</p>
+
+<p>// Offer page view
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;pv1&rdquo;, &ldquo;/offer?id=1234&rdquo;)</p>
+
+<p>// An impression event published almost immediately after page view
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv1&rdquo;)</p>
+
+<p>// Late purchase event, Bob took short coffee break before the final decision
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev2&rdquo;, &ldquo;add to cart&rdquo;, &ldquo;pv1&rdquo;)
+```</p>
+
+<p>For above clickstream the following enriched events output stream is expected.</p>
+
+<p>``` scala
+// Events from main page without duplicates</p>
+
+<p>ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev2&rdquo;, &ldquo;show recommendation&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev3&rdquo;, &ldquo;click recommendation&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)</p>
+
+<p>// Events from offer page, somehow incomplete due to streaming semantics limitations</p>
+
+<p>// early event
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, None, None)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv1&rdquo;, &ldquo;/offer?id=1234&rdquo;)</p>
+
+<p>// late event
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev2&rdquo;, &ldquo;add to cart&rdquo;, None, None)
+```</p>
+
+<h2>Kafka Stream DSL</h2>
+
+<p>Now we are ready to implement above use case with recommended Kafka Streams DSL.
+The code could be optimized but I would like to present the canonical way of using DSL
+without exploring DSL internals.
+All examples are implemented using the latest Kafka Streams 1.0.0 version.</p>
+
+<p>Create two input streams for page views and events
+connected to &ldquo;clickstream.events&rdquo; and &ldquo;clickstream.page_views&rdquo; Kafka topics.</p>
+
+<p>``` scala
+val builder = new StreamsBuilder()</p>
+
+<p>val evStream = builder.stream<a href="" title="clickstream.events">ClientKey, Ev</a>
+val pvStream = builder.stream<a href="" title="clickstream.page_views">ClientKey, Pv</a>
+```</p>
+
+<p>Repartition topics by client and page view identifiers <code>PvKey</code>
+as a prerequisite to join events with page view.
+Method <code>selectKey</code> sets a new key for every input record,
+and marks derived stream for repartitioning.</p>
+
+<p>``` scala
+case class PvKey(clientId: ClientId, pvId: PvId)</p>
+
+<p>val evToPvKeyMapper: KeyValueMapper[ClientKey, Ev, PvKey] =
+  (clientKey, ev) => PvKey(clientKey.clientId, ev.pvId)</p>
+
+<p>val evByPvKeyStream = evStream.selectKey(evToPvKeyMapper)</p>
+
+<p>val pvToPvKeyMapper: KeyValueMapper[ClientKey, Pv, PvKey] =
+  (clientKey, pv) => PvKey(clientKey.clientId, pv.pvId)</p>
+
+<p>val pvByPvKeyStream = pvStream.selectKey(pvToPvKeyMapper)
+```</p>
+
+<p>Join event with page view streams by selected previously <code>PvKey</code>,
+left join is used because we are interested also in events without matched page view.
+Every incoming event is enriched by matched page view into <code>EvPv</code> structure.</p>
+
+<p>The join window duration is set to reasonable 10 minutes.
+It means, that Kafka Streams will look for messages in &ldquo;event&rdquo; and &ldquo;page view&rdquo; sides of the join
+10 minutes in the past and 10 minutes in the future (using event time, not wall-clock time).
+Because we are not interested in late events out of defined window,
+the retention is 2 times longer than window, to hold events from the past and the future.
+If you are interested why 1 milliseconds needs to be added to the retention,
+please ask Kafka Streams authors not me ;)</p>
+
+<p>``` scala
+val evPvJoiner: ValueJoiner[Ev, Pv, EvPv] = { (ev, pv) =>
+  if (pv == null) {</p>
+
+<pre><code>EvPv(ev.evId, ev.value, None, None)
+</code></pre>
+
+<p>  } else {</p>
+
+<pre><code>EvPv(ev.evId, ev.value, Some(pv.pvId), Some(pv.value))
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>val joinWindowDuration = 10 minutes</p>
+
+<p>val joinRetention = joinWindowDuration.toMillis * 2 + 1
+val joinWindow = JoinWindows.of(joinWindowDuration.toMillis).until(joinRetention)</p>
+
+<p>val evPvStream = evByPvKeyStream.leftJoin(pvByPvKeyStream, evPvJoiner, joinWindow)
+```</p>
+
+<p>Now it&rsquo;s time to fight with duplicated enriched events.
+Duplicates come from unreliable nature of the network between client browser and our system.
+Most real-time processing pipelines in advertising and recommendation systems are counting events,
+so duplicates in the enriched clickstream could cause inaccuracies.</p>
+
+<p>The most straightforward deduplication method is to compare incoming event with state of previously processed events.
+If the event has been already processed it should be skipped.</p>
+
+<p>Unfortunately DSL does not provide &ldquo;deduplicate&rdquo; method out-of-the-box but similar logic might be implemented with
+&ldquo;reduce&rdquo; operation.</p>
+
+<p>First we need to define deduplication window.
+Deduplication window can be much shorter than join window,
+we do not expect duplicates more than 10 seconds between each other.</p>
+
+<p>``` scala
+val deduplicationWindowDuration = 10 seconds</p>
+
+<p>val deduplicationRetention = deduplicationWindowDuration.toMillis * 2 + 1
+val deduplicationWindow = TimeWindows.of(deduplicationWindowDuration.toMillis).until(deduplicationRetention)
+```</p>
+
+<p>Joined stream needs to be repartitioned again by compound key <code>EvPvKey</code> composed of
+client, page view and event identifiers.
+This key will be used to decide if <code>EvPv</code> is a duplicate or not.
+Next, the stream is grouped by selected key into KGroupedStream and
+deduplicated with reduce function, where first observed event wins.</p>
+
+<p>``` scala
+case class EvPvKey(clientId: ClientId, pvId: PvId, evId: EvId)</p>
+
+<p>val evPvToEvPvKeyMapper: KeyValueMapper[PvKey, EvPv, EvPvKey] =
+  (pvKey, evPv) => EvPvKey(pvKey.clientId, pvKey.pvId, evPv.evId)</p>
+
+<p>val evPvByEvPvKeyStream = evPvStream.selectKey(evPvToEvPvKeyMapper)</p>
+
+<p>val evPvDeduplicator: Reducer[EvPv] =
+  (evPv1, _) => evPv1</p>
+
+<p>val deduplicatedStream = evPvByEvPvKeyStream
+  .groupByKey()
+  .reduce(evPvDeduplicator, deduplicationWindow, &ldquo;evpv-store&rdquo;)
+  .toStream()
+```</p>
+
+<p>This deduplication implementation is debatable, due to &ldquo;continue stream&rdquo; semantics of KTable/KStream.
+Reduce operation creates KTable, and this KTable is transformed again into KStream of continuous updates of the same key.
+It could lead to duplicates again if the update frequency is higher than inverse of deduplication window period.
+For 10 seconds deduplication window the updates should not be emitted more often than every 10 seconds but
+lower updates frequency leads to higher latency.
+The updates frequency is controlled globally using &ldquo;cache.max.bytes.buffering&rdquo; and &ldquo;commit.interval.ms&rdquo;
+Kafka Streams properties.
+See reference documentation for details:
+<a href="https://docs.confluent.io/current/streams/developer-guide.html#streams-developer-guide-memory-management">Record caches in the DSL</a>.</p>
+
+<p>I did not find another way to deduplicate events with DSL, please let me know if better implementation exists.</p>
+
+<p>In the last stage the stream needs to be repartitioned again by client id
+and published to &ldquo;clickstream.events_enriched&rdquo; Kafka topic for downstream subscribers.
+In the same step mapper gets rid of the windowed key produced by windowed reduce function.</p>
+
+<p>``` scala
+val evPvToClientKeyMapper: KeyValueMapper[Windowed[EvPvKey], EvPv, ClientId] =
+  (windowedEvPvKey, _) => windowedEvPvKey.key.clientId</p>
+
+<p>val finalStream = deduplicatedStream.selectKey(evPvToClientKeyMapper)</p>
+
+<p>finalStream.to(&ldquo;clickstream.events_enriched&rdquo;)
+```</p>
+
+<h2>Under The Hood</h2>
+
+<p>Kafka Stream DSL is quite descriptive, isn&rsquo;t it?
+Especially developers with strong functional programming skills appreciate the overall design.
+But you will shortly see how much unexpected traffic to Kafka cluster is generated during runtime.</p>
+
+<p>I like numbers so let&rsquo;s estimate the traffic,
+based on real clickstream ingestion platform I develop on daily basis:</p>
+
+<ul>
+<li>1 kB &ndash; average page view size</li>
+<li>600 B &ndash; average event size</li>
+<li>4k &ndash; page views / second</li>
+<li>20k &ndash; events / second</li>
+</ul>
+
+
+<p>It gives 24k msgs/s and 16MB/s traffic-in total, the traffic easily handled even by small Kafka cluster.</p>
+
+<p>When stream of data is repartitioned Kafka Streams creates additional intermediate topic
+and publishes on the topic whole traffic partitioned by selected key.
+To be more precise it happens twice in our case, for repartitioned page views and events before join.
+We need to add 24k msgs/s and 16MB/s more traffic-in to the calculation.</p>
+
+<p>When streams of data are joined using window, Kafka Streams sends both sides of the join
+to two intermediate topics again. Even if you don&rsquo;t need fault tolerance,
+logging into Kafka cannot be disabled using DSL.
+You cannot also get rid of window for &ldquo;this&rdquo; side of the join (window for events), more about it later on.
+Add 24k msgs/s and 16MB/s more traffic-in to the calculation again.</p>
+
+<p>To deduplicate events, joined stream goes again into Kafka Streams intermediate topic.
+Add 20k msgs/s and (1kB + 1.6kB) * 20k = 52MB/s more traffic-in to the calculation again.</p>
+
+<p>The last repartitioning by client identifier adds 20k msgs/s and 52MB/s more traffic-in.</p>
+
+<p>Finally, instead of <strong>24k</strong> msgs/s and <strong>16MB/s</strong> traffic-in we have got
+<strong>112k</strong> msgs/s and <strong>152MB</strong> traffic-in.
+And I did not even count traffic from internal topics replication and standby replicas
+<a href="https://docs.confluent.io/current/streams/developer-guide.html#recommended-configuration-parameters-for-resiliency">recommended for resiliency</a>.</p>
+
+<p>Be aware that this is calculation for simple join of events and pages views generated by
+local e-commerce platform in central Europe country (~20M clients).
+I could also easily imagine much more complex stream topology, with tens of repartitions, joins and aggregations.</p>
+
+<p>If you are not careful, your Kafka Streams application could easily kill your Kafka cluster.
+At least our application did it once. Application deployed on 10 <a href="http://mesos.apache.org/">Mesos</a>
+nodes (4CPU, 4GB RAM) almost killed Kafka cluster deployed also on 10 physical machines (32CPU, 64GB RAM, SSD).
+Application was started after some time of inactivity and processed 3 hours of retention in 5 minutes
+(yep, it&rsquo;s a well known vulnerability until
+<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-13+-+Quotas">KIP-13</a> is open).</p>
+
+<h2>Kafka Processor API</h2>
+
+<p>Now it&rsquo;s time to check Processor API and figure out how to optimize our stream topology.</p>
+
+<p>Create the sources from input topics &ldquo;clickstream.events&rdquo; and &ldquo;clickstream.page_views&rdquo;.</p>
+
+<p><code>scala
+new Topology()
+  .addSource("ev-source", "clickstream.events")
+  .addSource("pv-source", "clickstream.page_views")
+</code></p>
+
+<p>Because we need to join an incoming event with the collected page view in the past,
+create processor which stores page view in windowed store.
+The processor puts observed page views into window store for joining in the next processor.
+The processed page views do not even need to be forwarded to downstream.</p>
+
+<p>``` scala
+class PvWindowProcessor(val pvStoreName: String) extends AbstractProcessor[ClientKey, Pv] {</p>
+
+<p>  private lazy val pvStore =</p>
+
+<pre><code>context().getStateStore(pvStoreName).asInstanceOf[WindowStore[ClientKey, Pv]]
+</code></pre>
+
+<p>  override def process(key: ClientKey, value: Pv): Unit =</p>
+
+<pre><code>pvStore.put(key, value)
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Store for page views is configured with the same size of window and retention.
+This store is configured to keep duplicates due to the fact
+that the key is a client id not page view id (retainDuplicates parameter).
+Because join window is typically quite long (minutes) the store should be fault tolerant (logging enabled).
+Even if one of the stream instances fails,
+another one will continue processing with persistent window state built by failed node, cool!
+Finally, the internal kafka topic can be easily configured using loggingConfig map
+(replication factor, number of partitions, etc.).</p>
+
+<p>``` scala
+val pvStoreWindowDuration = 10 minutes</p>
+
+<p>val retention = pvStoreWindowDuration.toMillis
+val window = pvStoreWindowDuration.toMillis
+val segments = 3
+val retainDuplicates = true</p>
+
+<p>val loggingConfig = Map<a href="">String, String</a></p>
+
+<p>val pvWindowStore = Stores.windowStoreBuilder(
+  Stores.persistentWindowStore(&ldquo;pv-window-store&rdquo;, retention, segments, window, retainDuplicates),
+  ClientKeySerde,
+  PvSerde
+).withLoggingEnabled(loggingConfig)
+```</p>
+
+<p>The first optimization you could observe is that in our scenario only one window store is created &ndash; for page views.
+The window store for events is not needed, if page view is collected by system after event it does not trigger new join.</p>
+
+<p>Add page view processor to the topology and connect with page view source upstream.</p>
+
+<p>``` scala
+val pvWindowProcessor: ProcessorSupplier[ClientKey, Pv] =
+  () => new PvWindowProcessor(&ldquo;pv-window-store&rdquo;)</p>
+
+<p>new Topology()
+  (&hellip;)
+  .addProcessor(&ldquo;pv-window-processor&rdquo;, pvWindowProcessor, &ldquo;pv-source&rdquo;)
+```</p>
+
+<p>Now, it&rsquo;s time for event and page view join processor, heart of the topology.
+It seems to be complex but this processor also deduplicates joined stream using <code>evPvStore</code>.</p>
+
+<p>``` scala
+class EvJoinProcessor(
+  val pvStoreName: String,
+  val evPvStoreName: String,
+  val joinWindow: FiniteDuration,
+  val deduplicationWindow: FiniteDuration
+) extends AbstractProcessor[ClientKey, Ev] {</p>
+
+<p>  import scala.collection.JavaConverters._</p>
+
+<p>  private lazy val pvStore =</p>
+
+<pre><code>context().getStateStore(pvStoreName).asInstanceOf[WindowStore[ClientKey, Pv]]
+</code></pre>
+
+<p>  private lazy val evPvStore =</p>
+
+<pre><code>context().getStateStore(evPvStoreName).asInstanceOf[WindowStore[EvPvKey, EvPv]]
+</code></pre>
+
+<p>  override def process(key: ClientKey, ev: Ev): Unit = {</p>
+
+<pre><code>val timestamp = context().timestamp()
+val evPvKey = EvPvKey(key.clientId, ev.pvId, ev.evId)
+
+if (isNotDuplicate(evPvKey, timestamp, deduplicationWindow)) {
+  val evPv = storedPvs(key, timestamp, joinWindow)
+    .find { pv =&gt;
+      pv.pvId == ev.pvId
+    }
+    .map { pv =&gt;
+      EvPv(ev.evId, ev.value, Some(pv.pvId), Some(pv.value))
+    }
+    .getOrElse {
+      EvPv(ev.evId, ev.value, None, None)
+    }
+
+  context().forward(evPvKey, evPv)
+  evPvStore.put(evPvKey, evPv)
+}
+</code></pre>
+
+<p>  }</p>
+
+<p>  private def isNotDuplicate(evPvKey: EvPvKey, timestamp: Long, deduplicationWindow: FiniteDuration) =</p>
+
+<pre><code>evPvStore.fetch(evPvKey, timestamp - deduplicationWindow.toMillis, timestamp).asScala.isEmpty
+</code></pre>
+
+<p>  private def storedPvs(key: ClientKey, timestamp: Long, joinWindow: FiniteDuration) =</p>
+
+<pre><code>pvStore.fetch(key, timestamp - joinWindow.toMillis, timestamp).asScala.map(_.value)
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>First processor performs a lookup for previously joined <code>PvEv</code> by <code>PvEvKey</code>.
+If <code>PvEv</code> is found the processing is skipped because <code>EvPv</code> has been already processed.</p>
+
+<p>Next, try to match page view to event using simple filter <code>pv.pvId == ev.pvId</code>.
+We don&rsquo;t need any repartitioning to do that, only get all page views from given client
+and join with event in the processor itself.
+It should be very efficient because every client generates up do hundred page views in 10 minutes.
+If there is no matched page view in the configured window,
+<code>EvPv</code> without page view details is forwarded to the downstream.</p>
+
+<p>Perceptive reader noticed that processor also changes the key from <code>ClientId</code> to <code>EvPvKey</code>
+for deduplication purposes.
+Everything is still within given client context without the need for any repartitioning.
+This is possible due to the fact, that new key is more detailed than the original one.</p>
+
+<p>As before, windowed store for deduplication needs to be configured.
+Because deduplication is done in a very short window (10 seconds or so),
+the logging to backed internal Kafka topic is disabled at all.
+If one of the stream instance fails, we could get some duplicates during this short window, not a big deal.</p>
+
+<p>``` scala
+val evPvStoreWindowDuration = 10 seconds</p>
+
+<p>val retention = evPvStoreWindowDuration.toMillis
+val window = evPvStoreWindowDuration.toMillis
+val segments = 3
+val retainDuplicates = false</p>
+
+<p>val evPvStore = Stores.windowStoreBuilder(
+  Stores.persistentWindowStore(&ldquo;ev-pv-window-store&rdquo;, retention, segments, window, retainDuplicates),
+  EvPvKeySerde,
+  EvPvSerde
+)
+```</p>
+
+<p>Add join processor to the topology and connect with event source upstream.</p>
+
+<p>``` scala
+val evJoinProcessor: ProcessorSupplier[ClientKey, Ev] =
+  () => new EvJoinProcessor(&ldquo;pv-window-store&rdquo;, &ldquo;ev-pv-window-store&rdquo;, pvStoreWindowDuration, evPvStoreWindowDuration)</p>
+
+<p>new Topology()
+  (&hellip;)
+  .addProcessor(&ldquo;ev-join-processor&rdquo;, evJoinProcessor, &ldquo;ev-source&rdquo;)
+```</p>
+
+<p>The last processor maps compound key <code>EvPvKey</code> again into <code>ClientId</code>.
+Because client identifier is already a part of the compound key,
+mapping is done by the processor without the need for further repartitioning.</p>
+
+<p>``` scala
+class EvPvMapProcessor extends AbstractProcessor[EvPvKey, EvPv] {
+  override def process(key: EvPvKey, value: EvPv): Unit =</p>
+
+<pre><code>context().forward(ClientKey(key.clientId), value)
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Add the map processor to the topology.</p>
+
+<p>``` scala
+val evPvMapProcessor: ProcessorSupplier[EvPvKey, EvPv] =
+  () => new EvPvMapProcessor()</p>
+
+<p>new Topology()
+  (&hellip;)
+  .addProcessor(&ldquo;ev-pv-map-processor&rdquo;, evPvMapProcessor, &ldquo;ev-pv-join-processor&rdquo;)
+```</p>
+
+<p>Finally publish join results to &ldquo;clickstream.events_enriched&rdquo; Kafka topic.</p>
+
+<p><code>scala
+new Topology()
+  (...)
+  .addSink("ev-pv-sink", EvPvTopic, "clickstream.events_enriched")
+</code></p>
+
+<p>If a processor requires access to the store this fact must be registered.
+It would be nice to have statically typed Topology API for registration,
+but now if the store is not connected to the processor,
+or is connected to the wrong store,
+runtime exception is thrown during application startup.</p>
+
+<p><code>scala
+new Topology()
+  (...)
+  .addStateStore(pvStore, "pv-window-processor", "ev-join-processor")
+  .addStateStore(evPvStore, "ev-join-processor")
+</code></p>
+
+<p>Let&rsquo;s count Kafka Streams internal topics overhead for Processor API version.
+Wait, there is only one internal topic, for page view join window!
+It gives 4k messages per second and 4MB traffic-in overhead, not more.</p>
+
+<p><strong>28k</strong> instead of <strong>112k</strong> messages per second and <strong>20MB</strong> instead of <strong>152MB</strong> traffic-in in total.
+It is a noticeable difference between Processor API and DSL topology versions,
+especially if we keep in mind that enrichment results are almost identical to results from DSL version.</p>
+
+<h2>Summary</h2>
+
+<p>Dear readers, are you still with me after long lecture with not so easy to digest Scala code?
+I hope so :)</p>
+
+<p>My final thoughts about Kafka Streams:</p>
+
+<ul>
+<li>Kafka DSL looks great at first, functional and declarative API sells the product, no doubts.</li>
+<li>Unfortunately Kafka DSL hides a lot of internals which should be exposed via the API
+(stores configuration, join semantics, repartitioning) &ndash; see
+<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-182%3A+Reduce+Streams+DSL+overloads+and+allow+easier+use+of+custom+storage+engines">KIP-182</a>.</li>
+<li>Processor API seems to be more complex and less sexy than DSL.</li>
+<li>But Processor API allows you to create hand-crafted, very efficient stream topologies.</li>
+<li>I did not present any Kafka Streams test (what&rsquo;s the shame &ndash; I&rsquo;m sorry)
+but I think testing would be easier with Processor API than DSL.
+With DSL it has to be an integration test, processors can be easily unit tested in separation with a few mocks.</li>
+<li>As Scala developer I prefer Processor API than DSL,
+e.g. Scala compiler could not infer KStream generic types.</li>
+<li>It&rsquo;s a pleasure to work with processor and fluent Topology APIs.</li>
+<li>I&rsquo;m really keen on KSQL future, it would be great to get optimized engine like
+<a href="https://databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html">Spark Catalyst</a> eventually.</li>
+<li>Finally, Kafka Streams library is extraordinarily fast and hardware efficient, if you know what you are doing.</li>
+</ul>
+
+
+<p>As always working code is published on
+<a href="https://github.com/mkuthan/example-kafkastreams">https://github.com/mkuthan/example-kafkastreams</a>.
+The project is configured with <a href="https://github.com/manub/scalatest-embedded-kafka">Embedded Kafka</a>
+and does not require any additional setup.
+Just uncomment either DSL or Processor API version, run main class and observe enriched stream of events on the console.</p>
+
+<p>Enjoy!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Spark Application Assembly for Cluster Deployments]]></title>
+    <link href="http://mkuthan.github.io/blog/2016/03/11/spark-application-assembly/"/>
+    <updated>2016-03-11T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2016/03/11/spark-application-assembly</id>
+    <content type="html"><![CDATA[<p>When I tried to deploy my first Spark application on a YARN cluster,
+I realized that there was no clear and concise instruction how to prepare the application for deployment.
+This blog post could be treated as missing manual on how to build Spark application written in Scala to get deployable binary.</p>
+
+<p>This blog post assumes that your Spark application is built with <a href="http://www.scala-sbt.org/">SBT</a>.
+As long as SBT is a mainstream tool for building Scala applications the assumption seems legit.
+Please ensure that your project is configured with at least SBT 0.13.6.
+Open <code>project/build.properties</code> file, verify the version and update SBT if needed:</p>
+
+<p><code>
+sbt.version=0.13.11
+</code></p>
+
+<h2>SBT Assembly Plugin</h2>
+
+<p>The <code>spark-submit</code> script is a convenient way to launch Spark application on the YARN or Mesos cluster.
+However, due to distributed nature of the cluster the application has to be prepared as single Java ARchive (JAR).
+This archive includes all classes from your project with all of its dependencies.
+This application assembly can be prepared using <a href="https://github.com/sbt/sbt-assembly">SBT Assembly Plugin</a>.</p>
+
+<p>To enable SBT Assembly Plugin, add the plugin dependency to the <code>project/plugins.sbt</code> file:</p>
+
+<p><code>
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.1")
+</code></p>
+
+<p>This basic setup can be verified by calling <code>sbt assembly</code> command.
+The final assembly location depend on the Scala version, application name and application version.
+The build result could be assembled into <code>target/scala-2.11/myapp-assembly-1.0.jar</code> file.</p>
+
+<p>You can configure many aspects of SBT Assembly Plugin like custom merge strategy
+but I found that it is much easier to keep the defaults and follow the plugin conventions.
+And what is even more important you don&rsquo;t have to change defaults to get correct, deployable application binary assembled by the plugin.</p>
+
+<h2>Provided dependencies scope</h2>
+
+<p>As long as cluster provides Spark classes at runtime, Spark dependencies must be excluded from the assembled JAR.
+If not, you should expect weird errors from Java classloader during application startup.
+Additional benefit of assembly without Spark dependencies is faster deployment.
+Please remember that application assembly must be copied over the network to the location accessible by all cluster nodes (e.g: HDFS or S3).</p>
+
+<p>Look at dependency section in your build file, it should look similar to the code snippet below:</p>
+
+<p>```
+val sparkVersion = &ldquo;1.6.0&rdquo;</p>
+
+<p>&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-core&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-sql&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-hive&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-mlib&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-graphx&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming-kafka&rdquo; % sparkVersion,
+(&hellip;)
+```</p>
+
+<p>The list of the Spark dependencies is always project specific.
+SQL, Hive, MLib, GraphX and Streaming extensions are defined only for reference.
+All defined dependencies are required by local build to compile code and run
+<a href="http://mkuthan.github.io/blog/2015/03/01/spark-unit-testing/">tests</a>.
+So they could not be removed from the build definition in the ordinary way because it will break the build at all.</p>
+
+<p>SBT Assembly Plugin comes with additional dependency scope &ldquo;provided&rdquo;.
+The scope is very similar to <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">Maven provided scope</a>.
+The provided dependency will be part of compilation and test, but excluded from the application assembly.</p>
+
+<p>To configure provided scope for Spark dependencies change the definition as follows:</p>
+
+<p>```
+val sparkVersion = &ldquo;1.6.0&rdquo;</p>
+
+<p>&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-core&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-sql&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-hive&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-mlib&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-graphx&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming-kafka&rdquo; % sparkVersion
+  exclude(&ldquo;log4j&rdquo;, &ldquo;log4j&rdquo;)
+  exclude(&ldquo;org.spark-project.spark&rdquo;, &ldquo;unused&rdquo;),
+(&hellip;)
+```</p>
+
+<p>Careful readers should notice that &ldquo;spark-streaming-kafka&rdquo; dependency has not been listed and marked as &ldquo;provided&rdquo;.
+It was done by purpose because integration with Kafka is not part of Spark distribution assembly
+and has to be assembled into application JAR.
+The exclusion rules for &ldquo;spark-streaming-kafka&rdquo; dependency will be discussed later.</p>
+
+<p>Ok, but how to recognize which libraries are part of Spark distribution assembly?
+There is no simple answer to this question.
+Look for <code>spark-assembly-*-1.6.0.jar</code> file on the cluster classpath,
+list the assembly content and verify what is included and what is not.
+In the assembly on my cluster I found core, sql, hive, mlib, graphx and streaming classes are embedded but not integration with Kafka.</p>
+
+<p><code>
+$ tar -tzf spark-assembly-1.6.0.jar
+META-INF/
+META-INF/MANIFEST.MF
+org/
+org/apache/
+org/apache/spark/
+org/apache/spark/HeartbeatReceiver
+(...)
+org/apache/spark/ml/
+org/apache/spark/ml/Pipeline$SharedReadWrite$$anonfun$2.class
+org/apache/spark/ml/tuning/
+(...)
+org/apache/spark/sql/
+org/apache/spark/sql/UDFRegistration$$anonfun$3.class
+org/apache/spark/sql/SQLContext$$anonfun$range$2.class
+(...)
+reference.conf
+META-INF/NOTICE
+</code></p>
+
+<h2>SBT run and run-main</h2>
+
+<p>Provided dependency scope unfortunately breaks SBT <code>run</code> and <code>run-main</code> tasks.
+Because provided dependencies are excluded from the runtime classpath, you should expect <code>ClassNotFoundException</code> during application startup on local machine.
+To fix this issue, provided dependencies must be explicitly added to all SBT tasks used for local run, e.g.:</p>
+
+<p><code>
+run in Compile &lt;&lt;= Defaults.runTask(fullClasspath in Compile, mainClass in(Compile, run), runner in(Compile, run))
+runMain in Compile &lt;&lt;= Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run))
+</code></p>
+
+<h2>How to exclude Log4j from application assembly?</h2>
+
+<p>Without Spark classes the application assembly is quite lightweight.
+But the assembly size might be reduced event more!</p>
+
+<p>Let assume that your application requires some logging provider.
+As long as Spark internally uses Log4j, it means that Log4j is already on the cluster classpath.
+But you may say that there is much better API for Scala than origin Log4j &ndash; and you are totally right.</p>
+
+<p>The snippet below configure excellent Typesafe (Lightbend nowadays) <a href="https://github.com/typesafehub/scala-logging">Scala Logging Library</a> dependency.</p>
+
+<p>```
+&ldquo;com.typesafe.scala-logging&rdquo; %% &ldquo;scala-logging&rdquo; % &ldquo;3.1.0&rdquo;,</p>
+
+<p>&ldquo;org.slf4j&rdquo; % &ldquo;slf4j-api&rdquo; % &ldquo;1.7.10&rdquo;,
+&ldquo;org.slf4j&rdquo; % &ldquo;slf4j-log4j12&rdquo; % &ldquo;1.7.10&rdquo; exclude(&ldquo;log4j&rdquo;, &ldquo;log4j&rdquo;),</p>
+
+<p>&ldquo;log4j&rdquo; % &ldquo;log4j&rdquo; % &ldquo;1.2.17&rdquo; % &ldquo;provided&rdquo;,
+```</p>
+
+<p>Scala Logging is a thin wrapper for SLF4J implemented using Scala macros.
+The &ldquo;slf4j-log4j12&rdquo; is a binding library between SLF4J API and Log4j logger provider.
+Three layers of indirection but who cares :&ndash;)</p>
+
+<p>There is also top-level dependency to Log4J defined with provided scope.
+But this is not enough to get rid of Log4j classes from the application assembly.
+Because Log4j is also a transitive dependency of &ldquo;slf4j-log4j12&rdquo; it must be explicitly excluded.
+If not, SBT Assembly Plugin adds Log4j classes to the assembly even if top level &ldquo;log4j&rdquo; dependency is marked as &ldquo;provided&rdquo;.
+Not very intuitive but SBT Assembly Plugin works this way.</p>
+
+<p>Alternatively you could disable transitive dependencies for &ldquo;slf4j-log4j12&rdquo; at all.
+It could be especially useful for libraries with many transitive dependencies which are expected to be on the cluster classpath.</p>
+
+<p><code>
+"org.slf4j" % "slf4j-log4j12" % "1.7.10" intransitive()
+</code></p>
+
+<h2>Spark Streaming Kafka dependency</h2>
+
+<p>Now we are ready to define dependency to &ldquo;spark-streaming-kafka&rdquo;.
+Because Spark integration with Kafka typically is not a part of Spark assembly,
+it must be embedded into application assembly.
+The artifact should not be defined within &ldquo;provided&rdquo; scope.</p>
+
+<p>```
+val sparkVersion = &ldquo;1.6.0&rdquo;</p>
+
+<p>(&hellip;)
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming-kafka&rdquo; % sparkVersion
+  exclude(&ldquo;log4j&rdquo;, &ldquo;log4j&rdquo;)
+  exclude(&ldquo;org.spark-project.spark&rdquo;, &ldquo;unused&rdquo;),
+(&hellip;)
+```</p>
+
+<p>Again, &ldquo;log4j&rdquo; transitive dependency of Kafka needs to be explicitly excluded.
+I also found that marker class from weird Spark &ldquo;unused&rdquo; artifact breaks default SBT Assembly Plugin merge strategy.
+It is much easier to exclude this dependency than customize merge strategy of the plugin.</p>
+
+<h2>Where is Guava?</h2>
+
+<p>When you look at your project dependencies you could easily find Guava (version 14.0.1 for Spark 1.6.0).
+Ok, Guava is an excellent library so you decide to use the library in your application.</p>
+
+<p><em>WRONG!</em></p>
+
+<p>Guava is on the classpath during compilation and tests but at runtime you will get &ldquo;ClassNotFoundException&rdquo; or method not found error.
+First, Guava is shaded in Spark distribution assembly under <code>org/spark-project/guava</code> package and should not be used directly.
+Second, there is a huge chance for outdated Guava library on the cluster classpath.
+In CDH 5.3 distribution, the installed Guava version is 11.0.2 released on Feb 22, 2012 &ndash; more than 4 years ago!
+Since the Guava is <a href="http://i.stack.imgur.com/8K6N8.jpg">binary compatible</a> only between 2 or 3 latest major releases it is a real blocker.</p>
+
+<p>There are experimental configuration flags for Spark <code>spark.driver.userClassPathFirst</code> and <code>spark.executor.userClassPathFirst</code>.
+In theory it gives user-added jars precedence over Spark&rsquo;s own jars when loading classes in the the driver.
+But in practice it does not work, at least for me :&ndash;(.</p>
+
+<p>In general you should avoid external dependencies at all cost when you develop application deployed on the YARN cluster.
+Classloader hell is even bigger than in JEE containers like JBoss or WebLogic.
+Look for the libraries with minimal transitive dependencies and narrowed features.
+For example, if you need a cache, choose <a href="https://github.com/ben-manes/caffeine">Caffeine</a> over Guava.</p>
+
+<h2>Deployment optimization for YARN cluster</h2>
+
+<p>When application is deployed on YARN cluster using <code>spark-submit</code> script,
+the script upload Spark distribution assembly to the cluster during every deployment.
+The distribution assembly size is over 100MB, ten times more than typical application assembly!</p>
+
+<p>So I really recommend to install Spark distribution assembly on well known location on the cluster
+and define <code>spark.yarn.jar</code> property for <code>spark-submit</code>.
+The assembly will not be copied over the network during every deployment.</p>
+
+<p><code>
+spark.yarn.jar=hdfs:///apps/spark/assembly/spark-assembly-1.6.0.jar
+</code></p>
+
+<h2>Summary</h2>
+
+<p>I witnessed a few Spark projects where <code>build.sbt</code> were more complex than application itself.
+And application assembly was bloated with unnecessary 3rd party classes and deployment process took ages.
+Build configuration described in this blog post should help you deploy Spark application on the cluster smoothly
+and still keep SBT configuration easy to maintain.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Spark and Kafka Integration Patterns, Part 2]]></title>
+    <link href="http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2/"/>
+    <updated>2016-01-29T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2</id>
+    <content type="html"><![CDATA[<p>In the <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101">world beyond batch</a>,
+streaming data processing is a future of dig data.
+Despite of the streaming framework using for data processing, tight integration with replayable data source like Apache Kafka is often required.
+The streaming applications often use Apache Kafka as a data source, or as a destination for processing results.</p>
+
+<p>Apache Spark distribution has built-in support for reading from Kafka, but surprisingly does not offer any
+integration for sending processing result back to Kafka.
+This blog post aims to fill this gap in the Spark ecosystem.</p>
+
+<p>In the <a href="http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/">first part</a> of the series
+you learned how to manage Kafka producer using Scala lazy evaluation feature
+and how to reuse single Kafka producer instance on Spark executor.</p>
+
+<p>In this blog post you will learn how to publish stream processing results to Apache Kafka in reliable way.
+First you will learn how Kafka Producer is working,
+how to configure Kafka producer and how to setup Kafka cluster to achieve desired reliability.
+In the second part of the blog post,
+I will present how to implement convenient library for sending continuous sequence of RDDs
+(<a href="https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.streaming.dstream.DStream">DStream</a>)
+to Apache Kafka topic, as easy as in the code snippet below.</p>
+
+<p>``` scala
+// enable implicit conversions
+import KafkaDStreamSink._</p>
+
+<p>// send dstream to Kafka
+dstream.sendToKafka(kafkaProducerConfig, topic)
+```</p>
+
+<h2>Quick introduction to Kafka</h2>
+
+<p>Kafka is a distributed, partitioned, replicated message broker.
+Basic architecture knowledge is a prerequisite to understand Spark and Kafka integration challenges.
+You can safely skip this section, if you are already familiar with Kafka concepts.</p>
+
+<p>For convenience I copied essential terminology definitions directly from Kafka
+<a href="http://kafka.apache.org/documentation.html#introduction">documentation</a>:</p>
+
+<ul>
+<li>Kafka maintains feeds of messages in categories called topics.</li>
+<li>We&rsquo;ll call processes that publish messages to a Kafka topic producers.</li>
+<li>We&rsquo;ll call processes that subscribe to topics and process the feed of published messages consumers.</li>
+<li>Kafka is run as a cluster comprised of one or more servers each of which is called a broker.</li>
+</ul>
+
+
+<p>So, at a high level, producers send messages over the network to the Kafka cluster which in turn serves them up to consumers like this:</p>
+
+<p><img class="<a" src="href="http://kafka.apache.org/images/producer_consumer.png">http://kafka.apache.org/images/producer_consumer.png</a>"></p>
+
+<p>This is a bare minimum you have to know but I really encourage you to read Kafka reference manual thoroughly.</p>
+
+<h2>Kafka producer API</h2>
+
+<p>First we need to know how Kafka producer is working.
+Kafka producer exposes very simple API for sending messages to Kafka topics.
+The most important methods from <code>KafkaProducer</code> class are listed below:</p>
+
+<p><code>java KafkaProducer API
+j.u.c.Future&lt;RecordMetadata&gt; send(ProducerRecord&lt;K,V&gt; record)
+j.u.c.Future&lt;RecordMetadata&gt; send(ProducerRecord&lt;K,V&gt; record, Callback callback)
+void flush()
+void close()
+</code></p>
+
+<p>The <code>send()</code> methods asynchronously send a key-value record to a topic and will return immediately once the record has been stored in the buffer of records waiting to be sent.
+This kind of API is not very convenient for developers, but is crucial to achieve high throughput and low latency.</p>
+
+<p>If you want to ensure that request has been completed, you can invoke blocking <code>get()</code> on the future returned by the <code>send()</code> methods.
+The main drawback of calling <code>get()</code> is a huge performance penalty because it disables batching effectively.
+You can not expect high throughput and low latency if the execution is blocked on every message and every single message needs to be sent separately.</p>
+
+<p>Fully non-blocking usage requires use of the callback. The callback will be invoked when the request is complete.
+Note that callback is executed in Kafka producer I/O thread so should not block the caller, the callback must be as lightweight as possible.
+The callback must be also properly synchronized due to <a href="https://en.wikipedia.org/wiki/Java_memory_model">Java memory model</a>.</p>
+
+<p>If the Kafka producer caller does not check result of the <code>send()</code> method using future or callback,
+it means that if Kafka producer crashed all messages from the internal Kafka producer buffer will be lost.
+This is the first, very important element of any integration library with Kafka,
+we should expect callback handling to avoid data lost and achieve good performance.</p>
+
+<p>The <code>flush()</code> method makes all buffered messages ready to send, and blocks on the completion of the requests associated with these messages.
+The <code>close()</code> method is like the <code>flush()</code> method but also closes the producer.</p>
+
+<p>The <code>flush()</code> method could be very handy if the Streaming framework wants to ensure that all messages have been sent before processing next part of the stream.
+With <code>flush()</code> method streaming framework is able to flush the messages to Kafka brokers to simulate commit behaviour.</p>
+
+<p>Method <code>flush()</code> was added in Kafka 0.9 release (<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-8+-+Add+a+flush+method+to+the+producer+API">KIP-8</a>).
+Before Kafka 0.9, the only safe and straightforward way to flush messages from Kafka producer internal buffer was to close the producer.</p>
+
+<h2>Kafka configuration</h2>
+
+<p>If the message must be reliable published on Kafka cluster, Kafka producer and Kafka cluster needs to be configured with care.
+It needs to be done independently of chosen streaming framework.</p>
+
+<p>Kafka producer buffers messages in memory before sending.
+When our memory buffer is exhausted, Kafka producer must either stop accepting new records (block) or throw errors.
+By default Kafka producer blocks and this behavior is legitimate for stream processing.
+The processing should be delayed if Kafka producer memory buffer is full and could not accept new messages.
+Ensure that <code>block.on.buffer.full</code> Kafka producer configuration property is set.</p>
+
+<p>With default configuration, when Kafka broker (leader of the partition) receive the message, store the message in memory and immediately send acknowledgment to Kafka producer.
+To avoid data loss the message should be replicated to at least one replica (follower).
+Only when the follower acknowledges the leader, the leader acknowledges the producer.</p>
+
+<p>This guarantee you will get with <code>ack=all</code> property in Kafka producer configuration.
+This guarantees that the record will not be lost as long as at least one in-sync replica remains alive.</p>
+
+<p>But this is not enough. The minimum number of replicas in-sync must be defined.
+You should configure <code>min.insync.replicas</code> property for every topic.
+I recommend to configure at least 2 in-sync replicas (leader and one follower).
+If you have datacenter with two zones, I also recommend to keep leader in the first zone and 2 followers in the second zone.
+This configuration guarantees that every message will be stored in both zones.</p>
+
+<p>We are almost done with Kafka cluster configuration.
+When you set <code>min.insync.replicas=2</code> property, the topic should be replicated with factor 2 + N.
+Where N is the number of brokers which could fail, and Kafka producer will still be able to publish messages to the cluster.
+I recommend to configure replication factor 3 for the topic (or more).</p>
+
+<p>With replication factor 3, the number of brokers in the cluster should be at least 3 + M.
+When one or more brokers are unavailable, you will get underreplicated partitions state of the topics.
+With more brokers in the cluster than replication factor, you can reassign underreplicated partitions and achieve fully replicated cluster again.
+I recommend to build the 4 nodes cluster at least for topics with replication factor 3.</p>
+
+<p>The last important Kafka cluster configuration property is <code>unclean.leader.election.enable</code>.
+It should be disabled (by default it is enabled) to avoid unrecoverable exceptions from Kafka consumer.
+Consider the situation when the latest committed offset is N,
+but after leader failure, the latest offset on the new leader is M &lt; N.
+M &lt; N because the new leader was elected from the lagging follower (not in-sync replica).
+When the streaming engine ask for data from offset N using Kafka consumer, it will get an exception because the offset N does not exist yet.
+Someone will have to fix offsets manually.</p>
+
+<p>So the minimal recommended Kafka setup for reliable message processing is:</p>
+
+<ul>
+<li>4 nodes in the cluster</li>
+<li><code>unclean.leader.election.enable=false</code> in the brokers configuration</li>
+<li>replication factor for the topics &ndash; 3</li>
+<li><code>min.insync.replicas=2</code> property in topic configuration</li>
+<li><code>ack=all</code> property in the producer configuration</li>
+<li><code>block.on.buffer.full=true</code> property in the producer configuration</li>
+</ul>
+
+
+<p>With the above setup your configuration should be resistant to single broker failure,
+and Kafka consumers will survive new leader election.</p>
+
+<p>You could also take look at <code>replica.lag.max.messages</code> and <code>replica.lag.time.max.ms</code> properties
+for tuning when the follower is removed from ISR by the leader.
+But this is out of this blog post scope.</p>
+
+<h2>How to expand Spark API?</h2>
+
+<p>After this not so short introduction, we are ready to disassembly
+<a href="https://github.com/mkuthan/example-spark-kafka">integration library</a> for Spark Streaming and Apache Kafka.
+First <code>DStream</code> needs to be somehow expanded to support new method <code>sendToKafka()</code>.</p>
+
+<p><code>scala
+dstream.sendToKafka(kafkaProducerConfig, topic)
+</code></p>
+
+<p>In Scala, the only way to add methods to existing API, is to use an implicit conversion feature.</p>
+
+<p>``` scala
+object KafkaDStreamSink {</p>
+
+<p>  import scala.language.implicitConversions</p>
+
+<p>  implicit def createKafkaDStreamSink(dstream: DStream[KafkaPayload]): KafkaDStreamSink = {</p>
+
+<pre><code>new KafkaDStreamSink(dstream)
+</code></pre>
+
+<p>  }</p>
+
+<p>}
+```</p>
+
+<p>Whenever Scala compiler finds call to non-existing method <code>sendToKafka()</code> on <code>DStream</code> class,
+the stream will be implicitly wrapped into <code>KafkaDStreamSink</code> class,
+where method <code>sendToKafka</code> is finally defined.
+To enable implicit conversion for <code>DStream</code> add the import statement to your code, that&rsquo;s all.</p>
+
+<p><code>scala
+import KafkaDStreamSink._
+</code></p>
+
+<h2>How to send to Kafka in reliable way?</h2>
+
+<p>Let&rsquo;s check how <code>sendToKafka()</code> method is defined step by step, this is the core part of the integration library.</p>
+
+<p>``` scala
+class KafkaDStreamSink(dstream: DStream[KafkaPayload]) {</p>
+
+<p>  def sendToKafka(config: Map[String, String], topic: String): Unit = {</p>
+
+<pre><code>dstream.foreachRDD { rdd =&gt;
+  rdd.foreachPartition { records =&gt;
+    // send records from every partition to Kafka
+  }
+}
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>There are two loops, first on wrapped <code>dstream</code> and second on <code>rdd</code> for every partition.
+Quite standard pattern for Spark programming model.
+Records from every partition are ready to be sent to Kafka topic by Spark executors.
+The destination topic name is given explicitly as the last parameter of the <code>sendToKafka()</code> method.</p>
+
+<p>First step in the inner loop is getting Kafka producer instance from the <code>KafkaProducerFactory</code>.</p>
+
+<p><code>scala
+rdd.foreachPartition { records =&gt;
+  val producer = KafkaProducerFactory.getOrCreateProducer(config)
+  (...)
+</code></p>
+
+<p>The factory creates only single instance of the producer for any given producer configuration.
+If the producer instance has been already created, the existing instance is returned and reused.
+Kafka producer caching is crucial for the performance reasons,
+because establishing a connection to the cluster takes time.
+It is a much more time consuming operation than opening plain socket connection,
+as Kafka producer needs to discover leaders for all partitions.
+Please refer to <a href="http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/">first part</a> of this blog post
+and <code>KafkaProducerFactory</code>
+<a href="https://github.com/mkuthan/example-spark-kafka/blob/master/src/main/scala/org/mkuthan/spark/KafkaProducerFactory.scala">source</a>
+for more details about the factory implementation.</p>
+
+<p>For debugging purposes logger and Spark task context are needed.</p>
+
+<p>``` scala
+import org.apache.spark.TaskContext
+import org.slf4j.LoggerFactory
+(&hellip;)</p>
+
+<p>rdd.foreachPartition { records =>
+  val producer = KafkaProducerFactory.getOrCreateProducer(config)</p>
+
+<p>  val context = TaskContext.get
+  val logger = Logger(LoggerFactory.getLogger(classOf[KafkaDStreamSink]))
+  (&hellip;)
+```</p>
+
+<p>You could use any logging framework but the logger itself has to be defined in the foreachPartition loop
+to avoid weird serialization issues.
+Spark task context will be used to get current partition identifier.
+I don&rsquo;t like static call for getting task context, but this is an official way to do that.
+See pull request <a href="https://github.com/apache/spark/pull/5927">SPARK-5927</a> for more details.</p>
+
+<p>Before we go further, Kafka producer callback for error handling needs to be introduced.</p>
+
+<p>``` scala KafkaDStreamSinkExceptionHandler
+import java.util.concurrent.atomic.AtomicReference
+import org.apache.kafka.clients.producer.Callback</p>
+
+<p>class KafkaDStreamSinkExceptionHandler extends Callback {</p>
+
+<p>  private val lastException = new AtomicReference<a href="None">Option[Exception]</a></p>
+
+<p>  override def onCompletion(metadata: RecordMetadata, exception: Exception): Unit =</p>
+
+<pre><code>lastException.set(Option(exception))
+</code></pre>
+
+<p>  def throwExceptionIfAny(): Unit =</p>
+
+<pre><code>lastException.getAndSet(None).foreach(ex =&gt; throw ex)
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Method <code>onCompletion()</code> of the callback is called when the message sent to the Kafka cluster has been acknowledged.
+Exactly one of the callback arguments will be non-null, <code>metadata</code> or <code>exception</code>.
+<code>KafkaDStreamSinkExceptionHandler</code> class keeps last exception registered by the callback (if any).
+The client of the callback is able to rethrow registered exception using <code>throwExceptionIfAny()</code> method.
+Because <code>onCompletion()</code> and <code>throwExceptionIfAny()</code> methods are called from different threads,
+last exception has to be kept in thread-safe data structure <code>AtomicReference</code>.</p>
+
+<p>Finally we are ready to send records to Kafka using created callback.</p>
+
+<p>``` scala
+rdd.foreachPartition { records =>
+  val producer = KafkaProducerFactory.getOrCreateProducer(config)</p>
+
+<p>  val context = TaskContext.get
+  val logger = Logger(LoggerFactory.getLogger(classOf[KafkaDStreamSink]))</p>
+
+<p>  val callback = new KafkaDStreamSinkExceptionHandler</p>
+
+<p>  logger.debug(s"Send Spark partition: ${context.partitionId} to Kafka topic: $topic")
+  val metadata = records.map { record =></p>
+
+<pre><code>callback.throwExceptionIfAny()
+producer.send(new ProducerRecord(topic, record.key.orNull, record.value), callback)
+</code></pre>
+
+<p>  }.toList
+```</p>
+
+<p>First the callback is examined for registered exception.
+If one of the previous record could not be sent, the exception is propagated to Spark framework.
+If any redelivery policy is needed it should be configured on Kafka producer level.
+Look at Kafka producer configuration properties <code>retries</code> and <code>retry.backoff.ms</code>.
+Finally Kafka producer metadata are collected and materialized by calling <code>toList()</code> method.
+At this moment, Kafka producer starts sending records in background I/O thread.
+To achieve high throughput Kafka producer sends records in batches.</p>
+
+<p>Because we want to achieve natural back pressure for our stream processing,
+next batch needs to be blocked until records from current batch are really acknowledged by the Kafka brokers.
+So for each collected metadata (Java <code>j.u.c.Future</code>), method <code>get()</code> is called to ensure that record has been sent to the brokers.</p>
+
+<p>``` scala
+rdd.foreachPartition { records =>
+  val producer = KafkaProducerFactory.getOrCreateProducer(config)</p>
+
+<p>  val context = TaskContext.get
+  val logger = Logger(LoggerFactory.getLogger(classOf[KafkaDStreamSink]))</p>
+
+<p>  val callback = new KafkaDStreamSinkExceptionHandler</p>
+
+<p>  logger.debug(s"Send Spark partition: ${context.partitionId} to Kafka topic: $topic")
+  val metadata = records.map { record =></p>
+
+<pre><code>callback.throwExceptionIfAny()
+producer.send(new ProducerRecord(topic, record.key.orNull, record.value), callback)
+</code></pre>
+
+<p>  }.toList</p>
+
+<p>  logger.debug(s"Flush Spark partition: ${context.partitionId} to Kafka topic: $topic")
+  metadata.foreach { metadata => metadata.get() }
+```</p>
+
+<p>As long as records sending was started moment ago, it is likelihood that records have been already sent
+and <code>get()</code> method does not block.
+However if the <code>get()</code> call is blocked, it means that there are unsent messages in the internal Kafka producer buffer
+and the processing should be blocked as well.</p>
+
+<p>Finally <code>sendToKafka()</code> method should propagate exception recorded by the callback (if any).
+Complete method is presented below for reference.</p>
+
+<p>``` scala sendToKafka
+def sendToKafka(config: Map[String, String], topic: String): Unit = {
+  dstream.foreachRDD { rdd =></p>
+
+<pre><code>rdd.foreachPartition { records =&gt;
+  val producer = KafkaProducerFactory.getOrCreateProducer(config)
+
+  val context = TaskContext.get
+  val logger = Logger(LoggerFactory.getLogger(classOf[KafkaDStreamSink]))
+
+  val callback = new KafkaDStreamSinkExceptionHandler
+
+  logger.debug(s"Send Spark partition: ${context.partitionId} to Kafka topic: $topic")
+  val metadata = records.map { record =&gt;
+    callback.throwExceptionIfAny()
+    producer.send(new ProducerRecord(topic, record.key.orNull, record.value), callback)
+  }.toList
+
+  logger.debug(s"Flush Spark partition: ${context.partitionId} to Kafka topic: $topic")
+  metadata.foreach { metadata =&gt; metadata.get() }
+
+  callback.throwExceptionIfAny()
+}
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>The method is not very complex but there are a few important elements
+if you don&rsquo;t want to lose processing results and if you need back pressure mechanism:</p>
+
+<ul>
+<li>Method <code>sendToKafka()</code> should fail fast if record could not be sent to Kafka. Don&rsquo;t worry Spark will execute failed task again.</li>
+<li>Method <code>sendToKafka()</code> should block Spark processing if Kafka producer slows down.</li>
+<li>Method <code>sendToKafka()</code> should flush records buffered by Kafka producer explicitly, to avoid data loss.</li>
+<li>Kafka producer needs to be reused by Spark executor to avoid connection to Kafka overhead.</li>
+<li>Kafka producer needs to be explicitly closed when Spark shutdowns executors to avoid data loss.</li>
+</ul>
+
+
+<h2>Summary</h2>
+
+<p>The complete, working project is published on
+<a href="https://github.com/mkuthan/example-spark-kafka">https://github.com/mkuthan/example-spark-kafka</a>.
+You can clone/fork the project and do some experiments by yourself.</p>
+
+<p>There is also alternative library developed by Cloudera
+<a href="https://github.com/cloudera/spark-kafka-writer">spark-kafka-writer</a>
+emerged from closed pull request <a href="https://github.com/apache/spark/pull/2994">SPARK-2994</a>.
+Unfortunately at the time of this writing,
+the library used obsolete Scala Kafka producer API and did not send processing results in reliable way.</p>
+
+<p>I hope that some day we will find reliable, mature library for sending processing result to Apache Kafka
+in the official Spark distribution.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Spark and Kafka Integration Patterns, Part 1]]></title>
+    <link href="http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/"/>
+    <updated>2015-08-06T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1</id>
+    <content type="html"><![CDATA[<p>I published post on the <a href="http://allegro.tech/">allegro.tech</a> blog, how to integrate Spark Streaming and Kafka.
+In the blog post you will find how to avoid <code>java.io.NotSerializableException</code> exception
+when Kafka producer is used for publishing results of the Spark Streaming processing.</p>
+
+<p><a href="http://allegro.tech/2015/08/spark-kafka-integration.html">http://allegro.tech/spark-kafka-integration.html</a></p>
+
+<p>You could be also interested in the
+<a href="http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2/">following part</a> of this blog post where
+I presented complete library for sending Spark Streaming processing results to Kafka.</p>
+
+<p>Happy reading :&ndash;)</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Kafka Streams | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/kafka-streams/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Kafka Streams DSL vs Processor API]]></title>
+    <link href="http://mkuthan.github.io/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/"/>
+    <updated>2017-11-02T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2017/11/02/kafka-streams-dsl-vs-processor-api</id>
+    <content type="html"><![CDATA[<p><a href="https://docs.confluent.io/current/streams/index.html">Kafka Streams</a> is a Java library
+for building real-time, highly scalable, fault tolerant, distributed applications.
+The library is fully integrated with <a href="https://kafka.apache.org/documentation/">Kafka</a> and leverages
+Kafka producer and consumer semantics (e.g: partitioning, rebalancing, data retention and compaction).
+What is really unique, the only dependency to run Kafka Streams application is a running Kafka cluster.
+Even local state stores are backed by Kafka topics to make the processing fault tolerant &ndash; brilliant!</p>
+
+<p>Kafka Streams provides all necessary stream processing primitives like one-record-at-a-time processing,
+event time processing, windowing support and local state management.
+Application developer can choose from three different Kafka Streams APIs: DSL, Processor or KSQL.</p>
+
+<ul>
+<li><p><a href="https://docs.confluent.io/current/streams/developer-guide.html#kafka-streams-dsl">Kafka Streams DSL</a>
+(Domain Specific Language) &ndash; recommended way for most users
+because business logic can be expressed in a few lines of code.
+All stateless and stateful transformations are defined using declarative,
+functional programming style (filter, map, flatMap, reduce, aggregate operations).
+Kafka Stream DSL encapsulates most of the stream processing complexity
+but unfortunately it also hides many useful knobs and switches.</p></li>
+<li><p><a href="https://docs.confluent.io/current/streams/developer-guide.html#processor-api">Kafka Processor API</a>
+provides a low level, imperative way to define stream processing logic.
+At first sight Processor API could look hostile but finally gives much more flexibility to developer.
+With this blog post I would like to demonstrate that hand-crafted stream processors might be a magnitude more efficient
+than a naive implementation using Kafka DSL.</p></li>
+<li><p><a href="https://www.confluent.io/product/ksql/">KSQL</a>
+is a promise that stream processing could be expressed by anyone using SQL as the language.
+It offers an easy way to express stream processing transformations as an alternative to writing
+an application in a programming language such as Java.
+Moreover, processing transformation written in SQL like language can be highly optimized
+by execution engine without any developer effort.
+KSQL was released recently and it is still at very early development stage.</p></li>
+</ul>
+
+
+<p>In the first part of this blog post I&rsquo;ll define simple but still realistic business problem to solve.
+Then you will learn how to implement this use case with Kafka Stream DSL
+and how much the processing performance is affected by this naive solution.
+At this moment you could stop reading and scale-up Kafka cluster ten times to fulfill business requirements
+or you could continue reading and learn how to optimize the processing with low level Kafka Processor API.</p>
+
+<h2>Business Use Case</h2>
+
+<p>Let&rsquo;s imagine a web based e-commerce platform with fabulous recommendation and advertisement systems.
+Every client during visit gets personalized recommendations and advertisements,
+the conversion is extraordinarily high and platform earns additional profits from advertisers.
+To build comprehensive recommendation models,
+such system needs to know everything about clients traits and their behaviour.</p>
+
+<p>To make it possible, e-commerce platform reports all clients activities as an unbounded stream
+of page views and events.
+Every time the client enters web page, a so-called page view is sent to Kafka cluster.
+A page view contains web page attributes like request URI, referrer URI, user agent, active A/B experiments
+and many more.
+In addition to page view all important actions are reported as custom events, e.g: search, add to cart or checkout.
+To get a complete view of the activity stream, collected events need to be enriched with data from page views.</p>
+
+<h2>Data Model</h2>
+
+<p>Because most of the processing logic is built within context of given client,
+page views and events are evenly partitioned on Kafka topics by the client identifier.</p>
+
+<p>``` scala
+type ClientId = String
+case class ClientKey(clientId: ClientId)</p>
+
+<p>val bob = ClientKey(&ldquo;bob&rdquo;)
+val jim = ClientKey(&ldquo;jim&rdquo;)
+```</p>
+
+<p>Page view and event structures are different so messages are published to separate Kafka topics
+using ingestion time as the event time.
+Our system should not rely on page view or event creation time due to high client clocks variance.
+The topic key is always <code>ClientKey</code> and value is either <code>Pv</code> or <code>Ev</code> presented below.
+For better examples readability page view and event payload is defined as simplified single value field.
+Events are uniquely identified by <code>pvId</code> and <code>evId</code> pair, <code>pvId</code> could be a random identifier, <code>evId</code>
+a sequence number.</p>
+
+<p>``` scala
+type PvId = String
+type EvId = String</p>
+
+<p>case class Pv(pvId: PvId, value: String)
+case class Ev(evId: EvId, value: String, pvId: PvId)
+```</p>
+
+<p>Enriched results <code>EvPv</code> is published to output Kafka topic using <code>ClientKey</code> as message key.
+This topic is then consumed directly by advertisement and recommendation systems.</p>
+
+<p><code>scala
+case class EvPv(evId: EvId, evValue: String, pvId: Option[PvId], pvValue: Option[String])
+</code></p>
+
+<h2>Example Scenario</h2>
+
+<p>For client &ldquo;bob&rdquo; the following page views and events are collected by the system.</p>
+
+<p>``` scala
+// Bob enters main page
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;pv0&rdquo;, &ldquo;/&rdquo;)</p>
+
+<p>// A few impression events collected almost immediately
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, &ldquo;pv0&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv0&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev2&rdquo;, &ldquo;show recommendation&rdquo;, &ldquo;pv0&rdquo;)</p>
+
+<p>// There is also single duplicated event, welcome to distributed world
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv0&rdquo;)</p>
+
+<p>// A dozen seconds later Bob clicks on one of the offers presented on the main page
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;ev3&rdquo;, &ldquo;click recommendation&rdquo;, &ldquo;pv0&rdquo;)</p>
+
+<p>// Out of order event collected before page view on the offer page
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, &ldquo;pv1&rdquo;)</p>
+
+<p>// Offer page view
+ClientKey(&ldquo;bob&rdquo;), Pv(&ldquo;pv1&rdquo;, &ldquo;/offer?id=1234&rdquo;)</p>
+
+<p>// An impression event published almost immediately after page view
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv1&rdquo;)</p>
+
+<p>// Late purchase event, Bob took short coffee break before the final decision
+ClientKey(&ldquo;bob&rdquo;), Ev(&ldquo;ev2&rdquo;, &ldquo;add to cart&rdquo;, &ldquo;pv1&rdquo;)
+```</p>
+
+<p>For above clickstream the following enriched events output stream is expected.</p>
+
+<p>``` scala
+// Events from main page without duplicates</p>
+
+<p>ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev2&rdquo;, &ldquo;show recommendation&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev3&rdquo;, &ldquo;click recommendation&rdquo;, &ldquo;pv0&rdquo;, &ldquo;/&rdquo;)</p>
+
+<p>// Events from offer page, somehow incomplete due to streaming semantics limitations</p>
+
+<p>// early event
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev0&rdquo;, &ldquo;show header&rdquo;, None, None)
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev1&rdquo;, &ldquo;show ads&rdquo;, &ldquo;pv1&rdquo;, &ldquo;/offer?id=1234&rdquo;)</p>
+
+<p>// late event
+ClientKey(&ldquo;bob&rdquo;), EvPv(&ldquo;ev2&rdquo;, &ldquo;add to cart&rdquo;, None, None)
+```</p>
+
+<h2>Kafka Stream DSL</h2>
+
+<p>Now we are ready to implement above use case with recommended Kafka Streams DSL.
+The code could be optimized but I would like to present the canonical way of using DSL
+without exploring DSL internals.
+All examples are implemented using the latest Kafka Streams 1.0.0 version.</p>
+
+<p>Create two input streams for page views and events
+connected to &ldquo;clickstream.events&rdquo; and &ldquo;clickstream.page_views&rdquo; Kafka topics.</p>
+
+<p>``` scala
+val builder = new StreamsBuilder()</p>
+
+<p>val evStream = builder.stream<a href="" title="clickstream.events">ClientKey, Ev</a>
+val pvStream = builder.stream<a href="" title="clickstream.page_views">ClientKey, Pv</a>
+```</p>
+
+<p>Repartition topics by client and page view identifiers <code>PvKey</code>
+as a prerequisite to join events with page view.
+Method <code>selectKey</code> sets a new key for every input record,
+and marks derived stream for repartitioning.</p>
+
+<p>``` scala
+case class PvKey(clientId: ClientId, pvId: PvId)</p>
+
+<p>val evToPvKeyMapper: KeyValueMapper[ClientKey, Ev, PvKey] =
+  (clientKey, ev) => PvKey(clientKey.clientId, ev.pvId)</p>
+
+<p>val evByPvKeyStream = evStream.selectKey(evToPvKeyMapper)</p>
+
+<p>val pvToPvKeyMapper: KeyValueMapper[ClientKey, Pv, PvKey] =
+  (clientKey, pv) => PvKey(clientKey.clientId, pv.pvId)</p>
+
+<p>val pvByPvKeyStream = pvStream.selectKey(pvToPvKeyMapper)
+```</p>
+
+<p>Join event with page view streams by selected previously <code>PvKey</code>,
+left join is used because we are interested also in events without matched page view.
+Every incoming event is enriched by matched page view into <code>EvPv</code> structure.</p>
+
+<p>The join window duration is set to reasonable 10 minutes.
+It means, that Kafka Streams will look for messages in &ldquo;event&rdquo; and &ldquo;page view&rdquo; sides of the join
+10 minutes in the past and 10 minutes in the future (using event time, not wall-clock time).
+Because we are not interested in late events out of defined window,
+the retention is 2 times longer than window, to hold events from the past and the future.
+If you are interested why 1 milliseconds needs to be added to the retention,
+please ask Kafka Streams authors not me ;)</p>
+
+<p>``` scala
+val evPvJoiner: ValueJoiner[Ev, Pv, EvPv] = { (ev, pv) =>
+  if (pv == null) {</p>
+
+<pre><code>EvPv(ev.evId, ev.value, None, None)
+</code></pre>
+
+<p>  } else {</p>
+
+<pre><code>EvPv(ev.evId, ev.value, Some(pv.pvId), Some(pv.value))
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>val joinWindowDuration = 10 minutes</p>
+
+<p>val joinRetention = joinWindowDuration.toMillis * 2 + 1
+val joinWindow = JoinWindows.of(joinWindowDuration.toMillis).until(joinRetention)</p>
+
+<p>val evPvStream = evByPvKeyStream.leftJoin(pvByPvKeyStream, evPvJoiner, joinWindow)
+```</p>
+
+<p>Now it&rsquo;s time to fight with duplicated enriched events.
+Duplicates come from unreliable nature of the network between client browser and our system.
+Most real-time processing pipelines in advertising and recommendation systems are counting events,
+so duplicates in the enriched clickstream could cause inaccuracies.</p>
+
+<p>The most straightforward deduplication method is to compare incoming event with state of previously processed events.
+If the event has been already processed it should be skipped.</p>
+
+<p>Unfortunately DSL does not provide &ldquo;deduplicate&rdquo; method out-of-the-box but similar logic might be implemented with
+&ldquo;reduce&rdquo; operation.</p>
+
+<p>First we need to define deduplication window.
+Deduplication window can be much shorter than join window,
+we do not expect duplicates more than 10 seconds between each other.</p>
+
+<p>``` scala
+val deduplicationWindowDuration = 10 seconds</p>
+
+<p>val deduplicationRetention = deduplicationWindowDuration.toMillis * 2 + 1
+val deduplicationWindow = TimeWindows.of(deduplicationWindowDuration.toMillis).until(deduplicationRetention)
+```</p>
+
+<p>Joined stream needs to be repartitioned again by compound key <code>EvPvKey</code> composed of
+client, page view and event identifiers.
+This key will be used to decide if <code>EvPv</code> is a duplicate or not.
+Next, the stream is grouped by selected key into KGroupedStream and
+deduplicated with reduce function, where first observed event wins.</p>
+
+<p>``` scala
+case class EvPvKey(clientId: ClientId, pvId: PvId, evId: EvId)</p>
+
+<p>val evPvToEvPvKeyMapper: KeyValueMapper[PvKey, EvPv, EvPvKey] =
+  (pvKey, evPv) => EvPvKey(pvKey.clientId, pvKey.pvId, evPv.evId)</p>
+
+<p>val evPvByEvPvKeyStream = evPvStream.selectKey(evPvToEvPvKeyMapper)</p>
+
+<p>val evPvDeduplicator: Reducer[EvPv] =
+  (evPv1, _) => evPv1</p>
+
+<p>val deduplicatedStream = evPvByEvPvKeyStream
+  .groupByKey()
+  .reduce(evPvDeduplicator, deduplicationWindow, &ldquo;evpv-store&rdquo;)
+  .toStream()
+```</p>
+
+<p>This deduplication implementation is debatable, due to &ldquo;continue stream&rdquo; semantics of KTable/KStream.
+Reduce operation creates KTable, and this KTable is transformed again into KStream of continuous updates of the same key.
+It could lead to duplicates again if the update frequency is higher than inverse of deduplication window period.
+For 10 seconds deduplication window the updates should not be emitted more often than every 10 seconds but
+lower updates frequency leads to higher latency.
+The updates frequency is controlled globally using &ldquo;cache.max.bytes.buffering&rdquo; and &ldquo;commit.interval.ms&rdquo;
+Kafka Streams properties.
+See reference documentation for details:
+<a href="https://docs.confluent.io/current/streams/developer-guide.html#streams-developer-guide-memory-management">Record caches in the DSL</a>.</p>
+
+<p>I did not find another way to deduplicate events with DSL, please let me know if better implementation exists.</p>
+
+<p>In the last stage the stream needs to be repartitioned again by client id
+and published to &ldquo;clickstream.events_enriched&rdquo; Kafka topic for downstream subscribers.
+In the same step mapper gets rid of the windowed key produced by windowed reduce function.</p>
+
+<p>``` scala
+val evPvToClientKeyMapper: KeyValueMapper[Windowed[EvPvKey], EvPv, ClientId] =
+  (windowedEvPvKey, _) => windowedEvPvKey.key.clientId</p>
+
+<p>val finalStream = deduplicatedStream.selectKey(evPvToClientKeyMapper)</p>
+
+<p>finalStream.to(&ldquo;clickstream.events_enriched&rdquo;)
+```</p>
+
+<h2>Under The Hood</h2>
+
+<p>Kafka Stream DSL is quite descriptive, isn&rsquo;t it?
+Especially developers with strong functional programming skills appreciate the overall design.
+But you will shortly see how much unexpected traffic to Kafka cluster is generated during runtime.</p>
+
+<p>I like numbers so let&rsquo;s estimate the traffic,
+based on real clickstream ingestion platform I develop on daily basis:</p>
+
+<ul>
+<li>1 kB &ndash; average page view size</li>
+<li>600 B &ndash; average event size</li>
+<li>4k &ndash; page views / second</li>
+<li>20k &ndash; events / second</li>
+</ul>
+
+
+<p>It gives 24k msgs/s and 16MB/s traffic-in total, the traffic easily handled even by small Kafka cluster.</p>
+
+<p>When stream of data is repartitioned Kafka Streams creates additional intermediate topic
+and publishes on the topic whole traffic partitioned by selected key.
+To be more precise it happens twice in our case, for repartitioned page views and events before join.
+We need to add 24k msgs/s and 16MB/s more traffic-in to the calculation.</p>
+
+<p>When streams of data are joined using window, Kafka Streams sends both sides of the join
+to two intermediate topics again. Even if you don&rsquo;t need fault tolerance,
+logging into Kafka cannot be disabled using DSL.
+You cannot also get rid of window for &ldquo;this&rdquo; side of the join (window for events), more about it later on.
+Add 24k msgs/s and 16MB/s more traffic-in to the calculation again.</p>
+
+<p>To deduplicate events, joined stream goes again into Kafka Streams intermediate topic.
+Add 20k msgs/s and (1kB + 1.6kB) * 20k = 52MB/s more traffic-in to the calculation again.</p>
+
+<p>The last repartitioning by client identifier adds 20k msgs/s and 52MB/s more traffic-in.</p>
+
+<p>Finally, instead of <strong>24k</strong> msgs/s and <strong>16MB/s</strong> traffic-in we have got
+<strong>112k</strong> msgs/s and <strong>152MB</strong> traffic-in.
+And I did not even count traffic from internal topics replication and standby replicas
+<a href="https://docs.confluent.io/current/streams/developer-guide.html#recommended-configuration-parameters-for-resiliency">recommended for resiliency</a>.</p>
+
+<p>Be aware that this is calculation for simple join of events and pages views generated by
+local e-commerce platform in central Europe country (~20M clients).
+I could also easily imagine much more complex stream topology, with tens of repartitions, joins and aggregations.</p>
+
+<p>If you are not careful, your Kafka Streams application could easily kill your Kafka cluster.
+At least our application did it once. Application deployed on 10 <a href="http://mesos.apache.org/">Mesos</a>
+nodes (4CPU, 4GB RAM) almost killed Kafka cluster deployed also on 10 physical machines (32CPU, 64GB RAM, SSD).
+Application was started after some time of inactivity and processed 3 hours of retention in 5 minutes
+(yep, it&rsquo;s a well known vulnerability until
+<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-13+-+Quotas">KIP-13</a> is open).</p>
+
+<h2>Kafka Processor API</h2>
+
+<p>Now it&rsquo;s time to check Processor API and figure out how to optimize our stream topology.</p>
+
+<p>Create the sources from input topics &ldquo;clickstream.events&rdquo; and &ldquo;clickstream.page_views&rdquo;.</p>
+
+<p><code>scala
+new Topology()
+  .addSource("ev-source", "clickstream.events")
+  .addSource("pv-source", "clickstream.page_views")
+</code></p>
+
+<p>Because we need to join an incoming event with the collected page view in the past,
+create processor which stores page view in windowed store.
+The processor puts observed page views into window store for joining in the next processor.
+The processed page views do not even need to be forwarded to downstream.</p>
+
+<p>``` scala
+class PvWindowProcessor(val pvStoreName: String) extends AbstractProcessor[ClientKey, Pv] {</p>
+
+<p>  private lazy val pvStore =</p>
+
+<pre><code>context().getStateStore(pvStoreName).asInstanceOf[WindowStore[ClientKey, Pv]]
+</code></pre>
+
+<p>  override def process(key: ClientKey, value: Pv): Unit =</p>
+
+<pre><code>pvStore.put(key, value)
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Store for page views is configured with the same size of window and retention.
+This store is configured to keep duplicates due to the fact
+that the key is a client id not page view id (retainDuplicates parameter).
+Because join window is typically quite long (minutes) the store should be fault tolerant (logging enabled).
+Even if one of the stream instances fails,
+another one will continue processing with persistent window state built by failed node, cool!
+Finally, the internal kafka topic can be easily configured using loggingConfig map
+(replication factor, number of partitions, etc.).</p>
+
+<p>``` scala
+val pvStoreWindowDuration = 10 minutes</p>
+
+<p>val retention = pvStoreWindowDuration.toMillis
+val window = pvStoreWindowDuration.toMillis
+val segments = 3
+val retainDuplicates = true</p>
+
+<p>val loggingConfig = Map<a href="">String, String</a></p>
+
+<p>val pvWindowStore = Stores.windowStoreBuilder(
+  Stores.persistentWindowStore(&ldquo;pv-window-store&rdquo;, retention, segments, window, retainDuplicates),
+  ClientKeySerde,
+  PvSerde
+).withLoggingEnabled(loggingConfig)
+```</p>
+
+<p>The first optimization you could observe is that in our scenario only one window store is created &ndash; for page views.
+The window store for events is not needed, if page view is collected by system after event it does not trigger new join.</p>
+
+<p>Add page view processor to the topology and connect with page view source upstream.</p>
+
+<p>``` scala
+val pvWindowProcessor: ProcessorSupplier[ClientKey, Pv] =
+  () => new PvWindowProcessor(&ldquo;pv-window-store&rdquo;)</p>
+
+<p>new Topology()
+  (&hellip;)
+  .addProcessor(&ldquo;pv-window-processor&rdquo;, pvWindowProcessor, &ldquo;pv-source&rdquo;)
+```</p>
+
+<p>Now, it&rsquo;s time for event and page view join processor, heart of the topology.
+It seems to be complex but this processor also deduplicates joined stream using <code>evPvStore</code>.</p>
+
+<p>``` scala
+class EvJoinProcessor(
+  val pvStoreName: String,
+  val evPvStoreName: String,
+  val joinWindow: FiniteDuration,
+  val deduplicationWindow: FiniteDuration
+) extends AbstractProcessor[ClientKey, Ev] {</p>
+
+<p>  import scala.collection.JavaConverters._</p>
+
+<p>  private lazy val pvStore =</p>
+
+<pre><code>context().getStateStore(pvStoreName).asInstanceOf[WindowStore[ClientKey, Pv]]
+</code></pre>
+
+<p>  private lazy val evPvStore =</p>
+
+<pre><code>context().getStateStore(evPvStoreName).asInstanceOf[WindowStore[EvPvKey, EvPv]]
+</code></pre>
+
+<p>  override def process(key: ClientKey, ev: Ev): Unit = {</p>
+
+<pre><code>val timestamp = context().timestamp()
+val evPvKey = EvPvKey(key.clientId, ev.pvId, ev.evId)
+
+if (isNotDuplicate(evPvKey, timestamp, deduplicationWindow)) {
+  val evPv = storedPvs(key, timestamp, joinWindow)
+    .find { pv =&gt;
+      pv.pvId == ev.pvId
+    }
+    .map { pv =&gt;
+      EvPv(ev.evId, ev.value, Some(pv.pvId), Some(pv.value))
+    }
+    .getOrElse {
+      EvPv(ev.evId, ev.value, None, None)
+    }
+
+  context().forward(evPvKey, evPv)
+  evPvStore.put(evPvKey, evPv)
+}
+</code></pre>
+
+<p>  }</p>
+
+<p>  private def isNotDuplicate(evPvKey: EvPvKey, timestamp: Long, deduplicationWindow: FiniteDuration) =</p>
+
+<pre><code>evPvStore.fetch(evPvKey, timestamp - deduplicationWindow.toMillis, timestamp).asScala.isEmpty
+</code></pre>
+
+<p>  private def storedPvs(key: ClientKey, timestamp: Long, joinWindow: FiniteDuration) =</p>
+
+<pre><code>pvStore.fetch(key, timestamp - joinWindow.toMillis, timestamp).asScala.map(_.value)
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>First processor performs a lookup for previously joined <code>PvEv</code> by <code>PvEvKey</code>.
+If <code>PvEv</code> is found the processing is skipped because <code>EvPv</code> has been already processed.</p>
+
+<p>Next, try to match page view to event using simple filter <code>pv.pvId == ev.pvId</code>.
+We don&rsquo;t need any repartitioning to do that, only get all page views from given client
+and join with event in the processor itself.
+It should be very efficient because every client generates up do hundred page views in 10 minutes.
+If there is no matched page view in the configured window,
+<code>EvPv</code> without page view details is forwarded to the downstream.</p>
+
+<p>Perceptive reader noticed that processor also changes the key from <code>ClientId</code> to <code>EvPvKey</code>
+for deduplication purposes.
+Everything is still within given client context without the need for any repartitioning.
+This is possible due to the fact, that new key is more detailed than the original one.</p>
+
+<p>As before, windowed store for deduplication needs to be configured.
+Because deduplication is done in a very short window (10 seconds or so),
+the logging to backed internal Kafka topic is disabled at all.
+If one of the stream instance fails, we could get some duplicates during this short window, not a big deal.</p>
+
+<p>``` scala
+val evPvStoreWindowDuration = 10 seconds</p>
+
+<p>val retention = evPvStoreWindowDuration.toMillis
+val window = evPvStoreWindowDuration.toMillis
+val segments = 3
+val retainDuplicates = false</p>
+
+<p>val evPvStore = Stores.windowStoreBuilder(
+  Stores.persistentWindowStore(&ldquo;ev-pv-window-store&rdquo;, retention, segments, window, retainDuplicates),
+  EvPvKeySerde,
+  EvPvSerde
+)
+```</p>
+
+<p>Add join processor to the topology and connect with event source upstream.</p>
+
+<p>``` scala
+val evJoinProcessor: ProcessorSupplier[ClientKey, Ev] =
+  () => new EvJoinProcessor(&ldquo;pv-window-store&rdquo;, &ldquo;ev-pv-window-store&rdquo;, pvStoreWindowDuration, evPvStoreWindowDuration)</p>
+
+<p>new Topology()
+  (&hellip;)
+  .addProcessor(&ldquo;ev-join-processor&rdquo;, evJoinProcessor, &ldquo;ev-source&rdquo;)
+```</p>
+
+<p>The last processor maps compound key <code>EvPvKey</code> again into <code>ClientId</code>.
+Because client identifier is already a part of the compound key,
+mapping is done by the processor without the need for further repartitioning.</p>
+
+<p>``` scala
+class EvPvMapProcessor extends AbstractProcessor[EvPvKey, EvPv] {
+  override def process(key: EvPvKey, value: EvPv): Unit =</p>
+
+<pre><code>context().forward(ClientKey(key.clientId), value)
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Add the map processor to the topology.</p>
+
+<p>``` scala
+val evPvMapProcessor: ProcessorSupplier[EvPvKey, EvPv] =
+  () => new EvPvMapProcessor()</p>
+
+<p>new Topology()
+  (&hellip;)
+  .addProcessor(&ldquo;ev-pv-map-processor&rdquo;, evPvMapProcessor, &ldquo;ev-pv-join-processor&rdquo;)
+```</p>
+
+<p>Finally publish join results to &ldquo;clickstream.events_enriched&rdquo; Kafka topic.</p>
+
+<p><code>scala
+new Topology()
+  (...)
+  .addSink("ev-pv-sink", EvPvTopic, "clickstream.events_enriched")
+</code></p>
+
+<p>If a processor requires access to the store this fact must be registered.
+It would be nice to have statically typed Topology API for registration,
+but now if the store is not connected to the processor,
+or is connected to the wrong store,
+runtime exception is thrown during application startup.</p>
+
+<p><code>scala
+new Topology()
+  (...)
+  .addStateStore(pvStore, "pv-window-processor", "ev-join-processor")
+  .addStateStore(evPvStore, "ev-join-processor")
+</code></p>
+
+<p>Let&rsquo;s count Kafka Streams internal topics overhead for Processor API version.
+Wait, there is only one internal topic, for page view join window!
+It gives 4k messages per second and 4MB traffic-in overhead, not more.</p>
+
+<p><strong>28k</strong> instead of <strong>112k</strong> messages per second and <strong>20MB</strong> instead of <strong>152MB</strong> traffic-in in total.
+It is a noticeable difference between Processor API and DSL topology versions,
+especially if we keep in mind that enrichment results are almost identical to results from DSL version.</p>
+
+<h2>Summary</h2>
+
+<p>Dear readers, are you still with me after long lecture with not so easy to digest Scala code?
+I hope so :)</p>
+
+<p>My final thoughts about Kafka Streams:</p>
+
+<ul>
+<li>Kafka DSL looks great at first, functional and declarative API sells the product, no doubts.</li>
+<li>Unfortunately Kafka DSL hides a lot of internals which should be exposed via the API
+(stores configuration, join semantics, repartitioning) &ndash; see
+<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-182%3A+Reduce+Streams+DSL+overloads+and+allow+easier+use+of+custom+storage+engines">KIP-182</a>.</li>
+<li>Processor API seems to be more complex and less sexy than DSL.</li>
+<li>But Processor API allows you to create hand-crafted, very efficient stream topologies.</li>
+<li>I did not present any Kafka Streams test (what&rsquo;s the shame &ndash; I&rsquo;m sorry)
+but I think testing would be easier with Processor API than DSL.
+With DSL it has to be an integration test, processors can be easily unit tested in separation with a few mocks.</li>
+<li>As Scala developer I prefer Processor API than DSL,
+e.g. Scala compiler could not infer KStream generic types.</li>
+<li>It&rsquo;s a pleasure to work with processor and fluent Topology APIs.</li>
+<li>I&rsquo;m really keen on KSQL future, it would be great to get optimized engine like
+<a href="https://databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html">Spark Catalyst</a> eventually.</li>
+<li>Finally, Kafka Streams library is extraordinarily fast and hardware efficient, if you know what you are doing.</li>
+</ul>
+
+
+<p>As always working code is published on
+<a href="https://github.com/mkuthan/example-kafkastreams">https://github.com/mkuthan/example-kafkastreams</a>.
+The project is configured with <a href="https://github.com/manub/scalatest-embedded-kafka">Embedded Kafka</a>
+and does not require any additional setup.
+Just uncomment either DSL or Processor API version, run main class and observe enriched stream of events on the console.</p>
+
+<p>Enjoy!</p>
+]]></content>
+  </entry>
+  
+</feed>

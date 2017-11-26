@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Mastering Node.js - Book Review - Passionate Developer</title>
+  <meta name="author" content="Marcin Kuthan">
+
+  
+  <meta name="description" content="Overview I&rsquo;m really impressed by Node.js (and JavaScript) ecosystem. I took Mastering Node.js book to understand Node.js philosophy and compare &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://mkuthan.github.io/blog/2014/08/20/mastering-nodejs-book-review">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Passionate Developer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-50832428-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Passionate Developer</a></h1>
+  
+    <h2>Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkuthan.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Mastering Node.js - Book Review</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-20T00:00:00+00:00" pubdate data-updated="true">Aug 20<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Overview</h2>
+
+<p>I&rsquo;m really impressed by Node.js (and JavaScript) ecosystem. I took <em>Mastering Node.js</em> book to understand Node.js philosophy and compare to JVM world.</p>
+
+<h2>V8</h2>
+
+<p>JavaScript virtual machine, conceptually very similar to JVM.
+The most important element of JavaScript ecosystem if you want to do something more than client side web application.
+I really like Node.js REPL, experimentation is as easy as with Scala.</p>
+
+<h2>Event loop</h2>
+
+<p>Elegant simulation of concurrency. Do you remember Swing event dispatch thread and <code>invokeLater()</code> method? Event loop is the same.
+It is crucial to understand events handling order:</p>
+
+<ul>
+<li>emitted event</li>
+<li>timers</li>
+<li>IO callbacks</li>
+<li>deferred execution blocks</li>
+</ul>
+
+
+<h2>Event driven concurrency</h2>
+
+<p>Process is a first class citizen. The easiest (and cheapest) way to achieve concurrency with horizontal scalability.</p>
+
+<h2>Real-time applications</h2>
+
+<p>I enhanced drawing board presented in the book. It was great fun together with my 2 years old son :&ndash;)
+Scalable server side implementation is presented below, I could not even imagine Java version.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">).</span><span class="nx">Server</span><span class="p">(</span><span class="nx">app</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">io</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;socket.io&#39;</span><span class="p">)(</span><span class="nx">http</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">redis</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;socket.io-redis&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">io</span><span class="p">.</span><span class="nx">adapter</span><span class="p">(</span><span class="nx">redis</span><span class="p">({</span> <span class="nx">host</span><span class="o">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="nx">port</span><span class="o">:</span> <span class="mi">6379</span> <span class="p">}));</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">port</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="kr">static</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;assets&#39;</span><span class="p">)));</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+</span><span class='line'>  <span class="nx">res</span><span class="p">.</span><span class="nx">sendfile</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">io</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;move&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">socket</span><span class="p">.</span><span class="nx">broadcast</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;moving&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">http</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">port</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Board started on: &#39;</span> <span class="o">+</span> <span class="nx">port</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Keep in mind that SSE is unidirectional from server to clients and requires funny 2KB padding. I didn&rsquo;t know that before.</p>
+
+<h2>Scaling on single node</h2>
+
+<p>Spawning, forking child processes is easy, communication between parent and children processes is easy as well.
+Cluster module simplifies web application implementation for multi-core processors and it is very easy to understand and control.</p>
+
+<h2>Horizontal scaling</h2>
+
+<p>Keep shared state in horizontally scalable store, e.g: session data in Redis or RabbitMq for events.</p>
+
+<h2>Apache Bench</h2>
+
+<p>Command line tool for load/stress testing. Using JMeter or Gatling is not always the only way to perform simple test.</p>
+
+<h2>UDP / Multicast</h2>
+
+<p>Good to know the world behind HTTP/REST/SOAP &hellip; There is a lot of important layers between application and wire, do you remember OSI?</p>
+
+<h2>AWS</h2>
+
+<p>I have to practice using S3 or DynamoDB eventually.</p>
+
+<h2>Node debugger</h2>
+
+<p>OMG &ndash; I used to debug application using console 10 years ago or so ;&ndash;)</p>
+
+<h2>Express, Socket.io, Path</h2>
+
+<p>Implementing web application using Node.js only is feasible but with Express it is much easier.</p>
+
+<p>Be aware that there are thousands of web frameworks for Node.js on the market. Much more that for Java 10 years ago ;&ndash;)
+It seems that frameworks built around WebSocket and Single Page App should be the leaders.</p>
+
+<h2>Interesing resources</h2>
+
+<p><a href="https://cs.uwaterloo.ca/~brecht/papers/getpaper.php?file=eurosys-2007.pdf">Comparing the Performance of Web Server Architectures</a></p>
+
+<p><a href="http://www.futurealoof.com/posts/broken-promises.html">Broken Promises</a></p>
+
+<h2>Summary</h2>
+
+<p>JavaScript and Node.js seem to be one of the most vital ecosystem for web development.
+The adoption in the enterprise world is still low but I really like this ecosystem and its community.
+And I&rsquo;m still waiting for final version of ES6, sometimes JavaScript really sucks.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Marcin Kuthan</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-20T00:00:00+00:00" pubdate data-updated="true">Aug 20<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/books/'>books</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://mkuthan.github.io/blog/2014/08/20/mastering-nodejs-book-review/" data-via="MarcinKuthan" data-counturl="http://mkuthan.github.io/blog/2014/08/20/mastering-nodejs-book-review/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/06/26/soa-patterns-book-review/" title="Previous Post: SOA Patterns - book review">&laquo; SOA Patterns - book review</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/09/15/programming_language_does_not_matter/" title="Next Post: Programming language does not matter">Programming language does not matter &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/">Kafka Streams DSL vs Processor API</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/18/apache-bigdata-europe/">Apache BigData Europe Conference Summary</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/spark-streaming-on-yarn/">Long-running Spark Streaming Jobs on YARN Cluster</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/03/11/spark-application-assembly/">Spark Application Assembly for Cluster Deployments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/01/29/spark-kafka-integration2/">Spark and Kafka Integration Patterns, Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/06/spark-kafka-integration1/">Spark and Kafka Integration Patterns, Part 1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/01/spark-unit-testing/">Spark and Spark Streaming Unit Testing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/22/ddd-how-to-learn/">How to Learn DDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/15/programming_language_does_not_matter/">Programming Language Does Not Matter</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/20/mastering-nodejs-book-review/">Mastering Node.js - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/26/soa-patterns-book-review/">SOA Patterns - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/21/release-it-book-review/">Rrelease It! - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/29/acceptance-testing-using-jbehave-spring-framework-and-maven/">Acceptance Testing Using JBehave, Spring Framework and Maven</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/27/the-twelve-factor-app-part2/">The Twelve-Factor App - Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/26/the-twelve-factor-app-part1/">The Twelve-Factor App - Part 1</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Category Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/architecture' style='font-size: 148.0%'>architecture(4)</a> <a href='/blog/categories/artifactory' style='font-size: 112.0%'>artifactory(1)</a> <a href='/blog/categories/bash' style='font-size: 112.0%'>bash(1)</a> <a href='/blog/categories/books' style='font-size: 136.0%'>books(3)</a> <a href='/blog/categories/conferences' style='font-size: 112.0%'>conferences(1)</a> <a href='/blog/categories/craftsmanship' style='font-size: 136.0%'>craftsmanship(3)</a> <a href='/blog/categories/ddd' style='font-size: 124.0%'>DDD(2)</a> <a href='/blog/categories/dvcs' style='font-size: 112.0%'>DVCS(1)</a> <a href='/blog/categories/git' style='font-size: 124.0%'>git(2)</a> <a href='/blog/categories/hdfs' style='font-size: 112.0%'>hdfs(1)</a> <a href='/blog/categories/java' style='font-size: 124.0%'>java(2)</a> <a href='/blog/categories/jbehave' style='font-size: 112.0%'>jbehave(1)</a> <a href='/blog/categories/jee' style='font-size: 112.0%'>JEE(1)</a> <a href='/blog/categories/jira' style='font-size: 112.0%'>jira(1)</a> <a href='/blog/categories/jms' style='font-size: 112.0%'>JMS(1)</a> <a href='/blog/categories/jvm' style='font-size: 112.0%'>jvm(1)</a> <a href='/blog/categories/kafka' style='font-size: 148.0%'>kafka(4)</a> <a href='/blog/categories/kafka-streams' style='font-size: 112.0%'>kafka streams(1)</a> <a href='/blog/categories/linux' style='font-size: 136.0%'>linux(3)</a> <a href='/blog/categories/maven' style='font-size: 124.0%'>maven(2)</a> <a href='/blog/categories/node-js' style='font-size: 112.0%'>node.js(1)</a> <a href='/blog/categories/performance' style='font-size: 112.0%'>performance(1)</a> <a href='/blog/categories/php' style='font-size: 112.0%'>PHP(1)</a> <a href='/blog/categories/presentations' style='font-size: 112.0%'>presentations(1)</a> <a href='/blog/categories/python' style='font-size: 112.0%'>python(1)</a> <a href='/blog/categories/ruby' style='font-size: 112.0%'>ruby(1)</a> <a href='/blog/categories/sbt' style='font-size: 112.0%'>sbt(1)</a> <a href='/blog/categories/scala' style='font-size: 160.0%'>scala(5)</a> <a href='/blog/categories/smtp' style='font-size: 112.0%'>smtp(1)</a> <a href='/blog/categories/spark' style='font-size: 160.0%'>spark(5)</a> <a href='/blog/categories/spring' style='font-size: 148.0%'>spring(4)</a> <a href='/blog/categories/tdd' style='font-size: 112.0%'>TDD(1)</a> <a href='/blog/categories/virtual-box' style='font-size: 112.0%'>virtual box(1)</a> <a href='/blog/categories/yarn' style='font-size: 112.0%'>yarn(1)</a> </span>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/mkuthan">@mkuthan</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'mkuthan',
+            count: 10,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>About Me</h1>
+  <p>Marcin Kuthan, genuine software engineer at <a href="http://allegrogroup.com/">Allegro Group</a>.</p>
+</section>
+
+<section>
+	<span>
+		<img src="http://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5" alt="Gravatar of Marcin Kuthan " title="Gravatar of Marcin Kuthan" />
+	</span>
+</section>
+<section>
+  <h1>Links</h1>
+  <p><a href="http://allegro.tech/"><img src="http://allegro.tech/img/logo-allegro-tech.svg" alt="allegro.tech"></a></p>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - Marcin Kuthan -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkuthan';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://mkuthan.github.io/blog/2014/08/20/mastering-nodejs-book-review/';
+        var disqus_url = 'http://mkuthan.github.io/blog/2014/08/20/mastering-nodejs-book-review/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

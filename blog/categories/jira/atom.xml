@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Jira | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/jira/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GitFlow Step by Step]]></title>
+    <link href="http://mkuthan.github.io/blog/2013/07/21/gitflow-step-by-step/"/>
+    <updated>2013-07-21T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2013/07/21/gitflow-step-by-step</id>
+    <content type="html"><![CDATA[<p>Git Flow is a mainstream process for branch per feature development. Git Flow  is the best method I&rsquo;ve found for
+managing project developed by small to medium project teams. Before you start reading this post you should read two
+mandatory lectures:</p>
+
+<p><a href="https://www.atlassian.com/git/workflows#!workflow-gitflow">Git Workflows by Atlassian</a></p>
+
+<p><a href="https://bitbucket.org/atlassian/jgit-flow/wiki/Home">Maven JGit-Flow Plugin</a></p>
+
+<p>This blog post is a step by step instruction how to use Git Flow together with Maven build tool, continuous integration
+server (e.g: Bamboo) and bug tracker (e.g: JIRA). If you are interested in how to automate the whole process, watch this
+<a href="https://www.youtube.com/watch?v=YIgX67c-2hQ">Flow with Bamboo</a> video. But I really recommend to start using Git Flow
+with pure git commands, when you understand the concept move to Git Flow, and then automate everything eventually.</p>
+
+<h2>Start feature branch</h2>
+
+<ol>
+<li>Assign JIRA task to you.</li>
+<li>Move JIRA tasks from &ldquo;To Do&rdquo; to &ldquo;In Progress&rdquo;.</li>
+<li><p>Create feature branch for the JIRA user story (if it is a first task of the user story).
+Feature branch must reflect JIRA issue number and have meaningful name, e.g: <em>PROJ-01_user_registration</em>.</p>
+
+<pre><code>  mvn jgitflow:feature-start
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>New local feature branch <em>feature/PROJ-01_user_registration</em> is created.</li>
+</ul>
+</li>
+<li><p>Optionally push feature branch into remote repository.</p>
+
+<pre><code> git push origin feature/PROJ-01_user_registration
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>The feature branch is pushed into remote repository.</li>
+<li>New Bamboo build plan is created for the feature branch.</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Checkout the feature branch</h2>
+
+<ol>
+<li><p>Checkout the feature branch created by other developer (e.g for code review).</p>
+
+<pre><code> git checkout feature/PROJ-01_user_registration
+</code></pre></li>
+</ol>
+
+
+<h2>Work on the feature branch</h2>
+
+<ol>
+<li><p>Periodically push changes to the remote repository.</p>
+
+<pre><code> git push origin feature/PROJ-01_user_registration
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Bamboo build plan for feature branch is green.</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Finish feature branch</h2>
+
+<ol>
+<li><p>Ensure your local develop branch is up to date.</p>
+
+<pre><code> git checkout develop
+ git pull origin develop
+</code></pre></li>
+<li><p>To avoid conflicts during finishing feature branch, ensure that all changes from develop are merged to the feature branch.</p>
+
+<pre><code> git checkout feature/PROJ-01_user_registration
+ git pull origin develop
+</code></pre></li>
+<li><p>Resolve all conflicts (if any) and commit changes.</p>
+
+<pre><code> git commit -a -m "Conflicts resolved"
+</code></pre></li>
+<li><p>Finish the feature.</p>
+
+<pre><code> mvn jgitflow:feature-finish
+</code></pre></li>
+<li><p>Push changes from develop into remote repository</p>
+
+<pre><code> git push origin develop
+</code></pre></li>
+<li><p>Move JIRA task to &ldquo;Done&rdquo; category.</p></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Feature branch is merged into develop branch.</li>
+<li>Local feature branch is removed.</li>
+<li>Bamboo build plan for develop is green.</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Start release branch</h2>
+
+<ol>
+<li><p>Create release branch.</p>
+
+<pre><code> mvn jgitflow:release-start
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>New local release branch release/version is created.</li>
+<li>Work with release branch</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Work with release branch</h2>
+
+<ol>
+<li><p>Clean the database (Database).</p></li>
+<li><p>Run the application (Running Application) and perform exploratory tests.</p></li>
+<li><p>Fix all issues (if any).</p></li>
+<li><p>Commit changes to the release branch.</p>
+
+<pre><code> git commit -a -m "Fixes release candidate"
+</code></pre></li>
+</ol>
+
+
+<h2>Finish release branch</h2>
+
+<ol>
+<li><p>Make sure your local master branch is up to date</p>
+
+<pre><code> git fetch origin master
+</code></pre></li>
+<li><p>Finish the release branch</p>
+
+<pre><code> mvn jgitflow:release-finish
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Release branch is merged into local develop branch.</li>
+<li>Project version is updated in local develop branch.</li>
+</ul>
+</li>
+<li><p>Push changes from develop into remote repository</p>
+
+<pre><code> git push origin develop
+</code></pre></li>
+<li><p>Checkout master</p>
+
+<pre><code> git checkout master
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Release branch is merged into local master branch.</li>
+<li>Project version is updated in local master branch.</li>
+</ul>
+</li>
+<li><p>Push changes from master into remote repository</p>
+
+<pre><code> git push --tags origin master
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Release tag is pushed to the remote repository.</li>
+<li>Build plan on master is green and new version is deployed.</li>
+</ul>
+</li>
+<li><p>Delete released feature branches from remote repository.</p>
+
+<pre><code> git push origin :feature/PROJ-01_user_registration
+</code></pre></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

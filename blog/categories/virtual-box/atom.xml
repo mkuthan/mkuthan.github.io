@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Virtual Box | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/virtual-box/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Virtual Box VDI Maintanance]]></title>
+    <link href="http://mkuthan.github.io/blog/2012/12/11/virtual-box-vdi-maintanance/"/>
+    <updated>2012-12-11T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2012/12/11/virtual-box-vdi-maintanance</id>
+    <content type="html"><![CDATA[<p>Virtual Disk Image (<em>VDI</em>) is a Virtual Box container format for guest hard
+disk. I found that <em>VDI</em> files on the host system grows over the time. If your
+<em>VDI</em> file on the host system is much bigger than used spaces on guest partition
+it is time for compaction:</p>
+
+<ol>
+<li>Install zerofree tool (<code>apt-get install zerofree</code>).</li>
+<li>Remove unused files (<code>apt-get autoremove</code>, <code>apt-get autoclean</code>, <code>orphaner --guess-all</code>).</li>
+<li>Reboot the guest system in single user mode (hit <code>e</code> during Grub boot and append single option to the Grub boot parameters).</li>
+<li>Remount filesystems as readonly (<code>mount -n -o remount,ro /</code>).</li>
+<li>Fill unused block with zeros (<code>zerofree /</code>). It&rsquo;s time consuming operation.</li>
+<li>Shutdown the system (<code>poweroff</code>).</li>
+<li>Compact VDI files on the host system (<code>VBoxManage modifyhd my.vdi compact</code>). It&rsquo;s time consuming operation.</li>
+</ol>
+
+
+<p>That&rsquo;s all, after the maintenance VDI file size on the host system should be
+very close to the used space on the guest partition.</p>
+
+<p>Oh, I forgot to mention: you shoud have a backup before start ;&ndash;)</p>
+]]></content>
+  </entry>
+  
+</feed>

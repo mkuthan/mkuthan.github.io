@@ -1,0 +1,2727 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Passionate Developer</title>
+  <meta name="author" content="Marcin Kuthan">
+
+  
+  <meta name="description" content="Overview I took this book from my bookshelf when I was preparing internal presentation about micro services for my Roche colleagues.
+I was mainly &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://mkuthan.github.io/blog/page/2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Passionate Developer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-50832428-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Passionate Developer</a></h1>
+  
+    <h2>Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkuthan.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/26/soa-patterns-book-review/">SOA Patterns - Book Review</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-26T00:00:00+00:00" pubdate data-updated="true">Jun 26<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Overview</h2>
+
+<p>I took this book from my bookshelf when I was preparing internal presentation about micro services for my Roche colleagues.
+I was mainly interested in <em>Saga</em> and <em>Composite Front End</em> patterns. But when I started, I decided to read rest of the book.</p>
+
+<h2>Patterns</h2>
+
+<p>Below you can find my short summary about every pattern described in the book:</p>
+
+<h3>Service Host</h3>
+
+<p>Every service needs the host where it works. For me <em>Spring Framework</em> is excellent example of the service host.</p>
+
+<h3>Active Service</h3>
+
+<p>Very similar to Micro Services concept, when the service should be autonomous.</p>
+
+<h3>Transactional Service</h3>
+
+<p>I know a few alternative names of this pattern: Unit of Work, Open Session in View. In JEE world implemented using <code>ThreadLocal</code>.</p>
+
+<h3>Workflodize</h3>
+
+<p>Strange pattern name. I don&rsquo;t really like complexity of workflow engines and prefer simple object oriented finite state machine implementation.</p>
+
+<h3>Edge Component</h3>
+
+<p>Separate infrastructure code from domain. Just simple like that.</p>
+
+<h3>Decoupled Invocation</h3>
+
+<p>Use event / command bus for communication.</p>
+
+<h3>Parallel Pipelines</h3>
+
+<p>Apply Unix philosophy to your services. SRP on the higher level.</p>
+
+<h3>Gridable Service</h3>
+
+<p>Horizontal scaling.</p>
+
+<h3>Service Instance</h3>
+
+<p>Horizonatal scaling.</p>
+
+<h3>Virtual Endpoint</h3>
+
+<p>Make your deployment configuration flexible.</p>
+
+<h3>Service Watchdog</h3>
+
+<p>Service monitoring should be built-in.</p>
+
+<h3>Secured Message</h3>
+
+<p>Encrypt what should be secured on the message level (privacy, integrity, impersonation).</p>
+
+<h3>Secured Infrastructure</h3>
+
+<p>Encrypt what should be secured on the protocol level (privacy, integrity, impersonation).</p>
+
+<h3>Service Firewall</h3>
+
+<p>Security on the network level. Expose only what is really needed.</p>
+
+<h3>Identity Provider</h3>
+
+<p>Single Sign On.</p>
+
+<h3>Service Monitor</h3>
+
+<p>Monitoring on the business process level.</p>
+
+<h3>Request/Reply</h3>
+
+<p>Synchronous point to point communication.</p>
+
+<h3>Request/Reaction</h3>
+
+<p>Asynchronous point to point communication.</p>
+
+<h3>Inversion of Communications</h3>
+
+<p>Command Bus, Event Bus, messaging middleware in general. Complex Event Processing (CEP).</p>
+
+<h3>Saga</h3>
+
+<p>Long running business transactions. Distributed transactions without XA.</p>
+
+<h3>Reservation</h3>
+
+<p>Related to Saga, how to avoid XA transactions.</p>
+
+<h3>Composite Front End</h3>
+
+<p>How to compose services into single web application? Author does not answer my doubts in this chapter.</p>
+
+<h3>Client/Server/Service</h3>
+
+<p>How to deal with legacy systems. How to move from monolithic architecture to SOA.</p>
+
+<h3>Service Bus</h3>
+
+<p>Message Bus, Service Bus, ESB &ndash; nice explanation.</p>
+
+<h3>Orchestration</h3>
+
+<p>Externalize business long running processes. But still encapsulate business logic in services not in the orchestrator!</p>
+
+<h3>Aggregated Reporting</h3>
+
+<p>Looks like CQRS for me.</p>
+
+<h2>Antipatterns</h2>
+
+<p>Funny names for real problems when SOA is used:</p>
+
+<ul>
+<li>Knot &ndash; problems with coupling.</li>
+<li>Nanoservice &ndash; problems with bounded contexts.</li>
+<li>Transactional Integration &ndash; problems with XA transations.</li>
+<li>Same Old Way &ndash; problems with CRUD like services.</li>
+</ul>
+
+
+<h2>Summary</h2>
+
+<p>For sure it&rsquo;s worth reading but I expected more from Arnon Rotem-Gal-Oz.
+Sometimes I felt that author covers only the top of the iceberg, when demons are under the hood.
+The sample code fragments are not very helpful, with high accidental complexity but do not clearly show the problem.</p>
+
+<p>In addition the book was published in 2012 but you will easily realized that author had started ten years before, some parts seems to be outdated.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/21/release-it-book-review/">Rrelease It! - Book Review</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-21T00:00:00+00:00" pubdate data-updated="true">Jun 21<span>st</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Recently I read excellent book <em>Release It!</em> written by Michael Nygard.
+The book is 7 years old and I don&rsquo;t know how I could miss the book until now.</p>
+
+<p>Michael Nygard shows how to design and architect medium or large scale web applications.
+Real lessons learnt from the trenches not golden rules from ivory architects.</p>
+
+<p>This blog post is a dump of taken notes when I was reading the book.
+The list could be used as a checklist for system architects and developers.
+There is no particular order of the notes, perhaps there are duplications too.</p>
+
+<ul>
+<li><p><em>admin access</em> &ndash; should use separate networks than regular traffic, if not administrator will not be able connect to the system when something is wrong.</p></li>
+<li><p><em>network timeouts</em> &ndash; should be always defined, if not our system could hang if there is a problem with remote service.</p></li>
+<li><p><em>firewall</em> &ndash; be aware of timeouts on firewall connection tracking tables, if the connection is unused for long time (e.g connection from the pool), firewall could drop packets silently.</p></li>
+<li><p><em>failure probability</em> &ndash; are dependant, not like during coin toss.</p></li>
+<li><p><em>3rd party vendors</em> &ndash; their client library often sucks, you can not define timeouts, you can not configure threading correctly.</p></li>
+<li><p><em>method wait</em> &ndash; always provide the timeout, do not use method <code>Object.wait()</code>.</p></li>
+<li><p><em>massive email with deep links</em> &ndash; do not send massive emails with deep links, bunch of requests to single resource could kill your application.</p></li>
+<li><p><em>threads ratio</em> &ndash; check front-end and back-end threads ratio, the system is as fast as its slowest part.</p></li>
+<li><p><em>SLA</em> &ndash; define different SLAs for different subsystems, not everything must have 99.99%</p></li>
+<li><p><em>high CPU utilization</em> &ndash; check GC logs first.</p></li>
+<li><p><em>JVM crash</em> &ndash; typical after OOM, when native code is trying to allocate memory &ndash; <code>malloc()</code> returns error but only few programmers handle this error.</p></li>
+<li><p><em>Collection size</em> &ndash; do not use unbounded collections, huge data set kills your application eventually.</p></li>
+<li><p><em>Outgoing communication</em> &ndash; define timeouts.</p></li>
+<li><p><em>Incoming communication</em> &ndash; fail fast, be pleasant for other systems.</p></li>
+<li><p><em>separate threads pool</em> &ndash; for admin access, your last way to fix the system.</p></li>
+<li><p><em>input validation</em> &ndash; fail fast, use JS validation even if validation must be duplicated.</p></li>
+<li><p><em>circuit braker</em> &ndash; design pattern for handling unavailable remote services.</p></li>
+<li><p><em>handshake in protocol</em> &ndash; alternative for <em>circuit braker</em> if you desing your own protocol.</p></li>
+<li><p><em>test harness</em> &ndash; test using production like environment (but how to do that???)</p></li>
+<li><p><em>capacity</em> &ndash; always multiply by number of users, requests, etc.</p></li>
+<li><p><em>safety limits on everything</em> &ndash; nice general rule.</p></li>
+<li><p><em>oracle and connection pool</em> &ndash; Oracle in default configuration spawns separate process for every connection, check how much memory is used only for handling client connections.</p></li>
+<li><p><em>unbalanced resources</em> &ndash; underestimated part will fail first, and it could hang whole system.</p></li>
+<li><p><em>JSP and GC</em> &ndash; be aware of <code>noclassgc</code> JVM option, compiled JSP files use perm gen space.</p></li>
+<li><p><em>http sessions</em> &ndash; users do not understand the concept, do not keep shopping card in the session :&ndash;)</p></li>
+<li><p><em>whitespaces</em> &ndash; remove any unnecessary whitespace from the pages, in large scale it saves a lot of traffic.</p></li>
+<li><p><em>avoid hand crafted SQLs</em> &ndash; hard to predict the outcome, and hard to optimize for performance.</p></li>
+<li><p><em>database tests</em> &ndash; use the real data volume.</p></li>
+<li><p><em>unicast</em> &ndash; could be used for up to ~10 servers, for bigger cluster use multicast.</p></li>
+<li><p><em>cache</em> &ndash; always limit cache size.</p></li>
+<li><p><em>hit ratio</em> &ndash; always monitor cache hit ratio.</p></li>
+<li><p><em>precompute html</em> &ndash; huge server resource saver, not everything changes on every request.</p></li>
+<li><p><em>JVM tuning</em> &ndash; is application release specific, on every release memory utilization could be different.</p></li>
+<li><p><em>multihomed servers</em> &ndash; on production network topology is much more complex.</p></li>
+<li><p><em>bonding</em> &ndash; single network configured with multiple network cards and multiple switch ports.</p></li>
+<li><p><em>backup</em> &ndash; use separate network, backup always consumes your whole bandwidth.</p></li>
+<li><p><em>virtual IP</em> &ndash; always configure virtual IP, your configuration will be much more flexible.</p></li>
+<li><p><em>technical accounts</em> &ndash; do not share accounts between services, it would be security flaws.</p></li>
+<li><p><em>cluster configuration verification</em> &ndash; periodically check configuration on the cluster nodes, even if the configuration is deployed automatically.</p></li>
+<li><p><em>separate configuration specific for the single cluster node</em> &ndash; keep node specific configuration separated from shared configuration.</p></li>
+<li><p><em>configuration property names</em> &ndash; based on function not nature (e.g: hostname is too generic).</p></li>
+<li><p><em>graceful shutdown</em> &ndash; do not terminate existing business transations.</p></li>
+<li><p><em>thread dumps</em> &ndash; prepare scripts for that, during accident time is really precious (SLAs).</p></li>
+<li><p><em>recovery oriented computing</em> &ndash; be prepared for restarting only part of the system, restarting everything is time consuming.</p></li>
+<li><p><em>transparency</em> &ndash; be able to monitor everything.</p></li>
+<li><p><em>monitoring policy, alerts</em> &ndash; should not be defined by the service, configure the policies outside (perhaps in central place).</p></li>
+<li><p><em>log format</em> &ndash; should be human readable, humans are the best in pattern matching, use tabulators and fixed width columns.</p></li>
+<li><p><em>CIM</em> &ndash; <em>SNMP</em> superior.</p></li>
+<li><p><em>SSL accelerator</em> &ndash; what it really is???</p></li>
+<li><p><em>OpsDB monitoring</em> &ndash; measurements and expectations, end to end business process monitoring.</p></li>
+<li><p><em>Node Identifiers</em> &ndash; assign to teams in block.</p></li>
+<li><p><em>Observe, Orient, Decide, Act</em> &ndash; military methodology, somehow similar to Agile :&ndash;)</p></li>
+<li><p><em>review</em> &ndash; tickets, stack traces in log files, volume of problems, data volumes, query statistics periodically.</p></li>
+<li><p><em>DB migration</em> &ndash; expansion phase for incompatible schema changes.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/29/acceptance-testing-using-jbehave-spring-framework-and-maven/">Acceptance Testing Using JBehave, Spring Framework and Maven</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-29T00:00:00+00:00" pubdate data-updated="true">May 29<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This post documents acceptance testing best practices collected in regular projects I was working on.
+Best practices materialized into working <a href="https://github.com/mkuthan/example-jbehave">project</a>, using <em>Jbehave</em>, <em>Spring Framework</em> and <em>Maven</em>.</p>
+
+<p>After the lecture you will know:</p>
+
+<ul>
+<li>How to implement automated acceptance tests and avoid common traps.</li>
+<li>How to organize project build using <em>Maven</em>.</li>
+<li>How to configure project and glue everything together using <em>Spring Framework</em>.</li>
+<li>How to write test scenarios using <em>JBehave</em>.</li>
+<li>Finally how to run tests from command line and from your favourite IDE.</li>
+</ul>
+
+
+<h2>Automated acceptance tests</h2>
+
+<p>Automated acceptance test suite is a system documentation, the real single source of truth.
+The best documentation I&rsquo;ve ever seen: always up-to-date, unambiguous and precise.</p>
+
+<p>But I found many traps when I was trying to apply acceptance tests automation in practice.</p>
+
+<blockquote><p>Acceptance Testing is about collaboration not tools.</p></blockquote>
+
+<p>You will get much better results if you will collaborate closely with product owner, end users and customer.
+You could write test scenario only by yourself but perhaps you will fail.
+When you are able to work on test scenarios together, you could think about tools and automation.
+Do not let that tools interfere in collaboration, all team members must be committed to acceptance tests contribution.</p>
+
+<blockquote><p>Acceptance Testing needs to be done using user interface.</p></blockquote>
+
+<p>In most situation you don&rsquo;t need to implement tests using user interface.</p>
+
+<p>User interface tends to be changed frequently, business logic not so often.
+I don&rsquo;t want to change my tests when business logic stays unchanged, even if user interface has been changed significantly.</p>
+
+<p>User interface tests are very fragile and slow. You will lost one of the automated tests advantages: fast and precise feedback loop.
+It is really hard to setup and maintain the infrastructure for user interface testing.</p>
+
+<blockquote><p>Everything should be tested.</p></blockquote>
+
+<p>Acceptance tests are mainly for happy path scenarios verification.
+Acceptance tests are expensive to maintain, so do not test corner cases, validation and error handling, on that level.
+Focus only on the relevant assertions for the given scenario, do not verify everything only because you can.</p>
+
+<h2>Project build organization</h2>
+
+<p>After bunch of theory it is time to show real code. Let&rsquo;s start with proper project organization.
+I found that acceptance testing is a cross cutting aspect of the application, and should be separated from the application code.
+Acceptance tests build configuration is very specific and I don&rsquo;t want to clutter application build configuration.
+You can also utilize multi module project, to ensure that acceptance tests module is allowed to call application public API only.
+This segregation applies only for acceptance testing, the best place for unit tests is still in an application module under <code>src/test</code> directory.</p>
+
+<p>With <em>Maven</em> (and other build tools like <em>Gradle</em>), application code and acceptance tests code can be located in separate modules.</p>
+
+<figure class='code'><figcaption><span>Parent module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;project&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>example<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>example-jbehave<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>pom<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;modules&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;module&gt;</span>example-jbehave-app<span class="nt">&lt;/module&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;module&gt;</span>example-jbehave-tests<span class="nt">&lt;/module&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/modules&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Web application module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;project&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;parent&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;groupId&gt;</span>example<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;artifactId&gt;</span>example-jbehave<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/parent&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>example-jbehave-app<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>war<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<figure class='code'><figcaption><span>Tests module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;project&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;parent&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;groupId&gt;</span>example<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;artifactId&gt;</span>example-jbehave<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/parent&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>example-jbehave-tests<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>The parent module is the best place to define common configuration properties inherited by child modules.</p>
+
+<figure class='code'><figcaption><span>Configuration properties in parent module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;properties&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;maven.compiler.source&gt;</span>1.7<span class="nt">&lt;/maven.compiler.source&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;maven.compiler.target&gt;</span>1.7<span class="nt">&lt;/maven.compiler.target&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;jbehave.version&gt;</span>3.9.2<span class="nt">&lt;/jbehave.version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;logback.version&gt;</span>1.1.1<span class="nt">&lt;/logback.version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;slf4j.version&gt;</span>1.7.6<span class="nt">&lt;/slf4j.version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;spring.version&gt;</span>4.0.5.RELEASE<span class="nt">&lt;/spring.version&gt;</span>
+</span><span class='line'><span class="nt">&lt;/properties&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the parent module you could also define <em>Spring Framework</em> BOM (Bill Of Materials), to ensure consistent dependency management.
+This is quite new <em>Spring Framework</em> ecosystem feature.</p>
+
+<figure class='code'><figcaption><span>Dependency management in parent module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependencyManagement&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>spring-framework-bom<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${spring.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>        (...)
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'><span class="nt">&lt;dependencyManagement&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because I prefer <em>SLF4J</em> over <em>Apache Commons Logging</em>, unwanted dependency is excluded globally from <code>spring-core</code> artifact.</p>
+
+<figure class='code'><figcaption><span>Dependency management in parent module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependencyManagement&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        (...)
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>spring-core<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${spring.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;exclusions&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;exclusion&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;groupId&gt;</span>commons-logging<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;artifactId&gt;</span>commons-logging<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/exclusion&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/exclusions&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependencyManagement&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>In the application module declare all application dependencies.
+In real application the list will be much longer.</p>
+
+<figure class='code'><figcaption><span>Dependency management in application module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>spring-webmvc<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>slf4j-api<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${slf4j.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>jcl-over-slf4j<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${slf4j.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>ch.qos.logback<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>logback-classic<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${logback.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>Maven War Plugin</em> must be configured specifically, classes (the content of the WEB-INF/classes directory) must be attached to the project as an additional artifact.
+Acceptance test module depends on this additional artifact. Set <code>attachClasses</code> property to <code>true</code>.</p>
+
+<figure class='code'><figcaption><span>War plugin configuration in application module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;</span><span class="n">plugin</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">maven</span><span class="o">.</span><span class="na">plugins</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">maven</span><span class="o">-</span><span class="n">war</span><span class="o">-</span><span class="n">plugin</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">2.4</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="n">configuration</span><span class="o">&gt;</span>
+</span><span class='line'>        <span class="o">&lt;</span><span class="n">attachClasses</span><span class="o">&gt;</span><span class="kc">true</span><span class="o">&lt;/</span><span class="n">attachClasses</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;/</span><span class="n">configuration</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">plugin</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Alternatively you can use two separate modules for the application.
+One <em>jar</em> type with domain and infrastructure and separate <em>war</em> type with web layer.
+Then you would declare dependency to your <em>jar</em> application module only.
+In my example I would keep it simple, and use single <em>war</em> type module for all layers in the application.</p>
+
+<p>In the tests module declare all dependencies as well.
+There is also an extra dependency to the application module, additional <em>jar</em> type artifact generated by <em>Maven War Plugin</em>.
+The last two dependencies of <code>zip</code> type are needed to generate <em>JBehave</em> tests report.</p>
+
+<figure class='code'><figcaption><span>Dependency management in tests module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>${project.groupId}<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>example-jbehave-app<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${project.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;classifier&gt;</span>classes<span class="nt">&lt;/classifier&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>spring-test<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.jbehave<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>jbehave-core<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${jbehave.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.jbehave<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>jbehave-spring<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${jbehave.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.jbehave.site<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>jbehave-site-resources<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>3.1.1<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;type&gt;</span>zip<span class="nt">&lt;/type&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.jbehave<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>jbehave-core<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${jbehave.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;classifier&gt;</span>resources<span class="nt">&lt;/classifier&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;type&gt;</span>zip<span class="nt">&lt;/type&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Two <em>Maven</em> plugins must be configured specifically in the tests module: <code>maven-surefire-plugin</code> and <code>jbehave-maven-plugin</code>.</p>
+
+<p>Because we separated tests into it&rsquo;s own module, test classes might be located under <code>src/main</code> as first class citizen.
+<em>Surefire</em> is configured to execute test scenarios under <code>example/jbehave/tests/stories</code> package.</p>
+
+<figure class='code'><figcaption><span>Surefire plugin configuration in tests module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>2.17<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;testSourceDirectory&gt;</span>${basedir}/src/main/java/<span class="nt">&lt;/testSourceDirectory&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;testClassesDirectory&gt;</span>${project.build.directory}/classes/<span class="nt">&lt;/testClassesDirectory&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;includes&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;include&gt;</span>example/jbehave/tests/stories/**/*.java<span class="nt">&lt;/include&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/includes&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In my setup <em>JBehave</em> plugin will be responsible only for unpacking resources used by tests report.
+I do not use plugin to run stories at all, I found better way to do that. It will be described later in the post.</p>
+
+<figure class='code'><figcaption><span>JBehave plugin configuration in tests module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>org.jbehave<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>jbehave-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>${jbehave.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;executions&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;execution&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;id&gt;</span>unpack-view-resources<span class="nt">&lt;/id&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;phase&gt;</span>generate-resources<span class="nt">&lt;/phase&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;goals&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;goal&gt;</span>unpack-view-resources<span class="nt">&lt;/goal&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/goals&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/execution&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Spring Framework configuration</h2>
+
+<p>The application implements shopping basket simplified functionality.
+Do not use my shopping basket implementation on production, it is only for this post educational purposes :&ndash;)</p>
+
+<p>The application is composed from three main packages: <code>domain</code>, <code>infrastructure</code> and <code>web</code>.
+This convention comes from Domain Driven Design, you can read more in my post <a href="http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/">DDD Architecture Summary</a>.</p>
+
+<p>Each package is configured using <em>Spring Framework</em> annotation support.
+In general you should keep the configuration as modular as possible.
+It is very important for testing, with modular configuration you can load only needed context and speed up tests execution.</p>
+
+<figure class='code'><figcaption><span>DomainConfiguration.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Configuration</span>
+</span><span class='line'><span class="nd">@ComponentScan</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DomainConfiguration</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>InfrastructureConfiguration.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Configuration</span>
+</span><span class='line'><span class="nd">@ComponentScan</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">InfrastructureConfiguration</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>WebConfiguration.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Configuration</span>
+</span><span class='line'><span class="nd">@ComponentScan</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebConfiguration</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you are interested in application functionality, go to the <a href="https://github.com/mkuthan/example-jbehave/tree/master/example-jbehave-app/src/main/java/example/jbehave/app">source code</a>.
+The application is really simple, just old plain Java.</p>
+
+<p>Much more interesting is <em>Spring Framework</em> configuration in tests module.
+First the meta annotation for acceptance tests is defined.
+This is a new way to avoid repetition in tests definition, introduced in <em>Spring Framework</em> recently.</p>
+
+<figure class='code'><figcaption><span>AcceptanceTest.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@ContextConfiguration</span><span class="o">(</span><span class="n">classes</span> <span class="o">=</span> <span class="n">AcceptanceTestsConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@ImportResource</span><span class="o">({</span><span class="s">&quot;classpath:/application.properties&quot;</span><span class="o">,</span> <span class="s">&quot;classpath:/tests.properties&quot;</span><span class="o">})</span>
+</span><span class='line'><span class="nd">@ActiveProfiles</span><span class="o">(</span><span class="s">&quot;tests&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@DirtiesContext</span>
+</span><span class='line'><span class="nd">@Target</span><span class="o">(</span><span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="nd">@interface</span> <span class="n">AcceptanceTest</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>Tests configuration is loaded, again using Java config instead of XML.</li>
+<li>Load application properties and overwrite defaults using tests properties if needed.</li>
+<li>Activate some special <em>Spring Framework</em> profile(s). Another way to customize tests configuration.</li>
+<li>Acceptance tests have side effects typically. Reload context before every story execution.</li>
+</ol>
+
+
+<p>The <code>AcceptanceTestsConfiguration</code> class is again very simple.
+It imports application configurations: domain and infrastructure.
+Because we will implement acceptance tests using service layer, we don&rsquo;t need to load web module or run web container.</p>
+
+<figure class='code'><figcaption><span>AcceptanceTestsConfiguration</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Configuration</span>
+</span><span class='line'><span class="nd">@Import</span><span class="o">({</span><span class="n">DomainConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">InfrastructureConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+</span><span class='line'><span class="nd">@ComponentScan</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AcceptanceTestsConfiguration</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Meta annotation support is also used to define very specific annotations, one for <em>JBehave</em> test steps, second for <em>JBehave</em> converters.
+Well crafted annotations are better than generic <code>@Component</code>, even if they do not provide additional features.</p>
+
+<figure class='code'><figcaption><span>Steps.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Target</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@Retention</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@Documented</span>
+</span><span class='line'><span class="nd">@Component</span>
+</span><span class='line'><span class="kd">public</span> <span class="nd">@interface</span> <span class="n">Steps</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Converter.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Target</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@Retention</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@Documented</span>
+</span><span class='line'><span class="nd">@Component</span>
+</span><span class='line'><span class="kd">public</span> <span class="nd">@interface</span> <span class="n">Converter</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>JBehave configuration</h2>
+
+<p>The last infrastructure element in tests module is a base class for stories.
+<em>JBehave</em> provides plenty of integration methods with <em>Spring Framework</em> and I spent a lot of time to select the best one.</p>
+
+<p>I have following requirements:</p>
+
+<ul>
+<li>The ability to run single story from my IDE.</li>
+<li>Meet Open Close Principle. When I add new story I do not want to modify any existing file. I want to add new one(s).</li>
+<li>Have a full control over <em>JBehave</em> configuration.</li>
+</ul>
+
+
+<p>To meet my requirements some base class for all tests must be defined.
+I do not like the idea to use inheritance here but I did not find better way.</p>
+
+<p>Let me describe <code>AbstractSpringJBehaveStory</code> step by step:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractSpringJBehaveStory</span> <span class="kd">extends</span> <span class="n">JUnitStory</span> <span class="o">{</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>JUnitStory</code> is a <em>JBehave</em> class with single test to run single story.
+It means that any subclass of this class can be executed as regular <em>JUnit</em> test.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">STORY_TIMEOUT</span> <span class="o">=</span> <span class="mi">120</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="nf">AbstractSpringJBehaveStory</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">Embedder</span> <span class="n">embedder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Embedder</span><span class="o">();</span>
+</span><span class='line'>    <span class="n">embedder</span><span class="o">.</span><span class="na">useEmbedderControls</span><span class="o">(</span><span class="n">embedderControls</span><span class="o">());</span>
+</span><span class='line'>    <span class="n">embedder</span><span class="o">.</span><span class="na">useMetaFilters</span><span class="o">(</span><span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">&quot;-skip&quot;</span><span class="o">));</span>
+</span><span class='line'>    <span class="n">useEmbedder</span><span class="o">(</span><span class="n">embedder</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">private</span> <span class="n">EmbedderControls</span> <span class="nf">embedderControls</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">EmbedderControls</span><span class="o">()</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">doIgnoreFailureInView</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">useStoryTimeoutInSecs</span><span class="o">(</span><span class="n">STORY_TIMEOUT</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The constructor initialize <em>JBehave</em> embedder, a fascade to embed <em>JBehave</em> functionality in JUnit runner.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Autowired</span>
+</span><span class='line'><span class="kd">private</span> <span class="n">ApplicationContext</span> <span class="n">applicationContext</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">public</span> <span class="n">InjectableStepsFactory</span> <span class="nf">stepsFactory</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">SpringStepsFactory</span><span class="o">(</span><span class="n">configuration</span><span class="o">(),</span> <span class="n">applicationContext</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Configure <em>JBehave</em> to load steps and converters from <em>Spring Framework</em> context.
+What is also important, the steps and converters are managed by <em>Spring Framework</em>, you can inject whatever you want.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">public</span> <span class="n">Configuration</span> <span class="nf">configuration</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">MostUsefulConfiguration</span><span class="o">()</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">useStoryPathResolver</span><span class="o">(</span><span class="n">storyPathResolver</span><span class="o">())</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">useStoryLoader</span><span class="o">(</span><span class="n">storyLoader</span><span class="o">())</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">useStoryReporterBuilder</span><span class="o">(</span><span class="n">storyReporterBuilder</span><span class="o">())</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">useParameterControls</span><span class="o">(</span><span class="n">parameterControls</span><span class="o">());</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>configuration</code> method is surprisingly responsible for <em>JBehave</em> configuration.
+The most useful configuration is used with some customizations.
+Let&rsquo;s check what kind of customization are applied.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="n">StoryPathResolver</span> <span class="nf">storyPathResolver</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">UnderscoredCamelCaseResolver</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The story path resolver is responsible for resolving story based on test class name.
+With <code>UnderscoredCamelCaseResolver</code> implementation, story <code>learn_jbehave_story.story</code> will be correlated with <code>LearnJbehaveStory.java</code> class.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="n">StoryLoader</span> <span class="nf">storyLoader</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">LoadFromClasspath</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Stories will be resolved and loaded from the current classpath (from <code>src/main/resources</code> to be more specific).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="n">StoryReporterBuilder</span> <span class="nf">storyReporterBuilder</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">StoryReporterBuilder</span><span class="o">()</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">withCodeLocation</span><span class="o">(</span><span class="n">CodeLocations</span><span class="o">.</span><span class="na">codeLocationFromClass</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">getClass</span><span class="o">()))</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">withPathResolver</span><span class="o">(</span><span class="k">new</span> <span class="n">ResolveToPackagedName</span><span class="o">())</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">withFailureTrace</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">withDefaultFormats</span><span class="o">()</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">withFormats</span><span class="o">(</span><span class="n">IDE_CONSOLE</span><span class="o">,</span> <span class="n">TXT</span><span class="o">,</span> <span class="n">HTML</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The configuration how the reports will look like.
+Nothing special, please refer to <em>JBehave</em> reference documentation for more details.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="n">ParameterControls</span> <span class="nf">parameterControls</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">ParameterControls</span><span class="o">()</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">useDelimiterNamedParameters</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The configuration how the steps parameters will be handled.</p>
+
+<h2>Test scenarios definition</h2>
+
+<p>Test scenarios are rather straightforward, if you are familiar with BDD and Gherkin like syntax. If not please read
+<a href="http://jbehave.org/reference/stable/concepts.html">BDD Concepts</a> short definition.</p>
+
+<p>Look, in the scenarios there is nothing specific to the application user interface.
+It is not important how product price editor looks like, and how the shopping basket is presented.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nl">Narrative:</span>
+</span><span class='line'><span class="n">In</span> <span class="n">order</span> <span class="n">to</span> <span class="n">learn</span> <span class="n">JBehave</span>
+</span><span class='line'><span class="n">As</span> <span class="n">a</span> <span class="n">tester</span>
+</span><span class='line'><span class="n">I</span> <span class="n">want</span> <span class="n">to</span> <span class="n">define</span> <span class="n">sample</span> <span class="n">story</span> <span class="k">for</span> <span class="n">shopping</span> <span class="n">cart</span>
+</span><span class='line'>
+</span><span class='line'><span class="nl">Lifecycle:</span>
+</span><span class='line'><span class="nl">Before:</span>
+</span><span class='line'><span class="n">Given</span> <span class="n">product</span> <span class="n">Domain</span> <span class="n">Driven</span> <span class="n">Design</span> <span class="n">with</span> <span class="n">SKU</span> <span class="mi">1234</span>
+</span><span class='line'><span class="n">And</span> <span class="n">product</span> <span class="n">Domain</span> <span class="n">Driven</span> <span class="n">Design</span> <span class="n">price</span> <span class="n">is</span> <span class="mi">35</span> <span class="n">EUR</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Given</span> <span class="n">product</span> <span class="n">Specification</span> <span class="n">By</span> <span class="n">Example</span> <span class="n">with</span> <span class="n">SKU</span> <span class="mi">2345</span>
+</span><span class='line'><span class="n">And</span> <span class="n">product</span> <span class="n">Specification</span> <span class="n">By</span> <span class="n">Example</span> <span class="n">price</span> <span class="n">is</span> <span class="mi">30</span> <span class="n">EUR</span>
+</span><span class='line'>
+</span><span class='line'><span class="nl">Scenario:</span> <span class="n">Empty</span> <span class="n">shopping</span> <span class="n">cart</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Given</span> <span class="n">empty</span> <span class="n">shopping</span> <span class="n">cart</span>
+</span><span class='line'><span class="n">Then</span> <span class="n">shopping</span> <span class="n">cart</span> <span class="n">is</span> <span class="n">empty</span>
+</span><span class='line'>
+</span><span class='line'><span class="nl">Scenario:</span> <span class="n">Products</span> <span class="n">are</span> <span class="n">added</span> <span class="n">to</span> <span class="n">empty</span> <span class="n">shopping</span> <span class="n">cart</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Given</span> <span class="n">empty</span> <span class="n">shopping</span> <span class="n">cart</span>
+</span><span class='line'><span class="n">When</span> <span class="n">products</span> <span class="n">are</span> <span class="n">added</span> <span class="n">to</span> <span class="n">the</span> <span class="n">shopping</span> <span class="nl">cart:</span>
+</span><span class='line'><span class="o">|</span><span class="n">PRODUCT</span>                 <span class="o">|</span><span class="n">QTY</span><span class="o">|</span>
+</span><span class='line'><span class="o">|</span><span class="n">Domain</span> <span class="n">Driven</span> <span class="n">Design</span>    <span class="o">|</span>  <span class="mi">1</span><span class="o">|</span>
+</span><span class='line'><span class="o">|</span><span class="n">Specification</span> <span class="n">By</span> <span class="n">Example</span><span class="o">|</span>  <span class="mi">2</span><span class="o">|</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Then</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">products</span> <span class="n">in</span> <span class="n">shopping</span> <span class="n">cart</span> <span class="n">is</span> <span class="mi">2</span>
+</span><span class='line'><span class="n">And</span> <span class="n">total</span> <span class="n">price</span> <span class="n">is</span> <span class="mi">95</span> <span class="n">EUR</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Test steps implementation</h2>
+
+<p>Test steps are implemented in Java classes annotated with <code>@Steps</code>.
+The common mistake is to develop steps only for single story.
+The steps should be reusable across many user stories if feasible.
+With reusable steps you will find, that writing next user stories are much easier and faster.
+You can just use existing steps implementation to define new user story.</p>
+
+<p>For example steps for product catalog and product prices are defined in <code>SharedSteps</code> class.
+The repositories are used to manage products and prices.
+In real application, you should use application service and it&rsquo;s public API instead of direct access to the repositories.
+Please think about steps implementation complexity, if we would need to use user interface, instead of repositories or service API.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Steps</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SharedSteps</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Autowired</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">ProductRepository</span> <span class="n">productRepository</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Autowired</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">PriceRepository</span> <span class="n">priceRepository</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Given</span><span class="o">(</span><span class="s">&quot;product $name with SKU $sku&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">product</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">StockKeepingUnit</span> <span class="n">sku</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">productRepository</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="k">new</span> <span class="n">Product</span><span class="o">(</span><span class="n">sku</span><span class="o">,</span> <span class="n">name</span><span class="o">));</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Given</span><span class="o">(</span><span class="s">&quot;product $name price is $price&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">price</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">Money</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">Product</span> <span class="n">product</span> <span class="o">=</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findByName</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">priceRepository</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">product</span><span class="o">.</span><span class="na">getSku</span><span class="o">(),</span> <span class="n">price</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You could ask, how does <em>JBehave</em> know about <code>StockKeepingUnit</code> and <code>Money</code> classes?
+You will have to implement custom converters but it is much more convenient to use well defined API, instead of dozen of <code>String</code> based values.</p>
+
+<figure class='code'><figcaption><span>MoneyConverter</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Converter</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MoneyConverter</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@AsParameterConverter</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">Money</span> <span class="nf">convertPercent</span><span class="o">(</span><span class="n">String</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">value</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">String</span><span class="o">[]</span> <span class="n">tokens</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">&quot;\\s&quot;</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">tokens</span><span class="o">.</span><span class="na">length</span> <span class="o">!=</span> <span class="mi">2</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="n">ParameterConverters</span><span class="o">.</span><span class="na">ParameterConvertionFailed</span><span class="o">(</span><span class="s">&quot;Expected 2 tokens (amount and currency) but got &quot;</span> <span class="o">+</span> <span class="n">tokens</span><span class="o">.</span><span class="na">length</span> <span class="o">+</span> <span class="s">&quot;, value: &quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nf">Money</span><span class="o">(</span><span class="n">tokens</span><span class="o">[</span><span class="mi">0</span><span class="o">],</span> <span class="n">tokens</span><span class="o">[</span><span class="mi">1</span><span class="o">]);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The class <code>MoneyConverter</code> is annotated with <code>@Converter</code> annotation defined before.
+<code>StringUtils</code> is a utility class from <em>Spring Framework</em>, look at the API documentation how many helpful utils classes are implemented in the framework.
+If the value cannot be converted, <em>JBehave</em> <code>ParameterConvertionFailed</code> exception is thrown.</p>
+
+<p>The shopping cart related steps are implemented in <code>ShoppingCartSteps</code> class.</p>
+
+<figure class='code'><figcaption><span>ShoppingCartSteps</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Steps</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShoppingCartSteps</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Autowired</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">ShoppingCartService</span> <span class="n">shoppingCartService</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Autowired</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">ProductDao</span> <span class="n">productRepository</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Given</span><span class="o">(</span><span class="s">&quot;empty shopping cart&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">emptyShoppingCart</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">shoppingCartService</span><span class="o">.</span><span class="na">createEmptyShoppingCart</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@When</span><span class="o">(</span><span class="s">&quot;products are added to the shopping cart: $rows&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addProducts</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">ShoppingCartRow</span><span class="o">&gt;</span> <span class="n">rows</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="n">ShoppingCartRow</span> <span class="n">row</span> <span class="o">:</span> <span class="n">rows</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">Product</span> <span class="n">product</span> <span class="o">=</span> <span class="n">productRepository</span><span class="o">.</span><span class="na">findByName</span><span class="o">(</span><span class="n">row</span><span class="o">.</span><span class="na">getProductName</span><span class="o">());</span>
+</span><span class='line'>            <span class="n">shoppingCartService</span><span class="o">.</span><span class="na">addProductToShoppingCart</span><span class="o">(</span><span class="n">product</span><span class="o">.</span><span class="na">getSku</span><span class="o">(),</span> <span class="n">row</span><span class="o">.</span><span class="na">getQuantity</span><span class="o">());</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Then</span><span class="o">(</span><span class="s">&quot;shopping cart is empty&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">isEmpty</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">ShoppingCart</span> <span class="n">shoppingCart</span> <span class="o">=</span> <span class="n">shoppingCartService</span><span class="o">.</span><span class="na">getShoppingCart</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">assertEquals</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">shoppingCart</span><span class="o">.</span><span class="na">numberOfItems</span><span class="o">());</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Then</span><span class="o">(</span><span class="s">&quot;the number of products in shopping cart is $numberOfItems&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">numberOfItems</span><span class="o">(</span><span class="kt">int</span> <span class="n">numberOfItems</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">ShoppingCart</span> <span class="n">shoppingCart</span> <span class="o">=</span> <span class="n">shoppingCartService</span><span class="o">.</span><span class="na">getShoppingCart</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">assertEquals</span><span class="o">(</span><span class="n">numberOfItems</span><span class="o">,</span> <span class="n">shoppingCart</span><span class="o">.</span><span class="na">numberOfItems</span><span class="o">());</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Then</span><span class="o">(</span><span class="s">&quot;total price is $price&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="nd">@Pending</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">totalPrice</span><span class="o">(</span><span class="n">Money</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="c1">// TODO: implement missing functionality and enable step</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are two interesting elements:</p>
+
+<ul>
+<li>Last step annotated with <code>@Pending</code> annotation.</li>
+<li><code>ShoppingCartRow</code> class used to defined products added to the cart.</li>
+</ul>
+
+
+<p>Typically user story is prepared before implementation.
+In this situation you will have several pending steps, slowly implemented during the sprint.
+Pending step does not mean that acceptance tests have failed, it only means that functionality has not been implemented yet.</p>
+
+<p><code>ShoppingCartRow</code> is a simple bean prepared for tabular parameters definition in the story. Do you remember this step?</p>
+
+<figure class='code'><figcaption><span>ShoppingCartSteps</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">When</span> <span class="n">products</span> <span class="n">are</span> <span class="n">added</span> <span class="n">to</span> <span class="n">the</span> <span class="n">shopping</span> <span class="nl">cart:</span>
+</span><span class='line'><span class="o">|</span><span class="n">PRODUCT</span>                 <span class="o">|</span><span class="n">QTY</span><span class="o">|</span>
+</span><span class='line'><span class="o">|</span><span class="n">Domain</span> <span class="n">Driven</span> <span class="n">Design</span>    <span class="o">|</span>  <span class="mi">1</span><span class="o">|</span>
+</span><span class='line'><span class="o">|</span><span class="n">Specification</span> <span class="n">By</span> <span class="n">Example</span><span class="o">|</span>  <span class="mi">2</span><span class="o">|</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Basket presented in tabular form is much easier to read than if it would be defined line by line.
+To use this kind of parameter you have to prepare a class with a few annotations.</p>
+
+<figure class='code'><figcaption><span>ShoppingCartRow</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@AsParameters</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ShoppingCartRow</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Parameter</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;PRODUCT&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">String</span> <span class="n">productName</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Parameter</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;QTY&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">Integer</span> <span class="n">quantity</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getProductName</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">productName</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setProductName</span><span class="o">(</span><span class="n">String</span> <span class="n">productName</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">productName</span> <span class="o">=</span> <span class="n">productName</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">getQuantity</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">quantity</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setQuantity</span><span class="o">(</span><span class="n">Integer</span> <span class="n">quantity</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">quantity</span> <span class="o">=</span> <span class="n">quantity</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>JBehave</em> uses this annotated class to convert table row from user story to Java object.</p>
+
+<h2>Running tests</h2>
+
+<p>The last part of this post is about running tests.</p>
+
+<p>For every user story definition, one test class is defined.
+The test class is only the marker and does not define any logic.</p>
+
+<figure class='code'><figcaption><span>LearnJBehaveStory.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@RunWith</span><span class="o">(</span><span class="n">SpringJUnit4ClassRunner</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+</span><span class='line'><span class="nd">@AcceptanceTest</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LearnJbehaveStory</span> <span class="kd">extends</span> <span class="n">AbstractSpringJBehaveStory</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The test can be executed directly from your favourite IDE, at least if the IDE provides support for JUnit runner.</p>
+
+<p>The second way to execute tests is to use <em>Maven</em> from command line.
+As long as tests are executed by regular <em>Maven Surefire Plugin</em>, the tests are executed exactly the same way like any other tests.
+Run the following command from the project parent directory.
+<em>Maven</em> builds the application module first, add the classes to the reactor classpath and then execute acceptance tests from tests module.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">mvn -pl example-jbehave-tests -am test</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The convenient way to execute single test from command line is to use regular Java property <code>-Dtest</code> recognized by <em>Surefire</em>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">mvn -pl example-jbehave-tests -am test -Dtest=LearnJbehaveStory</span>
+</span><span class='line'><span class="go">...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Summary</h2>
+
+<p>In the post I presented the most important elements from example project.
+The complete project is hosted on <a href="https://github.com/mkuthan/example-jbehave">GitHub</a>, you can clone/fork the project and do some experiments by yourself.
+I configure <a href="https://travis-ci.org/mkuthan/example-jbehave">Travis</a> continuous integration build to ensure that the project really works.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/27/the-twelve-factor-app-part2/">The Twelve-Factor App - Part 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-27T00:00:00+00:00" pubdate data-updated="true">May 27<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This blog post is a continuation of <a href="http://mkuthan.github.io/blog/2014/05/26/the-twelve-factor-app-part1/">first part</a> of this blog series.</p>
+
+<h2>7. Port Binding</h2>
+
+<blockquote><p>The twelve-factor app is completely self-contained and does not rely on runtime injection of a webserver into the execution environment to create a web-facing service.</p></blockquote>
+
+<p>I developed self-contained web application once, with embedded Jetty server.
+There are many product with embedded web server on the market, e.g: Artifactory.
+Now most of my POC (Proof of Concept) use Spring Boot, when you can run web application as regular system process.
+After hell of JBoss class loader issues it seems to be the correct way to run the application.</p>
+
+<h2>8. Concurrency</h2>
+
+<blockquote><p>In the twelve-factor app, processes are a first class citizen.</p></blockquote>
+
+<p>Using processes instead of threads is controversial in JVM world.
+But I agree that you can not scale out using threads only.
+What is also interesting, you should never daemonize process or write PID file.
+Just align to the system process management tools like upstart.</p>
+
+<h2>9. Disposability</h2>
+
+<blockquote><p>The twelve-factor app’s processes are disposable, meaning they can be started or stopped at a moment’s notice.</p></blockquote>
+
+<p>I faced disposability issues, when I was developing applications hosted on GAE (Google App Engine).
+Forget about any heavy duty frameworks on GAE, the startup process must be really light.
+In general it is problematic in JVM world.
+Startup time of the JVM is significant itself, and JMV must spin up our application as well.
+If I could compare JVM startup performance to the node.js there is a huge difference.</p>
+
+<p>I also remember how easily you can reconfigure system service when you can send -HUP signal.
+It would be nice to have this possibility for my applications.</p>
+
+<h2>10. Dev/prod parity</h2>
+
+<blockquote><p>The twelve-factor app is designed for continuous deployment by keeping the gap between development and production small.</p></blockquote>
+
+<p>Clear for me, test your production like environment as often as possible to minimize the risk.
+If the production database is Oracle, use Oracle XE for local development, not MySQL or H2.
+If the production applications server is JBoss, use JBoss locally or Apache Tomcat at last resort.
+Use the same JVM with similar memory settings if feasible.
+If you deploy your application on Linux, do not use Windows for local development.
+Virtualization or lightweight containers are your friends.
+And so on &hellip;</p>
+
+<h2>11. Logs</h2>
+
+<blockquote><p>A twelve-factor app never concerns itself with routing or storage of its output stream.</p></blockquote>
+
+<p>Hmm, I would prefer to use any logger (SLF4J) with configured appender instead of stdout.
+Instead file appender I could use Syslog appender and gather logs from all cluster nodes.
+But maybe I&rsquo;m wrong with this. I understand the point, than stdout is a basic common denominator for all runtime platform.</p>
+
+<h2>12. Admin processes</h2>
+
+<blockquote><p>Twelve-factor strongly favors languages which provide a REPL shell out of the box, and which make it easy to run one-off scripts.</p></blockquote>
+
+<p>For almost all my web application, I embedded BSH web servlet (Bean Shell Console). It rescued me out of trouble many times.
+It isn&rsquo;t full fledged REPL like this one from Scala but still usable.
+Oh, I forgot to mention about H2 web servlet, also embedded into most of my application.</p>
+
+<p>Sometimes it is much easier to expose some admin functionality as JMX beans.
+You can use Jolokia as REST JMX connector and easily prepare admin console using a few line of HTML and JavaScript.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/26/the-twelve-factor-app-part1/">The Twelve-Factor App - Part 1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-26T00:00:00+00:00" pubdate data-updated="true">May 26<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>During my studies about &ldquo;Micro Services&rdquo; I found comprehensive (but short) document about <em>Twelve-Factor App</em> methodology
+for building software-as-a-service applications. The orginal paper is published at <a href="http://12factor.net/">12factor.net</a>.</p>
+
+<p>Below you can find a short summary of my experiences for the first part of the document.
+There is also a <a href="http://mkuthan.github.io/blog/2014/05/27/the-twelve-factor-app-part2/">second part</a> of this blog post series.</p>
+
+<h2>1. Codebase</h2>
+
+<blockquote><p>There is always a one-to-one correlation between the codebase and the app</p></blockquote>
+
+<p>I had the chance to use setup, where Subversion repository was shared for many projects.
+Only once, and I said &ndash; &ldquo;never again&rdquo;.
+I remember problems with release management, setting up access rights, and crazy revision numbers.</p>
+
+<h2>2. Dependencies</h2>
+
+<blockquote><p>A twelve-factor app never relies on implicit existence of system-wide packages</p></blockquote>
+
+<p>I remember a setup where you spent whole day to build all dependencies (a lot of C and C++ code).
+The solution was a repository with compiled and versioned dependencies.
+Almost everything was compiled statically with minimal dependency to the core system libraries like stdc.</p>
+
+<p>Right now I build projects using Maven repositories and artifacts.
+But it is not enough for twelve-factor app, and I fully agree.
+My next step should be using &ldquo;Infrastructure as a code&rdquo; principle in practice.</p>
+
+<h2>3. Config</h2>
+
+<blockquote><p>strict separation of config from code</p></blockquote>
+
+<p>Some time ago my application was deployed on the wrong environment (WAR file prepared for QA environment was deployed on PROD).
+It was one of the worst week in my career to rollback everything back.
+Never again, I fully agree that binary should be environment independent. Keep configuration out of binary artifact.</p>
+
+<h2>4. Backing Services</h2>
+
+<blockquote><p>The code for a twelve-factor app makes no distinction between local and third party services</p></blockquote>
+
+<p>I do not fully understand this chapter.
+What I understood is that I should separate my domain from attached resources (local and third party services).
+And it is what I have done many times:</p>
+
+<ul>
+<li>Externalize connection configuration</li>
+<li>Use Anti Corruption Layer between my domain and infrastructure (e.g: hexagonal architecture)</li>
+<li>Do not mix domain logic with infrastructure code.</li>
+</ul>
+
+
+<h2>5. Build, release, run</h2>
+
+<blockquote><p>The twelve-factor app uses strict separation between the build, release, and run stages</p></blockquote>
+
+<p>The difference between build and release stages is somehow new for me.
+My JEE applications are released and deployed to the Maven repository.
+The deployed WAR files are deployable on any environment, the configuration is externalized and applied during Maven WAR overlay process.
+The outcome of the overlay is not stored as a reference but maybe it should. The question is where to put release?
+Again in the Maven repository or as a Bamboo build artifact?</p>
+
+<p>What I apply during the <em>run stage</em> is the database schema migration using <em>Liquibase</em> or <em>Flyway</em> and it really works.
+I agree with author to keep this stage as small as possible.</p>
+
+<p>And for sure direct changes on the production are prohibited.
+I had to clean up the project when the changes were not checked in to the repository once, never again.</p>
+
+<h2>6. Processes</h2>
+
+<blockquote><p>Twelve-factor processes are stateless and share-nothing.</p></blockquote>
+
+<p>I have never used this concept but I agree with author.
+From the scalability perspective share-nothing architecture of stateless services is good.</p>
+
+<p>Ok, 10 years ago I developed application using CORBA and there were remote calls to fully stateful remote object.
+Bad idea, really.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/06/how-to-send-email-from-jee-application/">How to Send Email From JEE Application</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-06T00:00:00+00:00" pubdate data-updated="true">Dec 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Sending email notifications from enterprise application is very common scenario.
+I know several methods to solve this puzzle, below you can find short summary.</p>
+
+<p>To send an email from the application at least SMTP server address must be configured.
+Because released application binary (e.g: WAR file) should be portable across environments (integration, QA, staging,
+production) configuration must be externalized.<br/>
+Below I present code snippets to configure SMTP server address as JNDI entry.</p>
+
+<p>Sample JNDI entry for JBoss:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;server&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;mbean</span> <span class="na">code=</span><span class="s">&quot;org.jboss.mail.MailService&quot;</span> <span class="na">name=</span><span class="s">&quot;jboss:service=mailSession&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;attribute</span> <span class="na">name=</span><span class="s">&quot;JNDIName&quot;</span><span class="nt">&gt;</span>mail/mailSession<span class="nt">&lt;/attribute&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;attribute</span> <span class="na">name=</span><span class="s">&quot;Configuration&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;mail.smtp.host&quot;</span> <span class="na">value=</span><span class="s">&quot;smtp.company.com&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/attribute&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;depends&gt;</span>jboss:service=Naming<span class="nt">&lt;/depends&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/mbean&gt;</span>
+</span><span class='line'><span class="nt">&lt;/server&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Sample JNDI entry for Tomcat:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;Context&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;Resource</span> <span class="na">name=</span><span class="s">&quot;mail/mailSession&quot;</span>
+</span><span class='line'>    <span class="na">auth=</span><span class="s">&quot;Container&quot;</span>
+</span><span class='line'>    <span class="na">type=</span><span class="s">&quot;javax.mail.Session&quot;</span>
+</span><span class='line'>    <span class="na">mail.smtp.host=</span><span class="s">&quot;smtp.company.com&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Context&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When mail session is configured as JNDI resource, it can be easily utilized by Spring Framework mail sender:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;jee:jndi-lookup</span> <span class="na">id=</span><span class="s">&quot;mailSession&quot;</span> <span class="na">jndi-name=</span><span class="s">&quot;mail/mailSession&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;mailSender&quot;</span> <span class="na">class=</span><span class="s">&quot;org.springframework.mail.javamail.JavaMailSenderImpl&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;session&quot;</span> <span class="na">ref=</span><span class="s">&quot;mailSession&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/bean&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it is time for more tough part, how to use mail sender correctly?
+There are at least four options, choose the best one for you:</p>
+
+<ul>
+<li><em>Direct (Sync)</em> Use mail session directly from the application service in the web request thread.</li>
+<li><em>Direct (Async)</em> Use mail session directly from the application service using <code>@Async</code> Spring annotation.</li>
+<li><em>Database Queue</em> Save messages into database table and create cron job to send the emails periodically.</li>
+<li><em>JMS Queue</em> Put messages into JMS queue and attach JMS listener to process and send emails.</li>
+</ul>
+
+
+<p>I collected a few non-functional and functional common requirements together with short categorization for each method.</p>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th>                                           </th>
+<th align="center">Direct (Sync)</th>
+<th align="center">Direct (Async)</th>
+<th align="center">Database Queue</th>
+<th align="center">JMS Queue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>Application works even if the SMTP is down </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Web request thread is not blocked          </td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Mail aggregation, scheduled sending, etc.  </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">limited</td>
+</tr>
+<tr>
+<td></td>
+<td>Control over SMTP requests throttle        </td>
+<td align="center">no</td>
+<td align="center">limited</td>
+<td align="center">limited</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Redelivery policy, do not lost messages if SMTP is down </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">limited</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td></td>
+<td>Monitoring                                 </td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>I would start with &ldquo;Database Queue&rdquo; approach, at least if JMS is not already used in the project or you do not have to send thousands of emails.
+&ldquo;Direct&rdquo; method is not an option at all IMHO.</p>
+
+<p>Separate part of the subject is to how to create email body. In most situation
+I used some template engine, like <em>Freemarker</em> or <em>Thymeleaf</em>. The
+template can be defined as internal WAR resource or can be loaded from
+database if the template needs to be adjusted on runtime.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/04/ddd-architecture-summary/">DDD Architecture Summary</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-04T00:00:00+00:00" pubdate data-updated="true">Nov 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In this blog post you can find my general rules for implementing system using <em>Domain Driven Design</em>. Do not use them
+blindly but it is good starting point for DDD practitioners.</p>
+
+<h2><a name="bc"></a>Bounded Context</h2>
+
+<ul>
+<li>Separate bounded context for each important module of the application (important from business partner perspective).</li>
+<li>Independent of each other (if feasible).</li>
+<li>For monolithic application separate <em>Spring Framework</em> context for each bounded context, e.g: <code>applicationContext-domain-crm.xml</code>,
+<code>applicationContext-domain-shipping.xml</code>, etc.</li>
+<li>CRUD like bounded contexts (user management, dictionaries, etc.) should be implemented as <em>Anemic Domain Model</em>.</li>
+</ul>
+
+
+<h2><a name="domain"></a>Domain</h2>
+
+<ul>
+<li>Place for application business logic.</li>
+<li>Must be independent of the technical complexity, move technical complexity into <a href="#infrastructure">infrastructure</a>.</li>
+<li>Must be independent of the particular presentation technology, move presentation related stuff into <a href="#web">web</a>.</li>
+<li>Internal package structure must reflect business concepts (<a href="#bc">bounded contexts</a>), e.g: <code>crm</code>, <code>shipping</code>, <code>sales</code>,
+<code>shared</code>, etc.</li>
+</ul>
+
+
+<h2><a name="dm"></a> Domain Model</h2>
+
+<ul>
+<li>Rich model, place for: entities, domain services, factories, strategies, specifications, etc.</li>
+<li>Best object oriented practices applied (SOLID, GRASP).</li>
+<li>Unit tested heavily (with mocks in the last resort).</li>
+<li>Unit tests executed concurrently (on method or class level).</li>
+<li>Meaningful names for domain services e.g: <code>RebateCalculator</code>, <code>PermissionChecker</code>, not <code>RebateManager</code> or
+<code>SecurityService</code>.</li>
+<li>Domain services dependencies are injected by constructor.</li>
+<li>Having more than 2~3 dependencies is suspicious.</li>
+<li>Entities are not managed by containers.</li>
+<li>Aggregate root entities are domain events publishers (events collectors).</li>
+<li>Aggregates in single bounded context might be strongly referenced (navigation across objects tree).</li>
+<li>Aggregates from different bounded contexts are referenced by business keys (if feasible).</li>
+<li>No security, no transactions, no aspects, no magic, only plain old Java.</li>
+<li>Interfaces for domain services when the service is provided by <a href="#infrastructure">infrastructure</a>.</li>
+<li>No interfaces for domain services implemented in the domain model itself.</li>
+</ul>
+
+
+<h2><a name="as"></a>Application Services</h2>
+
+<ul>
+<li>Orchestrator and facade for actors under Model.</li>
+<li>Place for security handling.</li>
+<li>Place for transactions handling.</li>
+<li>Must not deliver any business logic, move business logic into <a href="#dm">domain model</a>. Almost no conditionals and loops.</li>
+<li>Implemented as transactional script.</li>
+<li>No unit tests.</li>
+<li>Acceptance tests executed against this layer.</li>
+<li>Cglib proxied, proxy must be serialized by session scoped beans in <a href="#web">web</a> layer.</li>
+<li>Dependencies are injected on field level (private fields).</li>
+<li>Ten or more dependencies for single application service is not a problem.</li>
+<li>Application services are also domain event listeners.</li>
+<li>Always stateless.</li>
+<li>No interfaces, just implementation.</li>
+</ul>
+
+
+<h2><a name="ab"></a>Application Bootstrap</h2>
+
+<ul>
+<li>Initial application data.</li>
+<li>Loaded during application startup (fired by <code>BootstrapEvent</code>) if application storage is empty.</li>
+<li>Loading order is defined with Spring <code>Ordered</code> interface.</li>
+<li>Data is loaded within Model API.</li>
+<li>Data might be loaded within <a href="#as">application services</a>, e.g: load sample Excel when application is integrated with
+external world this way.</li>
+<li>No tests, bootstrap is tested during application startup on daily basis.</li>
+</ul>
+
+
+<h2><a name="infrastructure"></a>Infrastructure</h2>
+
+<ul>
+<li>Place for technical services</li>
+<li>Must not deliver any business logic, move business logic into <a href="#domain">domain</a>.</li>
+<li>Internal package structure must reflect technical concepts, e.g: <code>~infrastructure.jpa</code>, <code>~infrastructure.jms</code>,
+<code>~infrastructure.jsf</code>, <code>~infrastructure.freemarker</code>, <code>~infrastructure.jackson</code>, etc.</li>
+<li>Shared for all bounded context of the application. For more complex applications, separate technical services e.g:
+<code>~infrastructure.jpa.crm</code>, <code>~infrastructure.jpa.shipping</code>, etc.</li>
+<li>Class names must reflect technical concepts, e.g.: <code>JpaCustomerRepository</code>, <code>JaksonJsonSerializer</code>,
+not <code>CustomerRepositoryImpl</code>, <code>JsonSerializerImpl</code>.</li>
+<li>Integration tested heavily (with <em>Spring Framework</em> context loaded).</li>
+<li>Integration tests executed by single thread.</li>
+<li>Test execution separated from unit tests within test groups.</li>
+<li>Separate <em>Spring Framework</em> context for each technical concept, e.g: <code>applicationContext-infrastructure-jpa.xml</code>,
+<code>applicationContext-infrastructure-jms.xml</code>, etc.</li>
+<li>Separate and independent Spring test context for each technical module, e.g: <code>testContext-jpa.xml</code>,
+<code>testContext-jms.xml</code>, etc.</li>
+</ul>
+
+
+<h2><a name="web"></a>Web</h2>
+
+<ul>
+<li>Client specific facade (REST, MVC, JSF, etc.)</li>
+<li>Place for UI logic (not applicable for JavaScript client and REST)</li>
+<li>Delegates requests to <a href="#as">application services</a></li>
+<li>No transactions, no method level security, move security and transactions to <a href="#as">application services</a>.</li>
+<li>No business logic, move business logic into <a href="#domain">domain</a>.</li>
+<li>Tested with mocked application services.</li>
+<li>Tested with loaded spring context for MVC controllers (if applicable).</li>
+<li>Serializable session scoped beans (to be safe all beans in this module should be <code>java.io.Serializable</code>).</li>
+<li>Internal package structure must reflect UI organization structure, it might be similar to project <em>sitemap</em>.</li>
+<li>Top level package might reflect technology or architecture e.g: <code>presentation</code>, <code>rest</code>, <code>mvc</code>, <code>jsf</code>, etc.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/09/development-environment-setup/">Development Environment Setup</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-09T00:00:00+00:00" pubdate data-updated="true">Oct 9<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This document is a manual how to configure flexible development environment for <em>Java</em>, <em>JavaScript</em>, <em>Ruby</em> and <em>Python</em> &ndash; my primary set of tools.
+Even if the runtimes installation with <code>apt-get</code> seems to be a trivial task, there is limited control over installed version of the runtime.
+The goal is to configure environment where you can easily change <em>Java</em>, <em>Ruby</em> , <em>node.js</em> and <em>python</em> versions.
+Where you can define the runtime version on project level.</p>
+
+<p>The most convenient way to configure and manage runtimes is to use environment managers.
+Environment manager is nothing more than shell script, the script intercepts executed commands using shim executables injected into your <code>PATH</code>.
+There are two flavours of the environment managers: <code>rvm</code> and <code>rbenv</code> like.
+I prefer the second one, it is less obtrusive and follows general unix principle: &ldquo;do one thing and do it well&rdquo;.</p>
+
+<p>Let&rsquo;s start and install environment managers (for <em>Java</em>, <em>Ruby</em>, <em>node.js</em> and <em>Python</em>) into your home directory:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">git clone https://github.com/gcuisinier/jenv.git ~/.jenv</span>
+</span><span class='line'><span class="go">git clone https://github.com/sstephenson/rbenv.git ~/.rbenv</span>
+</span><span class='line'><span class="go">git clone https://github.com/OiNutter/nodenv.git ~/.nodenv</span>
+</span><span class='line'><span class="go">git clone https://github.com/yyuu/pyenv.git .pyenv</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For <code>rbenv</code> and <code>nodenv</code> you can install plugins that provide <code>rbenv install</code> and <code>nodenv install</code> commands to compile and install runtimes automatically.
+For Java you have to download and install JVM manually.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">$</span>git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+</span><span class='line'><span class="gp">$</span>git clone https://github.com/OiNutter/node-build.git ~/.nodenv/plugins/node-build
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Add environment managers to the <code>PATH</code> variable and initialize them to get command auto completion.
+Append the following snippet at the end of <code>.bashrc</code> (or <code>.bash_profile</code> on Mac) file.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$HOME/.jenv/bin:$PATH&quot;</span>
+</span><span class='line'><span class="nb">eval</span> <span class="s2">&quot;$(jenv init -)&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$HOME/.rbenv/bin:$PATH&quot;</span>
+</span><span class='line'><span class="nb">eval</span> <span class="s2">&quot;$(rbenv init -)&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$HOME/.nodenv/bin:$PATH&quot;</span>
+</span><span class='line'><span class="nb">eval</span> <span class="s2">&quot;$(nodenv init -)&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$HOME/.pyenv/bin:$PATH&quot;</span>
+</span><span class='line'><span class="nb">eval</span> <span class="s2">&quot;$(pyenv init -)&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Install runtimes using environment managers (Java needs to be installed manually):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">$</span>jenv add /path/to/already/installed/jdk
+</span><span class='line'><span class="gp">$</span>rbenv install 1.9.3-p448
+</span><span class='line'><span class="gp">$</span>nodenv install 0.10.12
+</span><span class='line'><span class="gp">$</span>pyenv install 3.4.1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Install build tools (<em>maven</em>, <em>gradle</em>, <em>sbt</em>, etc.), create symbolic links, and configure <code>PATH</code> in <code>.profile</code> file:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">APPS</span><span class="o">=</span><span class="s2">&quot;$HOME/apps&quot;</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$APPS/apache-maven/bin:$APPS/gradle/bin:$APPS/sbt/bin:$PATH&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Make build tools <em>jenv</em> aware:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">$</span>jenv <span class="nb">enable</span>-plugin maven
+</span><span class='line'><span class="gp">$</span>jenv <span class="nb">enable</span>-plugin gradle
+</span><span class='line'><span class="gp">$</span>jenv <span class="nb">enable</span>-plugin sbt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally add shell helper functions for JVM configuration to the <code>.profile</code> file:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="k">function </span>jdebug_set<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options <span class="s2">&quot;$JENV_OPTIONS -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n&quot;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>jdebug_unset<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options --unset
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>gc_set<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options <span class="s2">&quot;$JENV_OPTIONS -XX:+PrintGCDetails -Xloggc:gc.log&quot;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>gc_unset<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options --unset
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>jrebel_set<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options <span class="s2">&quot;$JENV_OPTIONS -javaagent:$APPS/jrebel/jrebel.jar -noverify&quot;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>jrebel_unset<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options --unset
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>jprofiler_set<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options <span class="s2">&quot;$JENV_OPTIONS -javaagent:$APPS/jprofiler/bin/agent.jar&quot;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>jprofiler_unset<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    jenv shell-options --unset
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The last step is to read environment managers manual. As long as all four managers are very similar it should not take more than one evening.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/21/gitflow-step-by-step/">GitFlow Step by Step</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-21T00:00:00+00:00" pubdate data-updated="true">Jul 21<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Git Flow is a mainstream process for branch per feature development. Git Flow  is the best method I&rsquo;ve found for
+managing project developed by small to medium project teams. Before you start reading this post you should read two
+mandatory lectures:</p>
+
+<p><a href="https://www.atlassian.com/git/workflows#!workflow-gitflow">Git Workflows by Atlassian</a></p>
+
+<p><a href="https://bitbucket.org/atlassian/jgit-flow/wiki/Home">Maven JGit-Flow Plugin</a></p>
+
+<p>This blog post is a step by step instruction how to use Git Flow together with Maven build tool, continuous integration
+server (e.g: Bamboo) and bug tracker (e.g: JIRA). If you are interested in how to automate the whole process, watch this
+<a href="https://www.youtube.com/watch?v=YIgX67c-2hQ">Flow with Bamboo</a> video. But I really recommend to start using Git Flow
+with pure git commands, when you understand the concept move to Git Flow, and then automate everything eventually.</p>
+
+<h2>Start feature branch</h2>
+
+<ol>
+<li>Assign JIRA task to you.</li>
+<li>Move JIRA tasks from &ldquo;To Do&rdquo; to &ldquo;In Progress&rdquo;.</li>
+<li><p>Create feature branch for the JIRA user story (if it is a first task of the user story).
+Feature branch must reflect JIRA issue number and have meaningful name, e.g: <em>PROJ-01_user_registration</em>.</p>
+
+<pre><code>  mvn jgitflow:feature-start
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>New local feature branch <em>feature/PROJ-01_user_registration</em> is created.</li>
+</ul>
+</li>
+<li><p>Optionally push feature branch into remote repository.</p>
+
+<pre><code> git push origin feature/PROJ-01_user_registration
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>The feature branch is pushed into remote repository.</li>
+<li>New Bamboo build plan is created for the feature branch.</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Checkout the feature branch</h2>
+
+<ol>
+<li><p>Checkout the feature branch created by other developer (e.g for code review).</p>
+
+<pre><code> git checkout feature/PROJ-01_user_registration
+</code></pre></li>
+</ol>
+
+
+<h2>Work on the feature branch</h2>
+
+<ol>
+<li><p>Periodically push changes to the remote repository.</p>
+
+<pre><code> git push origin feature/PROJ-01_user_registration
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Bamboo build plan for feature branch is green.</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Finish feature branch</h2>
+
+<ol>
+<li><p>Ensure your local develop branch is up to date.</p>
+
+<pre><code> git checkout develop
+ git pull origin develop
+</code></pre></li>
+<li><p>To avoid conflicts during finishing feature branch, ensure that all changes from develop are merged to the feature branch.</p>
+
+<pre><code> git checkout feature/PROJ-01_user_registration
+ git pull origin develop
+</code></pre></li>
+<li><p>Resolve all conflicts (if any) and commit changes.</p>
+
+<pre><code> git commit -a -m "Conflicts resolved"
+</code></pre></li>
+<li><p>Finish the feature.</p>
+
+<pre><code> mvn jgitflow:feature-finish
+</code></pre></li>
+<li><p>Push changes from develop into remote repository</p>
+
+<pre><code> git push origin develop
+</code></pre></li>
+<li><p>Move JIRA task to &ldquo;Done&rdquo; category.</p></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Feature branch is merged into develop branch.</li>
+<li>Local feature branch is removed.</li>
+<li>Bamboo build plan for develop is green.</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Start release branch</h2>
+
+<ol>
+<li><p>Create release branch.</p>
+
+<pre><code> mvn jgitflow:release-start
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>New local release branch release/version is created.</li>
+<li>Work with release branch</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>Work with release branch</h2>
+
+<ol>
+<li><p>Clean the database (Database).</p></li>
+<li><p>Run the application (Running Application) and perform exploratory tests.</p></li>
+<li><p>Fix all issues (if any).</p></li>
+<li><p>Commit changes to the release branch.</p>
+
+<pre><code> git commit -a -m "Fixes release candidate"
+</code></pre></li>
+</ol>
+
+
+<h2>Finish release branch</h2>
+
+<ol>
+<li><p>Make sure your local master branch is up to date</p>
+
+<pre><code> git fetch origin master
+</code></pre></li>
+<li><p>Finish the release branch</p>
+
+<pre><code> mvn jgitflow:release-finish
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Release branch is merged into local develop branch.</li>
+<li>Project version is updated in local develop branch.</li>
+</ul>
+</li>
+<li><p>Push changes from develop into remote repository</p>
+
+<pre><code> git push origin develop
+</code></pre></li>
+<li><p>Checkout master</p>
+
+<pre><code> git checkout master
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Release branch is merged into local master branch.</li>
+<li>Project version is updated in local master branch.</li>
+</ul>
+</li>
+<li><p>Push changes from master into remote repository</p>
+
+<pre><code> git push --tags origin master
+</code></pre></li>
+<li><p>Verify that:</p>
+
+<ul>
+<li>Release tag is pushed to the remote repository.</li>
+<li>Build plan on master is green and new version is deployed.</li>
+</ul>
+</li>
+<li><p>Delete released feature branches from remote repository.</p>
+
+<pre><code> git push origin :feature/PROJ-01_user_registration
+</code></pre></li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/21/how-to-document-your-professional/">How to Document Your Professional Experiences</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-21T00:00:00+00:00" pubdate data-updated="true">Mar 21<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Have you considered what is important for prospective employer?
+What is the most valuable information source about your professional experience?
+How to document that you are an expert in software engineering?</p>
+
+<p>Below you can find some of my tricks:</p>
+
+<ul>
+<li>Write a blog, teaching is the best learning method :&ndash;)</li>
+<li>Write an article to the software magazine</li>
+<li>Contribute to open source project(s) like <a href="http://mytourbook.sourceforge.net/mytourbook/index.php/contributors">MyTourbook</a></li>
+<li>Report <a href="https://jira.spring.io/issues/?jql=creator%20in%20(mkuthan)">bugs</a> to the open source project(s), send pull requests and patches.</li>
+<li>Manage your profile @ <a href="https://github.com/mkuthan/">GitHub</a></li>
+<li>Manage your profile @ StackOverflow</li>
+<li>Manage your profile @ <a href="https://www.goodreads.com/mkuthan">Goodreads</a></li>
+<li>Manage your profile @ <a href="http://pl.linkedin.com/in/marcinkuthan/">LinkedIn</a></li>
+<li>Post to discussion <a href="http://maven.40175.n5.nabble.com/template/NamlServlet.jtp?macro=user_nodes&amp;user=146149">groups</a>, be helpful for others</li>
+<li>Be active in local software groups (e.g JUG)</li>
+<li>Attend university lectures (@ <a href="https://www.coursera.org/user/i/3d908cbf919e14af793fae9a5fc732f4">Coursera</a>), 100% free</li>
+</ul>
+
+
+<p>To be honest, I have done only few of them for myself :&ndash;(</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/">Kafka Streams DSL vs Processor API</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/18/apache-bigdata-europe/">Apache BigData Europe Conference Summary</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/spark-streaming-on-yarn/">Long-running Spark Streaming Jobs on YARN Cluster</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/03/11/spark-application-assembly/">Spark Application Assembly for Cluster Deployments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/01/29/spark-kafka-integration2/">Spark and Kafka Integration Patterns, Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/06/spark-kafka-integration1/">Spark and Kafka Integration Patterns, Part 1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/01/spark-unit-testing/">Spark and Spark Streaming Unit Testing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/22/ddd-how-to-learn/">How to Learn DDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/15/programming_language_does_not_matter/">Programming Language Does Not Matter</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/20/mastering-nodejs-book-review/">Mastering Node.js - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/26/soa-patterns-book-review/">SOA Patterns - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/21/release-it-book-review/">Rrelease It! - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/29/acceptance-testing-using-jbehave-spring-framework-and-maven/">Acceptance Testing Using JBehave, Spring Framework and Maven</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/27/the-twelve-factor-app-part2/">The Twelve-Factor App - Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/26/the-twelve-factor-app-part1/">The Twelve-Factor App - Part 1</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Category Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/architecture' style='font-size: 148.0%'>architecture(4)</a> <a href='/blog/categories/artifactory' style='font-size: 112.0%'>artifactory(1)</a> <a href='/blog/categories/bash' style='font-size: 112.0%'>bash(1)</a> <a href='/blog/categories/books' style='font-size: 136.0%'>books(3)</a> <a href='/blog/categories/conferences' style='font-size: 112.0%'>conferences(1)</a> <a href='/blog/categories/craftsmanship' style='font-size: 136.0%'>craftsmanship(3)</a> <a href='/blog/categories/ddd' style='font-size: 124.0%'>DDD(2)</a> <a href='/blog/categories/dvcs' style='font-size: 112.0%'>DVCS(1)</a> <a href='/blog/categories/git' style='font-size: 124.0%'>git(2)</a> <a href='/blog/categories/hdfs' style='font-size: 112.0%'>hdfs(1)</a> <a href='/blog/categories/java' style='font-size: 124.0%'>java(2)</a> <a href='/blog/categories/jbehave' style='font-size: 112.0%'>jbehave(1)</a> <a href='/blog/categories/jee' style='font-size: 112.0%'>JEE(1)</a> <a href='/blog/categories/jira' style='font-size: 112.0%'>jira(1)</a> <a href='/blog/categories/jms' style='font-size: 112.0%'>JMS(1)</a> <a href='/blog/categories/jvm' style='font-size: 112.0%'>jvm(1)</a> <a href='/blog/categories/kafka' style='font-size: 148.0%'>kafka(4)</a> <a href='/blog/categories/kafka-streams' style='font-size: 112.0%'>kafka streams(1)</a> <a href='/blog/categories/linux' style='font-size: 136.0%'>linux(3)</a> <a href='/blog/categories/maven' style='font-size: 124.0%'>maven(2)</a> <a href='/blog/categories/node-js' style='font-size: 112.0%'>node.js(1)</a> <a href='/blog/categories/performance' style='font-size: 112.0%'>performance(1)</a> <a href='/blog/categories/php' style='font-size: 112.0%'>PHP(1)</a> <a href='/blog/categories/presentations' style='font-size: 112.0%'>presentations(1)</a> <a href='/blog/categories/python' style='font-size: 112.0%'>python(1)</a> <a href='/blog/categories/ruby' style='font-size: 112.0%'>ruby(1)</a> <a href='/blog/categories/sbt' style='font-size: 112.0%'>sbt(1)</a> <a href='/blog/categories/scala' style='font-size: 160.0%'>scala(5)</a> <a href='/blog/categories/smtp' style='font-size: 112.0%'>smtp(1)</a> <a href='/blog/categories/spark' style='font-size: 160.0%'>spark(5)</a> <a href='/blog/categories/spring' style='font-size: 148.0%'>spring(4)</a> <a href='/blog/categories/tdd' style='font-size: 112.0%'>TDD(1)</a> <a href='/blog/categories/virtual-box' style='font-size: 112.0%'>virtual box(1)</a> <a href='/blog/categories/yarn' style='font-size: 112.0%'>yarn(1)</a> </span>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/mkuthan">@mkuthan</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'mkuthan',
+            count: 10,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>About Me</h1>
+  <p>Marcin Kuthan, genuine software engineer at <a href="http://allegrogroup.com/">Allegro Group</a>.</p>
+</section>
+
+<section>
+	<span>
+		<img src="http://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5" alt="Gravatar of Marcin Kuthan " title="Gravatar of Marcin Kuthan" />
+	</span>
+</section>
+<section>
+  <h1>Links</h1>
+  <p><a href="http://allegro.tech/"><img src="http://allegro.tech/img/logo-allegro-tech.svg" alt="allegro.tech"></a></p>
+</section>
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - Marcin Kuthan -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkuthan';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

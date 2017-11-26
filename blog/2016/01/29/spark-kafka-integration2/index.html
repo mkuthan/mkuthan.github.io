@@ -1,0 +1,826 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Spark and Kafka Integration Patterns, Part 2 - Passionate Developer</title>
+  <meta name="author" content="Marcin Kuthan">
+
+  
+  <meta name="description" content="In the world beyond batch,
+streaming data processing is a future of dig data.
+Despite of the streaming framework using for data processing, tight &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Passionate Developer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-50832428-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Passionate Developer</a></h1>
+  
+    <h2>Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:mkuthan.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Spark and Kafka Integration Patterns, Part 2</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-01-29T00:00:00+00:00" pubdate data-updated="true">Jan 29<span>th</span>, 2016</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>In the <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101">world beyond batch</a>,
+streaming data processing is a future of dig data.
+Despite of the streaming framework using for data processing, tight integration with replayable data source like Apache Kafka is often required.
+The streaming applications often use Apache Kafka as a data source, or as a destination for processing results.</p>
+
+<p>Apache Spark distribution has built-in support for reading from Kafka, but surprisingly does not offer any
+integration for sending processing result back to Kafka.
+This blog post aims to fill this gap in the Spark ecosystem.</p>
+
+<p>In the <a href="http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/">first part</a> of the series
+you learned how to manage Kafka producer using Scala lazy evaluation feature
+and how to reuse single Kafka producer instance on Spark executor.</p>
+
+<p>In this blog post you will learn how to publish stream processing results to Apache Kafka in reliable way.
+First you will learn how Kafka Producer is working,
+how to configure Kafka producer and how to setup Kafka cluster to achieve desired reliability.
+In the second part of the blog post,
+I will present how to implement convenient library for sending continuous sequence of RDDs
+(<a href="https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.streaming.dstream.DStream">DStream</a>)
+to Apache Kafka topic, as easy as in the code snippet below.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="c1">// enable implicit conversions</span>
+</span><span class='line'><span class="k">import</span> <span class="nn">KafkaDStreamSink._</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// send dstream to Kafka</span>
+</span><span class='line'><span class="n">dstream</span><span class="o">.</span><span class="n">sendToKafka</span><span class="o">(</span><span class="n">kafkaProducerConfig</span><span class="o">,</span> <span class="n">topic</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Quick introduction to Kafka</h2>
+
+<p>Kafka is a distributed, partitioned, replicated message broker.
+Basic architecture knowledge is a prerequisite to understand Spark and Kafka integration challenges.
+You can safely skip this section, if you are already familiar with Kafka concepts.</p>
+
+<p>For convenience I copied essential terminology definitions directly from Kafka
+<a href="http://kafka.apache.org/documentation.html#introduction">documentation</a>:</p>
+
+<ul>
+<li>Kafka maintains feeds of messages in categories called topics.</li>
+<li>We&rsquo;ll call processes that publish messages to a Kafka topic producers.</li>
+<li>We&rsquo;ll call processes that subscribe to topics and process the feed of published messages consumers.</li>
+<li>Kafka is run as a cluster comprised of one or more servers each of which is called a broker.</li>
+</ul>
+
+
+<p>So, at a high level, producers send messages over the network to the Kafka cluster which in turn serves them up to consumers like this:</p>
+
+<p><img src="http://kafka.apache.org/images/producer_consumer.png"></p>
+
+<p>This is a bare minimum you have to know but I really encourage you to read Kafka reference manual thoroughly.</p>
+
+<h2>Kafka producer API</h2>
+
+<p>First we need to know how Kafka producer is working.
+Kafka producer exposes very simple API for sending messages to Kafka topics.
+The most important methods from <code>KafkaProducer</code> class are listed below:</p>
+
+<figure class='code'><figcaption><span>KafkaProducer API</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">j</span><span class="o">.</span><span class="na">u</span><span class="o">.</span><span class="na">c</span><span class="o">.</span><span class="na">Future</span><span class="o">&lt;</span><span class="n">RecordMetadata</span><span class="o">&gt;</span> <span class="nf">send</span><span class="o">(</span><span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span><span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">)</span>
+</span><span class='line'><span class="n">j</span><span class="o">.</span><span class="na">u</span><span class="o">.</span><span class="na">c</span><span class="o">.</span><span class="na">Future</span><span class="o">&lt;</span><span class="n">RecordMetadata</span><span class="o">&gt;</span> <span class="nf">send</span><span class="o">(</span><span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span><span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">,</span> <span class="n">Callback</span> <span class="n">callback</span><span class="o">)</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">flush</span><span class="o">()</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">close</span><span class="o">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>send()</code> methods asynchronously send a key-value record to a topic and will return immediately once the record has been stored in the buffer of records waiting to be sent.
+This kind of API is not very convenient for developers, but is crucial to achieve high throughput and low latency.</p>
+
+<p>If you want to ensure that request has been completed, you can invoke blocking <code>get()</code> on the future returned by the <code>send()</code> methods.
+The main drawback of calling <code>get()</code> is a huge performance penalty because it disables batching effectively.
+You can not expect high throughput and low latency if the execution is blocked on every message and every single message needs to be sent separately.</p>
+
+<p>Fully non-blocking usage requires use of the callback. The callback will be invoked when the request is complete.
+Note that callback is executed in Kafka producer I/O thread so should not block the caller, the callback must be as lightweight as possible.
+The callback must be also properly synchronized due to <a href="https://en.wikipedia.org/wiki/Java_memory_model">Java memory model</a>.</p>
+
+<p>If the Kafka producer caller does not check result of the <code>send()</code> method using future or callback,
+it means that if Kafka producer crashed all messages from the internal Kafka producer buffer will be lost.
+This is the first, very important element of any integration library with Kafka,
+we should expect callback handling to avoid data lost and achieve good performance.</p>
+
+<p>The <code>flush()</code> method makes all buffered messages ready to send, and blocks on the completion of the requests associated with these messages.
+The <code>close()</code> method is like the <code>flush()</code> method but also closes the producer.</p>
+
+<p>The <code>flush()</code> method could be very handy if the Streaming framework wants to ensure that all messages have been sent before processing next part of the stream.
+With <code>flush()</code> method streaming framework is able to flush the messages to Kafka brokers to simulate commit behaviour.</p>
+
+<p>Method <code>flush()</code> was added in Kafka 0.9 release (<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-8+-+Add+a+flush+method+to+the+producer+API">KIP-8</a>).
+Before Kafka 0.9, the only safe and straightforward way to flush messages from Kafka producer internal buffer was to close the producer.</p>
+
+<h2>Kafka configuration</h2>
+
+<p>If the message must be reliable published on Kafka cluster, Kafka producer and Kafka cluster needs to be configured with care.
+It needs to be done independently of chosen streaming framework.</p>
+
+<p>Kafka producer buffers messages in memory before sending.
+When our memory buffer is exhausted, Kafka producer must either stop accepting new records (block) or throw errors.
+By default Kafka producer blocks and this behavior is legitimate for stream processing.
+The processing should be delayed if Kafka producer memory buffer is full and could not accept new messages.
+Ensure that <code>block.on.buffer.full</code> Kafka producer configuration property is set.</p>
+
+<p>With default configuration, when Kafka broker (leader of the partition) receive the message, store the message in memory and immediately send acknowledgment to Kafka producer.
+To avoid data loss the message should be replicated to at least one replica (follower).
+Only when the follower acknowledges the leader, the leader acknowledges the producer.</p>
+
+<p>This guarantee you will get with <code>ack=all</code> property in Kafka producer configuration.
+This guarantees that the record will not be lost as long as at least one in-sync replica remains alive.</p>
+
+<p>But this is not enough. The minimum number of replicas in-sync must be defined.
+You should configure <code>min.insync.replicas</code> property for every topic.
+I recommend to configure at least 2 in-sync replicas (leader and one follower).
+If you have datacenter with two zones, I also recommend to keep leader in the first zone and 2 followers in the second zone.
+This configuration guarantees that every message will be stored in both zones.</p>
+
+<p>We are almost done with Kafka cluster configuration.
+When you set <code>min.insync.replicas=2</code> property, the topic should be replicated with factor 2 + N.
+Where N is the number of brokers which could fail, and Kafka producer will still be able to publish messages to the cluster.
+I recommend to configure replication factor 3 for the topic (or more).</p>
+
+<p>With replication factor 3, the number of brokers in the cluster should be at least 3 + M.
+When one or more brokers are unavailable, you will get underreplicated partitions state of the topics.
+With more brokers in the cluster than replication factor, you can reassign underreplicated partitions and achieve fully replicated cluster again.
+I recommend to build the 4 nodes cluster at least for topics with replication factor 3.</p>
+
+<p>The last important Kafka cluster configuration property is <code>unclean.leader.election.enable</code>.
+It should be disabled (by default it is enabled) to avoid unrecoverable exceptions from Kafka consumer.
+Consider the situation when the latest committed offset is N,
+but after leader failure, the latest offset on the new leader is M &lt; N.
+M &lt; N because the new leader was elected from the lagging follower (not in-sync replica).
+When the streaming engine ask for data from offset N using Kafka consumer, it will get an exception because the offset N does not exist yet.
+Someone will have to fix offsets manually.</p>
+
+<p>So the minimal recommended Kafka setup for reliable message processing is:</p>
+
+<ul>
+<li>4 nodes in the cluster</li>
+<li><code>unclean.leader.election.enable=false</code> in the brokers configuration</li>
+<li>replication factor for the topics &ndash; 3</li>
+<li><code>min.insync.replicas=2</code> property in topic configuration</li>
+<li><code>ack=all</code> property in the producer configuration</li>
+<li><code>block.on.buffer.full=true</code> property in the producer configuration</li>
+</ul>
+
+
+<p>With the above setup your configuration should be resistant to single broker failure,
+and Kafka consumers will survive new leader election.</p>
+
+<p>You could also take look at <code>replica.lag.max.messages</code> and <code>replica.lag.time.max.ms</code> properties
+for tuning when the follower is removed from ISR by the leader.
+But this is out of this blog post scope.</p>
+
+<h2>How to expand Spark API?</h2>
+
+<p>After this not so short introduction, we are ready to disassembly
+<a href="https://github.com/mkuthan/example-spark-kafka">integration library</a> for Spark Streaming and Apache Kafka.
+First <code>DStream</code> needs to be somehow expanded to support new method <code>sendToKafka()</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">dstream</span><span class="o">.</span><span class="n">sendToKafka</span><span class="o">(</span><span class="n">kafkaProducerConfig</span><span class="o">,</span> <span class="n">topic</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In Scala, the only way to add methods to existing API, is to use an implicit conversion feature.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">KafkaDStreamSink</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">import</span> <span class="nn">scala.language.implicitConversions</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">implicit</span> <span class="k">def</span> <span class="n">createKafkaDStreamSink</span><span class="o">(</span><span class="n">dstream</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">KafkaPayload</span><span class="o">])</span><span class="k">:</span> <span class="kt">KafkaDStreamSink</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">new</span> <span class="nc">KafkaDStreamSink</span><span class="o">(</span><span class="n">dstream</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Whenever Scala compiler finds call to non-existing method <code>sendToKafka()</code> on <code>DStream</code> class,
+the stream will be implicitly wrapped into <code>KafkaDStreamSink</code> class,
+where method <code>sendToKafka</code> is finally defined.
+To enable implicit conversion for <code>DStream</code> add the import statement to your code, that&rsquo;s all.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">KafkaDStreamSink._</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>How to send to Kafka in reliable way?</h2>
+
+<p>Let&rsquo;s check how <code>sendToKafka()</code> method is defined step by step, this is the core part of the integration library.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">class</span> <span class="nc">KafkaDStreamSink</span><span class="o">(</span><span class="n">dstream</span><span class="k">:</span> <span class="kt">DStream</span><span class="o">[</span><span class="kt">KafkaPayload</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">sendToKafka</span><span class="o">(</span><span class="n">config</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">],</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">dstream</span><span class="o">.</span><span class="n">foreachRDD</span> <span class="o">{</span> <span class="n">rdd</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">rdd</span><span class="o">.</span><span class="n">foreachPartition</span> <span class="o">{</span> <span class="n">records</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="c1">// send records from every partition to Kafka</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are two loops, first on wrapped <code>dstream</code> and second on <code>rdd</code> for every partition.
+Quite standard pattern for Spark programming model.
+Records from every partition are ready to be sent to Kafka topic by Spark executors.
+The destination topic name is given explicitly as the last parameter of the <code>sendToKafka()</code> method.</p>
+
+<p>First step in the inner loop is getting Kafka producer instance from the <code>KafkaProducerFactory</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">rdd</span><span class="o">.</span><span class="n">foreachPartition</span> <span class="o">{</span> <span class="n">records</span> <span class="k">=&gt;</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">producer</span> <span class="k">=</span> <span class="nc">KafkaProducerFactory</span><span class="o">.</span><span class="n">getOrCreateProducer</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">(...)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The factory creates only single instance of the producer for any given producer configuration.
+If the producer instance has been already created, the existing instance is returned and reused.
+Kafka producer caching is crucial for the performance reasons,
+because establishing a connection to the cluster takes time.
+It is a much more time consuming operation than opening plain socket connection,
+as Kafka producer needs to discover leaders for all partitions.
+Please refer to <a href="http://mkuthan.github.io/blog/2015/08/06/spark-kafka-integration1/">first part</a> of this blog post
+and <code>KafkaProducerFactory</code>
+<a href="https://github.com/mkuthan/example-spark-kafka/blob/master/src/main/scala/org/mkuthan/spark/KafkaProducerFactory.scala">source</a>
+for more details about the factory implementation.</p>
+
+<p>For debugging purposes logger and Spark task context are needed.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">org.apache.spark.TaskContext</span>
+</span><span class='line'><span class="k">import</span> <span class="nn">org.slf4j.LoggerFactory</span>
+</span><span class='line'><span class="o">(...)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">rdd</span><span class="o">.</span><span class="n">foreachPartition</span> <span class="o">{</span> <span class="n">records</span> <span class="k">=&gt;</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">producer</span> <span class="k">=</span> <span class="nc">KafkaProducerFactory</span><span class="o">.</span><span class="n">getOrCreateProducer</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">context</span> <span class="k">=</span> <span class="nc">TaskContext</span><span class="o">.</span><span class="n">get</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">logger</span> <span class="k">=</span> <span class="nc">Logger</span><span class="o">(</span><span class="nc">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">KafkaDStreamSink</span><span class="o">]))</span>
+</span><span class='line'>  <span class="o">(...)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You could use any logging framework but the logger itself has to be defined in the foreachPartition loop
+to avoid weird serialization issues.
+Spark task context will be used to get current partition identifier.
+I don&rsquo;t like static call for getting task context, but this is an official way to do that.
+See pull request <a href="https://github.com/apache/spark/pull/5927">SPARK-5927</a> for more details.</p>
+
+<p>Before we go further, Kafka producer callback for error handling needs to be introduced.</p>
+
+<figure class='code'><figcaption><span>KafkaDStreamSinkExceptionHandler</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">java.util.concurrent.atomic.AtomicReference</span>
+</span><span class='line'><span class="k">import</span> <span class="nn">org.apache.kafka.clients.producer.Callback</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">KafkaDStreamSinkExceptionHandler</span> <span class="k">extends</span> <span class="nc">Callback</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">private</span> <span class="k">val</span> <span class="n">lastException</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicReference</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">Exception</span><span class="o">]](</span><span class="nc">None</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">override</span> <span class="k">def</span> <span class="n">onCompletion</span><span class="o">(</span><span class="n">metadata</span><span class="k">:</span> <span class="kt">RecordMetadata</span><span class="o">,</span> <span class="n">exception</span><span class="k">:</span> <span class="kt">Exception</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">lastException</span><span class="o">.</span><span class="n">set</span><span class="o">(</span><span class="nc">Option</span><span class="o">(</span><span class="n">exception</span><span class="o">))</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">throwExceptionIfAny</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">lastException</span><span class="o">.</span><span class="n">getAndSet</span><span class="o">(</span><span class="nc">None</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span><span class="n">ex</span> <span class="k">=&gt;</span> <span class="k">throw</span> <span class="n">ex</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Method <code>onCompletion()</code> of the callback is called when the message sent to the Kafka cluster has been acknowledged.
+Exactly one of the callback arguments will be non-null, <code>metadata</code> or <code>exception</code>.
+<code>KafkaDStreamSinkExceptionHandler</code> class keeps last exception registered by the callback (if any).
+The client of the callback is able to rethrow registered exception using <code>throwExceptionIfAny()</code> method.
+Because <code>onCompletion()</code> and <code>throwExceptionIfAny()</code> methods are called from different threads,
+last exception has to be kept in thread-safe data structure <code>AtomicReference</code>.</p>
+
+<p>Finally we are ready to send records to Kafka using created callback.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">rdd</span><span class="o">.</span><span class="n">foreachPartition</span> <span class="o">{</span> <span class="n">records</span> <span class="k">=&gt;</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">producer</span> <span class="k">=</span> <span class="nc">KafkaProducerFactory</span><span class="o">.</span><span class="n">getOrCreateProducer</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">context</span> <span class="k">=</span> <span class="nc">TaskContext</span><span class="o">.</span><span class="n">get</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">logger</span> <span class="k">=</span> <span class="nc">Logger</span><span class="o">(</span><span class="nc">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">KafkaDStreamSink</span><span class="o">]))</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">callback</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KafkaDStreamSinkExceptionHandler</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">&quot;Send Spark partition: ${context.partitionId} to Kafka topic: $topic&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">metadata</span> <span class="k">=</span> <span class="n">records</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">record</span> <span class="k">=&gt;</span>
+</span><span class='line'>    <span class="n">callback</span><span class="o">.</span><span class="n">throwExceptionIfAny</span><span class="o">()</span>
+</span><span class='line'>    <span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="o">(</span><span class="k">new</span> <span class="nc">ProducerRecord</span><span class="o">(</span><span class="n">topic</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">orNull</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">value</span><span class="o">),</span> <span class="n">callback</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}.</span><span class="n">toList</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First the callback is examined for registered exception.
+If one of the previous record could not be sent, the exception is propagated to Spark framework.
+If any redelivery policy is needed it should be configured on Kafka producer level.
+Look at Kafka producer configuration properties <code>retries</code> and <code>retry.backoff.ms</code>.
+Finally Kafka producer metadata are collected and materialized by calling <code>toList()</code> method.
+At this moment, Kafka producer starts sending records in background I/O thread.
+To achieve high throughput Kafka producer sends records in batches.</p>
+
+<p>Because we want to achieve natural back pressure for our stream processing,
+next batch needs to be blocked until records from current batch are really acknowledged by the Kafka brokers.
+So for each collected metadata (Java <code>j.u.c.Future</code>), method <code>get()</code> is called to ensure that record has been sent to the brokers.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">rdd</span><span class="o">.</span><span class="n">foreachPartition</span> <span class="o">{</span> <span class="n">records</span> <span class="k">=&gt;</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">producer</span> <span class="k">=</span> <span class="nc">KafkaProducerFactory</span><span class="o">.</span><span class="n">getOrCreateProducer</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">context</span> <span class="k">=</span> <span class="nc">TaskContext</span><span class="o">.</span><span class="n">get</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">logger</span> <span class="k">=</span> <span class="nc">Logger</span><span class="o">(</span><span class="nc">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">KafkaDStreamSink</span><span class="o">]))</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">callback</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KafkaDStreamSinkExceptionHandler</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">&quot;Send Spark partition: ${context.partitionId} to Kafka topic: $topic&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">metadata</span> <span class="k">=</span> <span class="n">records</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">record</span> <span class="k">=&gt;</span>
+</span><span class='line'>    <span class="n">callback</span><span class="o">.</span><span class="n">throwExceptionIfAny</span><span class="o">()</span>
+</span><span class='line'>    <span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="o">(</span><span class="k">new</span> <span class="nc">ProducerRecord</span><span class="o">(</span><span class="n">topic</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">orNull</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">value</span><span class="o">),</span> <span class="n">callback</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}.</span><span class="n">toList</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">&quot;Flush Spark partition: ${context.partitionId} to Kafka topic: $topic&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="n">metadata</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">metadata</span> <span class="k">=&gt;</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="o">()</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As long as records sending was started moment ago, it is likelihood that records have been already sent
+and <code>get()</code> method does not block.
+However if the <code>get()</code> call is blocked, it means that there are unsent messages in the internal Kafka producer buffer
+and the processing should be blocked as well.</p>
+
+<p>Finally <code>sendToKafka()</code> method should propagate exception recorded by the callback (if any).
+Complete method is presented below for reference.</p>
+
+<figure class='code'><figcaption><span>sendToKafka</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">sendToKafka</span><span class="o">(</span><span class="n">config</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">],</span> <span class="n">topic</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">dstream</span><span class="o">.</span><span class="n">foreachRDD</span> <span class="o">{</span> <span class="n">rdd</span> <span class="k">=&gt;</span>
+</span><span class='line'>    <span class="n">rdd</span><span class="o">.</span><span class="n">foreachPartition</span> <span class="o">{</span> <span class="n">records</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">producer</span> <span class="k">=</span> <span class="nc">KafkaProducerFactory</span><span class="o">.</span><span class="n">getOrCreateProducer</span><span class="o">(</span><span class="n">config</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">context</span> <span class="k">=</span> <span class="nc">TaskContext</span><span class="o">.</span><span class="n">get</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">logger</span> <span class="k">=</span> <span class="nc">Logger</span><span class="o">(</span><span class="nc">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">KafkaDStreamSink</span><span class="o">]))</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">callback</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">KafkaDStreamSinkExceptionHandler</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">&quot;Send Spark partition: ${context.partitionId} to Kafka topic: $topic&quot;</span><span class="o">)</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">metadata</span> <span class="k">=</span> <span class="n">records</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">record</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="n">callback</span><span class="o">.</span><span class="n">throwExceptionIfAny</span><span class="o">()</span>
+</span><span class='line'>        <span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="o">(</span><span class="k">new</span> <span class="nc">ProducerRecord</span><span class="o">(</span><span class="n">topic</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">orNull</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">value</span><span class="o">),</span> <span class="n">callback</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}.</span><span class="n">toList</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="n">s</span><span class="s">&quot;Flush Spark partition: ${context.partitionId} to Kafka topic: $topic&quot;</span><span class="o">)</span>
+</span><span class='line'>      <span class="n">metadata</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">metadata</span> <span class="k">=&gt;</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="o">()</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">callback</span><span class="o">.</span><span class="n">throwExceptionIfAny</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The method is not very complex but there are a few important elements
+if you don&rsquo;t want to lose processing results and if you need back pressure mechanism:</p>
+
+<ul>
+<li>Method <code>sendToKafka()</code> should fail fast if record could not be sent to Kafka. Don&rsquo;t worry Spark will execute failed task again.</li>
+<li>Method <code>sendToKafka()</code> should block Spark processing if Kafka producer slows down.</li>
+<li>Method <code>sendToKafka()</code> should flush records buffered by Kafka producer explicitly, to avoid data loss.</li>
+<li>Kafka producer needs to be reused by Spark executor to avoid connection to Kafka overhead.</li>
+<li>Kafka producer needs to be explicitly closed when Spark shutdowns executors to avoid data loss.</li>
+</ul>
+
+
+<h2>Summary</h2>
+
+<p>The complete, working project is published on
+<a href="https://github.com/mkuthan/example-spark-kafka">https://github.com/mkuthan/example-spark-kafka</a>.
+You can clone/fork the project and do some experiments by yourself.</p>
+
+<p>There is also alternative library developed by Cloudera
+<a href="https://github.com/cloudera/spark-kafka-writer">spark-kafka-writer</a>
+emerged from closed pull request <a href="https://github.com/apache/spark/pull/2994">SPARK-2994</a>.
+Unfortunately at the time of this writing,
+the library used obsolete Scala Kafka producer API and did not send processing results in reliable way.</p>
+
+<p>I hope that some day we will find reliable, mature library for sending processing result to Apache Kafka
+in the official Spark distribution.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Marcin Kuthan</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-01-29T00:00:00+00:00" pubdate data-updated="true">Jan 29<span>th</span>, 2016</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/kafka/'>kafka</a>, <a class='category' href='/blog/categories/scala/'>scala</a>, <a class='category' href='/blog/categories/spark/'>spark</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2/" data-via="MarcinKuthan" data-counturl="http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/08/06/spark-kafka-integration1/" title="Previous Post: Spark and Kafka integration patterns, part 1">&laquo; Spark and Kafka integration patterns, part 1</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2016/03/11/spark-application-assembly/" title="Next Post: Spark application assembly for cluster deployments">Spark application assembly for cluster deployments &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/">Kafka Streams DSL vs Processor API</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/18/apache-bigdata-europe/">Apache BigData Europe Conference Summary</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/spark-streaming-on-yarn/">Long-running Spark Streaming Jobs on YARN Cluster</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/03/11/spark-application-assembly/">Spark Application Assembly for Cluster Deployments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/01/29/spark-kafka-integration2/">Spark and Kafka Integration Patterns, Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/06/spark-kafka-integration1/">Spark and Kafka Integration Patterns, Part 1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/01/spark-unit-testing/">Spark and Spark Streaming Unit Testing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/22/ddd-how-to-learn/">How to Learn DDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/15/programming_language_does_not_matter/">Programming Language Does Not Matter</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/20/mastering-nodejs-book-review/">Mastering Node.js - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/26/soa-patterns-book-review/">SOA Patterns - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/21/release-it-book-review/">Rrelease It! - Book Review</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/29/acceptance-testing-using-jbehave-spring-framework-and-maven/">Acceptance Testing Using JBehave, Spring Framework and Maven</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/27/the-twelve-factor-app-part2/">The Twelve-Factor App - Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/26/the-twelve-factor-app-part1/">The Twelve-Factor App - Part 1</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Category Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/architecture' style='font-size: 148.0%'>architecture(4)</a> <a href='/blog/categories/artifactory' style='font-size: 112.0%'>artifactory(1)</a> <a href='/blog/categories/bash' style='font-size: 112.0%'>bash(1)</a> <a href='/blog/categories/books' style='font-size: 136.0%'>books(3)</a> <a href='/blog/categories/conferences' style='font-size: 112.0%'>conferences(1)</a> <a href='/blog/categories/craftsmanship' style='font-size: 136.0%'>craftsmanship(3)</a> <a href='/blog/categories/ddd' style='font-size: 124.0%'>DDD(2)</a> <a href='/blog/categories/dvcs' style='font-size: 112.0%'>DVCS(1)</a> <a href='/blog/categories/git' style='font-size: 124.0%'>git(2)</a> <a href='/blog/categories/hdfs' style='font-size: 112.0%'>hdfs(1)</a> <a href='/blog/categories/java' style='font-size: 124.0%'>java(2)</a> <a href='/blog/categories/jbehave' style='font-size: 112.0%'>jbehave(1)</a> <a href='/blog/categories/jee' style='font-size: 112.0%'>JEE(1)</a> <a href='/blog/categories/jira' style='font-size: 112.0%'>jira(1)</a> <a href='/blog/categories/jms' style='font-size: 112.0%'>JMS(1)</a> <a href='/blog/categories/jvm' style='font-size: 112.0%'>jvm(1)</a> <a href='/blog/categories/kafka' style='font-size: 148.0%'>kafka(4)</a> <a href='/blog/categories/kafka-streams' style='font-size: 112.0%'>kafka streams(1)</a> <a href='/blog/categories/linux' style='font-size: 136.0%'>linux(3)</a> <a href='/blog/categories/maven' style='font-size: 124.0%'>maven(2)</a> <a href='/blog/categories/node-js' style='font-size: 112.0%'>node.js(1)</a> <a href='/blog/categories/performance' style='font-size: 112.0%'>performance(1)</a> <a href='/blog/categories/php' style='font-size: 112.0%'>PHP(1)</a> <a href='/blog/categories/presentations' style='font-size: 112.0%'>presentations(1)</a> <a href='/blog/categories/python' style='font-size: 112.0%'>python(1)</a> <a href='/blog/categories/ruby' style='font-size: 112.0%'>ruby(1)</a> <a href='/blog/categories/sbt' style='font-size: 112.0%'>sbt(1)</a> <a href='/blog/categories/scala' style='font-size: 160.0%'>scala(5)</a> <a href='/blog/categories/smtp' style='font-size: 112.0%'>smtp(1)</a> <a href='/blog/categories/spark' style='font-size: 160.0%'>spark(5)</a> <a href='/blog/categories/spring' style='font-size: 148.0%'>spring(4)</a> <a href='/blog/categories/tdd' style='font-size: 112.0%'>TDD(1)</a> <a href='/blog/categories/virtual-box' style='font-size: 112.0%'>virtual box(1)</a> <a href='/blog/categories/yarn' style='font-size: 112.0%'>yarn(1)</a> </span>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/mkuthan">@mkuthan</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'mkuthan',
+            count: 10,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>About Me</h1>
+  <p>Marcin Kuthan, genuine software engineer at <a href="http://allegrogroup.com/">Allegro Group</a>.</p>
+</section>
+
+<section>
+	<span>
+		<img src="http://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5" alt="Gravatar of Marcin Kuthan " title="Gravatar of Marcin Kuthan" />
+	</span>
+</section>
+<section>
+  <h1>Links</h1>
+  <p><a href="http://allegro.tech/"><img src="http://allegro.tech/img/logo-allegro-tech.svg" alt="allegro.tech"></a></p>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - Marcin Kuthan -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'mkuthan';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2/';
+        var disqus_url = 'http://mkuthan.github.io/blog/2016/01/29/spark-kafka-integration2/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

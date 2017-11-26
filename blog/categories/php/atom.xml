@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: PHP | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/php/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Programming Language Does Not Matter]]></title>
+    <link href="http://mkuthan.github.io/blog/2014/09/15/programming_language_does_not_matter/"/>
+    <updated>2014-09-15T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2014/09/15/programming_language_does_not_matter</id>
+    <content type="html"><![CDATA[<p>A few days ago I participated in quick presentation of significant e-commerce platform.
+The custom platform implemented mostly in PHP and designed as scalable and distributed system.
+And I was really impressed! Below you can find a short summary of chosen libraries, frameworks and tools.</p>
+
+<p><em>Symfony</em> &ndash; The leading PHP framework to create web applications.
+Very similar to Spring Framework, you will get dependency injection, layered architecture and good support for automated testing.</p>
+
+<p><em>Doctrine</em> &ndash; Object to relational mapper (ORM), part of the Symfony framework.  Very similar to JPA.</p>
+
+<p><em>Composer</em> &ndash; Dependency manager for PHP, very similar to NPM.</p>
+
+<p><em>Gearman</em> &ndash; Generic application framework to farm out work to other machines or processes. Somehow similar to YARN.</p>
+
+<p><em>Varnish</em> &ndash; HTTP reverse proxy.</p>
+
+<p><em>Memcached</em> &ndash; Distributed key value cache.</p>
+
+<p><em>RabbitMQ</em> &ndash; Messaging middleware based on AMPQ protocol. Used for distributed services integration but also for decoupled request reply communication.</p>
+
+<p><em>logstash</em> &ndash; Log manager with tons of plugins to almost everything. The monitoring is really crucial in distributed systems.</p>
+
+<p>The programming language does not really matter if you need scalable, distributed, easy to maintain and enhance system.
+You can apply excellent design using PHP or produce big ball of mud in Java.</p>
+]]></content>
+  </entry>
+  
+</feed>

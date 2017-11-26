@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Sbt | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/sbt/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Spark Application Assembly for Cluster Deployments]]></title>
+    <link href="http://mkuthan.github.io/blog/2016/03/11/spark-application-assembly/"/>
+    <updated>2016-03-11T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2016/03/11/spark-application-assembly</id>
+    <content type="html"><![CDATA[<p>When I tried to deploy my first Spark application on a YARN cluster,
+I realized that there was no clear and concise instruction how to prepare the application for deployment.
+This blog post could be treated as missing manual on how to build Spark application written in Scala to get deployable binary.</p>
+
+<p>This blog post assumes that your Spark application is built with <a href="http://www.scala-sbt.org/">SBT</a>.
+As long as SBT is a mainstream tool for building Scala applications the assumption seems legit.
+Please ensure that your project is configured with at least SBT 0.13.6.
+Open <code>project/build.properties</code> file, verify the version and update SBT if needed:</p>
+
+<p><code>
+sbt.version=0.13.11
+</code></p>
+
+<h2>SBT Assembly Plugin</h2>
+
+<p>The <code>spark-submit</code> script is a convenient way to launch Spark application on the YARN or Mesos cluster.
+However, due to distributed nature of the cluster the application has to be prepared as single Java ARchive (JAR).
+This archive includes all classes from your project with all of its dependencies.
+This application assembly can be prepared using <a href="https://github.com/sbt/sbt-assembly">SBT Assembly Plugin</a>.</p>
+
+<p>To enable SBT Assembly Plugin, add the plugin dependency to the <code>project/plugins.sbt</code> file:</p>
+
+<p><code>
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.1")
+</code></p>
+
+<p>This basic setup can be verified by calling <code>sbt assembly</code> command.
+The final assembly location depend on the Scala version, application name and application version.
+The build result could be assembled into <code>target/scala-2.11/myapp-assembly-1.0.jar</code> file.</p>
+
+<p>You can configure many aspects of SBT Assembly Plugin like custom merge strategy
+but I found that it is much easier to keep the defaults and follow the plugin conventions.
+And what is even more important you don&rsquo;t have to change defaults to get correct, deployable application binary assembled by the plugin.</p>
+
+<h2>Provided dependencies scope</h2>
+
+<p>As long as cluster provides Spark classes at runtime, Spark dependencies must be excluded from the assembled JAR.
+If not, you should expect weird errors from Java classloader during application startup.
+Additional benefit of assembly without Spark dependencies is faster deployment.
+Please remember that application assembly must be copied over the network to the location accessible by all cluster nodes (e.g: HDFS or S3).</p>
+
+<p>Look at dependency section in your build file, it should look similar to the code snippet below:</p>
+
+<p>```
+val sparkVersion = &ldquo;1.6.0&rdquo;</p>
+
+<p>&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-core&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-sql&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-hive&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-mlib&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-graphx&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming&rdquo; % sparkVersion,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming-kafka&rdquo; % sparkVersion,
+(&hellip;)
+```</p>
+
+<p>The list of the Spark dependencies is always project specific.
+SQL, Hive, MLib, GraphX and Streaming extensions are defined only for reference.
+All defined dependencies are required by local build to compile code and run
+<a href="http://mkuthan.github.io/blog/2015/03/01/spark-unit-testing/">tests</a>.
+So they could not be removed from the build definition in the ordinary way because it will break the build at all.</p>
+
+<p>SBT Assembly Plugin comes with additional dependency scope &ldquo;provided&rdquo;.
+The scope is very similar to <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">Maven provided scope</a>.
+The provided dependency will be part of compilation and test, but excluded from the application assembly.</p>
+
+<p>To configure provided scope for Spark dependencies change the definition as follows:</p>
+
+<p>```
+val sparkVersion = &ldquo;1.6.0&rdquo;</p>
+
+<p>&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-core&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-sql&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-hive&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-mlib&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-graphx&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming&rdquo; % sparkVersion % &ldquo;provided&rdquo;,
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming-kafka&rdquo; % sparkVersion
+  exclude(&ldquo;log4j&rdquo;, &ldquo;log4j&rdquo;)
+  exclude(&ldquo;org.spark-project.spark&rdquo;, &ldquo;unused&rdquo;),
+(&hellip;)
+```</p>
+
+<p>Careful readers should notice that &ldquo;spark-streaming-kafka&rdquo; dependency has not been listed and marked as &ldquo;provided&rdquo;.
+It was done by purpose because integration with Kafka is not part of Spark distribution assembly
+and has to be assembled into application JAR.
+The exclusion rules for &ldquo;spark-streaming-kafka&rdquo; dependency will be discussed later.</p>
+
+<p>Ok, but how to recognize which libraries are part of Spark distribution assembly?
+There is no simple answer to this question.
+Look for <code>spark-assembly-*-1.6.0.jar</code> file on the cluster classpath,
+list the assembly content and verify what is included and what is not.
+In the assembly on my cluster I found core, sql, hive, mlib, graphx and streaming classes are embedded but not integration with Kafka.</p>
+
+<p><code>
+$ tar -tzf spark-assembly-1.6.0.jar
+META-INF/
+META-INF/MANIFEST.MF
+org/
+org/apache/
+org/apache/spark/
+org/apache/spark/HeartbeatReceiver
+(...)
+org/apache/spark/ml/
+org/apache/spark/ml/Pipeline$SharedReadWrite$$anonfun$2.class
+org/apache/spark/ml/tuning/
+(...)
+org/apache/spark/sql/
+org/apache/spark/sql/UDFRegistration$$anonfun$3.class
+org/apache/spark/sql/SQLContext$$anonfun$range$2.class
+(...)
+reference.conf
+META-INF/NOTICE
+</code></p>
+
+<h2>SBT run and run-main</h2>
+
+<p>Provided dependency scope unfortunately breaks SBT <code>run</code> and <code>run-main</code> tasks.
+Because provided dependencies are excluded from the runtime classpath, you should expect <code>ClassNotFoundException</code> during application startup on local machine.
+To fix this issue, provided dependencies must be explicitly added to all SBT tasks used for local run, e.g.:</p>
+
+<p><code>
+run in Compile &lt;&lt;= Defaults.runTask(fullClasspath in Compile, mainClass in(Compile, run), runner in(Compile, run))
+runMain in Compile &lt;&lt;= Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run))
+</code></p>
+
+<h2>How to exclude Log4j from application assembly?</h2>
+
+<p>Without Spark classes the application assembly is quite lightweight.
+But the assembly size might be reduced event more!</p>
+
+<p>Let assume that your application requires some logging provider.
+As long as Spark internally uses Log4j, it means that Log4j is already on the cluster classpath.
+But you may say that there is much better API for Scala than origin Log4j &ndash; and you are totally right.</p>
+
+<p>The snippet below configure excellent Typesafe (Lightbend nowadays) <a href="https://github.com/typesafehub/scala-logging">Scala Logging Library</a> dependency.</p>
+
+<p>```
+&ldquo;com.typesafe.scala-logging&rdquo; %% &ldquo;scala-logging&rdquo; % &ldquo;3.1.0&rdquo;,</p>
+
+<p>&ldquo;org.slf4j&rdquo; % &ldquo;slf4j-api&rdquo; % &ldquo;1.7.10&rdquo;,
+&ldquo;org.slf4j&rdquo; % &ldquo;slf4j-log4j12&rdquo; % &ldquo;1.7.10&rdquo; exclude(&ldquo;log4j&rdquo;, &ldquo;log4j&rdquo;),</p>
+
+<p>&ldquo;log4j&rdquo; % &ldquo;log4j&rdquo; % &ldquo;1.2.17&rdquo; % &ldquo;provided&rdquo;,
+```</p>
+
+<p>Scala Logging is a thin wrapper for SLF4J implemented using Scala macros.
+The &ldquo;slf4j-log4j12&rdquo; is a binding library between SLF4J API and Log4j logger provider.
+Three layers of indirection but who cares :&ndash;)</p>
+
+<p>There is also top-level dependency to Log4J defined with provided scope.
+But this is not enough to get rid of Log4j classes from the application assembly.
+Because Log4j is also a transitive dependency of &ldquo;slf4j-log4j12&rdquo; it must be explicitly excluded.
+If not, SBT Assembly Plugin adds Log4j classes to the assembly even if top level &ldquo;log4j&rdquo; dependency is marked as &ldquo;provided&rdquo;.
+Not very intuitive but SBT Assembly Plugin works this way.</p>
+
+<p>Alternatively you could disable transitive dependencies for &ldquo;slf4j-log4j12&rdquo; at all.
+It could be especially useful for libraries with many transitive dependencies which are expected to be on the cluster classpath.</p>
+
+<p><code>
+"org.slf4j" % "slf4j-log4j12" % "1.7.10" intransitive()
+</code></p>
+
+<h2>Spark Streaming Kafka dependency</h2>
+
+<p>Now we are ready to define dependency to &ldquo;spark-streaming-kafka&rdquo;.
+Because Spark integration with Kafka typically is not a part of Spark assembly,
+it must be embedded into application assembly.
+The artifact should not be defined within &ldquo;provided&rdquo; scope.</p>
+
+<p>```
+val sparkVersion = &ldquo;1.6.0&rdquo;</p>
+
+<p>(&hellip;)
+&ldquo;org.apache.spark&rdquo; %% &ldquo;spark-streaming-kafka&rdquo; % sparkVersion
+  exclude(&ldquo;log4j&rdquo;, &ldquo;log4j&rdquo;)
+  exclude(&ldquo;org.spark-project.spark&rdquo;, &ldquo;unused&rdquo;),
+(&hellip;)
+```</p>
+
+<p>Again, &ldquo;log4j&rdquo; transitive dependency of Kafka needs to be explicitly excluded.
+I also found that marker class from weird Spark &ldquo;unused&rdquo; artifact breaks default SBT Assembly Plugin merge strategy.
+It is much easier to exclude this dependency than customize merge strategy of the plugin.</p>
+
+<h2>Where is Guava?</h2>
+
+<p>When you look at your project dependencies you could easily find Guava (version 14.0.1 for Spark 1.6.0).
+Ok, Guava is an excellent library so you decide to use the library in your application.</p>
+
+<p><em>WRONG!</em></p>
+
+<p>Guava is on the classpath during compilation and tests but at runtime you will get &ldquo;ClassNotFoundException&rdquo; or method not found error.
+First, Guava is shaded in Spark distribution assembly under <code>org/spark-project/guava</code> package and should not be used directly.
+Second, there is a huge chance for outdated Guava library on the cluster classpath.
+In CDH 5.3 distribution, the installed Guava version is 11.0.2 released on Feb 22, 2012 &ndash; more than 4 years ago!
+Since the Guava is <a href="http://i.stack.imgur.com/8K6N8.jpg">binary compatible</a> only between 2 or 3 latest major releases it is a real blocker.</p>
+
+<p>There are experimental configuration flags for Spark <code>spark.driver.userClassPathFirst</code> and <code>spark.executor.userClassPathFirst</code>.
+In theory it gives user-added jars precedence over Spark&rsquo;s own jars when loading classes in the the driver.
+But in practice it does not work, at least for me :&ndash;(.</p>
+
+<p>In general you should avoid external dependencies at all cost when you develop application deployed on the YARN cluster.
+Classloader hell is even bigger than in JEE containers like JBoss or WebLogic.
+Look for the libraries with minimal transitive dependencies and narrowed features.
+For example, if you need a cache, choose <a href="https://github.com/ben-manes/caffeine">Caffeine</a> over Guava.</p>
+
+<h2>Deployment optimization for YARN cluster</h2>
+
+<p>When application is deployed on YARN cluster using <code>spark-submit</code> script,
+the script upload Spark distribution assembly to the cluster during every deployment.
+The distribution assembly size is over 100MB, ten times more than typical application assembly!</p>
+
+<p>So I really recommend to install Spark distribution assembly on well known location on the cluster
+and define <code>spark.yarn.jar</code> property for <code>spark-submit</code>.
+The assembly will not be copied over the network during every deployment.</p>
+
+<p><code>
+spark.yarn.jar=hdfs:///apps/spark/assembly/spark-assembly-1.6.0.jar
+</code></p>
+
+<h2>Summary</h2>
+
+<p>I witnessed a few Spark projects where <code>build.sbt</code> were more complex than application itself.
+And application assembly was bloated with unnecessary 3rd party classes and deployment process took ages.
+Build configuration described in this blog post should help you deploy Spark application on the cluster smoothly
+and still keep SBT configuration easy to maintain.</p>
+]]></content>
+  </entry>
+  
+</feed>

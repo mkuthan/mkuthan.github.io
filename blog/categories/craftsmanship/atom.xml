@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Craftsmanship | Passionate Developer]]></title>
+  <link href="http://mkuthan.github.io/blog/categories/craftsmanship/atom.xml" rel="self"/>
+  <link href="http://mkuthan.github.io/"/>
+  <updated>2017-11-26T21:35:57+00:00</updated>
+  <id>http://mkuthan.github.io/</id>
+  <author>
+    <name><![CDATA[Marcin Kuthan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to Document Your Professional Experiences]]></title>
+    <link href="http://mkuthan.github.io/blog/2013/03/21/how-to-document-your-professional/"/>
+    <updated>2013-03-21T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2013/03/21/how-to-document-your-professional</id>
+    <content type="html"><![CDATA[<p>Have you considered what is important for prospective employer?
+What is the most valuable information source about your professional experience?
+How to document that you are an expert in software engineering?</p>
+
+<p>Below you can find some of my tricks:</p>
+
+<ul>
+<li>Write a blog, teaching is the best learning method :&ndash;)</li>
+<li>Write an article to the software magazine</li>
+<li>Contribute to open source project(s) like <a href="http://mytourbook.sourceforge.net/mytourbook/index.php/contributors">MyTourbook</a></li>
+<li>Report <a href="https://jira.spring.io/issues/?jql=creator%20in%20(mkuthan)">bugs</a> to the open source project(s), send pull requests and patches.</li>
+<li>Manage your profile @ <a href="https://github.com/mkuthan/">GitHub</a></li>
+<li>Manage your profile @ StackOverflow</li>
+<li>Manage your profile @ <a href="https://www.goodreads.com/mkuthan">Goodreads</a></li>
+<li>Manage your profile @ <a href="http://pl.linkedin.com/in/marcinkuthan/">LinkedIn</a></li>
+<li>Post to discussion <a href="http://maven.40175.n5.nabble.com/template/NamlServlet.jtp?macro=user_nodes&amp;user=146149">groups</a>, be helpful for others</li>
+<li>Be active in local software groups (e.g JUG)</li>
+<li>Attend university lectures (@ <a href="https://www.coursera.org/user/i/3d908cbf919e14af793fae9a5fc732f4">Coursera</a>), 100% free</li>
+</ul>
+
+
+<p>To be honest, I have done only few of them for myself :&ndash;(</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Code Coverage for Managers and Developers]]></title>
+    <link href="http://mkuthan.github.io/blog/2012/12/03/code-coverage-for-managers-and-developers/"/>
+    <updated>2012-12-03T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2012/12/03/code-coverage-for-managers-and-developers</id>
+    <content type="html"><![CDATA[<p>From time to time, people ask me what code coverage by tests should be. Does 60% mean that project is healthy? Or maybe the goal should be 70% or 80%?</p>
+
+<p><em>I don&rsquo;t know, it depends on your role in the project</em></p>
+
+<p>If you are a manager, Excel is your friend. Manager likes numbers, columns and charts. So the following rules are perfect for them:</p>
+
+<ul>
+<li>Below 20% &ndash; red, can not be accepted</li>
+<li>Between 20% &ndash; 50% &ndash; yellow, might be accepted conditionally</li>
+<li>Above 50% &ndash; green, accepted without doubts</li>
+</ul>
+
+
+<p>But as a developer I know that the numbers are meaningless. I can easily achieve high code coverage by:</p>
+
+<ul>
+<li>Measure coverage for integration or even acceptance tests.</li>
+<li>Write a lot of unmaintainable tests.</li>
+<li>Testing supporting or generic domain instead of core domain, because it&rsquo;s easy.</li>
+<li>Testing setters and getters because it&rsquo;s easy.</li>
+<li>Testing without assertions.</li>
+</ul>
+
+
+<p>Why would I do that?</p>
+
+<ul>
+<li>To meet acceptance criteria (sometimes enforced by the build/deployment tool).</li>
+<li>Christmas are coming, and my bonus depends on the code coverage level.</li>
+</ul>
+
+
+<p>Instead focusing on the numbers, manager should promote TDD approach in the team.
+Writing the unit tests should be a natural part of development process, not an exception.
+But writing unit test (or tests in general) is not easy, especially for badly written code.</p>
+
+<p>If you are a developer you need instant feedback what are you developing.
+Waiting one day for Sonar code coverage report is not acceptable.
+Write the tests, write the code, run the tests and check code coverage.
+Verify that your tests cover all important lines and branches.
+Generate report in isolation, only for test under development, check only coverage for tested part of the code.
+Everything else is covered by accident.</p>
+
+<p>Figure below illustrates coverage report in my IDE inlined with the tested source code.
+Personally I configured Eclipse (STS) with JaCoCo, works like a charm.</p>
+
+<p><img class="<a" src="href="https://lh4.googleusercontent.com/-aQXF5ck4hcg/U3uHsdejeqI/AAAAAAAAV8c/-6Kmq7OK5hU/s878/sts-code-coverage.png">https://lh4.googleusercontent.com/-aQXF5ck4hcg/U3uHsdejeqI/AAAAAAAAV8c/-6Kmq7OK5hU/s878/sts-code-coverage.png</a>"></p>
+
+<p>Code coverage reports and tools are not for managers, there are for developers to help them during development.
+If you are a manager, focus on the people, their skills, and build TDD approach into the team.</p>
+
+<p><em>We are all professionals, aren&rsquo;t we?</em></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to Fail a Software Project Fast and Efficient?]]></title>
+    <link href="http://mkuthan.github.io/blog/2012/06/01/how-to-fail-software-project-fast-and-efficient/"/>
+    <updated>2012-06-01T00:00:00+00:00</updated>
+    <id>http://mkuthan.github.io/blog/2012/06/01/how-to-fail-software-project-fast-and-efficient</id>
+    <content type="html"><![CDATA[<p>The short list based on excellent Thomas Sundberg <a href="http://s3-eu-west-1.amazonaws.com/presentations2012/41presentation.pdf">presentation</a>.</p>
+
+<blockquote><p>Divide the team into separate divisions &ndash; analysis, architecture, development, operations, test, etc.</p></blockquote>
+
+<p>Make the communication as hard as possible, different locations, different managers, different cost centres etc.</p>
+
+<blockquote><p>Assign developer to multiple projects managed by different people</p></blockquote>
+
+<p>Developers will be able to set priorities by themselves.</p>
+
+<p>Context switching is cheap.</p>
+
+<blockquote><p>Everything should be written</p></blockquote>
+
+<p>You can always use written document as a evidence, even if it is not valid anymore.</p>
+
+<blockquote><p>Don&rsquo;t allow to communicate development team with customers / end user</p></blockquote>
+
+<p>Developers are only for writing code based on given specifications.</p>
+
+<blockquote><p>Separate Devs and Ops</p></blockquote>
+
+<p>Devs should not be allowed into the production system, they can break something.</p>
+
+<p>Ops do not have to know anything about systems they care.</p>
+
+<blockquote><p>Improvement</p></blockquote>
+
+<p>No courses, no books, no conferences and learn only on personal time.</p>
+
+<p>If you train them, they leave.</p>
+
+<blockquote><p>Measuring</p></blockquote>
+
+<p>Number of fixes per day.</p>
+
+<p>Less than 100% test code coverage is a failure.</p>
+
+<p>100% Javadoc over descriptive naming, etc.</p>
+
+<blockquote><p>Resources</p></blockquote>
+
+<p>Resources can be easily replaced, it does not matter that valuable employees have left.</p>
+
+<p>We easily find next resource.</p>
+
+<blockquote><p>Meetings</p></blockquote>
+
+<p>Schedule lots of them, demand everyone to be present, cancel them late or don&rsquo;t show up or be unprepared.</p>
+
+<p>Always prepare meeting minutes.</p>
+
+<blockquote><p>Planning</p></blockquote>
+
+<p>The most experienced person does it better than whole team.</p>
+
+<p>Don&rsquo;t allow self-organization, only command and control!</p>
+
+<blockquote><p>Demotivation</p></blockquote>
+
+<p>Don&rsquo;t invest in tools, no large screens.</p>
+
+<p>The fastest laptops for managers (powerpoint slides are very heavy).</p>
+
+<blockquote><p>Working offsite</p></blockquote>
+
+<p>Make it extremely difficult to work from home.</p>
+
+<blockquote><p>Deployments</p></blockquote>
+
+<p>Avoid it, that&rsquo;s risky.</p>
+
+<p>Always manual, no more than twice a year.</p>
+
+<p>Different scenarios and teams for DEV, UAT and PROD.</p>
+
+<blockquote><p>Failed builds</p></blockquote>
+
+<p>Who cares, it works on production.</p>
+
+<p>Check-in new changes if the build is red.</p>
+
+<blockquote><p>Company policies</p></blockquote>
+
+<p>Single tool/library/framework/platform for all.</p>
+
+<blockquote><p>Architecture</p></blockquote>
+
+<p>Only &ldquo;ivory tower&rdquo; architects, at least 20.</p>
+
+<blockquote><p>Testing</p></blockquote>
+
+<p>Load and performance tests on the end.</p>
+
+<p>Only manual functional tests.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,916 @@
+<!doctype html>
+<html>
+<head>
+    <title>Micro Services</title>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" href="/assets/reveal.js-2.6.2/css/reveal.css">
+    <link rel="stylesheet" href="/assets/reveal.js-2.6.2/css/theme/sky.css">
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="/assets/reveal.js-2.6.2/lib/css/zenburn.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="/assets/font-awesome-4.1.0/css/font-awesome.css">
+    <style> .reveal i.fa { font-family: FontAwesome; font-style: normal; } </style>
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = '/assets/reveal.js-2.6.2/css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div class="reveal">
+    <div class="state-background"></div>
+
+    <div class="slides">
+        <section>
+    <section>
+        <h1>Micro Services</h1>
+        <h3>light and dark side</h3>
+
+        <p><small>Created by <a href="http://mkuthan.github.io">Marcin Kuthan</a></small></p>
+    </section>
+    <section>
+        <h2>The Talk</h2>
+
+        <ul>
+            <li class="fragment">Micro Services Architecture</li>
+            <li class="fragment">Contoso Conference Management System</li>
+            <li class="fragment">Challenges</li>
+            <li class="fragment">How to start?</li>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Monolithic Architecture</h2>
+
+        <aside class="notes">
+            Commonly used pattern for building enterprise applications.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Monolithic Architecture</h4>
+        <img src="https://lh4.googleusercontent.com/-Rtcigi7cFRQ/U3xjjDLLzRI/AAAAAAAAV98/QryTqdPswPg/s720/main-erd.png" width="720" height="504">
+
+        <aside class="notes">
+            For large, complex applications, becomes an obstacle to development and deployment.
+        </aside>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Micro Services Architecture</h2>
+
+        <p class="fragment"><a href="http://www.addsimplicity.com/downloads/eBaySDForum2006-11-29.pdf">The eBay Architecture</a></p>
+        <p class="fragment"><a href="http://www.slideshare.net/fredgeorge/micro-service-architecure">MicroService Architecture, personal journey of discovery</a></p>
+        <p class="fragment"><a href="http://www.slideshare.net/InfoQ/micro-services-java-the-unix-way">Micro Services, Java the Unix way</a></p>
+    </section>
+
+    <!-- general characteristics -->
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>SOA done right</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>No ESB</li>
+                <li>No WS-*</li>
+                <li>No synchronous communication</li>
+                <li>No 2PC transactions</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Small enough to fit in your head</h2>
+
+        <aside class="notes">
+            Depends on the service complexity, more complex logic, smaller service should be.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Does one thing well</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Unix philosophy.</li>
+                <li>Single Responsibility Principle.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Small enough that you can throw it away</h2>
+
+        <aside class="notes">
+            Rewrite over maintain.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Uses right tool for the job</h2>
+
+        <aside class="notes">
+            <ul>
+                <li>Polyglot programming.</li>
+                <li>Polyglot persistence.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <!-- integration -->
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Loosely coupled</h2>
+
+        <aside class="notes">
+            Asynchronous communicated using text based protocols.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Independent</h2>
+
+        <aside class="notes">
+            Independently replaceable and upgradeable.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Favor service choreography over orchestration</h2>
+
+        <aside class="notes">
+            With decentralized responsibilities.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Smart endpoints, dumb pipes</h2>
+
+        <aside class="notes">
+            Receiving a request, applying logic as appropriate and producing a response.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Design for failure</h2>
+
+        <aside class="notes">
+            Automated failure detection and notification.
+        </aside>
+    </section>
+
+    <!-- teams -->
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Empower teams and ownership</h2>
+
+        <aside class="notes">
+            Organized around business capability, rather for product than project.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>You build it, you run it</h2>
+
+        <aside class="notes">
+            DevOps teams.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Two Pizza Team</h2>
+
+        <aside class="notes">
+            Amazon limit of the team size.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Micro Services Architecture</h4>
+        <h2>Any comments?</h2>
+    </section>
+</section>
+
+<section>
+    <h2>Contoso Conference Management System</h2>
+
+    <p>
+        <a href="http://msdn.microsoft.com/en-us/library/jj554200.aspx">
+            <img src="http://i.msdn.microsoft.com/dynimg/IC602611.png" alt="CQRS Journey">
+        </a>
+    </p>
+
+    <aside class="notes">
+        Example of reasonable sized project, with well defined bounded contexts - candidates for micro services.
+    </aside>
+</section>
+
+<section>
+    <section>
+        <h4>Contoso Conference Management System</h4>
+        <h2>Domain</h2>
+
+        <aside class="notes">
+            Have you registered to the conference recently?
+        </aside>
+    </section>
+
+    <section>
+        <h4>Domain</h4>
+        <h2>Selling seats for a conference</h2>
+
+        <aside class="notes">
+            <p>
+            Business customer defines the number of seats available for the conference. The business customer may also
+            specify events at a conference such as workshops, receptions, and premium sessions for which attendees must
+            have a separate ticket. The business customer also defines how many seats are available for these events.
+            </p>
+
+            <p>
+            System manages the sale of seats to ensure that the conference and sub-events are not oversubscribed. This
+            part of the system will also operate wait-lists so that if other attendees cancel, their seats can be
+            reallocated.
+            </p>
+
+            <p>
+            System will require that the names of the attendees be associated with the purchased seats so that
+            an on-site system can print badges for the attendees when they arrive at the conference.
+            </p>
+        </aside>
+    </section>
+    <section>
+        <h4>Domain</h4>
+        <h2>Creating a conference</h2>
+
+        <aside class="notes">
+            <p>
+            Business customer can create new conferences and manage information about the conference such as its name,
+            description, and dates. The business customer can also make a conference visible on the Contoso Conference
+            Management System website by publishing it, or hide it by unpublishing it.
+            </p>
+
+            <p>
+            Business customer defines the seat types and available quantity of each seat type for the conference.
+            </p>
+
+            <p>
+            Enable the business customer to specify the following characteristics of a conference:
+            </p>
+
+            <ul>
+                <li>Whether the paper submission process will require reviewers.</li>
+                <li>What the fee structure for paying Contoso will be.</li>
+                <li>Who key personnel, such as the program chair and the event planner, will be.</li>
+            </ul>
+        </aside>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h4>Contoso Conference Management System</h4>
+        <h2>Decomposing the domain</h2>
+
+        <aside class="notes">
+            How to decompose the domain?
+        </aside>
+    </section>
+
+    <section>
+        <h4>Decomposing the domain</h4>
+        <h2>Orders and Registrations</h2>
+
+        <aside class="notes">
+            Within the orders and registrations bounded context are the reservations, payment, and registration items.
+            When a registrant interacts with the system, the system creates an order to manage the reservations,
+            payment, and registrations. An order contains one or more order items.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Decomposing the domain</h4>
+        <h2>Conference Management</h2>
+
+        <aside class="notes">
+            Business customer can create new conferences and manage them.
+            Business customer can also use the conference management website to view a list of orders and attendees.
+        </aside>
+    </section>
+
+    <section>
+        <h4>Decomposing the domain</h4>
+        <h2>Payments</h2>
+
+        <aside class="notes">
+            Responsible for managing the interactions between the conference management system and external payment systems
+        </aside>
+    </section>
+
+    <section>
+        <h4>Decomposing the domain</h4>
+        <h2>Summary</h2>
+
+        <img src="http://yuml.me/diagram/scruffy;dir:RL;scale:120/class/[note: core domain]-[Orders and Registrations],[Orders and Registrations]-[Payments],[Orders and Registrations]-[Conference Management]" />
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Conference Management</h2>
+    </section>
+
+    <section>
+        <h4>Conference Management</h4>
+        <h2>Model (1)</h2>
+        <pre><code data-trim class="java">
+@Entity
+class Conference {
+  String id
+  String name
+  String location
+  Boolean published
+  Set&lt;SeatType&gt; seatTypes
+  ... // speakers, schedule, etc.
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Conference Management</h4>
+        <h2>Model (2)</h2>
+        <pre><code data-trim class="java">
+@Entity
+class SeatType {
+  Conference conference
+  String id
+  String name
+  String description
+  int quantity
+  BigDecimal priceAmount
+  String priceCurrency
+  ... // rule based pricing
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Conference Management</h4>
+        <h2>Repositories</h2>
+        <pre><code data-trim class="java">
+@RepositoryRestResource
+interface ConferenceRepository extends JpaRepository&lt;Conference, String&gt; {
+}
+
+@RepositoryRestResource
+interface SeatTypeRepository extends JpaRepository&lt;SeatType, String&gt; {
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Conference Management</h4>
+        <h2>Integration (1)</h2>
+        <pre><code data-trim class="java">
+
+@RepositoryEventHandler(Conference.class)
+class ConferenceEventHandler {
+  @HandleAfterCreate
+  void publishConferenceCreatedEvent(Conference conference) {
+      ConferenceCreated event = new ConferenceCreated()
+
+      event.setConferenceId(conference.getId())
+      event.setName(conference.getName())
+      ...
+
+      eventBus.publish(event)
+  }
+
+  @Autowired
+  EventBus eventBus
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Conference Management</h4>
+        <h2>Integration (2)</h2>
+        <pre><code data-trim class="java">
+@RepositoryEventHandler(SeatType.class)
+class SeatTypeEventHandler {
+  @HandleAfterCreate
+  void publishSeatTypeCreatedEvent(SeatType seatType) {
+    SeatTypeCreated event = new SeatTypeCreated()
+
+    event.setSeatTypeId(seatType.getId())
+    event.setConferenceId(seatType.getConference().getId())
+    ...
+
+    eventBus.publish(event)
+  }
+
+  @Autowired
+  EventBus eventBus
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Conference Management</h4>
+        <h2>Wrap Up</h2>
+        <pre><code data-trim class="java">
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
+class ManagementApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(ManagementApplication.class, args);
+  }
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Conference Management</h4>
+        <h2>Demo</h2>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Orders and Registrations</h2>
+    </section>
+
+    <section>
+        <h4>Mockups</h4>
+
+        <img src="https://raw.githubusercontent.com/mspnp/cqrs-journey-doc/master/images/OrderMockup.png" />
+    </section>
+
+    <section>
+        <h4>Workflow</h4>
+
+        <img src="https://raw.githubusercontent.com/mspnp/cqrs-journey-doc/master/images/Reference_06_Workflow.png" />
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Model (1)</h2>
+        <pre><code data-trim class="java">
+@Entity
+class Order {
+  String orderId
+  String conferenceId
+  List&lt;OrderItem&gt; items
+  ... // registrant, status, payment
+}
+
+@Entity
+class OrderItem {
+  String seatTypeId
+  int quantity
+  ... // attendees, status
+}
+      </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Model (2)</h2>
+        <pre><code data-trim class="java">
+@Entity
+class SeatsAvailability {
+  String conferenceId
+  Set&lt;SeatAvailability&gt; availableSeats
+  makeSeatsReservation(...)
+  cancelSeatsReservation(...)
+  ... // addSeats(), removeSeats()
+}
+@Entity
+class SeatAvailability {
+  String seatTypeId
+  int quantity
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Integration (1)</h2>
+        <pre><code data-trim class="java">
+@EventHandler
+void on(ConferenceCreated event) {
+  seatsAvailability = new SeatsAvailability(event.getConferenceId())
+  repository.save(seatsAvailability)
+}
+
+@EventHandler
+void on(ConferenceUpdated event) {
+  seatsAvailability = repository.load(event.getConferenceId())
+
+  if (event.isPublished()) {
+    ...
+  } else {
+    ...
+  }
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Integration (2)</h2>
+        <pre><code data-trim class="java">
+@EventHandler
+void on(SeatTypeUpdated event) {
+  seatsAvailability = repository.load(event.getConferenceId())
+
+  int difference = // How to calculate diff?
+  if (difference > 0) {
+    seatsAvailability.addSeats(event.getSeatTypeId(), difference)
+  } else if (difference < 0) {
+    seatsAvailability.removeSeats(event.getSeatTypeId(), abs(difference))
+  }
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Business Processes (1)</h2>
+        <pre><code data-trim class="java">
+@SagaEventHandler
+void on(OrderPlaced event) {
+  makeSeatsReservation = new MakeSeatsReservation(
+            event.getOrderId(), event.getConferenceId(), event.getSeats())
+  commandGateway.send(makeSeatsReservation)
+
+  orderExpired = new RegistrationExpired(event.getOrderId())
+  eventScheduler.schedule(event.getTimeout(), orderExpired)
+}
+
+@Autowired
+CommandGateway commandGateway
+
+@Autowired
+EventScheduler eventScheduler
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Business Processes (2)</h2>
+        <pre><code data-trim class="java">
+@SagaEventHandler(associationProperty = "orderId")
+public void on(SeatsReservationAccepted event) {
+  seatsReservationAccepted = true
+
+  if (paymentReceived) {
+    confirmOrder(event.getOrderId())
+  }
+}
+// saga state
+boolean seatsReservationAccepted = false
+boolean paymentReceived = false
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Business Processes (3)</h2>
+        <pre><code data-trim class="java">
+@SagaEventHandler(associationProperty = "orderId")
+public void on(PaymentReceived event) {
+  paymentReceived = true
+
+  if (seatsReservationAccepted) {
+    confirmOrder(event.getOrderId())
+  }
+}
+// saga state
+boolean seatsReservationAccepted = false
+boolean paymentReceived = false
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Business Processes (4)</h2>
+        <pre><code data-trim class="java">
+@SagaEventHandler(associationProperty = "orderId")
+public void on(RegistrationExpired event) {
+  if (seatsReservationAccepted) {
+    cancelSeatsReservation = new CancelSeatsReservation(
+            event.getOrderId(), event.getConferenceId(), event.getSeats())
+    commandGateway.send(cancelSeatsReservation)
+  }
+
+  if (paymentReceived) {
+    // TODO: How to compensate payment?
+  }
+
+  rejectOrder(event.getOrderId());
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Wrap Up</h2>
+        <pre><code data-trim class="java">
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
+class RegistrationsApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(RegistrationsApplication.class, args);
+  }
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>Orders and Registrations</h4>
+        <h2>Demo</h2>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Payments</h2>
+    </section>
+
+    <section>
+        <h4>Payments</h4>
+        <h2>Out of scope</h2>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Architecture Challenges</h2>
+
+        <aside class="notes">
+            Micro Services Architecture dark side
+        </aside>
+    </section>
+
+    <section>
+        <h4>Architecture Challenges</h4>
+        <h2>Essential Complexity</h2>
+
+        <ul>
+            <li class="fragment">How to decompose the domain?</li>
+            <li class="fragment">How to accept eventual consistency?</li>
+        </ul>
+    </section>
+
+    <section>
+        <h4>Architecture Challenges</h4>
+        <h2>Accidental Complexity</h2>
+
+        <ul>
+            <li class="fragment">How to test the system?</li>
+            <li class="fragment">How to setup infrastructure?</li>
+            <li class="fragment">How to avoid 2PC transactions?</li>
+            <li class="fragment">How to implement Composite UI?</li>
+            <li class="fragment">How to monitor asynchronous communication?</li>
+            <li class="fragment">How to version, release and deploy moving parts?</li>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>Distributed Architecture</h2>
+    </section>
+
+    <section>
+        <h4>Martin Fowler’s First Law of Distribution</h4>
+        <p><small><a href="http://martinfowler.com/bliki/FirstLaw.html">http://martinfowler.com/bliki/FirstLaw.html</a></small></p>
+        <h2 class="fragment">Don&#8217;t</h2>
+    </section>
+
+    <section>
+        <h2>Fallacies of Distributed Computing</h2>
+
+        <p><small><a href="http://www.rgoarchitects.com/Files/fallacies.pdf">http://www.rgoarchitects.com/Files/fallacies.pdf</a></small></p>
+
+        <ul>
+            <li class="fragment">Network is reliable</li>
+            <li class="fragment">Latency is zero</li>
+            <li class="fragment">Bandwidth is infinite</li>
+            <li class="fragment">Transport cost is zero</li>
+            <li class="fragment">Network is secure</li>
+            <li class="fragment">Topology doesn’t change</li>
+            <li class="fragment">There is one administrator</li>
+            <li class="fragment">Network is homogeneous</li>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section>
+        <h2>How to start?</h2>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Single JVM</h2>
+
+        <p><em>Don&#8217;t distribute, deploy on single JVM.</em></p>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Decompose</h2>
+
+        <p><em>Don&#8217;t develop monoliths, decompose application.</em></p>
+
+        <aside class="notes">
+            <ul>
+                <li>Use strategic design from Domain Driven Design book.</li>
+                <li>Use Java packages.</li>
+                <li>Use Maven or Gradle modules.</li>
+                <li>Use separate projects.</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Published Language</h2>
+
+        <p><em>Don&#8217;t expose module internals, for every package define published language.</em></p>
+
+        <aside class="notes">
+            <ul>
+                <li>JAR artifacts</li>
+                <li>XML, JSON Schema</li>
+                <li>API console</li>
+            </ul>
+        </aside>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Business Identifiers</h2>
+
+        <p><em>Don&#8217;t use entity references, use only business identifiers as references.</em></p>
+
+        <pre class="fragment"><code data-trim class="java">
+class SeatsAvailability {
+  ConferenceId conferenceId
+  ...
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Event Bus (1)</h2>
+
+        <p><em>Don&#8217;t call us, we&#8217;ll call you.</em></p>
+
+        <pre class="fragment"><code data-trim class="java">
+@Aspect
+class EventsPublishingAspect {
+
+  @AfterReturning(pointcut = "execution(public * *.Repository+.save(..))")
+  public void publishPendingEvents(AggregateRoot aggregateRoot) {
+    for (Event event : aggregateRoot.getPendingEvents()) {
+      eventPublisher.publish(event)
+    }
+  }
+
+  @Autowired
+  EventPublisher eventPublisher
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Event Bus (2)</h2>
+
+        <p><em>Don&#8217;t rely on &#8220;Unit of Work&#8221; but still handle events in the caller thread.</em></p>
+
+        <pre class="fragment"><code data-trim class="java">
+@Component
+public class EventBusBeanPostProcessor implements BeanPostProcessor {
+
+  Object postProcessAfterInitialization(Object bean, String beanName) {
+    if (beanFactory.isSingleton(beanName)) {
+      eventBus.register(bean);
+    }
+    return bean;
+  }
+
+  @Autowired
+  com.google.common.eventbus.EventBus eventBus;
+}
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Event Bus (3)</h2>
+
+        <p><em>Process events asynchronously, eventually.</em></p>
+
+        <pre class="fragment"><code data-trim class="java">
+@Bean(destroyMethod = "shutdown")
+public Executor taskExecutor() {
+  ThreadFactory threadFactory = new ThreadFactoryBuilder()
+    .setNameFormat("MyTaskExecutor-%d")
+    .build()
+
+  return Executors.newScheduledThreadPool(
+    environment.getRequiredProperty("scheduling.taskExecutorCorePoolSize"),
+    threadFactory)
+}
+
+@Autowired
+Environment environment
+        </code></pre>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Saga</h2>
+
+        <p><em>Manage long running business processes explicitly using Saga pattern.</em></p>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Event Sourcing</h2>
+
+        <p><em>Manage domain complexity by separating write and read models.</em></p>
+    </section>
+
+    <section>
+        <h4>How to start?</h4>
+        <h2>Keep trying</h2>
+
+        <p><em>Expect challenges.</em></p>
+    </section>
+</section>
+
+<section>
+    <h1>The End</h1>
+    <p><small>Visit my blog: <a href="http://mkuthan.github.io">mkuthan.github.io</a></small></p>
+</section>
+
+    </div>
+
+    <div class="progress"><span></span></div>
+</div>
+
+<script src="/assets/reveal.js-2.6.2/lib/js/head.min.js"></script>
+<script src="/assets/reveal.js-2.6.2/js/reveal.min.js"></script>
+
+<script>
+    Reveal.initialize({
+        controls: false,
+        progress: false,
+        history: true,
+
+        transition: Reveal.getQueryHash().transition || 'default',
+        dependencies : [
+            { src: '/assets/reveal.js-2.6.2/lib/js/classList.js', condition: function () { return !document.body.classList;} },
+            { src: '/assets/reveal.js-2.6.2/plugin/highlight/highlight.js', async: true, callback: function () { window.hljs.initHighlightingOnLoad();} },
+            { src: '/assets/reveal.js-2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: '/assets/reveal.js-2.6.2/plugin/zoom-js/zoom.js', condition: function() { return !!document.body.classList; } }
+        ]
+    });
+</script>
+</body>
+</html>
