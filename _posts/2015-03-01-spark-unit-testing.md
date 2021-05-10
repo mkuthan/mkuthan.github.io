@@ -48,7 +48,9 @@ Let's define how typical Spark application is organized. Our hypothetical applic
 `SparkContext` and `StreamingContext` could be easily initialized for testing purposes.
 Set master URL to `local`, run the operations and then stop context gracefully.
 
-``` scala SparkContext Initialization
+SparkContext initialization:
+
+``` scala
 class SparkExampleSpec extends FlatSpec with BeforeAndAfter {
 
   private val master = "local[2]"
@@ -73,7 +75,9 @@ class SparkExampleSpec extends FlatSpec with BeforeAndAfter {
 
 ```
 
-``` scala StreamingContext Initialization
+StreamingContext initialization:
+
+``` scala 
 class SparkStreamingExampleSpec extends FlatSpec with BeforeAndAfter {
 
   private val master = "local[2]"
@@ -110,12 +114,16 @@ The problematic part is how to create RDD or DStream.
 For testing purposes it must be simplified to avoid embedded Kafka and ZooKeeper.
 Below you can find examples how to create in-memory RDD and DStream.
 
-``` scala In-memory RDD
+In-memory RDD:
+
+``` scala
 val lines = Seq("To be or not to be.", "That is the question.")
 val rdd = sparkContext.parallelize(lines)
 ```
 
-``` scala In-memory DStream
+In-memory DStream:
+
+``` scala
 val lines = mutable.Queue[RDD[String]]()
 val dstream = streamingContext.queueStream(lines)
 
@@ -128,7 +136,9 @@ lines += sparkContext.makeRDD(Seq("To be or not to be.", "That is the question."
 The most important part of our application - transformations logic - must be encapsulated in separate class or object.
 Object is preferred to avoid class serialization overhead. Exactly the same code is used by the application and by the test.
 
-``` scala WordCount.scala
+WordCount.scala
+
+``` scala
 case class WordCount(word: String, count: Int)
 
 object WordCount {
@@ -189,7 +199,9 @@ Spark Streaming provides necessary abstraction over system clock, `ManualClock` 
 Unfortunately `ManualClock` class is declared as package private. Some hack is needed.
 The wrapper presented below, is an adapter for the original `ManualClock` class but without access restriction.
 
-``` scala ClockWrapper.scala
+ClockWrapper.scala
+
+``` scala
 package org.apache.spark.streaming
 
 import org.apache.spark.streaming.util.ManualClock

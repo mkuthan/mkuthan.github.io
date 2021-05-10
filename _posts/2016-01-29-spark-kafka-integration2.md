@@ -250,7 +250,9 @@ See pull request [SPARK-5927](https://github.com/apache/spark/pull/5927) for mor
 
 Before we go further, Kafka producer callback for error handling needs to be introduced.
 
-``` scala KafkaDStreamSinkExceptionHandler
+KafkaDStreamSinkExceptionHandler:
+
+``` scala
 import java.util.concurrent.atomic.AtomicReference
 import org.apache.kafka.clients.producer.Callback
 
@@ -331,7 +333,7 @@ and the processing should be blocked as well.
 Finally `sendToKafka()` method should propagate exception recorded by the callback (if any).
 Complete method is presented below for reference.
 
-``` scala sendToKafka
+``` scala
 def sendToKafka(config: Map[String, String], topic: String): Unit = {
   dstream.foreachRDD { rdd =>
     rdd.foreachPartition { records =>

@@ -404,7 +404,9 @@ public @interface Steps {
 }
 ```
 
-``` java Converter.java
+Converter.java
+
+``` java
 @Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
@@ -603,7 +605,7 @@ public class SharedSteps {
 You could ask, how does _JBehave_ know about `StockKeepingUnit` and `Money` classes?
 You will have to implement custom converters but it is much more convenient to use well defined API, instead of dozen of `String` based values.
 
-``` java MoneyConverter
+``` java 
 @Converter
 public class MoneyConverter {
 
@@ -629,7 +631,7 @@ If the value cannot be converted, _JBehave_ `ParameterConvertionFailed` exceptio
 
 The shopping cart related steps are implemented in `ShoppingCartSteps` class. 
 
-``` java ShoppingCartSteps
+``` java
 @Steps
 public class ShoppingCartSteps {
 
@@ -693,7 +695,7 @@ When products are added to the shopping cart:
 Basket presented in tabular form is much easier to read than if it would be defined line by line. 
 To use this kind of parameter you have to prepare a class with a few annotations.
 
-``` java ShoppingCartRow
+``` java
 @AsParameters
 public static class ShoppingCartRow {
 
@@ -730,7 +732,7 @@ The last part of this post is about running tests.
 For every user story definition, one test class is defined. 
 The test class is only the marker and does not define any logic.
 
-``` java LearnJBehaveStory.java
+``` java
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcceptanceTest
 public class LearnJbehaveStory extends AbstractSpringJBehaveStory {
