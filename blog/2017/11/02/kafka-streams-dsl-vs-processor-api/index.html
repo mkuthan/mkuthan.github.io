@@ -1,0 +1,1231 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Kafka Streams DSL vs Processor API - Passionate Developer</title>
+<meta name="description" content="Kafka Streams is a Java library  for building real-time, highly scalable, fault tolerant, distributed applications.  The library is fully integrated with Kafka and leverages  Kafka producer and consumer semantics (e.g: partitioning, rebalancing, data retention and compaction). What is really unique, the only dependency to run Kafka Streams application is a running Kafka cluster. Even local state stores are backed by Kafka topics to make the processing fault tolerant - brilliant!">
+
+
+  <meta name="author" content="Marcin Kuthan">
+  
+  <meta property="article:author" content="Marcin Kuthan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Passionate Developer">
+<meta property="og:title" content="Kafka Streams DSL vs Processor API">
+<meta property="og:url" content="http://mkuthan.github.io/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/">
+
+
+  <meta property="og:description" content="Kafka Streams is a Java library  for building real-time, highly scalable, fault tolerant, distributed applications.  The library is fully integrated with Kafka and leverages  Kafka producer and consumer semantics (e.g: partitioning, rebalancing, data retention and compaction). What is really unique, the only dependency to run Kafka Streams application is a running Kafka cluster. Even local state stores are backed by Kafka topics to make the processing fault tolerant - brilliant!">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2017-11-02T00:00:00+00:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://mkuthan.github.io/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://mkuthan.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Passionate Developer Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Passionate Developer
+          <span class="site-subtitle">Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</span>
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpg" alt="Marcin Kuthan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Marcin Kuthan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://github.com/mkuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/MarcinKuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Kafka Streams DSL vs Processor API">
+    <meta itemprop="description" content="Kafka Streams is a Java library for building real-time, highly scalable, fault tolerant, distributed applications. The library is fully integrated with Kafka and leverages Kafka producer and consumer semantics (e.g: partitioning, rebalancing, data retention and compaction).What is really unique, the only dependency to run Kafka Streams application is a running Kafka cluster.Even local state stores are backed by Kafka topics to make the processing fault tolerant - brilliant!">
+    <meta itemprop="datePublished" content="2017-11-02T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Kafka Streams DSL vs Processor API
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        <time datetime="2017-11-02T00:00:00+00:00">November 2, 2017</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#business-use-case">Business Use Case</a></li><li><a href="#data-model">Data Model</a></li><li><a href="#example-scenario">Example Scenario</a></li><li><a href="#kafka-stream-dsl">Kafka Stream DSL</a></li><li><a href="#under-the-hood">Under The Hood</a></li><li><a href="#kafka-processor-api">Kafka Processor API</a></li><li><a href="#summary">Summary</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p><a href="https://docs.confluent.io/current/streams/index.html">Kafka Streams</a> is a Java library 
+for building real-time, highly scalable, fault tolerant, distributed applications. 
+The library is fully integrated with <a href="https://kafka.apache.org/documentation/">Kafka</a> and leverages 
+Kafka producer and consumer semantics (e.g: partitioning, rebalancing, data retention and compaction).
+What is really unique, the only dependency to run Kafka Streams application is a running Kafka cluster.
+Even local state stores are backed by Kafka topics to make the processing fault tolerant - brilliant!</p>
+
+<p>Kafka Streams provides all necessary stream processing primitives like one-record-at-a-time processing, 
+event time processing, windowing support and local state management. 
+Application developer can choose from three different Kafka Streams APIs: DSL, Processor or KSQL.</p>
+
+<ul>
+  <li>
+    <p><a href="https://docs.confluent.io/current/streams/developer-guide.html#kafka-streams-dsl">Kafka Streams DSL</a> 
+(Domain Specific Language) - recommended way for most users 
+because business logic can be expressed in a few lines of code.
+All stateless and stateful transformations are defined using declarative, 
+functional programming style (filter, map, flatMap, reduce, aggregate operations).
+Kafka Stream DSL encapsulates most of the stream processing complexity
+but unfortunately it also hides many useful knobs and switches.</p>
+  </li>
+  <li>
+    <p><a href="https://docs.confluent.io/current/streams/developer-guide.html#processor-api">Kafka Processor API</a> 
+provides a low level, imperative way to define stream processing logic.
+At first sight Processor API could look hostile but finally gives much more flexibility to developer.
+With this blog post I would like to demonstrate that hand-crafted stream processors might be a magnitude more efficient
+than a naive implementation using Kafka DSL.</p>
+  </li>
+  <li>
+    <p><a href="https://www.confluent.io/product/ksql/">KSQL</a> 
+is a promise that stream processing could be expressed by anyone using SQL as the language.
+It offers an easy way to express stream processing transformations as an alternative to writing 
+an application in a programming language such as Java.
+Moreover, processing transformation written in SQL like language can be highly optimized
+by execution engine without any developer effort. 
+KSQL was released recently and it is still at very early development stage.</p>
+  </li>
+</ul>
+
+<p>In the first part of this blog post I’ll define simple but still realistic business problem to solve.
+Then you will learn how to implement this use case with Kafka Stream DSL 
+and how much the processing performance is affected by this naive solution.
+At this moment you could stop reading and scale-up Kafka cluster ten times to fulfill business requirements 
+or you could continue reading and learn how to optimize the processing with low level Kafka Processor API.</p>
+
+<h2 id="business-use-case">Business Use Case</h2>
+
+<p>Let’s imagine a web based e-commerce platform with fabulous recommendation and advertisement systems.
+Every client during visit gets personalized recommendations and advertisements,
+the conversion is extraordinarily high and platform earns additional profits from advertisers.
+To build comprehensive recommendation models, 
+such system needs to know everything about clients traits and their behaviour.</p>
+
+<p>To make it possible, e-commerce platform reports all clients activities as an unbounded stream 
+of page views and events.
+Every time the client enters web page, a so-called page view is sent to Kafka cluster. 
+A page view contains web page attributes like request URI, referrer URI, user agent, active A/B experiments
+and many more.
+In addition to page view all important actions are reported as custom events, e.g: search, add to cart or checkout.
+To get a complete view of the activity stream, collected events need to be enriched with data from page views.</p>
+
+<h2 id="data-model">Data Model</h2>
+
+<p>Because most of the processing logic is built within context of given client, 
+page views and events are evenly partitioned on Kafka topics by the client identifier.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="k">type</span> <span class="kt">ClientId</span> <span class="o">=</span> <span class="nc">String</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">ClientKey</span><span class="o">(</span><span class="n">clientId</span><span class="k">:</span> <span class="kt">ClientId</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">bob</span> <span class="k">=</span> <span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">jim</span> <span class="k">=</span> <span class="nc">ClientKey</span><span class="o">(</span><span class="s">"jim"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Page view and event structures are different so messages are published to separate Kafka topics
+using ingestion time as the event time. 
+Our system should not rely on page view or event creation time due to high client clocks variance.
+The topic key is always <code class="language-plaintext highlighter-rouge">ClientKey</code> and value is either <code class="language-plaintext highlighter-rouge">Pv</code> or <code class="language-plaintext highlighter-rouge">Ev</code> presented below.
+For better examples readability page view and event payload is defined as simplified single value field.
+Events are uniquely identified by <code class="language-plaintext highlighter-rouge">pvId</code> and <code class="language-plaintext highlighter-rouge">evId</code> pair, <code class="language-plaintext highlighter-rouge">pvId</code> could be a random identifier, <code class="language-plaintext highlighter-rouge">evId</code> 
+a sequence number.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="k">type</span> <span class="kt">PvId</span> <span class="o">=</span> <span class="nc">String</span>
+<span class="k">type</span> <span class="kt">EvId</span> <span class="o">=</span> <span class="nc">String</span>
+
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Pv</span><span class="o">(</span><span class="n">pvId</span><span class="k">:</span> <span class="kt">PvId</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Ev</span><span class="o">(</span><span class="n">evId</span><span class="k">:</span> <span class="kt">EvId</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">pvId</span><span class="k">:</span> <span class="kt">PvId</span><span class="o">)</span> 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Enriched results <code class="language-plaintext highlighter-rouge">EvPv</code> is published to output Kafka topic using <code class="language-plaintext highlighter-rouge">ClientKey</code> as message key.
+This topic is then consumed directly by advertisement and recommendation systems.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="k">case</span> <span class="k">class</span> <span class="nc">EvPv</span><span class="o">(</span><span class="n">evId</span><span class="k">:</span> <span class="kt">EvId</span><span class="o">,</span> <span class="n">evValue</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">pvId</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">PvId</span><span class="o">],</span> <span class="n">pvValue</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="example-scenario">Example Scenario</h2>
+
+<p>For client “bob” the following page views and events are collected by the system.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+</pre></td><td class="rouge-code"><pre><span class="c1">// Bob enters main page</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Pv</span><span class="o">(</span><span class="s">"pv0"</span><span class="o">,</span> <span class="s">"/"</span><span class="o">)</span>
+
+<span class="c1">// A few impression events collected almost immediately</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Ev</span><span class="o">(</span><span class="s">"ev0"</span><span class="o">,</span> <span class="s">"show header"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">)</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Ev</span><span class="o">(</span><span class="s">"ev1"</span><span class="o">,</span> <span class="s">"show ads"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">)</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Ev</span><span class="o">(</span><span class="s">"ev2"</span><span class="o">,</span> <span class="s">"show recommendation"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">)</span>
+
+<span class="c1">// There is also single duplicated event, welcome to distributed world</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Pv</span><span class="o">(</span><span class="s">"ev1"</span><span class="o">,</span> <span class="s">"show ads"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">)</span>
+
+<span class="c1">// A dozen seconds later Bob clicks on one of the offers presented on the main page</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Pv</span><span class="o">(</span><span class="s">"ev3"</span><span class="o">,</span> <span class="s">"click recommendation"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">)</span>
+
+<span class="c1">// Out of order event collected before page view on the offer page </span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Ev</span><span class="o">(</span><span class="s">"ev0"</span><span class="o">,</span> <span class="s">"show header"</span><span class="o">,</span> <span class="s">"pv1"</span><span class="o">)</span>
+
+<span class="c1">// Offer page view</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Pv</span><span class="o">(</span><span class="s">"pv1"</span><span class="o">,</span> <span class="s">"/offer?id=1234"</span><span class="o">)</span>
+
+<span class="c1">// An impression event published almost immediately after page view</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Ev</span><span class="o">(</span><span class="s">"ev1"</span><span class="o">,</span> <span class="s">"show ads"</span><span class="o">,</span> <span class="s">"pv1"</span><span class="o">)</span>
+
+<span class="c1">// Late purchase event, Bob took short coffee break before the final decision</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">Ev</span><span class="o">(</span><span class="s">"ev2"</span><span class="o">,</span> <span class="s">"add to cart"</span><span class="o">,</span> <span class="s">"pv1"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>For above clickstream the following enriched events output stream is expected.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre><span class="c1">// Events from main page without duplicates</span>
+
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">EvPv</span><span class="o">(</span><span class="s">"ev0"</span><span class="o">,</span> <span class="s">"show header"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">,</span> <span class="s">"/"</span><span class="o">)</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">EvPv</span><span class="o">(</span><span class="s">"ev1"</span><span class="o">,</span> <span class="s">"show ads"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">,</span> <span class="s">"/"</span><span class="o">)</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">EvPv</span><span class="o">(</span><span class="s">"ev2"</span><span class="o">,</span> <span class="s">"show recommendation"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">,</span> <span class="s">"/"</span><span class="o">)</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">EvPv</span><span class="o">(</span><span class="s">"ev3"</span><span class="o">,</span> <span class="s">"click recommendation"</span><span class="o">,</span> <span class="s">"pv0"</span><span class="o">,</span> <span class="s">"/"</span><span class="o">)</span>
+
+<span class="c1">// Events from offer page, somehow incomplete due to streaming semantics limitations</span>
+
+<span class="c1">// early event</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">EvPv</span><span class="o">(</span><span class="s">"ev0"</span><span class="o">,</span> <span class="s">"show header"</span><span class="o">,</span> <span class="nc">None</span><span class="o">,</span> <span class="nc">None</span><span class="o">)</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">EvPv</span><span class="o">(</span><span class="s">"ev1"</span><span class="o">,</span> <span class="s">"show ads"</span><span class="o">,</span> <span class="s">"pv1"</span><span class="o">,</span> <span class="s">"/offer?id=1234"</span><span class="o">)</span>
+
+<span class="c1">// late event</span>
+<span class="nc">ClientKey</span><span class="o">(</span><span class="s">"bob"</span><span class="o">),</span> <span class="nc">EvPv</span><span class="o">(</span><span class="s">"ev2"</span><span class="o">,</span> <span class="s">"add to cart"</span><span class="o">,</span> <span class="nc">None</span><span class="o">,</span> <span class="nc">None</span><span class="o">)</span> 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="kafka-stream-dsl">Kafka Stream DSL</h2>
+
+<p>Now we are ready to implement above use case with recommended Kafka Streams DSL. 
+The code could be optimized but I would like to present the canonical way of using DSL
+without exploring DSL internals.
+All examples are implemented using the latest Kafka Streams 1.0.0 version.</p>
+
+<p>Create two input streams for page views and events 
+connected to “clickstream.events” and “clickstream.page_views” Kafka topics.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">builder</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StreamsBuilder</span><span class="o">()</span>
+
+<span class="k">val</span> <span class="nv">evStream</span> <span class="k">=</span> <span class="nv">builder</span><span class="o">.</span><span class="py">stream</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Ev</span><span class="o">](</span><span class="s">"clickstream.events"</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">pvStream</span> <span class="k">=</span> <span class="nv">builder</span><span class="o">.</span><span class="py">stream</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Pv</span><span class="o">](</span><span class="s">"clickstream.page_views"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Repartition topics by client and page view identifiers <code class="language-plaintext highlighter-rouge">PvKey</code> 
+as a prerequisite to join events with page view.
+Method <code class="language-plaintext highlighter-rouge">selectKey</code> sets a new key for every input record,
+and marks derived stream for repartitioning.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="k">case</span> <span class="k">class</span> <span class="nc">PvKey</span><span class="o">(</span><span class="n">clientId</span><span class="k">:</span> <span class="kt">ClientId</span><span class="o">,</span> <span class="n">pvId</span><span class="k">:</span> <span class="kt">PvId</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">evToPvKeyMapper</span><span class="k">:</span> <span class="kt">KeyValueMapper</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Ev</span>, <span class="kt">PvKey</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">(</span><span class="n">clientKey</span><span class="o">,</span> <span class="n">ev</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">PvKey</span><span class="o">(</span><span class="nv">clientKey</span><span class="o">.</span><span class="py">clientId</span><span class="o">,</span> <span class="nv">ev</span><span class="o">.</span><span class="py">pvId</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">evByPvKeyStream</span> <span class="k">=</span> <span class="nv">evStream</span><span class="o">.</span><span class="py">selectKey</span><span class="o">(</span><span class="n">evToPvKeyMapper</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">pvToPvKeyMapper</span><span class="k">:</span> <span class="kt">KeyValueMapper</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Pv</span>, <span class="kt">PvKey</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">(</span><span class="n">clientKey</span><span class="o">,</span> <span class="n">pv</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">PvKey</span><span class="o">(</span><span class="nv">clientKey</span><span class="o">.</span><span class="py">clientId</span><span class="o">,</span> <span class="nv">pv</span><span class="o">.</span><span class="py">pvId</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">pvByPvKeyStream</span> <span class="k">=</span> <span class="nv">pvStream</span><span class="o">.</span><span class="py">selectKey</span><span class="o">(</span><span class="n">pvToPvKeyMapper</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Join event with page view streams by selected previously <code class="language-plaintext highlighter-rouge">PvKey</code>, 
+left join is used because we are interested also in events without matched page view.
+Every incoming event is enriched by matched page view into <code class="language-plaintext highlighter-rouge">EvPv</code> structure.</p>
+
+<p>The join window duration is set to reasonable 10 minutes.
+It means, that Kafka Streams will look for messages in “event” and “page view” sides of the join 
+10 minutes in the past and 10 minutes in the future (using event time, not wall-clock time).
+Because we are not interested in late events out of defined window, 
+the retention is 2 times longer than window, to hold events from the past and the future.
+If you are interested why 1 milliseconds needs to be added to the retention, 
+please ask Kafka Streams authors not me ;)</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">evPvJoiner</span><span class="k">:</span> <span class="kt">ValueJoiner</span><span class="o">[</span><span class="kt">Ev</span>, <span class="kt">Pv</span>, <span class="kt">EvPv</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span> <span class="o">(</span><span class="n">ev</span><span class="o">,</span> <span class="n">pv</span><span class="o">)</span> <span class="k">=&gt;</span>
+  <span class="nf">if</span> <span class="o">(</span><span class="n">pv</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">EvPv</span><span class="o">(</span><span class="nv">ev</span><span class="o">.</span><span class="py">evId</span><span class="o">,</span> <span class="nv">ev</span><span class="o">.</span><span class="py">value</span><span class="o">,</span> <span class="nc">None</span><span class="o">,</span> <span class="nc">None</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="nc">EvPv</span><span class="o">(</span><span class="nv">ev</span><span class="o">.</span><span class="py">evId</span><span class="o">,</span> <span class="nv">ev</span><span class="o">.</span><span class="py">value</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">pv</span><span class="o">.</span><span class="py">pvId</span><span class="o">),</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">pv</span><span class="o">.</span><span class="py">value</span><span class="o">))</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="nv">joinWindowDuration</span> <span class="k">=</span> <span class="mi">10</span> <span class="n">minutes</span>
+
+<span class="k">val</span> <span class="nv">joinRetention</span> <span class="k">=</span> <span class="nv">joinWindowDuration</span><span class="o">.</span><span class="py">toMillis</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">val</span> <span class="nv">joinWindow</span> <span class="k">=</span> <span class="nv">JoinWindows</span><span class="o">.</span><span class="py">of</span><span class="o">(</span><span class="nv">joinWindowDuration</span><span class="o">.</span><span class="py">toMillis</span><span class="o">).</span><span class="py">until</span><span class="o">(</span><span class="n">joinRetention</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">evPvStream</span> <span class="k">=</span> <span class="nv">evByPvKeyStream</span><span class="o">.</span><span class="py">leftJoin</span><span class="o">(</span><span class="n">pvByPvKeyStream</span><span class="o">,</span> <span class="n">evPvJoiner</span><span class="o">,</span> <span class="n">joinWindow</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Now it’s time to fight with duplicated enriched events. 
+Duplicates come from unreliable nature of the network between client browser and our system.
+Most real-time processing pipelines in advertising and recommendation systems are counting events,
+so duplicates in the enriched clickstream could cause inaccuracies.</p>
+
+<p>The most straightforward deduplication method is to compare incoming event with state of previously processed events.
+If the event has been already processed it should be skipped.</p>
+
+<p>Unfortunately DSL does not provide “deduplicate” method out-of-the-box but similar logic might be implemented with 
+“reduce” operation.</p>
+
+<p>First we need to define deduplication window.
+Deduplication window can be much shorter than join window, 
+we do not expect duplicates more than 10 seconds between each other.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">deduplicationWindowDuration</span> <span class="k">=</span> <span class="mi">10</span> <span class="n">seconds</span>
+
+<span class="k">val</span> <span class="nv">deduplicationRetention</span> <span class="k">=</span> <span class="nv">deduplicationWindowDuration</span><span class="o">.</span><span class="py">toMillis</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">val</span> <span class="nv">deduplicationWindow</span> <span class="k">=</span> <span class="nv">TimeWindows</span><span class="o">.</span><span class="py">of</span><span class="o">(</span><span class="nv">deduplicationWindowDuration</span><span class="o">.</span><span class="py">toMillis</span><span class="o">).</span><span class="py">until</span><span class="o">(</span><span class="n">deduplicationRetention</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Joined stream needs to be repartitioned again by compound key <code class="language-plaintext highlighter-rouge">EvPvKey</code> composed of 
+client, page view and event identifiers.
+This key will be used to decide if <code class="language-plaintext highlighter-rouge">EvPv</code> is a duplicate or not.
+Next, the stream is grouped by selected key into KGroupedStream and
+deduplicated with reduce function, where first observed event wins.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre><span class="k">case</span> <span class="k">class</span> <span class="nc">EvPvKey</span><span class="o">(</span><span class="n">clientId</span><span class="k">:</span> <span class="kt">ClientId</span><span class="o">,</span> <span class="n">pvId</span><span class="k">:</span> <span class="kt">PvId</span><span class="o">,</span> <span class="n">evId</span><span class="k">:</span> <span class="kt">EvId</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">evPvToEvPvKeyMapper</span><span class="k">:</span> <span class="kt">KeyValueMapper</span><span class="o">[</span><span class="kt">PvKey</span>, <span class="kt">EvPv</span>, <span class="kt">EvPvKey</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">(</span><span class="n">pvKey</span><span class="o">,</span> <span class="n">evPv</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">EvPvKey</span><span class="o">(</span><span class="nv">pvKey</span><span class="o">.</span><span class="py">clientId</span><span class="o">,</span> <span class="nv">pvKey</span><span class="o">.</span><span class="py">pvId</span><span class="o">,</span> <span class="nv">evPv</span><span class="o">.</span><span class="py">evId</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">evPvByEvPvKeyStream</span> <span class="k">=</span> <span class="nv">evPvStream</span><span class="o">.</span><span class="py">selectKey</span><span class="o">(</span><span class="n">evPvToEvPvKeyMapper</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">evPvDeduplicator</span><span class="k">:</span> <span class="kt">Reducer</span><span class="o">[</span><span class="kt">EvPv</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">(</span><span class="n">evPv1</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">evPv1</span>
+
+
+<span class="k">val</span> <span class="nv">deduplicatedStream</span> <span class="k">=</span> <span class="n">evPvByEvPvKeyStream</span>
+  <span class="o">.</span><span class="py">groupByKey</span><span class="o">()</span>
+  <span class="o">.</span><span class="py">reduce</span><span class="o">(</span><span class="n">evPvDeduplicator</span><span class="o">,</span> <span class="n">deduplicationWindow</span><span class="o">,</span> <span class="s">"evpv-store"</span><span class="o">)</span>
+  <span class="o">.</span><span class="py">toStream</span><span class="o">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>This deduplication implementation is debatable, due to “continue stream” semantics of KTable/KStream.
+Reduce operation creates KTable, and this KTable is transformed again into KStream of continuous updates of the same key.
+It could lead to duplicates again if the update frequency is higher than inverse of deduplication window period.
+For 10 seconds deduplication window the updates should not be emitted more often than every 10 seconds but
+lower updates frequency leads to higher latency.
+The updates frequency is controlled globally using “cache.max.bytes.buffering” and “commit.interval.ms” 
+Kafka Streams properties. 
+See reference documentation for details:
+<a href="https://docs.confluent.io/current/streams/developer-guide.html#streams-developer-guide-memory-management">Record caches in the DSL</a>.</p>
+
+<p>I did not find another way to deduplicate events with DSL, please let me know if better implementation exists.</p>
+
+<p>In the last stage the stream needs to be repartitioned again by client id 
+and published to “clickstream.events_enriched” Kafka topic for downstream subscribers.
+In the same step mapper gets rid of the windowed key produced by windowed reduce function.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">evPvToClientKeyMapper</span><span class="k">:</span> <span class="kt">KeyValueMapper</span><span class="o">[</span><span class="kt">Windowed</span><span class="o">[</span><span class="kt">EvPvKey</span><span class="o">]</span>, <span class="kt">EvPv</span>, <span class="kt">ClientId</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">(</span><span class="n">windowedEvPvKey</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nv">windowedEvPvKey</span><span class="o">.</span><span class="py">key</span><span class="o">.</span><span class="py">clientId</span>
+
+<span class="k">val</span> <span class="nv">finalStream</span> <span class="k">=</span> <span class="nv">deduplicatedStream</span><span class="o">.</span><span class="py">selectKey</span><span class="o">(</span><span class="n">evPvToClientKeyMapper</span><span class="o">)</span>
+
+<span class="nv">finalStream</span><span class="o">.</span><span class="py">to</span><span class="o">(</span><span class="s">"clickstream.events_enriched"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="under-the-hood">Under The Hood</h2>
+
+<p>Kafka Stream DSL is quite descriptive, isn’t it? 
+Especially developers with strong functional programming skills appreciate the overall design.
+But you will shortly see how much unexpected traffic to Kafka cluster is generated during runtime.</p>
+
+<p>I like numbers so let’s estimate the traffic, 
+based on real clickstream ingestion platform I develop on daily basis:</p>
+
+<ul>
+  <li>1 kB - average page view size</li>
+  <li>600 B - average event size</li>
+  <li>4k - page views / second</li>
+  <li>20k - events / second</li>
+</ul>
+
+<p>It gives 24k msgs/s and 16MB/s traffic-in total, the traffic easily handled even by small Kafka cluster.</p>
+
+<p>When stream of data is repartitioned Kafka Streams creates additional intermediate topic
+and publishes on the topic whole traffic partitioned by selected key. 
+To be more precise it happens twice in our case, for repartitioned page views and events before join.
+We need to add 24k msgs/s and 16MB/s more traffic-in to the calculation.</p>
+
+<p>When streams of data are joined using window, Kafka Streams sends both sides of the join
+to two intermediate topics again. Even if you don’t need fault tolerance,
+logging into Kafka cannot be disabled using DSL.
+You cannot also get rid of window for “this” side of the join (window for events), more about it later on. 
+Add 24k msgs/s and 16MB/s more traffic-in to the calculation again.</p>
+
+<p>To deduplicate events, joined stream goes again into Kafka Streams intermediate topic.
+Add 20k msgs/s and (1kB + 1.6kB) * 20k = 52MB/s more traffic-in to the calculation again.</p>
+
+<p>The last repartitioning by client identifier adds 20k msgs/s and 52MB/s more traffic-in.</p>
+
+<p>Finally, instead of <strong>24k</strong> msgs/s and <strong>16MB/s</strong> traffic-in we have got
+<strong>112k</strong> msgs/s and <strong>152MB</strong> traffic-in.
+And I did not even count traffic from internal topics replication and standby replicas 
+<a href="https://docs.confluent.io/current/streams/developer-guide.html#recommended-configuration-parameters-for-resiliency">recommended for resiliency</a>.</p>
+
+<p>Be aware that this is calculation for simple join of events and pages views generated by 
+local e-commerce platform in central Europe country (~20M clients). 
+I could also easily imagine much more complex stream topology, with tens of repartitions, joins and aggregations.</p>
+
+<p>If you are not careful, your Kafka Streams application could easily kill your Kafka cluster.
+At least our application did it once. Application deployed on 10 <a href="http://mesos.apache.org/">Mesos</a> 
+nodes (4CPU, 4GB RAM) almost killed Kafka cluster deployed also on 10 physical machines (32CPU, 64GB RAM, SSD).
+Application was started after some time of inactivity and processed 3 hours of retention in 5 minutes
+(yep, it’s a well known vulnerability until 
+<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-13+-+Quotas">KIP-13</a> is open).</p>
+
+<h2 id="kafka-processor-api">Kafka Processor API</h2>
+
+<p>Now it’s time to check Processor API and figure out how to optimize our stream topology.</p>
+
+<p>Create the sources from input topics “clickstream.events” and “clickstream.page_views”.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="k">new</span> <span class="nc">Topology</span><span class="o">()</span>
+  <span class="o">.</span><span class="py">addSource</span><span class="o">(</span><span class="s">"ev-source"</span><span class="o">,</span> <span class="s">"clickstream.events"</span><span class="o">)</span>
+  <span class="o">.</span><span class="py">addSource</span><span class="o">(</span><span class="s">"pv-source"</span><span class="o">,</span> <span class="s">"clickstream.page_views"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Because we need to join an incoming event with the collected page view in the past,
+create processor which stores page view in windowed store. 
+The processor puts observed page views into window store for joining in the next processor.
+The processed page views do not even need to be forwarded to downstream.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">PvWindowProcessor</span><span class="o">(</span><span class="k">val</span> <span class="nv">pvStoreName</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">AbstractProcessor</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Pv</span><span class="o">]</span> <span class="o">{</span>
+
+  <span class="k">private</span> <span class="k">lazy</span> <span class="k">val</span> <span class="nv">pvStore</span> <span class="k">=</span>
+    <span class="nf">context</span><span class="o">().</span><span class="py">getStateStore</span><span class="o">(</span><span class="n">pvStoreName</span><span class="o">).</span><span class="py">asInstanceOf</span><span class="o">[</span><span class="kt">WindowStore</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Pv</span><span class="o">]]</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="nf">process</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">ClientKey</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">Pv</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+    <span class="nv">pvStore</span><span class="o">.</span><span class="py">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Store for page views is configured with the same size of window and retention.
+This store is configured to keep duplicates due to the fact 
+that the key is a client id not page view id (retainDuplicates parameter).
+Because join window is typically quite long (minutes) the store should be fault tolerant (logging enabled).
+Even if one of the stream instances fails, 
+another one will continue processing with persistent window state built by failed node, cool!
+Finally, the internal kafka topic can be easily configured using loggingConfig map 
+(replication factor, number of partitions, etc.).</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">pvStoreWindowDuration</span> <span class="k">=</span> <span class="mi">10</span> <span class="n">minutes</span>
+ 
+<span class="k">val</span> <span class="nv">retention</span> <span class="k">=</span> <span class="nv">pvStoreWindowDuration</span><span class="o">.</span><span class="py">toMillis</span>
+<span class="k">val</span> <span class="nv">window</span> <span class="k">=</span> <span class="nv">pvStoreWindowDuration</span><span class="o">.</span><span class="py">toMillis</span>
+<span class="k">val</span> <span class="nv">segments</span> <span class="k">=</span> <span class="mi">3</span>
+<span class="k">val</span> <span class="nv">retainDuplicates</span> <span class="k">=</span> <span class="kc">true</span>
+
+<span class="k">val</span> <span class="nv">loggingConfig</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">]()</span>
+
+<span class="k">val</span> <span class="nv">pvWindowStore</span> <span class="k">=</span> <span class="nv">Stores</span><span class="o">.</span><span class="py">windowStoreBuilder</span><span class="o">(</span>
+  <span class="nv">Stores</span><span class="o">.</span><span class="py">persistentWindowStore</span><span class="o">(</span><span class="s">"pv-window-store"</span><span class="o">,</span> <span class="n">retention</span><span class="o">,</span> <span class="n">segments</span><span class="o">,</span> <span class="n">window</span><span class="o">,</span> <span class="n">retainDuplicates</span><span class="o">),</span>
+  <span class="nc">ClientKeySerde</span><span class="o">,</span>
+  <span class="nc">PvSerde</span>
+<span class="o">).</span><span class="py">withLoggingEnabled</span><span class="o">(</span><span class="n">loggingConfig</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>The first optimization you could observe is that in our scenario only one window store is created - for page views.
+The window store for events is not needed, if page view is collected by system after event it does not trigger new join.</p>
+
+<p>Add page view processor to the topology and connect with page view source upstream.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">pvWindowProcessor</span><span class="k">:</span> <span class="kt">ProcessorSupplier</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Pv</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">()</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">PvWindowProcessor</span><span class="o">(</span><span class="s">"pv-window-store"</span><span class="o">)</span>
+  
+<span class="k">new</span> <span class="nc">Topology</span><span class="o">()</span>
+  <span class="o">(...)</span>
+  <span class="o">.</span><span class="py">addProcessor</span><span class="o">(</span><span class="s">"pv-window-processor"</span><span class="o">,</span> <span class="n">pvWindowProcessor</span><span class="o">,</span> <span class="s">"pv-source"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Now, it’s time for event and page view join processor, heart of the topology.
+It seems to be complex but this processor also deduplicates joined stream using <code class="language-plaintext highlighter-rouge">evPvStore</code>.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">EvJoinProcessor</span><span class="o">(</span>
+  <span class="k">val</span> <span class="nv">pvStoreName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+  <span class="k">val</span> <span class="nv">evPvStoreName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span>
+  <span class="k">val</span> <span class="nv">joinWindow</span><span class="k">:</span> <span class="kt">FiniteDuration</span><span class="o">,</span>
+  <span class="k">val</span> <span class="nv">deduplicationWindow</span><span class="k">:</span> <span class="kt">FiniteDuration</span>
+<span class="o">)</span> <span class="k">extends</span> <span class="nc">AbstractProcessor</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Ev</span><span class="o">]</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">scala.collection.JavaConverters._</span>
+
+  <span class="k">private</span> <span class="k">lazy</span> <span class="k">val</span> <span class="nv">pvStore</span> <span class="k">=</span>
+    <span class="nf">context</span><span class="o">().</span><span class="py">getStateStore</span><span class="o">(</span><span class="n">pvStoreName</span><span class="o">).</span><span class="py">asInstanceOf</span><span class="o">[</span><span class="kt">WindowStore</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Pv</span><span class="o">]]</span>
+
+  <span class="k">private</span> <span class="k">lazy</span> <span class="k">val</span> <span class="nv">evPvStore</span> <span class="k">=</span>
+    <span class="nf">context</span><span class="o">().</span><span class="py">getStateStore</span><span class="o">(</span><span class="n">evPvStoreName</span><span class="o">).</span><span class="py">asInstanceOf</span><span class="o">[</span><span class="kt">WindowStore</span><span class="o">[</span><span class="kt">EvPvKey</span>, <span class="kt">EvPv</span><span class="o">]]</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="nf">process</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">ClientKey</span><span class="o">,</span> <span class="n">ev</span><span class="k">:</span> <span class="kt">Ev</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">timestamp</span> <span class="k">=</span> <span class="nf">context</span><span class="o">().</span><span class="py">timestamp</span><span class="o">()</span>
+    <span class="k">val</span> <span class="nv">evPvKey</span> <span class="k">=</span> <span class="nc">EvPvKey</span><span class="o">(</span><span class="nv">key</span><span class="o">.</span><span class="py">clientId</span><span class="o">,</span> <span class="nv">ev</span><span class="o">.</span><span class="py">pvId</span><span class="o">,</span> <span class="nv">ev</span><span class="o">.</span><span class="py">evId</span><span class="o">)</span>
+
+    <span class="nf">if</span> <span class="o">(</span><span class="nf">isNotDuplicate</span><span class="o">(</span><span class="n">evPvKey</span><span class="o">,</span> <span class="n">timestamp</span><span class="o">,</span> <span class="n">deduplicationWindow</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">val</span> <span class="nv">evPv</span> <span class="k">=</span> <span class="nf">storedPvs</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">timestamp</span><span class="o">,</span> <span class="n">joinWindow</span><span class="o">)</span>
+        <span class="o">.</span><span class="py">find</span> <span class="o">{</span> <span class="n">pv</span> <span class="k">=&gt;</span>
+          <span class="nv">pv</span><span class="o">.</span><span class="py">pvId</span> <span class="o">==</span> <span class="nv">ev</span><span class="o">.</span><span class="py">pvId</span>
+        <span class="o">}</span>
+        <span class="o">.</span><span class="py">map</span> <span class="o">{</span> <span class="n">pv</span> <span class="k">=&gt;</span>
+          <span class="nc">EvPv</span><span class="o">(</span><span class="nv">ev</span><span class="o">.</span><span class="py">evId</span><span class="o">,</span> <span class="nv">ev</span><span class="o">.</span><span class="py">value</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">pv</span><span class="o">.</span><span class="py">pvId</span><span class="o">),</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">pv</span><span class="o">.</span><span class="py">value</span><span class="o">))</span>
+        <span class="o">}</span>
+        <span class="o">.</span><span class="py">getOrElse</span> <span class="o">{</span>
+          <span class="nc">EvPv</span><span class="o">(</span><span class="nv">ev</span><span class="o">.</span><span class="py">evId</span><span class="o">,</span> <span class="nv">ev</span><span class="o">.</span><span class="py">value</span><span class="o">,</span> <span class="nc">None</span><span class="o">,</span> <span class="nc">None</span><span class="o">)</span>
+        <span class="o">}</span>
+
+      <span class="nf">context</span><span class="o">().</span><span class="py">forward</span><span class="o">(</span><span class="n">evPvKey</span><span class="o">,</span> <span class="n">evPv</span><span class="o">)</span>
+      <span class="nv">evPvStore</span><span class="o">.</span><span class="py">put</span><span class="o">(</span><span class="n">evPvKey</span><span class="o">,</span> <span class="n">evPv</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="k">private</span> <span class="k">def</span> <span class="nf">isNotDuplicate</span><span class="o">(</span><span class="n">evPvKey</span><span class="k">:</span> <span class="kt">EvPvKey</span><span class="o">,</span> <span class="n">timestamp</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">deduplicationWindow</span><span class="k">:</span> <span class="kt">FiniteDuration</span><span class="o">)</span> <span class="k">=</span>
+    <span class="nv">evPvStore</span><span class="o">.</span><span class="py">fetch</span><span class="o">(</span><span class="n">evPvKey</span><span class="o">,</span> <span class="n">timestamp</span> <span class="o">-</span> <span class="nv">deduplicationWindow</span><span class="o">.</span><span class="py">toMillis</span><span class="o">,</span> <span class="n">timestamp</span><span class="o">).</span><span class="py">asScala</span><span class="o">.</span><span class="py">isEmpty</span>
+
+  <span class="k">private</span> <span class="k">def</span> <span class="nf">storedPvs</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">ClientKey</span><span class="o">,</span> <span class="n">timestamp</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">joinWindow</span><span class="k">:</span> <span class="kt">FiniteDuration</span><span class="o">)</span> <span class="k">=</span>
+    <span class="nv">pvStore</span><span class="o">.</span><span class="py">fetch</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">timestamp</span> <span class="o">-</span> <span class="nv">joinWindow</span><span class="o">.</span><span class="py">toMillis</span><span class="o">,</span> <span class="n">timestamp</span><span class="o">).</span><span class="py">asScala</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">value</span><span class="o">)</span>
+  <span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>First processor performs a lookup for previously joined <code class="language-plaintext highlighter-rouge">PvEv</code> by <code class="language-plaintext highlighter-rouge">PvEvKey</code>.
+If <code class="language-plaintext highlighter-rouge">PvEv</code> is found the processing is skipped because <code class="language-plaintext highlighter-rouge">EvPv</code> has been already processed.</p>
+
+<p>Next, try to match page view to event using simple filter <code class="language-plaintext highlighter-rouge">pv.pvId == ev.pvId</code>.
+We don’t need any repartitioning to do that, only get all page views from given client 
+and join with event in the processor itself. 
+It should be very efficient because every client generates up do hundred page views in 10 minutes.
+If there is no matched page view in the configured window, 
+<code class="language-plaintext highlighter-rouge">EvPv</code> without page view details is forwarded to the downstream.</p>
+
+<p>Perceptive reader noticed that processor also changes the key from <code class="language-plaintext highlighter-rouge">ClientId</code> to <code class="language-plaintext highlighter-rouge">EvPvKey</code>
+for deduplication purposes. 
+Everything is still within given client context without the need for any repartitioning.
+This is possible due to the fact, that new key is more detailed than the original one.</p>
+
+<p>As before, windowed store for deduplication needs to be configured.
+Because deduplication is done in a very short window (10 seconds or so),
+the logging to backed internal Kafka topic is disabled at all.
+If one of the stream instance fails, we could get some duplicates during this short window, not a big deal.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">evPvStoreWindowDuration</span> <span class="k">=</span> <span class="mi">10</span> <span class="n">seconds</span>
+
+<span class="k">val</span> <span class="nv">retention</span> <span class="k">=</span> <span class="nv">evPvStoreWindowDuration</span><span class="o">.</span><span class="py">toMillis</span>
+<span class="k">val</span> <span class="nv">window</span> <span class="k">=</span> <span class="nv">evPvStoreWindowDuration</span><span class="o">.</span><span class="py">toMillis</span>
+<span class="k">val</span> <span class="nv">segments</span> <span class="k">=</span> <span class="mi">3</span>
+<span class="k">val</span> <span class="nv">retainDuplicates</span> <span class="k">=</span> <span class="kc">false</span>
+
+<span class="k">val</span> <span class="nv">evPvStore</span> <span class="k">=</span> <span class="nv">Stores</span><span class="o">.</span><span class="py">windowStoreBuilder</span><span class="o">(</span>
+  <span class="nv">Stores</span><span class="o">.</span><span class="py">persistentWindowStore</span><span class="o">(</span><span class="s">"ev-pv-window-store"</span><span class="o">,</span> <span class="n">retention</span><span class="o">,</span> <span class="n">segments</span><span class="o">,</span> <span class="n">window</span><span class="o">,</span> <span class="n">retainDuplicates</span><span class="o">),</span>
+  <span class="nc">EvPvKeySerde</span><span class="o">,</span>
+  <span class="nc">EvPvSerde</span>
+<span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Add join processor to the topology and connect with event source upstream.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">evJoinProcessor</span><span class="k">:</span> <span class="kt">ProcessorSupplier</span><span class="o">[</span><span class="kt">ClientKey</span>, <span class="kt">Ev</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">()</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">EvJoinProcessor</span><span class="o">(</span><span class="s">"pv-window-store"</span><span class="o">,</span> <span class="s">"ev-pv-window-store"</span><span class="o">,</span> <span class="n">pvStoreWindowDuration</span><span class="o">,</span> <span class="n">evPvStoreWindowDuration</span><span class="o">)</span>
+
+<span class="k">new</span> <span class="nc">Topology</span><span class="o">()</span>
+  <span class="o">(...)</span>
+  <span class="o">.</span><span class="py">addProcessor</span><span class="o">(</span><span class="s">"ev-join-processor"</span><span class="o">,</span> <span class="n">evJoinProcessor</span><span class="o">,</span> <span class="s">"ev-source"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>The last processor maps compound key <code class="language-plaintext highlighter-rouge">EvPvKey</code> again into <code class="language-plaintext highlighter-rouge">ClientId</code>. 
+Because client identifier is already a part of the compound key, 
+mapping is done by the processor without the need for further repartitioning.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">EvPvMapProcessor</span> <span class="k">extends</span> <span class="nc">AbstractProcessor</span><span class="o">[</span><span class="kt">EvPvKey</span>, <span class="kt">EvPv</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">override</span> <span class="k">def</span> <span class="nf">process</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">EvPvKey</span><span class="o">,</span> <span class="n">value</span><span class="k">:</span> <span class="kt">EvPv</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+    <span class="nf">context</span><span class="o">().</span><span class="py">forward</span><span class="o">(</span><span class="nc">ClientKey</span><span class="o">(</span><span class="nv">key</span><span class="o">.</span><span class="py">clientId</span><span class="o">),</span> <span class="n">value</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Add the map processor to the topology.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">evPvMapProcessor</span><span class="k">:</span> <span class="kt">ProcessorSupplier</span><span class="o">[</span><span class="kt">EvPvKey</span>, <span class="kt">EvPv</span><span class="o">]</span> <span class="k">=</span>
+  <span class="o">()</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">EvPvMapProcessor</span><span class="o">()</span>
+
+<span class="k">new</span> <span class="nc">Topology</span><span class="o">()</span>
+  <span class="o">(...)</span>
+  <span class="o">.</span><span class="py">addProcessor</span><span class="o">(</span><span class="s">"ev-pv-map-processor"</span><span class="o">,</span> <span class="n">evPvMapProcessor</span><span class="o">,</span> <span class="s">"ev-pv-join-processor"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Finally publish join results to “clickstream.events_enriched” Kafka topic.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="k">new</span> <span class="nc">Topology</span><span class="o">()</span>
+  <span class="o">(...)</span>
+  <span class="o">.</span><span class="py">addSink</span><span class="o">(</span><span class="s">"ev-pv-sink"</span><span class="o">,</span> <span class="nc">EvPvTopic</span><span class="o">,</span> <span class="s">"clickstream.events_enriched"</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>If a processor requires access to the store this fact must be registered.
+It would be nice to have statically typed Topology API for registration, 
+but now if the store is not connected to the processor, 
+or is connected to the wrong store,
+runtime exception is thrown during application startup.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="k">new</span> <span class="nc">Topology</span><span class="o">()</span>
+  <span class="o">(...)</span>
+  <span class="o">.</span><span class="py">addStateStore</span><span class="o">(</span><span class="n">pvStore</span><span class="o">,</span> <span class="s">"pv-window-processor"</span><span class="o">,</span> <span class="s">"ev-join-processor"</span><span class="o">)</span>
+  <span class="o">.</span><span class="py">addStateStore</span><span class="o">(</span><span class="n">evPvStore</span><span class="o">,</span> <span class="s">"ev-join-processor"</span><span class="o">)</span> 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Let’s count Kafka Streams internal topics overhead for Processor API version.
+Wait, there is only one internal topic, for page view join window!
+It gives 4k messages per second and 4MB traffic-in overhead, not more.</p>
+
+<p><strong>28k</strong> instead of <strong>112k</strong> messages per second and <strong>20MB</strong> instead of <strong>152MB</strong> traffic-in in total. 
+It is a noticeable difference between Processor API and DSL topology versions, 
+especially if we keep in mind that enrichment results are almost identical to results from DSL version.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Dear readers, are you still with me after long lecture with not so easy to digest Scala code?
+I hope so :)</p>
+
+<p>My final thoughts about Kafka Streams:</p>
+
+<ul>
+  <li>Kafka DSL looks great at first, functional and declarative API sells the product, no doubts.</li>
+  <li>Unfortunately Kafka DSL hides a lot of internals which should be exposed via the API 
+(stores configuration, join semantics, repartitioning) - see 
+<a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-182%3A+Reduce+Streams+DSL+overloads+and+allow+easier+use+of+custom+storage+engines">KIP-182</a>.</li>
+  <li>Processor API seems to be more complex and less sexy than DSL.</li>
+  <li>But Processor API allows you to create hand-crafted, very efficient stream topologies.</li>
+  <li>I did not present any Kafka Streams test (what’s the shame - I’m sorry) 
+but I think testing would be easier with Processor API than DSL. 
+With DSL it has to be an integration test, processors can be easily unit tested in separation with a few mocks.</li>
+  <li>As Scala developer I prefer Processor API than DSL, 
+e.g. Scala compiler could not infer KStream generic types.</li>
+  <li>It’s a pleasure to work with processor and fluent Topology APIs.</li>
+  <li>I’m really keen on KSQL future, it would be great to get optimized engine like 
+<a href="https://databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html">Spark Catalyst</a> eventually.</li>
+  <li>Finally, Kafka Streams library is extraordinarily fast and hardware efficient, if you know what you are doing.</li>
+</ul>
+
+<p>As always working code is published on 
+<a href="https://github.com/mkuthan/example-kafkastreams">https://github.com/mkuthan/example-kafkastreams</a>.
+The project is configured with <a href="https://github.com/manub/scalatest-embedded-kafka">Embedded Kafka</a>
+and does not require any additional setup. 
+Just uncomment either DSL or Processor API version, run main class and observe enriched stream of events on the console.</p>
+
+<p>Enjoy!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/kafka" class="page__taxonomy-item" rel="tag">kafka</a><span class="sep">, </span>
+    
+      <a href="/categories/kafka-streams" class="page__taxonomy-item" rel="tag">kafka streams</a><span class="sep">, </span>
+    
+      <a href="/categories/scala" class="page__taxonomy-item" rel="tag">scala</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2017-11-02T00:00:00+00:00">November 2, 2017</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2016/11/18/apache-bigdata-europe/" class="pagination--pager" title="Apache BigData Europe Conference Summary
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Passionate Developer. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-50832428-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-50832428-2', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://mkuthan.github.io/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/blog/2017/11/02/kafka-streams-dsl-vs-processor-api"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkuthan.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

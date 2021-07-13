@@ -1,0 +1,738 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Spark application assembly for cluster deployments - Passionate Developer</title>
+<meta name="description" content="When I tried to deploy my first Spark application on a YARN cluster,  I realized that there was no clear and concise instruction how to prepare the application for deployment. This blog post could be treated as missing manual on how to build Spark application written in Scala to get deployable binary.">
+
+
+  <meta name="author" content="Marcin Kuthan">
+  
+  <meta property="article:author" content="Marcin Kuthan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Passionate Developer">
+<meta property="og:title" content="Spark application assembly for cluster deployments">
+<meta property="og:url" content="http://mkuthan.github.io/blog/2016/03/11/spark-application-assembly/">
+
+
+  <meta property="og:description" content="When I tried to deploy my first Spark application on a YARN cluster,  I realized that there was no clear and concise instruction how to prepare the application for deployment. This blog post could be treated as missing manual on how to build Spark application written in Scala to get deployable binary.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2016-03-11T00:00:00+00:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://mkuthan.github.io/blog/2016/03/11/spark-application-assembly/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://mkuthan.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Passionate Developer Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Passionate Developer
+          <span class="site-subtitle">Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</span>
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpg" alt="Marcin Kuthan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Marcin Kuthan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://github.com/mkuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/MarcinKuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Spark application assembly for cluster deployments">
+    <meta itemprop="description" content="When I tried to deploy my first Spark application on a YARN cluster, I realized that there was no clear and concise instruction how to prepare the application for deployment.This blog post could be treated as missing manual on how to build Spark application written in Scala to get deployable binary.">
+    <meta itemprop="datePublished" content="2016-03-11T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Spark application assembly for cluster deployments
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        <time datetime="2016-03-11T00:00:00+00:00">March 11, 2016</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#sbt-assembly-plugin">SBT Assembly Plugin</a></li><li><a href="#provided-dependencies-scope">Provided dependencies scope</a></li><li><a href="#sbt-run-and-run-main">SBT run and run-main</a></li><li><a href="#how-to-exclude-log4j-from-application-assembly">How to exclude Log4j from application assembly?</a></li><li><a href="#spark-streaming-kafka-dependency">Spark Streaming Kafka dependency</a></li><li><a href="#where-is-guava">Where is Guava?</a></li><li><a href="#deployment-optimization-for-yarn-cluster">Deployment optimization for YARN cluster</a></li><li><a href="#summary">Summary</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>When I tried to deploy my first Spark application on a YARN cluster, 
+I realized that there was no clear and concise instruction how to prepare the application for deployment.
+This blog post could be treated as missing manual on how to build Spark application written in Scala to get deployable binary.</p>
+
+<p>This blog post assumes that your Spark application is built with <a href="http://www.scala-sbt.org/">SBT</a>.
+As long as SBT is a mainstream tool for building Scala applications the assumption seems legit.
+Please ensure that your project is configured with at least SBT 0.13.6.
+Open <code class="language-plaintext highlighter-rouge">project/build.properties</code> file, verify the version and update SBT if needed:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>sbt.version=0.13.11
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="sbt-assembly-plugin">SBT Assembly Plugin</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">spark-submit</code> script is a convenient way to launch Spark application on the YARN or Mesos cluster.
+However, due to distributed nature of the cluster the application has to be prepared as single Java ARchive (JAR).
+This archive includes all classes from your project with all of its dependencies.
+This application assembly can be prepared using <a href="https://github.com/sbt/sbt-assembly">SBT Assembly Plugin</a>.</p>
+
+<p>To enable SBT Assembly Plugin, add the plugin dependency to the <code class="language-plaintext highlighter-rouge">project/plugins.sbt</code> file:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.1")
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>This basic setup can be verified by calling <code class="language-plaintext highlighter-rouge">sbt assembly</code> command. 
+The final assembly location depend on the Scala version, application name and application version.
+The build result could be assembled into <code class="language-plaintext highlighter-rouge">target/scala-2.11/myapp-assembly-1.0.jar</code> file.</p>
+
+<p>You can configure many aspects of SBT Assembly Plugin like custom merge strategy
+but I found that it is much easier to keep the defaults and follow the plugin conventions.
+And what is even more important you don’t have to change defaults to get correct, deployable application binary assembled by the plugin.</p>
+
+<h2 id="provided-dependencies-scope">Provided dependencies scope</h2>
+
+<p>As long as cluster provides Spark classes at runtime, Spark dependencies must be excluded from the assembled JAR.
+If not, you should expect weird errors from Java classloader during application startup. 
+Additional benefit of assembly without Spark dependencies is faster deployment.
+Please remember that application assembly must be copied over the network to the location accessible by all cluster nodes (e.g: HDFS or S3).</p>
+
+<p>Look at dependency section in your build file, it should look similar to the code snippet below:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre>val sparkVersion = "1.6.0"
+
+"org.apache.spark" %% "spark-core" % sparkVersion,
+"org.apache.spark" %% "spark-sql" % sparkVersion,
+"org.apache.spark" %% "spark-hive" % sparkVersion,
+"org.apache.spark" %% "spark-mlib" % sparkVersion,
+"org.apache.spark" %% "spark-graphx" % sparkVersion,
+"org.apache.spark" %% "spark-streaming" % sparkVersion,
+"org.apache.spark" %% "spark-streaming-kafka" % sparkVersion,
+(...)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>The list of the Spark dependencies is always project specific.
+SQL, Hive, MLib, GraphX and Streaming extensions are defined only for reference.
+All defined dependencies are required by local build to compile code and run
+<a href="http://mkuthan.github.io/blog/2015/03/01/spark-unit-testing/">tests</a>. 
+So they could not be removed from the build definition in the ordinary way because it will break the build at all.</p>
+
+<p>SBT Assembly Plugin comes with additional dependency scope “provided”. 
+The scope is very similar to <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">Maven provided scope</a>.
+The provided dependency will be part of compilation and test, but excluded from the application assembly.</p>
+
+<p>To configure provided scope for Spark dependencies change the definition as follows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre>val sparkVersion = "1.6.0"
+
+"org.apache.spark" %% "spark-core" % sparkVersion % "provided",
+"org.apache.spark" %% "spark-sql" % sparkVersion % "provided",
+"org.apache.spark" %% "spark-hive" % sparkVersion % "provided",
+"org.apache.spark" %% "spark-mlib" % sparkVersion % "provided",
+"org.apache.spark" %% "spark-graphx" % sparkVersion % "provided",
+"org.apache.spark" %% "spark-streaming" % sparkVersion % "provided",
+"org.apache.spark" %% "spark-streaming-kafka" % sparkVersion
+  exclude("log4j", "log4j")
+  exclude("org.spark-project.spark", "unused"),
+(...)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Careful readers should notice that “spark-streaming-kafka” dependency has not been listed and marked as “provided”.
+It was done by purpose because integration with Kafka is not part of Spark distribution assembly
+and has to be assembled into application JAR.
+The exclusion rules for “spark-streaming-kafka” dependency will be discussed later.</p>
+
+<p>Ok, but how to recognize which libraries are part of Spark distribution assembly?
+There is no simple answer to this question.
+Look for <code class="language-plaintext highlighter-rouge">spark-assembly-*-1.6.0.jar</code> file on the cluster classpath,
+list the assembly content and verify what is included and what is not.
+In the assembly on my cluster I found core, sql, hive, mlib, graphx and streaming classes are embedded but not integration with Kafka.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre>$ tar -tzf spark-assembly-1.6.0.jar
+META-INF/
+META-INF/MANIFEST.MF
+org/
+org/apache/
+org/apache/spark/
+org/apache/spark/HeartbeatReceiver
+(...)
+org/apache/spark/ml/
+org/apache/spark/ml/Pipeline$SharedReadWrite$$anonfun$2.class
+org/apache/spark/ml/tuning/
+(...)
+org/apache/spark/sql/
+org/apache/spark/sql/UDFRegistration$$anonfun$3.class
+org/apache/spark/sql/SQLContext$$anonfun$range$2.class
+(...)
+reference.conf
+META-INF/NOTICE
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="sbt-run-and-run-main">SBT run and run-main</h2>
+
+<p>Provided dependency scope unfortunately breaks SBT <code class="language-plaintext highlighter-rouge">run</code> and <code class="language-plaintext highlighter-rouge">run-main</code> tasks.
+Because provided dependencies are excluded from the runtime classpath, you should expect <code class="language-plaintext highlighter-rouge">ClassNotFoundException</code> during application startup on local machine.
+To fix this issue, provided dependencies must be explicitly added to all SBT tasks used for local run, e.g.:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>run in Compile &lt;&lt;= Defaults.runTask(fullClasspath in Compile, mainClass in(Compile, run), runner in(Compile, run))
+runMain in Compile &lt;&lt;= Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run))
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="how-to-exclude-log4j-from-application-assembly">How to exclude Log4j from application assembly?</h2>
+
+<p>Without Spark classes the application assembly is quite lightweight.
+But the assembly size might be reduced event more!</p>
+
+<p>Let assume that your application requires some logging provider.
+As long as Spark internally uses Log4j, it means that Log4j is already on the cluster classpath.
+But you may say that there is much better API for Scala than origin Log4j - and you are totally right.</p>
+
+<p>The snippet below configure excellent Typesafe (Lightbend nowadays) <a href="https://github.com/typesafehub/scala-logging">Scala Logging Library</a> dependency.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>"com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+
+"org.slf4j" % "slf4j-api" % "1.7.10",
+"org.slf4j" % "slf4j-log4j12" % "1.7.10" exclude("log4j", "log4j"),
+
+"log4j" % "log4j" % "1.2.17" % "provided",
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Scala Logging is a thin wrapper for SLF4J implemented using Scala macros.
+The “slf4j-log4j12” is a binding library between SLF4J API and Log4j logger provider.
+Three layers of indirection but who cares :-)</p>
+
+<p>There is also top-level dependency to Log4J defined with provided scope. 
+But this is not enough to get rid of Log4j classes from the application assembly.
+Because Log4j is also a transitive dependency of “slf4j-log4j12” it must be explicitly excluded.
+If not, SBT Assembly Plugin adds Log4j classes to the assembly even if top level “log4j” dependency is marked as “provided”.
+Not very intuitive but SBT Assembly Plugin works this way.</p>
+
+<p>Alternatively you could disable transitive dependencies for “slf4j-log4j12” at all.
+It could be especially useful for libraries with many transitive dependencies which are expected to be on the cluster classpath.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>"org.slf4j" % "slf4j-log4j12" % "1.7.10" intransitive()
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="spark-streaming-kafka-dependency">Spark Streaming Kafka dependency</h2>
+
+<p>Now we are ready to define dependency to “spark-streaming-kafka”.
+Because Spark integration with Kafka typically is not a part of Spark assembly,
+it must be embedded into application assembly.
+The artifact should not be defined within “provided” scope.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>val sparkVersion = "1.6.0"
+
+(...)
+"org.apache.spark" %% "spark-streaming-kafka" % sparkVersion
+  exclude("log4j", "log4j")
+  exclude("org.spark-project.spark", "unused"),
+(...)
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Again, “log4j” transitive dependency of Kafka needs to be explicitly excluded. 
+I also found that marker class from weird Spark “unused” artifact breaks default SBT Assembly Plugin merge strategy.
+It is much easier to exclude this dependency than customize merge strategy of the plugin.</p>
+
+<h2 id="where-is-guava">Where is Guava?</h2>
+
+<p>When you look at your project dependencies you could easily find Guava (version 14.0.1 for Spark 1.6.0).
+Ok, Guava is an excellent library so you decide to use the library in your application.</p>
+
+<p><em>WRONG!</em></p>
+
+<p>Guava is on the classpath during compilation and tests but at runtime you will get “ClassNotFoundException” or method not found error.
+First, Guava is shaded in Spark distribution assembly under <code class="language-plaintext highlighter-rouge">org/spark-project/guava</code> package and should not be used directly.
+Second, there is a huge chance for outdated Guava library on the cluster classpath. 
+In CDH 5.3 distribution, the installed Guava version is 11.0.2 released on Feb 22, 2012 - more than 4 years ago!
+Since the Guava is <a href="http://i.stack.imgur.com/8K6N8.jpg">binary compatible</a> only between 2 or 3 latest major releases it is a real blocker.</p>
+
+<p>There are experimental configuration flags for Spark <code class="language-plaintext highlighter-rouge">spark.driver.userClassPathFirst</code> and <code class="language-plaintext highlighter-rouge">spark.executor.userClassPathFirst</code>.
+In theory it gives user-added jars precedence over Spark’s own jars when loading classes in the the driver.
+But in practice it does not work, at least for me :-(.</p>
+
+<p>In general you should avoid external dependencies at all cost when you develop application deployed on the YARN cluster.
+Classloader hell is even bigger than in JEE containers like JBoss or WebLogic.
+Look for the libraries with minimal transitive dependencies and narrowed features.
+For example, if you need a cache, choose <a href="https://github.com/ben-manes/caffeine">Caffeine</a> over Guava.</p>
+
+<h2 id="deployment-optimization-for-yarn-cluster">Deployment optimization for YARN cluster</h2>
+
+<p>When application is deployed on YARN cluster using <code class="language-plaintext highlighter-rouge">spark-submit</code> script, 
+the script upload Spark distribution assembly to the cluster during every deployment.
+The distribution assembly size is over 100MB, ten times more than typical application assembly!</p>
+
+<p>So I really recommend to install Spark distribution assembly on well known location on the cluster 
+and define <code class="language-plaintext highlighter-rouge">spark.yarn.jar</code> property for <code class="language-plaintext highlighter-rouge">spark-submit</code>.
+The assembly will not be copied over the network during every deployment.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>spark.yarn.jar=hdfs:///apps/spark/assembly/spark-assembly-1.6.0.jar
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="summary">Summary</h2>
+
+<p>I witnessed a few Spark projects where <code class="language-plaintext highlighter-rouge">build.sbt</code> were more complex than application itself.
+And application assembly was bloated with unnecessary 3rd party classes and deployment process took ages.
+Build configuration described in this blog post should help you deploy Spark application on the cluster smoothly
+and still keep SBT configuration easy to maintain.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/kafka" class="page__taxonomy-item" rel="tag">kafka</a><span class="sep">, </span>
+    
+      <a href="/categories/sbt" class="page__taxonomy-item" rel="tag">sbt</a><span class="sep">, </span>
+    
+      <a href="/categories/scala" class="page__taxonomy-item" rel="tag">scala</a><span class="sep">, </span>
+    
+      <a href="/categories/spark" class="page__taxonomy-item" rel="tag">spark</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2016-03-11T00:00:00+00:00">March 11, 2016</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2016/01/29/spark-kafka-integration2/" class="pagination--pager" title="Spark and Kafka integration patterns, part 2
+">Previous</a>
+    
+    
+      <a href="/blog/2016/09/30/spark-streaming-on-yarn/" class="pagination--pager" title="Long-running Spark Streaming jobs on YARN cluster
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Passionate Developer. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-50832428-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-50832428-2', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://mkuthan.github.io/blog/2016/03/11/spark-application-assembly/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/blog/2016/03/11/spark-application-assembly"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkuthan.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

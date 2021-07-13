@@ -1,0 +1,498 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>How to learn DDD - Passionate Developer</title>
+<meta name="description" content="Books">
+
+
+  <meta name="author" content="Marcin Kuthan">
+  
+  <meta property="article:author" content="Marcin Kuthan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Passionate Developer">
+<meta property="og:title" content="How to learn DDD">
+<meta property="og:url" content="http://mkuthan.github.io/blog/2014/09/22/ddd-how-to-learn/">
+
+
+  <meta property="og:description" content="Books">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-09-22T00:00:00+00:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://mkuthan.github.io/blog/2014/09/22/ddd-how-to-learn/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://mkuthan.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Passionate Developer Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Passionate Developer
+          <span class="site-subtitle">Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</span>
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpg" alt="Marcin Kuthan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Marcin Kuthan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://github.com/mkuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/MarcinKuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="How to learn DDD">
+    <meta itemprop="description" content="Books">
+    <meta itemprop="datePublished" content="2014-09-22T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">How to learn DDD
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        <time datetime="2014-09-22T00:00:00+00:00">September 22, 2014</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#books">Books</a></li><li><a href="#my-examples">My examples</a></li><li><a href="#other-sources">Other sources</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <h2 id="books">Books</h2>
+
+<p><a href="https:///show/179133.Domain_Driven_Designwww.goodreads.com/book">Domain Driven Design</a> by Eric Evans.</p>
+
+<p>You have to read this book, period. From the very beginning to very end. 
+Do not stop reading after first part of the book, the part about strategic design is much more important.
+Study this book again and again. I did not read this book at once, it would be impossible mission. 
+Every time I back to this book I found something new, every single word in this book is important and brings some meaning.</p>
+
+<p><a href="https://www.goodreads.com/book/show/15756865-implementing-domain-driven-design">Implementing Domain Driven Design</a> by Vaughn Vernon.</p>
+
+<p>More practical and easier to digest book than previous one. Not so brilliant but still worth reading.</p>
+
+<p><a href="https://www.goodreads.com/book/show/19086899-exploring-cqrs-and-event-sourcing">Exploring CQRS and Event Sourcing</a></p>
+
+<p>Excellent DDD/CQRS case study with working code on GitHub. 
+Real world example how to define bounded context and how to integrate them using domain events.
+Awesome!</p>
+
+<p><a href="https://www.goodreads.com/book/show/434826.Enterprise_Patterns_and_MDA">Enterprise Patterns and MDA</a> by Jim Arlow and Ila Neusandt</p>
+
+<p>Do not reinvent the wheel when you discover your domain model. At least for e-commerce :-) 
+Apply presented archetype patterns wisely and save your ass.</p>
+
+<h2 id="my-examples">My examples</h2>
+
+<p><a href="http://mkuthan.github.io/presentations/ddd.html">http://mkuthan.github.io/presentations/ddd.html</a> - “Domain Driven Desing - from trenches for practitioners” presentation.</p>
+
+<p><a href="http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/">http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/</a> - Blog post - my DDD check list.</p>
+
+<p><a href="https://github.com/mkuthan/example-ddd-cqrs-server">https://github.com/mkuthan/example-ddd-cqrs-server</a> - Experiment based on Vernon book.</p>
+
+<p><a href="https://github.com/mkuthan/example-axon">https://github.com/mkuthan/example-axon</a> - Experiment based on Exploring CQRS and Event Sourcing book.</p>
+
+<h2 id="other-sources">Other sources</h2>
+
+<p><a href="http://www.udidahan.com/?blog=true">http://www.udidahan.com/</a> - Udi Dahan - one of my mentor in distributed systems and DDD architecture.</p>
+
+<p><a href="https://groups.yahoo.com/neo/groups/domaindrivendesign">https://groups.yahoo.com/neo/groups/domaindrivendesign</a> - official DDD discussion group, addictive reading for long winter evenings.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/ddd" class="page__taxonomy-item" rel="tag">DDD</a><span class="sep">, </span>
+    
+      <a href="/categories/presentations" class="page__taxonomy-item" rel="tag">presentations</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-09-22T00:00:00+00:00">September 22, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2014/09/15/programming_language_does_not_matter/" class="pagination--pager" title="Programming language does not matter
+">Previous</a>
+    
+    
+      <a href="/blog/2015/03/01/spark-unit-testing/" class="pagination--pager" title="Spark and Spark Streaming unit testing
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Passionate Developer. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-50832428-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-50832428-2', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://mkuthan.github.io/blog/2014/09/22/ddd-how-to-learn/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/blog/2014/09/22/ddd-how-to-learn"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkuthan.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

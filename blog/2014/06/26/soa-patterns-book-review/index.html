@@ -1,0 +1,588 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>SOA Patterns - book review - Passionate Developer</title>
+<meta name="description" content="Overview">
+
+
+  <meta name="author" content="Marcin Kuthan">
+  
+  <meta property="article:author" content="Marcin Kuthan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Passionate Developer">
+<meta property="og:title" content="SOA Patterns - book review">
+<meta property="og:url" content="http://mkuthan.github.io/blog/2014/06/26/soa-patterns-book-review/">
+
+
+  <meta property="og:description" content="Overview">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-06-26T00:00:00+00:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://mkuthan.github.io/blog/2014/06/26/soa-patterns-book-review/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://mkuthan.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Passionate Developer Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Passionate Developer
+          <span class="site-subtitle">Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</span>
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpg" alt="Marcin Kuthan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Marcin Kuthan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://github.com/mkuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/MarcinKuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="SOA Patterns - book review">
+    <meta itemprop="description" content="Overview">
+    <meta itemprop="datePublished" content="2014-06-26T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">SOA Patterns - book review
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        <time datetime="2014-06-26T00:00:00+00:00">June 26, 2014</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#overview">Overview</a></li><li><a href="#patterns">Patterns</a><ul><li><a href="#service-host">Service Host</a></li><li><a href="#active-service">Active Service</a></li><li><a href="#transactional-service">Transactional Service</a></li><li><a href="#workflodize">Workflodize</a></li><li><a href="#edge-component">Edge Component</a></li><li><a href="#decoupled-invocation">Decoupled Invocation</a></li><li><a href="#parallel-pipelines">Parallel Pipelines</a></li><li><a href="#gridable-service">Gridable Service</a></li><li><a href="#service-instance">Service Instance</a></li><li><a href="#virtual-endpoint">Virtual Endpoint</a></li><li><a href="#service-watchdog">Service Watchdog</a></li><li><a href="#secured-message">Secured Message</a></li><li><a href="#secured-infrastructure">Secured Infrastructure</a></li><li><a href="#service-firewall">Service Firewall</a></li><li><a href="#identity-provider">Identity Provider</a></li><li><a href="#service-monitor">Service Monitor</a></li><li><a href="#requestreply">Request/Reply</a></li><li><a href="#requestreaction">Request/Reaction</a></li><li><a href="#inversion-of-communications">Inversion of Communications</a></li><li><a href="#saga">Saga</a></li><li><a href="#reservation">Reservation</a></li><li><a href="#composite-front-end">Composite Front End</a></li><li><a href="#clientserverservice">Client/Server/Service</a></li><li><a href="#service-bus">Service Bus</a></li><li><a href="#orchestration">Orchestration</a></li><li><a href="#aggregated-reporting">Aggregated Reporting</a></li></ul></li><li><a href="#antipatterns">Antipatterns</a></li><li><a href="#summary">Summary</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <h2 id="overview">Overview</h2>
+
+<p>I took this book from my bookshelf when I was preparing internal presentation about micro services for my Roche colleagues.
+I was mainly interested in <em>Saga</em> and <em>Composite Front End</em> patterns. But when I started, I decided to read rest of the book.</p>
+
+<h2 id="patterns">Patterns</h2>
+
+<p>Below you can find my short summary about every pattern described in the book:</p>
+
+<h3 id="service-host">Service Host</h3>
+
+<p>Every service needs the host where it works. For me <em>Spring Framework</em> is excellent example of the service host.</p>
+
+<h3 id="active-service">Active Service</h3>
+
+<p>Very similar to Micro Services concept, when the service should be autonomous.</p>
+
+<h3 id="transactional-service">Transactional Service</h3>
+
+<p>I know a few alternative names of this pattern: Unit of Work, Open Session in View. In JEE world implemented using <code class="language-plaintext highlighter-rouge">ThreadLocal</code>.</p>
+
+<h3 id="workflodize">Workflodize</h3>
+
+<p>Strange pattern name. I don’t really like complexity of workflow engines and prefer simple object oriented finite state machine implementation.</p>
+
+<h3 id="edge-component">Edge Component</h3>
+
+<p>Separate infrastructure code from domain. Just simple like that.</p>
+
+<h3 id="decoupled-invocation">Decoupled Invocation</h3>
+
+<p>Use event / command bus for communication.</p>
+
+<h3 id="parallel-pipelines">Parallel Pipelines</h3>
+
+<p>Apply Unix philosophy to your services. SRP on the higher level.</p>
+
+<h3 id="gridable-service">Gridable Service</h3>
+
+<p>Horizontal scaling.</p>
+
+<h3 id="service-instance">Service Instance</h3>
+
+<p>Horizonatal scaling.</p>
+
+<h3 id="virtual-endpoint">Virtual Endpoint</h3>
+
+<p>Make your deployment configuration flexible.</p>
+
+<h3 id="service-watchdog">Service Watchdog</h3>
+
+<p>Service monitoring should be built-in.</p>
+
+<h3 id="secured-message">Secured Message</h3>
+
+<p>Encrypt what should be secured on the message level (privacy, integrity, impersonation).</p>
+
+<h3 id="secured-infrastructure">Secured Infrastructure</h3>
+
+<p>Encrypt what should be secured on the protocol level (privacy, integrity, impersonation).</p>
+
+<h3 id="service-firewall">Service Firewall</h3>
+
+<p>Security on the network level. Expose only what is really needed.</p>
+
+<h3 id="identity-provider">Identity Provider</h3>
+
+<p>Single Sign On.</p>
+
+<h3 id="service-monitor">Service Monitor</h3>
+
+<p>Monitoring on the business process level.</p>
+
+<h3 id="requestreply">Request/Reply</h3>
+
+<p>Synchronous point to point communication.</p>
+
+<h3 id="requestreaction">Request/Reaction</h3>
+
+<p>Asynchronous point to point communication.</p>
+
+<h3 id="inversion-of-communications">Inversion of Communications</h3>
+
+<p>Command Bus, Event Bus, messaging middleware in general. Complex Event Processing (CEP).</p>
+
+<h3 id="saga">Saga</h3>
+
+<p>Long running business transactions. Distributed transactions without XA.</p>
+
+<h3 id="reservation">Reservation</h3>
+
+<p>Related to Saga, how to avoid XA transactions.</p>
+
+<h3 id="composite-front-end">Composite Front End</h3>
+
+<p>How to compose services into single web application? Author does not answer my doubts in this chapter.</p>
+
+<h3 id="clientserverservice">Client/Server/Service</h3>
+
+<p>How to deal with legacy systems. How to move from monolithic architecture to SOA.</p>
+
+<h3 id="service-bus">Service Bus</h3>
+
+<p>Message Bus, Service Bus, ESB - nice explanation.</p>
+
+<h3 id="orchestration">Orchestration</h3>
+
+<p>Externalize business long running processes. But still encapsulate business logic in services not in the orchestrator!</p>
+
+<h3 id="aggregated-reporting">Aggregated Reporting</h3>
+
+<p>Looks like CQRS for me.</p>
+
+<h2 id="antipatterns">Antipatterns</h2>
+
+<p>Funny names for real problems when SOA is used:</p>
+
+<ul>
+  <li>Knot - problems with coupling.</li>
+  <li>Nanoservice - problems with bounded contexts.</li>
+  <li>Transactional Integration - problems with XA transations.</li>
+  <li>Same Old Way - problems with CRUD like services.</li>
+</ul>
+
+<h2 id="summary">Summary</h2>
+
+<p>For sure it’s worth reading but I expected more from Arnon Rotem-Gal-Oz. 
+Sometimes I felt that author covers only the top of the iceberg, when demons are under the hood.
+The sample code fragments are not very helpful, with high accidental complexity but do not clearly show the problem.</p>
+
+<p>In addition the book was published in 2012 but you will easily realized that author had started ten years before, some parts seems to be outdated.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/books" class="page__taxonomy-item" rel="tag">books</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-06-26T00:00:00+00:00">June 26, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2014/06/21/release-it-book-review/" class="pagination--pager" title="Rrelease It! - book review
+">Previous</a>
+    
+    
+      <a href="/blog/2014/08/20/mastering-nodejs-book-review/" class="pagination--pager" title="Mastering Node.js - book review
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Passionate Developer. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-50832428-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-50832428-2', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://mkuthan.github.io/blog/2014/06/26/soa-patterns-book-review/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/blog/2014/06/26/soa-patterns-book-review"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkuthan.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,697 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>GitFlow step by step - Passionate Developer</title>
+<meta name="description" content="Git Flow is a mainstream process for branch per feature development. Git Flow  is the best method I’ve found for  managing project developed by small to medium project teams. Before you start reading this post you should read two  mandatory lectures:">
+
+
+  <meta name="author" content="Marcin Kuthan">
+  
+  <meta property="article:author" content="Marcin Kuthan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Passionate Developer">
+<meta property="og:title" content="GitFlow step by step">
+<meta property="og:url" content="http://mkuthan.github.io/blog/2013/07/21/gitflow-step-by-step/">
+
+
+  <meta property="og:description" content="Git Flow is a mainstream process for branch per feature development. Git Flow  is the best method I’ve found for  managing project developed by small to medium project teams. Before you start reading this post you should read two  mandatory lectures:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2013-07-21T00:00:00+00:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://mkuthan.github.io/blog/2013/07/21/gitflow-step-by-step/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://mkuthan.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Passionate Developer Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Passionate Developer
+          <span class="site-subtitle">Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</span>
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpg" alt="Marcin Kuthan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Marcin Kuthan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://github.com/mkuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/MarcinKuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="GitFlow step by step">
+    <meta itemprop="description" content="Git Flow is a mainstream process for branch per feature development. Git Flow  is the best method I’ve found for managing project developed by small to medium project teams. Before you start reading this post you should read two mandatory lectures:">
+    <meta itemprop="datePublished" content="2013-07-21T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">GitFlow step by step
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        <time datetime="2013-07-21T00:00:00+00:00">July 21, 2013</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#start-feature-branch">Start feature branch</a></li><li><a href="#checkout-the-feature-branch">Checkout the feature branch</a></li><li><a href="#work-on-the-feature-branch">Work on the feature branch</a></li><li><a href="#finish-feature-branch">Finish feature branch</a></li><li><a href="#start-release-branch">Start release branch</a></li><li><a href="#work-with-release-branch">Work with release branch</a></li><li><a href="#finish-release-branch">Finish release branch</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>Git Flow is a mainstream process for branch per feature development. Git Flow  is the best method I’ve found for 
+managing project developed by small to medium project teams. Before you start reading this post you should read two 
+mandatory lectures:</p>
+
+<p><a href="https://www.atlassian.com/git/workflows#!workflow-gitflow">Git Workflows by Atlassian</a></p>
+
+<p><a href="https://bitbucket.org/atlassian/jgit-flow/wiki/Home">Maven JGit-Flow Plugin</a></p>
+
+<p>This blog post is a step by step instruction how to use Git Flow together with Maven build tool, continuous integration
+server (e.g: Bamboo) and bug tracker (e.g: JIRA). If you are interested in how to automate the whole process, watch this
+<a href="https://www.youtube.com/watch?v=YIgX67c-2hQ">Flow with Bamboo</a> video. But I really recommend to start using Git Flow 
+with pure git commands, when you understand the concept move to Git Flow, and then automate everything eventually.</p>
+
+<h2 id="start-feature-branch">Start feature branch</h2>
+
+<ol>
+  <li>Assign JIRA task to you.</li>
+  <li>Move JIRA tasks from “To Do” to “In Progress”.</li>
+  <li>
+    <p>Create feature branch for the JIRA user story (if it is a first task of the user story). 
+Feature branch must reflect JIRA issue number and have meaningful name, e.g: <em>PROJ-01_user_registration</em>.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> mvn jgitflow:feature-start
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>Verify that:
+    <ul>
+      <li>New local feature branch <em>feature/PROJ-01_user_registration</em> is created.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Optionally push feature branch into remote repository.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git push origin feature/PROJ-01_user_registration
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>Verify that:
+    <ul>
+      <li>The feature branch is pushed into remote repository.</li>
+      <li>New Bamboo build plan is created for the feature branch.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="checkout-the-feature-branch">Checkout the feature branch</h2>
+
+<ol>
+  <li>
+    <p>Checkout the feature branch created by other developer (e.g for code review).</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git checkout feature/PROJ-01_user_registration
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="work-on-the-feature-branch">Work on the feature branch</h2>
+
+<ol>
+  <li>
+    <p>Periodically push changes to the remote repository.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git push origin feature/PROJ-01_user_registration
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Verify that:</p>
+    <ul>
+      <li>Bamboo build plan for feature branch is green.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="finish-feature-branch">Finish feature branch</h2>
+
+<ol>
+  <li>
+    <p>Ensure your local develop branch is up to date.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre> git checkout develop
+ git pull origin develop
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>To avoid conflicts during finishing feature branch, ensure that all changes from develop are merged to the feature branch.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre> git checkout feature/PROJ-01_user_registration
+ git pull origin develop
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Resolve all conflicts (if any) and commit changes.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git commit -a -m "Conflicts resolved"
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Finish the feature.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> mvn jgitflow:feature-finish
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Push changes from develop into remote repository</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git push origin develop
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Move JIRA task to “Done” category.</p>
+  </li>
+  <li>
+    <p>Verify that:</p>
+    <ul>
+      <li>Feature branch is merged into develop branch.</li>
+      <li>Local feature branch is removed.</li>
+      <li>Bamboo build plan for develop is green.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="start-release-branch">Start release branch</h2>
+
+<ol>
+  <li>
+    <p>Create release branch.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> mvn jgitflow:release-start
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Verify that:</p>
+    <ul>
+      <li>New local release branch release/version is created.</li>
+      <li>Work with release branch</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="work-with-release-branch">Work with release branch</h2>
+
+<ol>
+  <li>
+    <p>Clean the database (Database).</p>
+  </li>
+  <li>
+    <p>Run the application (Running Application) and perform exploratory tests.</p>
+  </li>
+  <li>
+    <p>Fix all issues (if any).</p>
+  </li>
+  <li>
+    <p>Commit changes to the release branch.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git commit -a -m "Fixes release candidate"
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="finish-release-branch">Finish release branch</h2>
+
+<ol>
+  <li>
+    <p>Make sure your local master branch is up to date</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git fetch origin master
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Finish the release branch</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> mvn jgitflow:release-finish
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>Verify that:
+    <ul>
+      <li>Release branch is merged into local develop branch.</li>
+      <li>Project version is updated in local develop branch.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Push changes from develop into remote repository</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git push origin develop
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Checkout master</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git checkout master
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>Verify that:
+    <ul>
+      <li>Release branch is merged into local master branch.</li>
+      <li>Project version is updated in local master branch.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Push changes from master into remote repository</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git push --tags origin master
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>Verify that:
+    <ul>
+      <li>Release tag is pushed to the remote repository.</li>
+      <li>Build plan on master is green and new version is deployed.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Delete released feature branches from remote repository.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> git push origin :feature/PROJ-01_user_registration
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+</ol>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/git" class="page__taxonomy-item" rel="tag">git</a><span class="sep">, </span>
+    
+      <a href="/categories/jira" class="page__taxonomy-item" rel="tag">jira</a><span class="sep">, </span>
+    
+      <a href="/categories/maven" class="page__taxonomy-item" rel="tag">maven</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-07-21T00:00:00+00:00">July 21, 2013</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2013/03/21/how-to-document-your-professional/" class="pagination--pager" title="How to document your professional experiences
+">Previous</a>
+    
+    
+      <a href="/blog/2013/10/09/development-environment-setup/" class="pagination--pager" title="Development Environment Setup
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Passionate Developer. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-50832428-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-50832428-2', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://mkuthan.github.io/blog/2013/07/21/gitflow-step-by-step/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/blog/2013/07/21/gitflow-step-by-step"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkuthan.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

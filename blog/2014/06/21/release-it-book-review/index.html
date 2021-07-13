@@ -1,0 +1,631 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Rrelease It! - book review - Passionate Developer</title>
+<meta name="description" content="Recently I read excellent book Release It! written by Michael Nygard.  The book is 7 years old and I don’t know how I could miss the book until now.">
+
+
+  <meta name="author" content="Marcin Kuthan">
+  
+  <meta property="article:author" content="Marcin Kuthan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Passionate Developer">
+<meta property="og:title" content="Rrelease It! - book review">
+<meta property="og:url" content="http://mkuthan.github.io/blog/2014/06/21/release-it-book-review/">
+
+
+  <meta property="og:description" content="Recently I read excellent book Release It! written by Michael Nygard.  The book is 7 years old and I don’t know how I could miss the book until now.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2014-06-21T00:00:00+00:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://mkuthan.github.io/blog/2014/06/21/release-it-book-review/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://mkuthan.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Passionate Developer Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Passionate Developer
+          <span class="site-subtitle">Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</span>
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpg" alt="Marcin Kuthan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Marcin Kuthan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://github.com/mkuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/MarcinKuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Rrelease It! - book review">
+    <meta itemprop="description" content="Recently I read excellent book Release It! written by Michael Nygard. The book is 7 years old and I don’t know how I could miss the book until now.">
+    <meta itemprop="datePublished" content="2014-06-21T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Rrelease It! - book review
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        <time datetime="2014-06-21T00:00:00+00:00">June 21, 2014</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              
+
+            </nav>
+          </aside>
+        
+        <p>Recently I read excellent book <em>Release It!</em> written by Michael Nygard. 
+The book is 7 years old and I don’t know how I could miss the book until now.</p>
+
+<p>Michael Nygard shows how to design and architect medium or large scale web applications. 
+Real lessons learnt from the trenches not golden rules from ivory architects.</p>
+
+<p>This blog post is a dump of taken notes when I was reading the book. 
+The list could be used as a checklist for system architects and developers.
+There is no particular order of the notes, perhaps there are duplications too.</p>
+
+<ul>
+  <li>
+    <p><em>admin access</em> - should use separate networks than regular traffic, if not administrator will not be able connect to the system when something is wrong.</p>
+  </li>
+  <li>
+    <p><em>network timeouts</em> - should be always defined, if not our system could hang if there is a problem with remote service.</p>
+  </li>
+  <li>
+    <p><em>firewall</em> - be aware of timeouts on firewall connection tracking tables, if the connection is unused for long time (e.g connection from the pool), firewall could drop packets silently.</p>
+  </li>
+  <li>
+    <p><em>failure probability</em> - are dependant, not like during coin toss.</p>
+  </li>
+  <li>
+    <p><em>3rd party vendors</em> - their client library often sucks, you can not define timeouts, you can not configure threading correctly.</p>
+  </li>
+  <li>
+    <p><em>method wait</em> - always provide the timeout, do not use method <code class="language-plaintext highlighter-rouge">Object.wait()</code>.</p>
+  </li>
+  <li>
+    <p><em>massive email with deep links</em> - do not send massive emails with deep links, bunch of requests to single resource could kill your application.</p>
+  </li>
+  <li>
+    <p><em>threads ratio</em> - check front-end and back-end threads ratio, the system is as fast as its slowest part.</p>
+  </li>
+  <li>
+    <p><em>SLA</em> - define different SLAs for different subsystems, not everything must have 99.99%</p>
+  </li>
+  <li>
+    <p><em>high CPU utilization</em> - check GC logs first.</p>
+  </li>
+  <li>
+    <p><em>JVM crash</em> - typical after OOM, when native code is trying to allocate memory - <code class="language-plaintext highlighter-rouge">malloc()</code> returns error but only few programmers handle this error.</p>
+  </li>
+  <li>
+    <p><em>Collection size</em> - do not use unbounded collections, huge data set kills your application eventually.</p>
+  </li>
+  <li>
+    <p><em>Outgoing communication</em> - define timeouts.</p>
+  </li>
+  <li>
+    <p><em>Incoming communication</em> - fail fast, be pleasant for other systems.</p>
+  </li>
+  <li>
+    <p><em>separate threads pool</em> - for admin access, your last way to fix the system.</p>
+  </li>
+  <li>
+    <p><em>input validation</em> - fail fast, use JS validation even if validation must be duplicated.</p>
+  </li>
+  <li>
+    <p><em>circuit braker</em> - design pattern for handling unavailable remote services.</p>
+  </li>
+  <li>
+    <p><em>handshake in protocol</em> - alternative for <em>circuit braker</em> if you desing your own protocol.</p>
+  </li>
+  <li>
+    <p><em>test harness</em> - test using production like environment (but how to do that???)</p>
+  </li>
+  <li>
+    <p><em>capacity</em> - always multiply by number of users, requests, etc.</p>
+  </li>
+  <li>
+    <p><em>safety limits on everything</em> - nice general rule.</p>
+  </li>
+  <li>
+    <p><em>oracle and connection pool</em> - Oracle in default configuration spawns separate process for every connection, check how much memory is used only for handling client connections.</p>
+  </li>
+  <li>
+    <p><em>unbalanced resources</em> - underestimated part will fail first, and it could hang whole system.</p>
+  </li>
+  <li>
+    <p><em>JSP and GC</em> - be aware of <code class="language-plaintext highlighter-rouge">noclassgc</code> JVM option, compiled JSP files use perm gen space.</p>
+  </li>
+  <li>
+    <p><em>http sessions</em> - users do not understand the concept, do not keep shopping card in the session :-)</p>
+  </li>
+  <li>
+    <p><em>whitespaces</em> - remove any unnecessary whitespace from the pages, in large scale it saves a lot of traffic.</p>
+  </li>
+  <li>
+    <p><em>avoid hand crafted SQLs</em> - hard to predict the outcome, and hard to optimize for performance.</p>
+  </li>
+  <li>
+    <p><em>database tests</em> - use the real data volume.</p>
+  </li>
+  <li>
+    <p><em>unicast</em> - could be used for up to ~10 servers, for bigger cluster use multicast.</p>
+  </li>
+  <li>
+    <p><em>cache</em> - always limit cache size.</p>
+  </li>
+  <li>
+    <p><em>hit ratio</em> - always monitor cache hit ratio.</p>
+  </li>
+  <li>
+    <p><em>precompute html</em> - huge server resource saver, not everything changes on every request.</p>
+  </li>
+  <li>
+    <p><em>JVM tuning</em> - is application release specific, on every release memory utilization could be different.</p>
+  </li>
+  <li>
+    <p><em>multihomed servers</em> - on production network topology is much more complex.</p>
+  </li>
+  <li>
+    <p><em>bonding</em> - single network configured with multiple network cards and multiple switch ports.</p>
+  </li>
+  <li>
+    <p><em>backup</em> - use separate network, backup always consumes your whole bandwidth.</p>
+  </li>
+  <li>
+    <p><em>virtual IP</em> - always configure virtual IP, your configuration will be much more flexible.</p>
+  </li>
+  <li>
+    <p><em>technical accounts</em> - do not share accounts between services, it would be security flaws.</p>
+  </li>
+  <li>
+    <p><em>cluster configuration verification</em> - periodically check configuration on the cluster nodes, even if the configuration is deployed automatically.</p>
+  </li>
+  <li>
+    <p><em>separate configuration specific for the single cluster node</em> - keep node specific configuration separated from shared configuration.</p>
+  </li>
+  <li>
+    <p><em>configuration property names</em> - based on function not nature (e.g: hostname is too generic).</p>
+  </li>
+  <li>
+    <p><em>graceful shutdown</em> - do not terminate existing business transations.</p>
+  </li>
+  <li>
+    <p><em>thread dumps</em> - prepare scripts for that, during accident time is really precious (SLAs).</p>
+  </li>
+  <li>
+    <p><em>recovery oriented computing</em> - be prepared for restarting only part of the system, restarting everything is time consuming.</p>
+  </li>
+  <li>
+    <p><em>transparency</em> - be able to monitor everything.</p>
+  </li>
+  <li>
+    <p><em>monitoring policy, alerts</em> - should not be defined by the service, configure the policies outside (perhaps in central place).</p>
+  </li>
+  <li>
+    <p><em>log format</em> - should be human readable, humans are the best in pattern matching, use tabulators and fixed width columns.</p>
+  </li>
+  <li>
+    <p><em>CIM</em> - <em>SNMP</em> superior.</p>
+  </li>
+  <li>
+    <p><em>SSL accelerator</em> - what it really is???</p>
+  </li>
+  <li>
+    <p><em>OpsDB monitoring</em> - measurements and expectations, end to end business process monitoring.</p>
+  </li>
+  <li>
+    <p><em>Node Identifiers</em> - assign to teams in block.</p>
+  </li>
+  <li>
+    <p><em>Observe, Orient, Decide, Act</em> - military methodology, somehow similar to Agile :-)</p>
+  </li>
+  <li>
+    <p><em>review</em> - tickets, stack traces in log files, volume of problems, data volumes, query statistics periodically.</p>
+  </li>
+  <li>
+    <p><em>DB migration</em> - expansion phase for incompatible schema changes.</p>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/books" class="page__taxonomy-item" rel="tag">books</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2014-06-21T00:00:00+00:00">June 21, 2014</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2014/05/29/acceptance-testing-using-jbehave-spring-framework-and-maven/" class="pagination--pager" title="Acceptance testing using JBehave, Spring Framework and Maven
+">Previous</a>
+    
+    
+      <a href="/blog/2014/06/26/soa-patterns-book-review/" class="pagination--pager" title="SOA Patterns - book review
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Passionate Developer. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-50832428-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-50832428-2', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://mkuthan.github.io/blog/2014/06/21/release-it-book-review/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/blog/2014/06/21/release-it-book-review"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkuthan.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

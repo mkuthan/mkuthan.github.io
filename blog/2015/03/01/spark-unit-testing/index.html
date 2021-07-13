@@ -1,0 +1,921 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Spark and Spark Streaming unit testing - Passionate Developer</title>
+<meta name="description" content="When you develop distributed system, it is crucial to make it easy to test. Execute tests in controlled environment, ideally from your IDE. Long develop-test-develop cycle for complex systems could kill your productivity. Below you find my testing strategy for Spark and Spark Streaming applications.">
+
+
+  <meta name="author" content="Marcin Kuthan">
+  
+  <meta property="article:author" content="Marcin Kuthan">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Passionate Developer">
+<meta property="og:title" content="Spark and Spark Streaming unit testing">
+<meta property="og:url" content="http://mkuthan.github.io/blog/2015/03/01/spark-unit-testing/">
+
+
+  <meta property="og:description" content="When you develop distributed system, it is crucial to make it easy to test. Execute tests in controlled environment, ideally from your IDE. Long develop-test-develop cycle for complex systems could kill your productivity. Below you find my testing strategy for Spark and Spark Streaming applications.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-03-01T00:00:00+00:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://mkuthan.github.io/blog/2015/03/01/spark-unit-testing/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "http://mkuthan.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Passionate Developer Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Passionate Developer
+          <span class="site-subtitle">Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable</span>
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpg" alt="Marcin Kuthan" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Marcin Kuthan</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://github.com/mkuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/MarcinKuthan" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Spark and Spark Streaming unit testing">
+    <meta itemprop="description" content="When you develop distributed system, it is crucial to make it easy to test.Execute tests in controlled environment, ideally from your IDE.Long develop-test-develop cycle for complex systems could kill your productivity.Below you find my testing strategy for Spark and Spark Streaming applications.">
+    <meta itemprop="datePublished" content="2015-03-01T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Spark and Spark Streaming unit testing
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        <time datetime="2015-03-01T00:00:00+00:00">March 1, 2015</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#unit-or-integration-tests-that-is-the-question">Unit or integration tests, that is the question</a></li><li><a href="#what-should-be-tested">What should be tested?</a><ul><li><a href="#context">Context</a></li><li><a href="#rdd-and-dstream">RDD and DStream</a></li><li><a href="#transformation-logic">Transformation logic</a></li></ul></li><li><a href="#spark-test">Spark test</a></li><li><a href="#spark-streaming-test">Spark Streaming test</a></li><li><a href="#summary">Summary</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>When you develop distributed system, it is crucial to make it easy to test.
+Execute tests in controlled environment, ideally from your IDE.
+Long develop-test-develop cycle for complex systems could kill your productivity.
+Below you find my testing strategy for Spark and Spark Streaming applications.</p>
+
+<h2 id="unit-or-integration-tests-that-is-the-question">Unit or integration tests, that is the question</h2>
+
+<p>Our hypothetical Spark application pulls data from Apache Kafka, apply transformations using 
+<a href="https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.rdd.RDD">RDDs</a> 
+and 
+<a href="https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.streaming.dstream.DStream">DStreams</a>
+and persist outcomes into Cassandra or Elastic Search database.
+On production Spark application is deployed on YARN or Mesos cluster, and everything is glued with ZooKeeper.
+Big picture of the stream processing architecture is presented below:</p>
+
+<p><img src="http://yuml.me/diagram/scruffy;dir:LR/class/[Apache%20Kafka]-[Spark%20Streaming],[Spark%20Streaming]-[Cassandra],[Spark%20Streaming]-[Elastic%20Search],[Spark%20Streaming],[Zookeeper{bg:cornsilk}],[YARN%20or%20Mesos%20Cluster{bg:cornsilk}]" alt="" /></p>
+
+<p>Lots of moving parts, not so easy to configure and test.
+Even with automated provisioning implemented with Vagrant, Docker and Ansible.
+If you can’t test everything, test at least the most important part of your application - transformations - implemented with Spark.</p>
+
+<p>Spark claims, that it is friendly to unit testing with any popular unit test framework.
+To be strict, Spark supports rather lightweight integration testing, not unit testing, IMHO.
+But still it is much more convenient to test transformation logic locally, than deploying all parts on YARN.</p>
+
+<p>There is a pull request <a href="https://github.com/apache/spark/pull/1751">SPARK-1751</a> that adds “unit tests” support for Apache Kafka streams.
+Should we follow that way? Embedded ZooKeeper and embedded Apache Kafka are needed, the test fixture is complex and cumbersome.
+Perhaps tests would be fragile and hard to maintain. This approach makes sense for Spark core team, they want to test Spark and Kafka integration.</p>
+
+<h2 id="what-should-be-tested">What should be tested?</h2>
+
+<p>Our transformation logic implemented with Spark, nothing more. But how to test the logic so tightly coupled to Spark API (RDD, DStream)?
+Let’s define how typical Spark application is organized. Our hypothetical application structure looks like this:</p>
+
+<ol>
+  <li>Initialize <code class="language-plaintext highlighter-rouge">SparkContext</code> or <code class="language-plaintext highlighter-rouge">StreamingContext</code>.</li>
+  <li>Create RDD or DStream for given source (e.g: Apache Kafka)</li>
+  <li>Evaluate transformations on RDD or DStream API.</li>
+  <li>Put transformation outcomes (e.g: aggregations) into external database.</li>
+</ol>
+
+<h3 id="context">Context</h3>
+
+<p><code class="language-plaintext highlighter-rouge">SparkContext</code> and <code class="language-plaintext highlighter-rouge">StreamingContext</code> could be easily initialized for testing purposes.
+Set master URL to <code class="language-plaintext highlighter-rouge">local</code>, run the operations and then stop context gracefully.</p>
+
+<p>SparkContext initialization:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">SparkExampleSpec</span> <span class="k">extends</span> <span class="nc">FlatSpec</span> <span class="k">with</span> <span class="nc">BeforeAndAfter</span> <span class="o">{</span>
+
+  <span class="k">private</span> <span class="k">val</span> <span class="nv">master</span> <span class="k">=</span> <span class="s">"local[2]"</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="nv">appName</span> <span class="k">=</span> <span class="s">"example-spark"</span>
+
+  <span class="k">private</span> <span class="k">var</span> <span class="n">sc</span><span class="k">:</span> <span class="kt">SparkContext</span> <span class="o">=</span> <span class="k">_</span>
+
+  <span class="n">before</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">conf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">()</span>
+      <span class="o">.</span><span class="py">setMaster</span><span class="o">(</span><span class="n">master</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">setAppName</span><span class="o">(</span><span class="n">appName</span><span class="o">)</span>
+
+    <span class="n">sc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkContext</span><span class="o">(</span><span class="n">conf</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="n">after</span> <span class="o">{</span>
+    <span class="nf">if</span> <span class="o">(</span><span class="n">sc</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="nv">sc</span><span class="o">.</span><span class="py">stop</span><span class="o">()</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+  <span class="o">(...)</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>StreamingContext initialization:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre></td><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">SparkStreamingExampleSpec</span> <span class="k">extends</span> <span class="nc">FlatSpec</span> <span class="k">with</span> <span class="nc">BeforeAndAfter</span> <span class="o">{</span>
+
+  <span class="k">private</span> <span class="k">val</span> <span class="nv">master</span> <span class="k">=</span> <span class="s">"local[2]"</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="nv">appName</span> <span class="k">=</span> <span class="s">"example-spark-streaming"</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="nv">batchDuration</span> <span class="k">=</span> <span class="nc">Seconds</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="nv">checkpointDir</span> <span class="k">=</span> <span class="nv">Files</span><span class="o">.</span><span class="py">createTempDirectory</span><span class="o">(</span><span class="n">appName</span><span class="o">).</span><span class="py">toString</span>
+
+  <span class="k">private</span> <span class="k">var</span> <span class="n">sc</span><span class="k">:</span> <span class="kt">SparkContext</span> <span class="o">=</span> <span class="k">_</span>
+  <span class="k">private</span> <span class="k">var</span> <span class="n">ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span> <span class="o">=</span> <span class="k">_</span>
+
+  <span class="n">before</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">conf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">()</span>
+      <span class="o">.</span><span class="py">setMaster</span><span class="o">(</span><span class="n">master</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">setAppName</span><span class="o">(</span><span class="n">appName</span><span class="o">)</span>
+
+    <span class="n">ssc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StreamingContext</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="n">batchDuration</span><span class="o">)</span>
+    <span class="nv">ssc</span><span class="o">.</span><span class="py">checkpoint</span><span class="o">(</span><span class="n">checkpointDir</span><span class="o">)</span>
+
+    <span class="n">sc</span> <span class="k">=</span> <span class="nv">ssc</span><span class="o">.</span><span class="py">sparkContext</span>
+  <span class="o">}</span>
+
+  <span class="n">after</span> <span class="o">{</span>
+    <span class="nf">if</span> <span class="o">(</span><span class="n">ssc</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="nv">ssc</span><span class="o">.</span><span class="py">stop</span><span class="o">()</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="o">(...)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="rdd-and-dstream">RDD and DStream</h3>
+
+<p>The problematic part is how to create RDD or DStream.
+For testing purposes it must be simplified to avoid embedded Kafka and ZooKeeper.
+Below you can find examples how to create in-memory RDD and DStream.</p>
+
+<p>In-memory RDD:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">lines</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">"To be or not to be."</span><span class="o">,</span> <span class="s">"That is the question."</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">rdd</span> <span class="k">=</span> <span class="nv">sparkContext</span><span class="o">.</span><span class="py">parallelize</span><span class="o">(</span><span class="n">lines</span><span class="o">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>In-memory DStream:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="k">val</span> <span class="nv">lines</span> <span class="k">=</span> <span class="nv">mutable</span><span class="o">.</span><span class="py">Queue</span><span class="o">[</span><span class="kt">RDD</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
+<span class="k">val</span> <span class="nv">dstream</span> <span class="k">=</span> <span class="nv">streamingContext</span><span class="o">.</span><span class="py">queueStream</span><span class="o">(</span><span class="n">lines</span><span class="o">)</span>
+
+<span class="c1">// append data to DStream</span>
+<span class="n">lines</span> <span class="o">+=</span> <span class="nv">sparkContext</span><span class="o">.</span><span class="py">makeRDD</span><span class="o">(</span><span class="nc">Seq</span><span class="o">(</span><span class="s">"To be or not to be."</span><span class="o">,</span> <span class="s">"That is the question."</span><span class="o">))</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="transformation-logic">Transformation logic</h3>
+
+<p>The most important part of our application - transformations logic - must be encapsulated in separate class or object.
+Object is preferred to avoid class serialization overhead. Exactly the same code is used by the application and by the test.</p>
+
+<p>WordCount.scala</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="rouge-code"><pre><span class="k">case</span> <span class="k">class</span> <span class="nc">WordCount</span><span class="o">(</span><span class="n">word</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">count</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+
+<span class="k">object</span> <span class="nc">WordCount</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="nf">count</span><span class="o">(</span><span class="n">lines</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span> <span class="n">stopWords</span><span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">WordCount</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nv">words</span> <span class="k">=</span> <span class="nv">lines</span><span class="o">.</span><span class="py">flatMap</span><span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">split</span><span class="o">(</span><span class="s">"\\s"</span><span class="o">))</span>
+      <span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">strip</span><span class="o">(</span><span class="s">","</span><span class="o">).</span><span class="py">strip</span><span class="o">(</span><span class="s">"."</span><span class="o">).</span><span class="py">toLowerCase</span><span class="o">)</span>
+      <span class="o">.</span><span class="py">filter</span><span class="o">(!</span><span class="nv">stopWords</span><span class="o">.</span><span class="py">contains</span><span class="o">(</span><span class="k">_</span><span class="o">)).</span><span class="py">filter</span><span class="o">(!</span><span class="nv">_</span><span class="o">.</span><span class="py">isEmpty</span><span class="o">)</span>
+
+    <span class="k">val</span> <span class="nv">wordCounts</span> <span class="k">=</span> <span class="nv">words</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="n">word</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">word</span><span class="o">,</span> <span class="mi">1</span><span class="o">)).</span><span class="py">reduceByKey</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">).</span><span class="py">map</span> <span class="o">{</span>
+      <span class="nf">case</span> <span class="o">(</span><span class="n">word</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">count</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">WordCount</span><span class="o">(</span><span class="n">word</span><span class="o">,</span> <span class="n">count</span><span class="o">)</span>
+    <span class="o">}</span>
+
+    <span class="k">val</span> <span class="nv">sortedWordCounts</span> <span class="k">=</span> <span class="nv">wordCounts</span><span class="o">.</span><span class="py">sortBy</span><span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">word</span><span class="o">)</span>
+
+    <span class="n">sortedWordCounts</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="spark-test">Spark test</h2>
+
+<p>Now it is time to implement our first test for WordCount transformation.
+The code of test is very straightforward and easy to read.
+Single point of truth, the best documentation of your system, always up-to-date.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="rouge-code"><pre><span class="s">"Shakespeare most famous quote"</span> <span class="n">should</span> <span class="s">"be counted"</span> <span class="n">in</span> <span class="o">{</span>
+    <span class="nc">Given</span><span class="o">(</span><span class="s">"quote"</span><span class="o">)</span>
+    <span class="k">val</span> <span class="nv">lines</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">(</span><span class="s">"To be or not to be."</span><span class="o">,</span> <span class="s">"That is the question."</span><span class="o">)</span>
+
+    <span class="nc">Given</span><span class="o">(</span><span class="s">"stop words"</span><span class="o">)</span>
+    <span class="k">val</span> <span class="nv">stopWords</span> <span class="k">=</span> <span class="nc">Set</span><span class="o">(</span><span class="s">"the"</span><span class="o">)</span>
+
+    <span class="nc">When</span><span class="o">(</span><span class="s">"count words"</span><span class="o">)</span>
+    <span class="k">val</span> <span class="nv">wordCounts</span> <span class="k">=</span> <span class="nv">WordCount</span><span class="o">.</span><span class="py">count</span><span class="o">(</span><span class="nv">sc</span><span class="o">.</span><span class="py">parallelize</span><span class="o">(</span><span class="n">lines</span><span class="o">),</span> <span class="n">stopWords</span><span class="o">).</span><span class="py">collect</span><span class="o">()</span>
+
+    <span class="nc">Then</span><span class="o">(</span><span class="s">"words counted"</span><span class="o">)</span>
+    <span class="n">wordCounts</span> <span class="n">should</span> <span class="nf">equal</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"be"</span><span class="o">,</span> <span class="mi">2</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"is"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"not"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"or"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"question"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"that"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"to"</span><span class="o">,</span> <span class="mi">2</span><span class="o">)))</span>
+  <span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="spark-streaming-test">Spark Streaming test</h2>
+
+<p>Spark Streaming transformations are much more complex to test.
+The full control over clock is needed to manually manage batches, slides and windows.
+Without controlled clock you would end up with complex tests with many <code class="language-plaintext highlighter-rouge">Thread.sleeep</code> calls.
+And the test execution would take ages.
+The only downside is that you will not have extra time for coffee during tests execution.</p>
+
+<p>Spark Streaming provides necessary abstraction over system clock, <code class="language-plaintext highlighter-rouge">ManualClock</code> class.
+Unfortunately <code class="language-plaintext highlighter-rouge">ManualClock</code> class is declared as package private. Some hack is needed.
+The wrapper presented below, is an adapter for the original <code class="language-plaintext highlighter-rouge">ManualClock</code> class but without access restriction.</p>
+
+<p>ClockWrapper.scala</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre><span class="k">package</span> <span class="nn">org.apache.spark.streaming</span>
+
+<span class="k">import</span> <span class="nn">org.apache.spark.streaming.util.ManualClock</span>
+
+<span class="k">class</span> <span class="nc">ClockWrapper</span><span class="o">(</span><span class="n">ssc</span><span class="k">:</span> <span class="kt">StreamingContext</span><span class="o">)</span> <span class="o">{</span>
+
+  <span class="k">def</span> <span class="nf">getTimeMillis</span><span class="o">()</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nf">manualClock</span><span class="o">().</span><span class="py">currentTime</span><span class="o">()</span>
+
+  <span class="k">def</span> <span class="nf">setTime</span><span class="o">(</span><span class="n">timeToSet</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="k">=</span> <span class="nf">manualClock</span><span class="o">().</span><span class="py">setTime</span><span class="o">(</span><span class="n">timeToSet</span><span class="o">)</span>
+
+  <span class="k">def</span> <span class="nf">advance</span><span class="o">(</span><span class="n">timeToAdd</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="k">=</span> <span class="nf">manualClock</span><span class="o">().</span><span class="py">addToTime</span><span class="o">(</span><span class="n">timeToAdd</span><span class="o">)</span>
+
+  <span class="k">def</span> <span class="nf">waitTillTime</span><span class="o">(</span><span class="n">targetTime</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nf">manualClock</span><span class="o">().</span><span class="py">waitTillTime</span><span class="o">(</span><span class="n">targetTime</span><span class="o">)</span>
+
+  <span class="k">private</span> <span class="k">def</span> <span class="nf">manualClock</span><span class="o">()</span><span class="k">:</span> <span class="kt">ManualClock</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nv">ssc</span><span class="o">.</span><span class="py">scheduler</span><span class="o">.</span><span class="py">clock</span><span class="o">.</span><span class="py">asInstanceOf</span><span class="o">[</span><span class="kt">ManualClock</span><span class="o">]</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Now Spark Streaming test can be implemented in efficient way.
+The test does not have to wait for system clock and test is implemented with millisecond precision.
+You can easily test your windowed scenario from the very beginning to very end.
+With given\when\then structure you should be able to understand tested logic without further explanations.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+</pre></td><td class="rouge-code"><pre><span class="s">"Sample set"</span> <span class="n">should</span> <span class="s">"be counted"</span> <span class="n">in</span> <span class="o">{</span>
+  <span class="nc">Given</span><span class="o">(</span><span class="s">"streaming context is initialized"</span><span class="o">)</span>
+  <span class="k">val</span> <span class="nv">lines</span> <span class="k">=</span> <span class="nv">mutable</span><span class="o">.</span><span class="py">Queue</span><span class="o">[</span><span class="kt">RDD</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
+
+  <span class="k">var</span> <span class="n">results</span> <span class="k">=</span> <span class="nv">ListBuffer</span><span class="o">.</span><span class="py">empty</span><span class="o">[</span><span class="kt">Array</span><span class="o">[</span><span class="kt">WordCount</span><span class="o">]]</span>
+
+  <span class="nv">WordCount</span><span class="o">.</span><span class="py">count</span><span class="o">(</span><span class="nv">ssc</span><span class="o">.</span><span class="py">queueStream</span><span class="o">(</span><span class="n">lines</span><span class="o">),</span> <span class="n">windowDuration</span><span class="o">,</span> <span class="n">slideDuration</span><span class="o">)</span> <span class="o">{</span> <span class="o">(</span><span class="n">wordsCount</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">WordCount</span><span class="o">],</span> <span class="n">time</span><span class="k">:</span> <span class="kt">Time</span><span class="o">)</span> <span class="k">=&gt;</span>
+    <span class="n">results</span> <span class="o">+=</span> <span class="nv">wordsCount</span><span class="o">.</span><span class="py">collect</span><span class="o">()</span>
+  <span class="o">}</span>
+
+  <span class="nv">ssc</span><span class="o">.</span><span class="py">start</span><span class="o">()</span>
+
+  <span class="nc">When</span><span class="o">(</span><span class="s">"first set of words queued"</span><span class="o">)</span>
+  <span class="n">lines</span> <span class="o">+=</span> <span class="nv">sc</span><span class="o">.</span><span class="py">makeRDD</span><span class="o">(</span><span class="nc">Seq</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="s">"b"</span><span class="o">))</span>
+
+  <span class="nc">Then</span><span class="o">(</span><span class="s">"words counted after first slide"</span><span class="o">)</span>
+  <span class="nv">clock</span><span class="o">.</span><span class="py">advance</span><span class="o">(</span><span class="nv">slideDuration</span><span class="o">.</span><span class="py">milliseconds</span><span class="o">)</span>
+  <span class="nf">eventually</span><span class="o">(</span><span class="nf">timeout</span><span class="o">(</span><span class="mi">1</span> <span class="n">second</span><span class="o">))</span> <span class="o">{</span>
+    <span class="nv">results</span><span class="o">.</span><span class="py">last</span> <span class="n">should</span> <span class="nf">equal</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"b"</span><span class="o">,</span> <span class="mi">1</span><span class="o">)))</span>
+  <span class="o">}</span>
+
+  <span class="nc">When</span><span class="o">(</span><span class="s">"second set of words queued"</span><span class="o">)</span>
+  <span class="n">lines</span> <span class="o">+=</span> <span class="nv">sc</span><span class="o">.</span><span class="py">makeRDD</span><span class="o">(</span><span class="nc">Seq</span><span class="o">(</span><span class="s">"b"</span><span class="o">,</span> <span class="s">"c"</span><span class="o">))</span>
+
+  <span class="nc">Then</span><span class="o">(</span><span class="s">"words counted after second slide"</span><span class="o">)</span>
+  <span class="nv">clock</span><span class="o">.</span><span class="py">advance</span><span class="o">(</span><span class="nv">slideDuration</span><span class="o">.</span><span class="py">milliseconds</span><span class="o">)</span>
+  <span class="nf">eventually</span><span class="o">(</span><span class="nf">timeout</span><span class="o">(</span><span class="mi">1</span> <span class="n">second</span><span class="o">))</span> <span class="o">{</span>
+    <span class="nv">results</span><span class="o">.</span><span class="py">last</span> <span class="n">should</span> <span class="nf">equal</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"b"</span><span class="o">,</span> <span class="mi">2</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"c"</span><span class="o">,</span> <span class="mi">1</span><span class="o">)))</span>
+  <span class="o">}</span>
+
+  <span class="nc">When</span><span class="o">(</span><span class="s">"nothing more queued"</span><span class="o">)</span>
+
+  <span class="nc">Then</span><span class="o">(</span><span class="s">"word counted after third slide"</span><span class="o">)</span>
+  <span class="nv">clock</span><span class="o">.</span><span class="py">advance</span><span class="o">(</span><span class="nv">slideDuration</span><span class="o">.</span><span class="py">milliseconds</span><span class="o">)</span>
+  <span class="nf">eventually</span><span class="o">(</span><span class="nf">timeout</span><span class="o">(</span><span class="mi">1</span> <span class="n">second</span><span class="o">))</span> <span class="o">{</span>
+    <span class="nv">results</span><span class="o">.</span><span class="py">last</span> <span class="n">should</span> <span class="nf">equal</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="mi">0</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"b"</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"c"</span><span class="o">,</span> <span class="mi">1</span><span class="o">)))</span>
+  <span class="o">}</span>
+
+  <span class="nc">When</span><span class="o">(</span><span class="s">"nothing more queued"</span><span class="o">)</span>
+
+  <span class="nc">Then</span><span class="o">(</span><span class="s">"word counted after fourth slide"</span><span class="o">)</span>
+  <span class="nv">clock</span><span class="o">.</span><span class="py">advance</span><span class="o">(</span><span class="nv">slideDuration</span><span class="o">.</span><span class="py">milliseconds</span><span class="o">)</span>
+  <span class="nf">eventually</span><span class="o">(</span><span class="nf">timeout</span><span class="o">(</span><span class="mi">1</span> <span class="n">second</span><span class="o">))</span> <span class="o">{</span>
+    <span class="nv">results</span><span class="o">.</span><span class="py">last</span> <span class="n">should</span> <span class="nf">equal</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="mi">0</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"b"</span><span class="o">,</span> <span class="mi">0</span><span class="o">),</span>
+      <span class="nc">WordCount</span><span class="o">(</span><span class="s">"c"</span><span class="o">,</span> <span class="mi">0</span><span class="o">)))</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>One comment to <code class="language-plaintext highlighter-rouge">Eventually</code> trait usage.
+The trait is needed because Spark Streaming is a multithreaded application, and results are not computed immediately.
+I found that 1 second timeout is enough for Spark Streaming to calculate the results.
+The timeout is not related to batch, slide or window duration.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>The complete, working project is published on <a href="https://github.com/mkuthan/example-spark">GitHub</a>.
+You can clone/fork the project and do some experiments by yourself.</p>
+
+<p>I hope that Spark committers expose <code class="language-plaintext highlighter-rouge">ManualClock</code> for others, eventually.
+Control of time is necessary for efficient Spark Streaming application testing.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/scala" class="page__taxonomy-item" rel="tag">scala</a><span class="sep">, </span>
+    
+      <a href="/categories/spark" class="page__taxonomy-item" rel="tag">spark</a><span class="sep">, </span>
+    
+      <a href="/categories/tdd" class="page__taxonomy-item" rel="tag">TDD</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-03-01T00:00:00+00:00">March 1, 2015</time></p>
+
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2014/09/22/ddd-how-to-learn/" class="pagination--pager" title="How to learn DDD
+">Previous</a>
+    
+    
+      <a href="/blog/2015/08/06/spark-kafka-integration1/" class="pagination--pager" title="Spark and Kafka integration patterns, part 1
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Comments</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Passionate Developer. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-50832428-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-50832428-2', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://mkuthan.github.io/blog/2015/03/01/spark-unit-testing/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/blog/2015/03/01/spark-unit-testing"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mkuthan.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>
