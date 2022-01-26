@@ -1,13 +1,13 @@
 ---
-title: "Stream Processing - Part 1 - Apache Beam"
+title: "Stream Processing - Part 1"
 date: 2022-01-29
 categories: [stream processing, apache beam, scala]
 ---
 
-## Overview
-
 This is a very first part of [stream processing](/categories/stream-processing/) blog posts series.
 From the series you will learn how to develop and test stateful streaming data pipelines.
+
+## Overview
 
 I'm going to start with examples implemented with [Apache Beam](https://beam.apache.org/) and [Scio](https://spotify.github.io/scio/),
 then check and compare capabilities in other frameworks like [Apache Flink](https://flink.apache.org), 
@@ -228,10 +228,12 @@ Late data is an inevitable part of every streaming application.
 Imagine that our stream comes from mobile application and someone is on a train that has hit long tunnel somewhere in the Alps ...
 
 Streaming pipeline needs to materialize results in a timely manner, how long the pipeline should wait for data?
-If on 99th percentile latency is 3 seconds, it does not make any sense to wait for outliers late by minutes or hours. 
+If 99<sup>th</sup> percentile latency is 3 seconds, it does not make any sense to wait for outliers late by minutes or hours. 
 For unbounded data this is always heuristic calculation, 
-the streaming engine continuously estimates time "X" where all input data with event-time less than "X" have been already observed.
-The time "X" is called **watermark**.
+the streaming framework continuously estimates time "X" where all input data with event-time less than "X" have been already observed.
+The time "X" is called **watermark**. 
+The watermark calculation algorithm determines quality of the streaming framework. 
+With better heuristics you will get lower overall latency and more precise late data handling. 
 
 Fortunately it's quite easy to write fully deterministic test scenario for late data. 
 Good streaming frameworks (like Apache Beam) provide watermark programmatic control for testing purposes.
@@ -257,14 +259,17 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 }
 ```
 
-* After two on-time events the watermark is programmatically advanced to the end of the first one-minute window
-* As a result of updated watermark, the results for the first window are materialized.
-* Then late event is observed, it should be included in the results of window "00:01:00" but it is silently dropped!
+* After "foo bar" and "baz baz" on-time events, the watermark is programmatically advanced to the end of the first one-minute window
+* As an effect of updated watermark, the results for the first window are materialized.
+* Then late event "foo" is observed, it should be included in the results of window "00:01:00" but it is silently dropped!
+
+With high quality heuristic watermark it should be rare situation that watermark is advanced too early. 
+But as a developer you have to take into account this kind of situation.
 
 ## Late Data Under Allowed Lateness (Discarded)
 
 What if late data must be included in the final calculation?
-As a pipeline developer we define allowed lateness.
+**Allowed lateness** comes to the rescue.
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
@@ -300,9 +305,13 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 * Late result gets end-of-window time "00:00:01" as new event-time, exactly as on-time results
 * There are special assertions to ensure that aggregation comes from on-time or late pane
 
+Late data propagates through the pipeline.
+Most probably late result from one step is still considered late in the downstream steps.
+Configure allowed lateness consistently for all pipeline steps.
+
 ## Late Data Under Allowed Lateness (Accumulated)
 
-In the previous example the results from on-time pane are discarded and not used for late pane.
+In the previous example the results from *on-time pane* are discarded and not used for the *late pane*.
 If the pipeline writes result into idempotent sink we could accumulate on-time into late pane, and update incomplete result when late data arrives. 
 
 ```scala
@@ -335,26 +344,26 @@ If the pipeline writes result into idempotent sink we could accumulate on-time i
 ```
 
 * Accumulation mode is set to `ACCUMULATING_FIRED_PANES` instead of default `DISCARDING_FIRED_PANES`
-* Result in late pane counts `foo` from both panes
+* Result in *late pane* counts `foo` from both panes
 * Be aware, accumulation means more resources utilized by the streaming framework
 
 ## Summary
 
 Are you interested how the aggregation is implemented actually?
-A few lines of code, much less than tests code.
-Streaming pipelines are magnitude more complex to test than batch pipelines. 
-You can inspect [full source code](https://github.com/mkuthan/example-streaming) to get the whole picture.
+Feel free to inspect [source code](https://github.com/mkuthan/example-streaming) to get the whole picture of the examples.
 
 ```scala
 def wordCountInFixedWindow(
   lines: SCollection[String],
   windowDuration: Duration,
   allowedLateness: Duration = Duration.ZERO,
-  accumulationMode: AccumulationMode = AccumulationMode.DISCARDING_FIRED_PANES
+  accumulationMode: AccumulationMode = AccumulationMode.DISCARDING_FIRED_PANES,
+  timestampCombiner: TimestampCombiner = TimestampCombiner.END_OF_WINDOW
 ): SCollection[(String, Long)] = {
   val windowOptions = WindowOptions(
     allowedLateness = allowedLateness,
-    accumulationMode = accumulationMode
+    accumulationMode = accumulationMode,
+    timestampCombiner = timestampCombiner
   )
   
   lines
@@ -363,11 +372,14 @@ def wordCountInFixedWindow(
     .countByValue
 }
 ```
+
 Key takeaways:
 
-* To aggregate unbounded stream the data must be partitioned by event-time
-* Every aggregation introduce latency, event-time typically advances through the pipeline
-* Late date is inevitable for streaming pipelines
-* Watermark handling is the most important feature of any streaming framework
+* Streaming pipelines are magnitude more complex to test than batch pipelines.
+* To aggregate unbounded stream the data must be partitioned by event-time.
+* Every aggregation introduce latency, event-time typically advances through the pipeline.
+* Late date is inevitable for streaming pipelines.
+* Watermark handling is the most important feature of any streaming framework.
 
 I hope that you enjoy the first blog post in [stream processing](/categories/stream-processing/) series.
+Let me know what do you think as a comment below.
