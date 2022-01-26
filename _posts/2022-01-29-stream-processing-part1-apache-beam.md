@@ -7,14 +7,14 @@ categories: [stream processing, apache beam, scala]
 ## Overview
 
 This is a very first part of [stream processing](/categories/stream-processing/) blog posts series.
-From the series you will learn how to develop and test stateful streaming pipelines.
+From the series you will learn how to develop and test stateful streaming data pipelines.
 
 I'm going to start with examples implemented with [Apache Beam](https://beam.apache.org/) and [Scio](https://spotify.github.io/scio/),
 then check and compare capabilities in other frameworks like [Apache Flink](https://flink.apache.org), 
 [Structured Spark Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) or 
 [Kafka Streams](https://kafka.apache.org/documentation/streams/).
 
-Expect well-crafted code samples verified by tests, and some stream processing fundamental theory if it's absolutely necessary:
+Expect well-crafted code samples verified by integration tests, and stream processing fundamental theory if it's absolutely necessary:
 
 * event time vs. processing time
 * latency vs. completeness
@@ -45,23 +45,29 @@ Should be aggregated and partitioned by event time into same-length, non-overlap
 (...)
 ```
 
-I'm fan of TDD, so the implementation of the aggregation method will be disclosed at the end of this blog post.
+I'm fan of TDD as a learning technique, so the implementation of the aggregation method will be disclosed at the very end of this blog post.
 As for now, the following method signature should be enough to understand all presented test scenarios:
 
 ```scala
 def wordCountInFixedWindow(
-    lines: SCollection[String],
-    windowDuration: Duration
+  lines: SCollection[String],
+  windowDuration: Duration
 ): SCollection[(String, Long)]
 ```
-* Method takes unbounded stream of lines (Scio `SCollection`, Beam `PCollection`, Flink `DataStream`, Spark `Dataset` or Kafka `KStream`)
-* Parameter `windowDuration` defines length of the fixed window
+
+* Method takes payload - unbounded stream of lines (Scio [SCollection](https://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html), 
+  Beam [PCollection](https://beam.apache.org/documentation/programming-guide/#pcollections),
+  Flink [Dataset](https://javadoc.io/static/org.apache.flink/flink-java/1.14.3/org/apache/flink/api/java/DataSet.html),
+  Spark [Dataset](https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/Dataset.html) or 
+  Kafka [KStream](https://kafka.apache.org/31/javadoc/org/apache/kafka/streams/kstream/KStream.html))
+* Parameter `windowDuration` defines length of the fixed non-overlapping window
 * Result is defined as tuple: (word, cardinality)
-* You do not find any footprint of event time in the signature, WTF?
+
+You do not find any footprint of event time in the signature, WTF?
 
 The event time is passed implicitly, it's a common pattern for streaming frameworks.
-Because every part of the system must be always event-time aware, the event-time is transported outside the main payload. 
-Moreover, the event-time is constantly advanced during journey through the pipeline 
+Because every part of the system must be always event-time aware, the event-time is transported outside the payload. 
+Moreover, the event-time is constantly advanced during data journey through the pipeline 
 so keeping event-time as a part of the payload does not make sense.
 
 Let's move to the first test scenario.
@@ -74,17 +80,17 @@ If the input stream is empty the aggregation should not emit any results.
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words aggregate" should "be empty for empty stream" in runWithContext { sc =>
-    val words = testStreamOf[String].advanceWatermarkToInfinity()
-    
-    val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-    
-    results should beEmpty
+  val words = testStreamOf[String].advanceWatermarkToInfinity()
+  
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
+  
+  results should beEmpty
 }
 ```
 
 Nothing fancy, except one mystery method: `advanceWatermarkToInfinity()`.
-In a nutshell the method tells: *all lines in the input stream have been observed, calculate the results please*.
-Don't worry, you will learn more about watermarks later on.
+In a nutshell the method tells: *all lines in the input stream have been already observed, calculate the results please*.
+Unclear? I'm fully with you but don't worry, you will learn more about watermarks later on.
 
 ## Single Window
 
@@ -94,24 +100,56 @@ The scenario where input lines are aggregated into words in single fixed one-min
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words" should "be aggregated into single fixed window" in runWithContext { sc =>
-    val words = testStreamOf[String]
-      .addElementsAt("00:00:00", "foo bar")
-      .addElementsAt("00:00:30", "baz baz")
-      .advanceWatermarkToInfinity()
-    
-    val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-    
-    results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-      ("00:01:00", ("foo", 1L)),
-      ("00:01:00", ("bar", 1L)),
-      ("00:01:00", ("baz", 2L))
-    ))
+  val words = testStreamOf[String]
+    .addElementsAt("00:00:00", "foo bar")
+    .addElementsAt("00:00:30", "baz baz")
+    .advanceWatermarkToInfinity()
+  
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
+  
+  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
+    ("00:01:00", ("foo", 1L)),
+    ("00:01:00", ("bar", 1L)),
+    ("00:01:00", ("baz", 2L))
+  ))
 }
 ```
 
 * All result elements get end-of-window time "00:00:01" as a new event-time
 * It means that every fixed window in the pipeline introduces additional latency
-* Longer window requires more resources allocated by streaming runtime as well
+* Longer window requires more resources allocated by streaming runtime
+
+## Single Window (Latest Timestamp Combiner)
+
+You might be tempted to materialize the aggregate with timestamp of latest observed element instead of end-of-window time.
+Look at the next scenario:
+
+```scala
+"Words" should "be aggregated into single fixed window with latest timestamp" in runWithContext { sc =>
+  val words = testStreamOf[String]
+    .addElementsAt("00:00:00", "foo bar")
+    .addElementsAt("00:00:30", "baz baz")
+    .advanceWatermarkToInfinity()
+
+  val timestampCombiner = TimestampCombiner.LATEST
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration, timestampCombiner = timestampCombiner)
+
+  results.withTimestamp should containInAnyOrderAtTime(Seq(
+    ("00:00:00", ("foo", 1L)),
+    ("00:00:00", ("bar", 1L)),
+    ("00:00:30", ("baz", 2L)),
+  ))
+}
+```
+
+* All result elements get the latest timestamp of the words instead of end-of-window time
+* But the overall latency of the pipeline is exactly the same
+
+The results will be materialized at the same processing time but the time skew between processing and event time will be larger.
+Let me explain on the example, assume that average time skew for the input is 10 seconds (events are delayed by 10 seconds).
+For end-of-window timestamp combiner, the time skew after aggregation will be also 10 seconds or a little more.
+For latest timestamp combiner, the skew after aggregation will be 60 + 10 seconds for `foo` and 30 + 10 seconds for `baz`.
+So don't cheat with the latest timestamp combiner for fixed window, you can not travel back in time :)
 
 ## Consecutive Windows
 
@@ -121,22 +159,22 @@ The scenario when the lines are aggregated into words for two consecutive fixed 
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words" should "be aggregated into consecutive fixed windows" in runWithContext { sc =>
-    val words = testStreamOf[String]
-      .addElementsAt("00:00:00", "foo bar")
-      .addElementsAt("00:00:30", "baz baz")
-      .addElementsAt("00:01:00", "foo bar")
-      .addElementsAt("00:01:30", "bar foo")
-      .advanceWatermarkToInfinity()
-    
-    val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-    
-    results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-      ("00:01:00", ("foo", 1L)),
-      ("00:01:00", ("bar", 1L)),
-      ("00:01:00", ("baz", 2L)),
-      ("00:02:00", ("foo", 2L)),
-      ("00:02:00", ("bar", 2L)),
-    ))
+  val words = testStreamOf[String]
+    .addElementsAt("00:00:00", "foo bar")
+    .addElementsAt("00:00:30", "baz baz")
+    .addElementsAt("00:01:00", "foo bar")
+    .addElementsAt("00:01:30", "bar foo")
+    .advanceWatermarkToInfinity()
+  
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
+  
+  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
+    ("00:01:00", ("foo", 1L)),
+    ("00:01:00", ("bar", 1L)),
+    ("00:01:00", ("baz", 2L)),
+    ("00:02:00", ("foo", 2L)),
+    ("00:02:00", ("bar", 2L)),
+  ))
 }
 ```
 
@@ -152,30 +190,34 @@ The scenario when the lines are aggregated into words for two non-consecutive fi
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words" should "be aggregated into non-consecutive fixed windows" in runWithContext { sc =>
-    val words = testStreamOf[String]
-      .addElementsAt("00:00:00", "foo bar")
-      .addElementsAt("00:00:30", "baz baz")
-      .addElementsAt("00:02:00", "foo bar")
-      .addElementsAt("00:02:30", "bar foo")
-      .advanceWatermarkToInfinity()
-    
-    val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-    
-    results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-      ("00:01:00", ("foo", 1L)),
-      ("00:01:00", ("bar", 1L)),
-      ("00:01:00", ("baz", 2L)),
-      ("00:03:00", ("foo", 2L)),
-      ("00:03:00", ("bar", 2L)),
-    ))
-    
-    results.withTimestamp should inOnTimePane("00:01:00", "00:02:00") {
-      beEmpty
-    }
+  val words = testStreamOf[String]
+    .addElementsAt("00:00:00", "foo bar")
+    .addElementsAt("00:00:30", "baz baz")
+    .addElementsAt("00:02:00", "foo bar")
+    .addElementsAt("00:02:30", "bar foo")
+    .advanceWatermarkToInfinity()
+  
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
+  
+  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
+    ("00:01:00", ("foo", 1L)),
+    ("00:01:00", ("bar", 1L)),
+    ("00:01:00", ("baz", 2L)),
+    ("00:03:00", ("foo", 2L)),
+    ("00:03:00", ("bar", 2L)),
+  ))
+  
+  results.withTimestamp should inOnTimePane("00:01:00", "00:02:00") {
+    beEmpty
+  }
 }
 ```
 
 * If there is no input lines for given period, no results are produced
+
+It is quite problematic trait of the streaming pipelines for the frameworks.
+How to recognize if the pipeline is stale from the situation when everything works smoothly but there is no data for some period of time?
+It becomes especially important for joins, if there is no incoming data in one stream it can not block the pipeline forever.
 
 
 ## Late Data
@@ -198,20 +240,20 @@ Good streaming frameworks (like Apache Beam) provide watermark programmatic cont
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Late words" should "be silently dropped" in runWithContext { sc =>
-    val words = testStreamOf[String]
-      .addElementsAt("00:00:00", "foo bar")
-      .addElementsAt("00:00:30", "baz baz")
-      .advanceWatermarkTo("00:01:00")
-      .addElementsAt("00:00:40", "foo") // late event
-      .advanceWatermarkToInfinity()
-    
-    val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-    
-    results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-      ("00:01:00", ("foo", 1L)),
-      ("00:01:00", ("bar", 1L)),
-      ("00:01:00", ("baz", 2L)),
-    ))
+  val words = testStreamOf[String]
+    .addElementsAt("00:00:00", "foo bar")
+    .addElementsAt("00:00:30", "baz baz")
+    .advanceWatermarkTo("00:01:00")
+    .addElementsAt("00:00:40", "foo") // late event
+    .advanceWatermarkToInfinity()
+  
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
+  
+  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
+    ("00:01:00", ("foo", 1L)),
+    ("00:01:00", ("bar", 1L)),
+    ("00:01:00", ("baz", 2L)),
+  ))
 }
 ```
 
@@ -228,29 +270,29 @@ As a pipeline developer we define allowed lateness.
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Late words under allowed lateness" should "be aggregated in late pane" in runWithContext { sc =>
-    val words = testStreamOf[String]
-      .addElementsAt("00:00:00", "foo bar")
-      .addElementsAt("00:00:30", "baz baz")
-      .advanceWatermarkTo("00:01:00")
-      .addElementsAt("00:00:40", "foo foo") // late event under allowed lateness
-      .advanceWatermarkToInfinity()
-    
-    val allowedLateness = Duration.standardSeconds(30)
-    val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration, allowedLateness)
-    
-    results.withTimestamp should inOnTimePane("00:00:00", "00:01:00") {
-      containInAnyOrderAtWindowTime(Seq(
-        ("00:01:00", ("foo", 1L)),
-        ("00:01:00", ("bar", 1L)),
-        ("00:01:00", ("baz", 2L)),
-      ))
-    }
-    
-    results.withTimestamp should inLatePane("00:00:00", "00:01:00") {
-      containSingleValueAtWindowTime(
-        "00:01:00", ("foo", 2L)
-      )
-    }
+  val words = testStreamOf[String]
+    .addElementsAt("00:00:00", "foo bar")
+    .addElementsAt("00:00:30", "baz baz")
+    .advanceWatermarkTo("00:01:00")
+    .addElementsAt("00:00:40", "foo foo") // late event under allowed lateness
+    .advanceWatermarkToInfinity()
+  
+  val allowedLateness = Duration.standardSeconds(30)
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration, allowedLateness)
+  
+  results.withTimestamp should inOnTimePane("00:00:00", "00:01:00") {
+    containInAnyOrderAtWindowTime(Seq(
+      ("00:01:00", ("foo", 1L)),
+      ("00:01:00", ("bar", 1L)),
+      ("00:01:00", ("baz", 2L)),
+    ))
+  }
+  
+  results.withTimestamp should inLatePane("00:00:00", "00:01:00") {
+    containSingleValueAtWindowTime(
+      "00:01:00", ("foo", 2L)
+    )
+  }
 }
 ```
 
@@ -265,30 +307,30 @@ If the pipeline writes result into idempotent sink we could accumulate on-time i
 
 ```scala
 "Late words under allowed lateness" should "be aggregated and accumulated in late pane" in runWithContext { sc =>
-    val words = testStreamOf[String]
-      .addElementsAt("00:00:00", "foo bar")
-      .addElementsAt("00:00:30", "baz baz")
-      .advanceWatermarkTo("00:01:00")
-      .addElementsAt("00:00:40", "foo foo") // late event under allowed lateness
-      .advanceWatermarkToInfinity()
-    
-    val allowedLateness = Duration.standardSeconds(30)
-    val accumulationMode = AccumulationMode.ACCUMULATING_FIRED_PANES
-    val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration, allowedLateness, accumulationMode)
-    
-    results.withTimestamp should inOnTimePane("00:00:00", "00:01:00") {
-      containInAnyOrderAtWindowTime(Seq(
-        ("00:01:00", ("foo", 1L)),
-        ("00:01:00", ("bar", 1L)),
-        ("00:01:00", ("baz", 2L))
-      ))
-    }
-    
-    results.withTimestamp should inLatePane("00:00:00", "00:01:00") {
-      containSingleValueAtWindowTime(
-        "00:01:00", ("foo", 3L)
-      )
-    }
+  val words = testStreamOf[String]
+    .addElementsAt("00:00:00", "foo bar")
+    .addElementsAt("00:00:30", "baz baz")
+    .advanceWatermarkTo("00:01:00")
+    .addElementsAt("00:00:40", "foo foo") // late event under allowed lateness
+    .advanceWatermarkToInfinity()
+  
+  val allowedLateness = Duration.standardSeconds(30)
+  val accumulationMode = AccumulationMode.ACCUMULATING_FIRED_PANES
+  val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration, allowedLateness, accumulationMode)
+  
+  results.withTimestamp should inOnTimePane("00:00:00", "00:01:00") {
+    containInAnyOrderAtWindowTime(Seq(
+      ("00:01:00", ("foo", 1L)),
+      ("00:01:00", ("bar", 1L)),
+      ("00:01:00", ("baz", 2L))
+    ))
+  }
+  
+  results.withTimestamp should inLatePane("00:00:00", "00:01:00") {
+    containSingleValueAtWindowTime(
+      "00:01:00", ("foo", 3L)
+    )
+  }
 }
 ```
 
@@ -305,20 +347,20 @@ You can inspect [full source code](https://github.com/mkuthan/example-streaming)
 
 ```scala
 def wordCountInFixedWindow(
-      lines: SCollection[String],
-      windowDuration: Duration,
-      allowedLateness: Duration = Duration.ZERO,
-      accumulationMode: AccumulationMode = AccumulationMode.DISCARDING_FIRED_PANES
+  lines: SCollection[String],
+  windowDuration: Duration,
+  allowedLateness: Duration = Duration.ZERO,
+  accumulationMode: AccumulationMode = AccumulationMode.DISCARDING_FIRED_PANES
 ): SCollection[(String, Long)] = {
-    val windowOptions = WindowOptions(
-      allowedLateness = allowedLateness,
-      accumulationMode = accumulationMode
-    )
-    
-    lines
-      .flatMap(line => line.split("\\s+"))
-      .withFixedWindows(duration = windowDuration, options = windowOptions)
-      .countByValue
+  val windowOptions = WindowOptions(
+    allowedLateness = allowedLateness,
+    accumulationMode = accumulationMode
+  )
+  
+  lines
+    .flatMap(line => line.split("\\s+"))
+    .withFixedWindows(duration = windowDuration, options = windowOptions)
+    .countByValue
 }
 ```
 Key takeaways:
