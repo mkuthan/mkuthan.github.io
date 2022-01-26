@@ -141,7 +141,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 * The aggregates from each fixed window are independent
 * It means that aggregation results from the first window are discarded after materialization and framework is able to free allocated resources
 
-## Non-Consecutive Windows (Fire If Not Empty)
+## Non-Consecutive Windows
 
 The scenario when the lines are aggregated into words for two non-consecutive fixed one-minute windows.
 
@@ -165,14 +165,15 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
       ("00:03:00", ("foo", 2L)),
       ("00:03:00", ("bar", 2L)),
     ))
+    
+    results.withTimestamp should inOnTimePane("00:01:00", "00:02:00") {
+      beEmpty
+    }
 }
 ```
 
 * If there is no input lines for given period, no results are produced
 
-## Non-Consecutive Windows (Fire Always)
-
-TODO
 
 ## Late Data
 
