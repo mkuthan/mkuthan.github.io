@@ -4,7 +4,9 @@ date: 2022-01-29
 categories: [stream processing, apache beam, scala]
 ---
 
-This is a very first part of [stream processing](/categories/stream-processing/) series.
+## Overview
+
+This is a very first part of [stream processing](/categories/stream-processing/) blog posts series.
 From the series you will learn how to develop and test stateful streaming pipelines.
 
 I'm going to start with examples implemented with [Apache Beam](https://beam.apache.org/) and [Scio](https://spotify.github.io/scio/),
@@ -21,7 +23,7 @@ Expect well-crafted code samples verified by tests, and some stream processing f
 
 ## Word Count
 
-Let's start with "Word Count" on unbounded stream of text lines.
+Let's start with *Word Count* on unbounded stream of text lines.
 The pipeline produces the cardinality of each observed word.
 Because this is a streaming pipeline, the results are materialized periodically on every minute.
 
@@ -54,15 +56,15 @@ def wordCountInFixedWindow(
 ```
 * Method takes unbounded stream of lines (Scio `SCollection`, Beam `PCollection`, Flink `DataStream`, Spark `Dataset` or Kafka `KStream`)
 * Parameter `windowDuration` defines length of the fixed window
-* Result is defined as tuple: word + cardinality
-* You can not find any footprint of event time in the signature
+* Result is defined as tuple: (word, cardinality)
+* You do not find any footprint of event time in the signature, WTF?
 
-The event time is passed implicitly by the framework, it's a common pattern for streaming frameworks.
+The event time is passed implicitly, it's a common pattern for streaming frameworks.
 Because every part of the system must be always event-time aware, the event-time is transported outside the main payload. 
 Moreover, the event-time is constantly advanced during journey through the pipeline 
 so keeping event-time as a part of the payload does not make sense.
 
-Let's move to the test scenarios.
+Let's move to the first test scenario.
 
 ## No Input
 
@@ -80,8 +82,9 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 }
 ```
 
-Nothing fancy except one mystery method: `advanceWatermarkToInfinity()`.
-In a nutshell the method tells: "all lines in the input stream have been observed, calculate the results please".
+Nothing fancy, except one mystery method: `advanceWatermarkToInfinity()`.
+In a nutshell the method tells: *all lines in the input stream have been observed, calculate the results please*.
+Don't worry, you will learn more about watermarks later on.
 
 ## Single Window
 
@@ -189,7 +192,7 @@ the streaming engine continuously estimates time "X" where all input data with e
 The time "X" is called **watermark**.
 
 Fortunately it's quite easy to write fully deterministic test scenario for late data. 
-Good streaming frameworks (like Apache Beam) provide watermark programmatic control.
+Good streaming frameworks (like Apache Beam) provide watermark programmatic control for testing purposes.
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
@@ -213,7 +216,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 ```
 
 * After two on-time events the watermark is programmatically advanced to the end of the first one-minute window
-* The results for the first window are materialized as before
+* As a result of updated watermark, the results for the first window are materialized.
 * Then late event is observed, it should be included in the results of window "00:01:00" but it is silently dropped!
 
 ## Late Data Under Allowed Lateness (Discarded)
@@ -254,7 +257,6 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 * The late event under allowed lateness is included in the result
 * Late result gets end-of-window time "00:00:01" as new event-time, exactly as on-time results
 * There are special assertions to ensure that aggregation comes from on-time or late pane
-* In this mode, `allowed lateness > 0` should not require more resources, but I'm not fully sure - let me know what do you think
 
 ## Late Data Under Allowed Lateness (Accumulated)
 
@@ -290,15 +292,15 @@ If the pipeline writes result into idempotent sink we could accumulate on-time i
 }
 ```
 
-* Accumulation mode is set to "ACCUMULATING_FIRED_PANES" instead of default "DISCARDING_FIRED_PANES"
-* Result in late pane counts "foo" from both panes
+* Accumulation mode is set to `ACCUMULATING_FIRED_PANES` instead of default `DISCARDING_FIRED_PANES`
+* Result in late pane counts `foo` from both panes
 * Be aware, accumulation means more resources utilized by the streaming framework
 
 ## Summary
 
 Are you interested how the aggregation is implemented actually?
-A few lines of code.
-But streaming pipelines are magnitude more complex to test than batch pipelines. 
+A few lines of code, much less than tests code.
+Streaming pipelines are magnitude more complex to test than batch pipelines. 
 You can inspect [full source code](https://github.com/mkuthan/example-streaming) to get the whole picture.
 
 ```scala
