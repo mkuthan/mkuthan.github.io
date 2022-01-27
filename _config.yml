@@ -9,6 +9,7 @@ plugins:
   - jekyll-archives
 
 search: true
+search_full_content: false
 
 permalink: /blog/:year/:month/:day/:title/
 paginate: 10
@@ -71,9 +72,11 @@ defaults:
       classes: wide
       author_profile: true
       comments: true
-      share: false
+      share: true
       show_date: true
       toc: true
+      read_time: true
+      related: true
   - scope:
       path: ""
       type: tag

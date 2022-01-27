@@ -20,7 +20,6 @@ Expect well-crafted code samples verified by integration tests, and stream proce
 * latency vs. completeness
 * windowing, watermarks, triggers, accumulation, punctuation and more
 
-
 ## Word Count
 
 Let's start with *Word Count* on unbounded stream of text lines.
