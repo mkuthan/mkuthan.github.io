@@ -304,7 +304,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 ```
 
 * The late event under allowed lateness is included in the result
-* Late result gets end-of-window time "00:00:01" as new event-time, exactly as on-time results
+* Late result gets end-of-window time of window starting at "00:00:00" as new event-time, exactly as on-time results
 * There are special assertions to ensure that aggregation comes from on-time or late pane
 
 Late data propagates through the pipeline.
