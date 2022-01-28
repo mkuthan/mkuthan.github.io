@@ -214,7 +214,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 }
 ```
 
-* If there is no input lines for given period, no results are produced
+* If there are no input lines for a given period, no results are produced
 
 It is quite problematic trait of the streaming pipelines for the frameworks.
 How to recognize if the pipeline is stale from the situation when everything works smoothly but there is no data for some period of time?
