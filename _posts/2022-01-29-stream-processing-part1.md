@@ -280,7 +280,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
     .addElementsAt("00:00:00", "foo bar")
     .addElementsAt("00:00:30", "baz baz")
     .advanceWatermarkTo("00:01:00")
-    .addElementsAt("00:00:40", "foo foo") // late event under allowed lateness
+    .addElementsAt("00:00:40", "foo foo") // late event within allowed lateness
     .advanceWatermarkToInfinity()
   
   val results = wordCountInFixedWindow(
