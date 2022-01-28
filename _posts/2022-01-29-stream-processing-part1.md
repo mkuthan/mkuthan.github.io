@@ -64,7 +64,7 @@ def wordCountInFixedWindow(
 
 There is no trace of event time in the signature, WTF?
 
-The event time is passed implicitly, it's a common pattern for streaming frameworks.
+The event time is passed implicitly which is a common pattern for streaming frameworks.
 Because every part of the system must be always event-time aware, the event-time is transported outside the payload. 
 Moreover, the event-time is constantly advanced during data journey through the pipeline 
 so keeping event-time as a part of the payload does not make sense.
