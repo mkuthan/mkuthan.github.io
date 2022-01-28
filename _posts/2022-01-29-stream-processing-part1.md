@@ -24,7 +24,7 @@ Expect well-crafted code samples verified by integration tests, and stream proce
 
 Let's start with *Word Count* on unbounded stream of text lines.
 The pipeline produces the cardinality of each observed word.
-Because this is a streaming pipeline, the results are materialized periodically on every minute.
+Because this is a streaming pipeline, the results are materialized periodically - in this case every minute.
 
 For example, the following stream of lines:
 ```
