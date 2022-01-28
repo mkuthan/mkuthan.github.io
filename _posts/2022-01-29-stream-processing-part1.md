@@ -10,7 +10,7 @@ From the series you will learn how to develop and test stateful streaming data p
 ## Overview
 
 I'm going to start with examples implemented with [Apache Beam](https://beam.apache.org/) and [Scio](https://spotify.github.io/scio/),
-then check and compare capabilities in other frameworks like [Apache Flink](https://flink.apache.org), 
+then check and compare capabilities of other frameworks like [Apache Flink](https://flink.apache.org), 
 [Structured Spark Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) or 
 [Kafka Streams](https://kafka.apache.org/documentation/streams/).
 
