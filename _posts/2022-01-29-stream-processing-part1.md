@@ -147,7 +147,7 @@ Look at the next scenario:
 * But the overall latency of the pipeline is exactly the same
 
 The results will be materialized at the same processing time but the time skew between processing and event time will be larger.
-Let me explain on the example, assume that average time skew for the input is 10 seconds (events are delayed by 10 seconds).
+Let me explain with the example. Assume that average time skew for the input is 10 seconds (events are delayed by 10 seconds).
 For end-of-window timestamp combiner, the time skew after aggregation will be also 10 seconds or a little more.
 For latest timestamp combiner, the skew after aggregation will be 60 + 10 seconds for `foo` and 30 + 10 seconds for `baz`.
 So don't cheat with the latest timestamp combiner for fixed window, you can not travel back in time :)
