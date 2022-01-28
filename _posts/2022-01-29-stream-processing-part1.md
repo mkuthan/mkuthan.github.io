@@ -381,7 +381,7 @@ Key takeaways:
 * Streaming pipelines are magnitude more complex to test than batch pipelines.
 * To aggregate unbounded stream the data must be partitioned by event-time.
 * Every aggregation introduce latency, event-time typically advances through the pipeline.
-* Late date is inevitable for streaming pipelines.
+* Late data is inevitable for streaming pipelines.
 * Watermark handling is the most important feature of any streaming framework.
 
 I hope that you enjoy the first blog post in [stream processing](/categories/stream-processing/) series.
