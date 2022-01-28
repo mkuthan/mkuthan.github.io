@@ -1,6 +1,6 @@
 ---
 title: "Stream Processing - Part 1"
-date: 2022-01-29
+date: 2022-01-28
 categories: [stream processing, apache beam, scala]
 ---
 
@@ -114,7 +114,8 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 }
 ```
 
-* All result elements get end-of-window time of window starting at "00:00:00" as a new event-time
+* One-minute window is defined as the half-open interval *[00:00:00, 00:01:00)*
+* All result elements get end-of-window time *00:00:59.999* as a new event-time
 * It means that every fixed window in the pipeline introduces additional latency
 * Longer window requires more resources allocated by streaming runtime for keeping the state
 
@@ -151,8 +152,8 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 The results will be materialized at the same processing time but the time skew between processing and event time will be larger.
 Let me explain with an example. Assume that the average time skew for the input is 10 seconds (events are delayed by 10 seconds).
-For end-of-window timestamp combiner, the time skew after aggregation will be also 10 seconds or a little more.
-For the latest timestamp combiner, the skew after aggregation will be 60 + 10 seconds for `foo` and 30 + 10 seconds for `baz`.
+For `END_OF_WINDOW` timestamp combiner, the time skew after aggregation will be also 10 seconds or a little more.
+For the `LATEST` timestamp combiner, the skew after aggregation will be 60 + 10 seconds for `foo` and 30 + 10 seconds for `baz`.
 So don't cheat with the latest timestamp combiner for a fixed window, you can not travel back in time :)
 
 ## Consecutive Windows
@@ -217,7 +218,8 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 }
 ```
 
-* If there are no input lines for a window "00:01:00-00:02:00", no results are produced
+* If there are no input lines for a window *[00:01:00, 00:02:00)*, no results are produced
+* The example uses new assertion `inWindow` to check results only for the given pane 
 
 It is quite a problematic trait of the streaming pipelines for the frameworks.
 How to recognize if the pipeline is stale from the situation when everything works smoothly but there is no data for some period of time?
@@ -265,7 +267,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 * After "foo bar" and "baz baz" on-time events, the watermark is programmatically advanced to the end of the first one-minute window
 * As an effect of the updated watermark, the results for the first window are materialized.
-* Then the late event "foo" is observed, it should be included in the results of window "00:01:00" but it is silently dropped!
+* Then the late event "foo" is observed, it should be included in the results of window *[00:00:00, 00:01:00)* but it is silently dropped!
 
 With high quality heuristic watermark it should be rare that watermark is advanced too early. 
 But as a developer you have to take into account this kind of situation.
@@ -307,8 +309,9 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 }
 ```
 
+* Allowed lateness is set to 30 seconds
 * The late event within allowed lateness is included in the result
-* Late result gets end-of-window time of window starting at "00:00:00" as new event-time, exactly as on-time results
+* Late result gets end-of-window time as new event-time, exactly as on-time results
 * There are special assertions to ensure that aggregation comes from on-time or late pane
 
 Late data propagates through the pipeline.
@@ -317,8 +320,8 @@ Configure allowed lateness consistently for all pipeline steps.
 
 ## Late Data Within Allowed Lateness (Fired Panes Accumulated)
 
-In the previous example the results from *on-time pane* are discarded and not used for the *late pane*.
-If the pipeline writes result into idempotent sink we could accumulate on-time into late pane, and update incomplete result when late data arrives. 
+In the previous example the results from *on-time* pane are discarded and not used for the *late* pane.
+If the pipeline writes result into idempotent sink we could accumulate *on-time* into *late* pane, and update incomplete result when late data arrives. 
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
