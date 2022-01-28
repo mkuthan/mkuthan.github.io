@@ -44,7 +44,7 @@ Should be aggregated and partitioned by event time into same-length, non-overlap
 (...)
 ```
 
-I'm fan of TDD as a learning technique, so the implementation of the aggregation method will be disclosed at the very end of this blog post.
+I'm a fan of TDD as a learning technique, so the implementation of the aggregation method will not be disclosed until the very end of this blog post.
 As for now, the following method signature should be enough to understand all presented test scenarios:
 
 ```scala
