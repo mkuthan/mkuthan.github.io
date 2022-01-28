@@ -14,7 +14,7 @@ then check and compare capabilities of other frameworks like [Apache Flink](http
 [Structured Spark Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) or 
 [Kafka Streams](https://kafka.apache.org/documentation/streams/).
 
-Expect well-crafted code samples verified by integration tests, and stream processing fundamental theory if it's absolutely necessary:
+Expect well-crafted code samples verified by integration tests and stream processing fundamental theory if it's absolutely necessary:
 
 * event time vs. processing time
 * latency vs. completeness
@@ -66,10 +66,10 @@ There is no trace of event time in the signature, WTF?
 
 The event time is passed implicitly which is a common pattern for streaming frameworks.
 Because every part of the system must be always event-time aware, the event-time is transported outside the payload. 
-Moreover, the event-time is constantly advanced during data journey through the pipeline 
+Moreover, the event-time may advance during data journey through the pipeline 
 so keeping event-time as a part of the payload does not make sense.
 
-Let's move to the first test scenario.
+Let's see how this example behaves in different scenarios.
 
 ## No Input
 
@@ -91,7 +91,7 @@ Nothing fancy, except one mystery method: `advanceWatermarkToInfinity()`.
 In a nutshell the method tells: *all lines in the input stream have been already observed, calculate the results please*.
 Unclear? I'm fully with you but don't worry, you will learn more about watermarks later on.
 
-## Single Window
+## Single Window (End Of Window Timestamp Combiner)
 
 The scenario where input lines are aggregated into words in single fixed one-minute window.
 
@@ -100,23 +100,23 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words" should "be aggregated into single fixed window" in runWithContext { sc =>
   val words = testStreamOf[String]
-    .addElementsAt("00:00:00", "foo bar")
-    .addElementsAt("00:00:30", "baz baz")
+    .addElementsAtTime("00:00:00", "foo bar")
+    .addElementsAtTime("00:00:30", "baz baz")
     .advanceWatermarkToInfinity()
-  
+
   val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-  
-  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-    ("00:01:00", ("foo", 1L)),
-    ("00:01:00", ("bar", 1L)),
-    ("00:01:00", ("baz", 2L))
+
+  results.withTimestamp should containInAnyOrderAtTime(Seq(
+    ("00:00:59.999", ("foo", 1L)),
+    ("00:00:59.999", ("bar", 1L)),
+    ("00:00:59.999", ("baz", 2L)),
   ))
 }
 ```
 
 * All result elements get end-of-window time of window starting at "00:00:00" as a new event-time
 * It means that every fixed window in the pipeline introduces additional latency
-* Longer window requires more resources allocated by streaming runtime
+* Longer window requires more resources allocated by streaming runtime for keeping the state
 
 ## Single Window (Latest Timestamp Combiner)
 
@@ -124,16 +124,18 @@ You might be tempted to materialize the aggregate with timestamp of latest obser
 Look at the next scenario:
 
 ```scala
+val DefaultWindowDuration = Duration.standardMinutes(1L)
+
 "Words" should "be aggregated into single fixed window with latest timestamp" in runWithContext { sc =>
   val words = testStreamOf[String]
-    .addElementsAt("00:00:00", "foo bar")
-    .addElementsAt("00:00:30", "baz baz")
+    .addElementsAtTime("00:00:00", "foo bar")
+    .addElementsAtTime("00:00:30", "baz baz")
     .advanceWatermarkToInfinity()
 
   val results = wordCountInFixedWindow(
-    sc.testStream(words), 
-     DefaultWindowDuration, 
-     timestampCombiner = TimestampCombiner.LATEST)
+    sc.testStream(words),
+    DefaultWindowDuration,
+    timestampCombiner = TimestampCombiner.LATEST)
 
   results.withTimestamp should containInAnyOrderAtTime(Seq(
     ("00:00:00", ("foo", 1L)),
@@ -143,6 +145,7 @@ Look at the next scenario:
 }
 ```
 
+* Timestamp combiner is set to `LATEST` instead of default `END_OF_WINDOW`
 * All result elements get the latest timestamp of the words instead of end-of-window time
 * But the overall latency of the pipeline is exactly the same
 
@@ -161,20 +164,20 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words" should "be aggregated into consecutive fixed windows" in runWithContext { sc =>
   val words = testStreamOf[String]
-    .addElementsAt("00:00:00", "foo bar")
-    .addElementsAt("00:00:30", "baz baz")
-    .addElementsAt("00:01:00", "foo bar")
-    .addElementsAt("00:01:30", "bar foo")
+    .addElementsAtTime("00:00:00", "foo bar")
+    .addElementsAtTime("00:00:30", "baz baz")
+    .addElementsAtTime("00:01:00", "foo bar")
+    .addElementsAtTime("00:01:30", "bar foo")
     .advanceWatermarkToInfinity()
-  
+
   val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-  
-  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-    ("00:01:00", ("foo", 1L)),
-    ("00:01:00", ("bar", 1L)),
-    ("00:01:00", ("baz", 2L)),
-    ("00:02:00", ("foo", 2L)),
-    ("00:02:00", ("bar", 2L)),
+
+  results.withTimestamp should containInAnyOrderAtTime(Seq(
+    ("00:00:59.999", ("foo", 1L)),
+    ("00:00:59.999", ("bar", 1L)),
+    ("00:00:59.999", ("baz", 2L)),
+    ("00:01:59.999", ("foo", 2L)),
+    ("00:01:59.999", ("bar", 2L)),
   ))
 }
 ```
@@ -192,29 +195,29 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words" should "be aggregated into non-consecutive fixed windows" in runWithContext { sc =>
   val words = testStreamOf[String]
-    .addElementsAt("00:00:00", "foo bar")
-    .addElementsAt("00:00:30", "baz baz")
-    .addElementsAt("00:02:00", "foo bar")
-    .addElementsAt("00:02:30", "bar foo")
+    .addElementsAtTime("00:00:00", "foo bar")
+    .addElementsAtTime("00:00:30", "baz baz")
+    .addElementsAtTime("00:02:00", "foo bar")
+    .addElementsAtTime("00:02:30", "bar foo")
     .advanceWatermarkToInfinity()
-  
+
   val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-  
-  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-    ("00:01:00", ("foo", 1L)),
-    ("00:01:00", ("bar", 1L)),
-    ("00:01:00", ("baz", 2L)),
-    ("00:03:00", ("foo", 2L)),
-    ("00:03:00", ("bar", 2L)),
+
+  results.withTimestamp should containInAnyOrderAtTime(Seq(
+    ("00:00:59.999", ("foo", 1L)),
+    ("00:00:59.999", ("bar", 1L)),
+    ("00:00:59.999", ("baz", 2L)),
+    ("00:02:59.999", ("foo", 2L)),
+    ("00:02:59.999", ("bar", 2L)),
   ))
-  
-  results.withTimestamp should inOnTimePane("00:01:00", "00:02:00") {
+
+  results.withTimestamp should inWindow("00:01:00", "00:02:00") {
     beEmpty
   }
 }
 ```
 
-* If there are no input lines for a given period, no results are produced
+* If there are no input lines for a window "00:01:00-00:02:00", no results are produced
 
 It is quite problematic trait of the streaming pipelines for the frameworks.
 How to recognize if the pipeline is stale from the situation when everything works smoothly but there is no data for some period of time?
@@ -244,18 +247,18 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Late words" should "be silently dropped" in runWithContext { sc =>
   val words = testStreamOf[String]
-    .addElementsAt("00:00:00", "foo bar")
-    .addElementsAt("00:00:30", "baz baz")
+    .addElementsAtTime("00:00:00", "foo bar")
+    .addElementsAtTime("00:00:30", "baz baz")
     .advanceWatermarkTo("00:01:00")
-    .addElementsAt("00:00:40", "foo") // late event
+    .addElementsAtTime("00:00:40", "foo") // late event
     .advanceWatermarkToInfinity()
-  
+
   val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-  
-  results.withTimestamp should containInAnyOrderAtWindowTime(Seq(
-    ("00:01:00", ("foo", 1L)),
-    ("00:01:00", ("bar", 1L)),
-    ("00:01:00", ("baz", 2L)),
+
+  results.withTimestamp should containInAnyOrderAtTime(Seq(
+    ("00:00:59.999", ("foo", 1L)),
+    ("00:00:59.999", ("bar", 1L)),
+    ("00:00:59.999", ("baz", 2L)),
   ))
 }
 ```
@@ -267,7 +270,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 With high quality heuristic watermark it should be rare situation that watermark is advanced too early. 
 But as a developer you have to take into account this kind of situation.
 
-## Late Data Within Allowed Lateness (Discarded)
+## Late Data Within Allowed Lateness (Fired Panes Discarded)
 
 What if late data must be included in the final calculation?
 **Allowed lateness** comes to the rescue.
@@ -277,33 +280,34 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Late words within allowed lateness" should "be aggregated in late pane" in runWithContext { sc =>
   val words = testStreamOf[String]
-    .addElementsAt("00:00:00", "foo bar")
-    .addElementsAt("00:00:30", "baz baz")
+    .addElementsAtTime("00:00:00", "foo bar")
+    .addElementsAtTime("00:00:30", "baz baz")
     .advanceWatermarkTo("00:01:00")
-    .addElementsAt("00:00:40", "foo foo") // late event within allowed lateness
+    .addElementsAtTime("00:00:40", "foo foo") // late event within allowed lateness
     .advanceWatermarkToInfinity()
-  
+
   val results = wordCountInFixedWindow(
-    sc.testStream(words), DefaultWindowDuration, 
+    sc.testStream(words),
+    DefaultWindowDuration,
     allowedLateness = Duration.standardSeconds(30))
-  
+
   results.withTimestamp should inOnTimePane("00:00:00", "00:01:00") {
-    containInAnyOrderAtWindowTime(Seq(
-      ("00:01:00", ("foo", 1L)),
-      ("00:01:00", ("bar", 1L)),
-      ("00:01:00", ("baz", 2L)),
+    containInAnyOrderAtTime(Seq(
+      ("00:00:59.999", ("foo", 1L)),
+      ("00:00:59.999", ("bar", 1L)),
+      ("00:00:59.999", ("baz", 2L)),
     ))
   }
-  
+
   results.withTimestamp should inLatePane("00:00:00", "00:01:00") {
-    containSingleValueAtWindowTime(
-      "00:01:00", ("foo", 2L)
+    containSingleValueAtTime(
+      "00:00:59.999", ("foo", 2L)
     )
   }
 }
 ```
 
-* The late event under allowed lateness is included in the result
+* The late event within allowed lateness is included in the result
 * Late result gets end-of-window time of window starting at "00:00:00" as new event-time, exactly as on-time results
 * There are special assertions to ensure that aggregation comes from on-time or late pane
 
@@ -311,36 +315,39 @@ Late data propagates through the pipeline.
 Most probably late result from one step is still considered late in downstream steps.
 Configure allowed lateness consistently for all pipeline steps.
 
-## Late Data Under Allowed Lateness (Accumulated)
+## Late Data Within Allowed Lateness (Fired Panes Accumulated)
 
 In the previous example the results from *on-time pane* are discarded and not used for the *late pane*.
 If the pipeline writes result into idempotent sink we could accumulate on-time into late pane, and update incomplete result when late data arrives. 
 
 ```scala
-"Late words under allowed lateness" should "be aggregated and accumulated in late pane" in runWithContext { sc =>
+val DefaultWindowDuration = Duration.standardMinutes(1L)
+
+"Late words within allowed lateness" should "be aggregated and accumulated in late pane" in runWithContext { sc =>
   val words = testStreamOf[String]
-    .addElementsAt("00:00:00", "foo bar")
-    .addElementsAt("00:00:30", "baz baz")
+    .addElementsAtTime("00:00:00", "foo bar")
+    .addElementsAtTime("00:00:30", "baz baz")
     .advanceWatermarkTo("00:01:00")
-    .addElementsAt("00:00:40", "foo foo") // late event under allowed lateness
+    .addElementsAtTime("00:00:40", "foo foo") // late event within allowed lateness
     .advanceWatermarkToInfinity()
-  
+
   val results = wordCountInFixedWindow(
-    sc.testStream(words), DefaultWindowDuration, 
-    allowedLateness = Duration.standardSeconds(30), 
+    sc.testStream(words),
+    DefaultWindowDuration,
+    allowedLateness = Duration.standardSeconds(30),
     accumulationMode = AccumulationMode.ACCUMULATING_FIRED_PANES)
-  
+
   results.withTimestamp should inOnTimePane("00:00:00", "00:01:00") {
-    containInAnyOrderAtWindowTime(Seq(
-      ("00:01:00", ("foo", 1L)),
-      ("00:01:00", ("bar", 1L)),
-      ("00:01:00", ("baz", 2L))
+    containInAnyOrderAtTime(Seq(
+      ("00:00:59.999", ("foo", 1L)),
+      ("00:00:59.999", ("bar", 1L)),
+      ("00:00:59.999", ("baz", 2L))
     ))
   }
-  
+
   results.withTimestamp should inLatePane("00:00:00", "00:01:00") {
-    containSingleValueAtWindowTime(
-      "00:01:00", ("foo", 3L)
+    containSingleValueAtTime(
+      "00:00:59.999", ("foo", 3L)
     )
   }
 }
@@ -386,3 +393,6 @@ Key takeaways:
 
 I hope that you enjoy the first blog post in [stream processing](/categories/stream-processing/) series.
 Let me know what do you think as a comment below.
+
+Last but not least, I would like to thank [Piotr](https://www.linkedin.com/in/piotr-szczepanik-a4a2b92/) 
+for the blog post review and hours of fruitful discussions.
