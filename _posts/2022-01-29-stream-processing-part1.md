@@ -185,7 +185,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 ## Non-Consecutive Windows
 
-The scenario when the lines are aggregated into words for two non-consecutive fixed one-minute windows.
+In this scenario lines are aggregated into words for two non-consecutive fixed one-minute windows.
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
