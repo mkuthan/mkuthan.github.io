@@ -154,7 +154,7 @@ So don't cheat with the latest timestamp combiner for fixed window, you can not 
 
 ## Consecutive Windows
 
-The scenario when the lines are aggregated into words for two consecutive fixed one-minute windows.
+The scenario in which lines are aggregated into words for two consecutive fixed one-minute windows.
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
