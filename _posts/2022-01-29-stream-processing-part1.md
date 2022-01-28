@@ -267,7 +267,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 With high quality heuristic watermark it should be rare situation that watermark is advanced too early. 
 But as a developer you have to take into account this kind of situation.
 
-## Late Data Under Allowed Lateness (Discarded)
+## Late Data Within Allowed Lateness (Discarded)
 
 What if late data must be included in the final calculation?
 **Allowed lateness** comes to the rescue.
