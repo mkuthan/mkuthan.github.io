@@ -275,7 +275,7 @@ What if late data must be included in the final calculation?
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
-"Late words under allowed lateness" should "be aggregated in late pane" in runWithContext { sc =>
+"Late words within allowed lateness" should "be aggregated in late pane" in runWithContext { sc =>
   val words = testStreamOf[String]
     .addElementsAt("00:00:00", "foo bar")
     .addElementsAt("00:00:30", "baz baz")
