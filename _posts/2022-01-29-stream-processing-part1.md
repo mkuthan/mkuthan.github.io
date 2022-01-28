@@ -4,7 +4,7 @@ date: 2022-01-29
 categories: [stream processing, apache beam, scala]
 ---
 
-This is a very first part of [stream processing](/categories/stream-processing/) blog posts series.
+This is the very first part of [stream processing](/categories/stream-processing/) blog post series.
 From the series you will learn how to develop and test stateful streaming data pipelines.
 
 ## Overview
