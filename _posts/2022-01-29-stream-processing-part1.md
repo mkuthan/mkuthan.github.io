@@ -4,7 +4,7 @@ date: 2022-01-29
 categories: [stream processing, apache beam, scala]
 ---
 
-This is the very first part of [stream processing](/categories/stream-processing/) blog post series.
+This is the very first part of the [stream processing](/categories/stream-processing/) blog post series.
 From the series you will learn how to develop and test stateful streaming data pipelines.
 
 ## Overview
@@ -22,7 +22,7 @@ Expect well-crafted code samples verified by integration tests and stream proces
 
 ## Word Count
 
-Let's start with *Word Count* on unbounded stream of text lines.
+Let's start with *Word Count* on an unbounded stream of text lines.
 The pipeline produces the cardinality of each observed word.
 Because this is a streaming pipeline, the results are materialized periodically - in this case every minute.
 
@@ -93,7 +93,7 @@ Unclear? I'm fully with you but don't worry, you will learn more about watermark
 
 ## Single Window (End Of Window Timestamp Combiner)
 
-The scenario where input lines are aggregated into words in single fixed one-minute window.
+The scenario where input lines are aggregated into words in a single fixed one-minute window.
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
@@ -120,7 +120,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 ## Single Window (Latest Timestamp Combiner)
 
-You might be tempted to materialize the aggregate with timestamp of latest observed element instead of end-of-window time.
+You might be tempted to materialize the aggregate with a timestamp of the latest observed element instead of end-of-window time.
 Look at the next scenario:
 
 ```scala
@@ -150,10 +150,10 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 * But the overall latency of the pipeline is exactly the same
 
 The results will be materialized at the same processing time but the time skew between processing and event time will be larger.
-Let me explain with the example. Assume that average time skew for the input is 10 seconds (events are delayed by 10 seconds).
+Let me explain with an example. Assume that the average time skew for the input is 10 seconds (events are delayed by 10 seconds).
 For end-of-window timestamp combiner, the time skew after aggregation will be also 10 seconds or a little more.
-For latest timestamp combiner, the skew after aggregation will be 60 + 10 seconds for `foo` and 30 + 10 seconds for `baz`.
-So don't cheat with the latest timestamp combiner for fixed window, you can not travel back in time :)
+For the latest timestamp combiner, the skew after aggregation will be 60 + 10 seconds for `foo` and 30 + 10 seconds for `baz`.
+So don't cheat with the latest timestamp combiner for a fixed window, you can not travel back in time :)
 
 ## Consecutive Windows
 
@@ -219,7 +219,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 * If there are no input lines for a window "00:01:00-00:02:00", no results are produced
 
-It is quite problematic trait of the streaming pipelines for the frameworks.
+It is quite a problematic trait of the streaming pipelines for the frameworks.
 How to recognize if the pipeline is stale from the situation when everything works smoothly but there is no data for some period of time?
 It becomes especially important for joins, if there is no incoming data in one stream it can not block the pipeline forever.
 
@@ -229,17 +229,17 @@ It becomes especially important for joins, if there is no incoming data in one s
 I'm glad that you are still there, the most interesting part of this blog post starts here.
 
 Late data is an inevitable part of every streaming application. 
-Imagine that our stream comes from mobile application and someone is on a train that has hit long tunnel somewhere in the Alps ...
+Imagine that our stream comes from a mobile application and someone is on a train that has hit a long tunnel somewhere in the Alps ...
 
-Streaming pipeline needs to materialize results in a timely manner, how long the pipeline should wait for data?
-If 99<sup>th</sup> percentile latency is 3 seconds, it does not make any sense to wait for outliers late by minutes or hours. 
-For unbounded data this is always heuristic calculation.
+Streaming pipeline needs to materialize results in a timely manner, how long should the pipeline wait for data?
+If the 99<sup>th</sup> percentile latency is 3 seconds, it does not make any sense to wait for outliers late by minutes or hours. 
+For unbounded data this is always a heuristic calculation.
 The streaming framework continuously estimates time "X" for which all input data with event-time less than "X" have been already observed.
-The time "X" is called **watermark**. 
-The watermark calculation algorithm determines quality of the streaming framework. 
+The time "X" is called a **watermark**. 
+The watermark calculation algorithm determines the quality of the streaming framework. 
 With better heuristics you will get lower overall latency and more precise late data handling. 
 
-Fortunately it's quite easy to write fully deterministic test scenario for late data. 
+Fortunately it's quite easy to write a fully deterministic test scenario for late data. 
 Good streaming frameworks (like Apache Beam) provide watermark programmatic control for testing purposes.
 
 ```scala
@@ -264,10 +264,10 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 ```
 
 * After "foo bar" and "baz baz" on-time events, the watermark is programmatically advanced to the end of the first one-minute window
-* As an effect of updated watermark, the results for the first window are materialized.
-* Then late event "foo" is observed, it should be included in the results of window "00:01:00" but it is silently dropped!
+* As an effect of the updated watermark, the results for the first window are materialized.
+* Then the late event "foo" is observed, it should be included in the results of window "00:01:00" but it is silently dropped!
 
-With high quality heuristic watermark it should be rare situation that watermark is advanced too early. 
+With high quality heuristic watermark it should be rare that watermark is advanced too early. 
 But as a developer you have to take into account this kind of situation.
 
 ## Late Data Within Allowed Lateness (Fired Panes Discarded)
@@ -359,8 +359,8 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 ## Summary
 
-Are you interested how the aggregation is implemented actually?
-Feel free to inspect [source code](https://github.com/mkuthan/example-streaming) to get the whole picture of the examples.
+Are you interested in how the aggregation is actually implemented?
+Feel free to inspect [source code](https://github.com/mkuthan/stream-processing) to get the whole picture of the examples.
 
 ```scala
 def wordCountInFixedWindow(
@@ -385,14 +385,14 @@ def wordCountInFixedWindow(
 
 Key takeaways:
 
-* Streaming pipelines are magnitude more complex to test than batch pipelines.
-* To aggregate unbounded stream the data must be partitioned by event-time.
-* Every aggregation introduce latency, event-time typically advances through the pipeline.
+* Streaming pipelines are magnitudes more complex to test than batch pipelines.
+* To aggregate unbounded streams the data must be partitioned by event-time.
+* Every aggregation introduces latency, event-time typically advances through the pipeline.
 * Late data is inevitable for streaming pipelines.
 * Watermark handling is the most important feature of any streaming framework.
 
-I hope that you enjoy the first blog post in [stream processing](/categories/stream-processing/) series.
-Let me know what do you think as a comment below.
+I hope that you enjoy the first blog post in the [stream processing](/categories/stream-processing/) series.
+Let me know what you think as a comment below.
 
 Last but not least, I would like to thank [Piotr](https://www.linkedin.com/in/piotr-szczepanik-a4a2b92/) 
 for the blog post review and hours of fruitful discussions.
