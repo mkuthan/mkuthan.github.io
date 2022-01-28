@@ -114,7 +114,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 }
 ```
 
-* All result elements get end-of-window time "00:00:01" as a new event-time
+* All result elements get end-of-window time of window starting at "00:00:00" as a new event-time
 * It means that every fixed window in the pipeline introduces additional latency
 * Longer window requires more resources allocated by streaming runtime
 
