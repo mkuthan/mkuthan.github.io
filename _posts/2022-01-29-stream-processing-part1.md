@@ -308,7 +308,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 * There are special assertions to ensure that aggregation comes from on-time or late pane
 
 Late data propagates through the pipeline.
-Most probably late result from one step is still considered late in the downstream steps.
+Most probably late result from one step is still considered late in downstream steps.
 Configure allowed lateness consistently for all pipeline steps.
 
 ## Late Data Under Allowed Lateness (Accumulated)
