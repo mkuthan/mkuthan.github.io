@@ -230,8 +230,8 @@ Imagine that our stream comes from mobile application and someone is on a train 
 
 Streaming pipeline needs to materialize results in a timely manner, how long the pipeline should wait for data?
 If 99<sup>th</sup> percentile latency is 3 seconds, it does not make any sense to wait for outliers late by minutes or hours. 
-For unbounded data this is always heuristic calculation, 
-the streaming framework continuously estimates time "X" where all input data with event-time less than "X" have been already observed.
+For unbounded data this is always heuristic calculation.
+The streaming framework continuously estimates time "X" for which all input data with event-time less than "X" have been already observed.
 The time "X" is called **watermark**. 
 The watermark calculation algorithm determines quality of the streaming framework. 
 With better heuristics you will get lower overall latency and more precise late data handling. 
