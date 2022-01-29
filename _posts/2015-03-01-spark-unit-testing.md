@@ -2,10 +2,14 @@
 title: "Spark and Spark Streaming unit testing"
 date: 2015-03-01
 categories: [spark, TDD, scala]
+tagline: ""
+header:
+    overlay_image: /assets/images/jakub-skafiriak-AljDaiCbCVY-unsplash.webp
+    overlay_filter: 0.2
 ---
 
-When you develop distributed system, it is crucial to make it easy to test.
-Execute tests in controlled environment, ideally from your IDE.
+When you develop a distributed system, it is crucial to make it easy to test.
+Execute tests in a controlled environment, ideally from your IDE.
 Long develop-test-develop cycle for complex systems could kill your productivity.
 Below you find my testing strategy for Spark and Spark Streaming applications.
 
@@ -15,7 +19,7 @@ Our hypothetical Spark application pulls data from Apache Kafka, apply transform
 [RDDs](https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.rdd.RDD) 
 and 
 [DStreams](https://spark.apache.org/docs/latest/api/scala/#org.apache.spark.streaming.dstream.DStream)
-and persist outcomes into Cassandra or Elastic Search database.
+and persist outcomes into Cassandra or ElasticSearch database.
 On production Spark application is deployed on YARN or Mesos cluster, and everything is glued with ZooKeeper.
 Big picture of the stream processing architecture is presented below:
 
@@ -25,7 +29,7 @@ Lots of moving parts, not so easy to configure and test.
 Even with automated provisioning implemented with Vagrant, Docker and Ansible.
 If you can't test everything, test at least the most important part of your application - transformations - implemented with Spark.
 
-Spark claims, that it is friendly to unit testing with any popular unit test framework.
+Spark claims that it is friendly to unit testing with any popular unit test framework.
 To be strict, Spark supports rather lightweight integration testing, not unit testing, IMHO.
 But still it is much more convenient to test transformation logic locally, than deploying all parts on YARN.
 
@@ -35,13 +39,15 @@ Perhaps tests would be fragile and hard to maintain. This approach makes sense f
 
 ## What should be tested?
 
-Our transformation logic implemented with Spark, nothing more. But how to test the logic so tightly coupled to Spark API (RDD, DStream)?
-Let's define how typical Spark application is organized. Our hypothetical application structure looks like this:
+Our transformation logic is implemented with Spark, nothing more. 
+But how to test the logic so tightly coupled to Spark API (RDD, DStream)?
+Let's define how a typical Spark application is organized. 
+Our hypothetical application structure looks like this:
 
 1. Initialize `SparkContext` or `StreamingContext`.
 2. Create RDD or DStream for given source (e.g: Apache Kafka)
 3. Evaluate transformations on RDD or DStream API.
-4. Put transformation outcomes (e.g: aggregations) into external database.
+4. Put transformation outcomes (e.g: aggregations) into an external database.
 
 ### Context
 
@@ -50,7 +56,7 @@ Set master URL to `local`, run the operations and then stop context gracefully.
 
 SparkContext initialization:
 
-``` scala
+```scala
 class SparkExampleSpec extends FlatSpec with BeforeAndAfter {
 
   private val master = "local[2]"
@@ -77,7 +83,7 @@ class SparkExampleSpec extends FlatSpec with BeforeAndAfter {
 
 StreamingContext initialization:
 
-``` scala 
+```scala 
 class SparkStreamingExampleSpec extends FlatSpec with BeforeAndAfter {
 
   private val master = "local[2]"
@@ -112,18 +118,18 @@ class SparkStreamingExampleSpec extends FlatSpec with BeforeAndAfter {
 
 The problematic part is how to create RDD or DStream.
 For testing purposes it must be simplified to avoid embedded Kafka and ZooKeeper.
-Below you can find examples how to create in-memory RDD and DStream.
+Below you can find examples on how to create in-memory RDD and DStream.
 
 In-memory RDD:
 
-``` scala
+```scala
 val lines = Seq("To be or not to be.", "That is the question.")
 val rdd = sparkContext.parallelize(lines)
 ```
 
 In-memory DStream:
 
-``` scala
+```scala
 val lines = mutable.Queue[RDD[String]]()
 val dstream = streamingContext.queueStream(lines)
 
@@ -133,12 +139,13 @@ lines += sparkContext.makeRDD(Seq("To be or not to be.", "That is the question."
 
 ### Transformation logic
 
-The most important part of our application - transformations logic - must be encapsulated in separate class or object.
-Object is preferred to avoid class serialization overhead. Exactly the same code is used by the application and by the test.
+The most important part of our application - transformations logic - must be encapsulated in a separate class or object.
+Object is preferred to avoid class serialization overhead. 
+Exactly the same code is used by the application and by the test.
 
 WordCount.scala
 
-``` scala
+```scala
 case class WordCount(word: String, count: Int)
 
 object WordCount {
@@ -161,10 +168,10 @@ object WordCount {
 ## Spark test
 
 Now it is time to implement our first test for WordCount transformation.
-The code of test is very straightforward and easy to read.
+The code of the test is very straightforward and easy to read.
 Single point of truth, the best documentation of your system, always up-to-date.
 
-``` scala
+```scala
 "Shakespeare most famous quote" should "be counted" in {
     Given("quote")
     val lines = Array("To be or not to be.", "That is the question.")
@@ -190,10 +197,10 @@ Single point of truth, the best documentation of your system, always up-to-date.
 ## Spark Streaming test
 
 Spark Streaming transformations are much more complex to test.
-The full control over clock is needed to manually manage batches, slides and windows.
-Without controlled clock you would end up with complex tests with many `Thread.sleeep` calls.
+Full control over the clock is needed to manually manage batches, slides and windows.
+Without a controlled clock you would end up with complex tests with many `Thread.sleeep` calls.
 And the test execution would take ages.
-The only downside is that you will not have extra time for coffee during tests execution.
+The only downside is that you will not have extra time for coffee during test execution.
 
 Spark Streaming provides necessary abstraction over system clock, `ManualClock` class.
 Unfortunately `ManualClock` class is declared as package private. Some hack is needed.
@@ -201,7 +208,7 @@ The wrapper presented below, is an adapter for the original `ManualClock` class 
 
 ClockWrapper.scala
 
-``` scala
+```scala
 package org.apache.spark.streaming
 
 import org.apache.spark.streaming.util.ManualClock
@@ -223,12 +230,12 @@ class ClockWrapper(ssc: StreamingContext) {
 }
 ```
 
-Now Spark Streaming test can be implemented in efficient way.
-The test does not have to wait for system clock and test is implemented with millisecond precision.
+Now the Spark Streaming test can be implemented in an efficient way.
+The test does not have to wait for the system clock and the test is implemented with millisecond precision.
 You can easily test your windowed scenario from the very beginning to very end.
-With given\when\then structure you should be able to understand tested logic without further explanations.
+With the given\when\then structure you should be able to understand tested logic without further explanations.
 
-``` scala
+```scala
 "Sample set" should "be counted" in {
   Given("streaming context is initialized")
   val lines = mutable.Queue[RDD[String]]()
