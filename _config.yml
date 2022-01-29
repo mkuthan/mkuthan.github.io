@@ -1,5 +1,4 @@
 title: Passionate Developer
-subtitle: Memory is unreliable like a software, so make my thoughts more eternal and my software more reliable
 url: http://mkuthan.github.io
 
 theme: minimal-mistakes-jekyll
@@ -11,8 +10,8 @@ plugins:
 search: true
 search_full_content: false
 
-logo: /assets/images/logo.png
-og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.jpg
+logo: /assets/images/logo.webp
+og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.webp
 
 permalink: /blog/:year/:month/:day/:title/
 paginate: 10
@@ -29,7 +28,7 @@ kramdown:
 
 author:
   name: "Marcin Kuthan"
-  avatar: "/assets/images/avatar.jpg"
+  avatar: "/assets/images/avatar.webp"
   bio: "Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform."
   links:
     - label: "GitHub"
