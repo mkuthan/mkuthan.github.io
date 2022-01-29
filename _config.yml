@@ -7,6 +7,9 @@ minimal_mistakes_skin: "dirt"
 plugins:
   - jekyll-archives
 
+sass:
+  style: compressed
+
 search: true
 search_full_content: false
 
