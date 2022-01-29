@@ -2,7 +2,7 @@
 title: "Kafka Streams DSL vs Processor API"
 date: 2017-11-02
 categories: [kafka, kafka streams, scala]
-tagline: Kafka Streams
+tagline: ""
 header:
     overlay_image: /assets/images/mitchell-kmetz-5a3gboOg9qc-unsplash.webp
     overlay_filter: 0.2

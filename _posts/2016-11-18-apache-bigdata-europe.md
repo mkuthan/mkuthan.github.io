@@ -2,7 +2,7 @@
 title: "Apache BigData Europe Conference Summary"
 date: 2016-11-18
 categories: [conferences]
-tagline: Apache BigData Europe
+tagline: Seville
 header:
     overlay_image: /assets/images/joan-oger-PWrNP4bQHB4-unsplash.webp
     overlay_filter: 0.2
