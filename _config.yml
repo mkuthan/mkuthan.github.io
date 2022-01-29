@@ -11,6 +11,7 @@ plugins:
 search: true
 search_full_content: false
 
+logo: /assets/images/logo.png
 og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.jpg
 
 permalink: /blog/:year/:month/:day/:title/
