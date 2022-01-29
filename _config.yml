@@ -11,7 +11,7 @@ plugins:
 search: true
 search_full_content: false
 
-og_image: /assets/images/jeff-dewitt-K4io-aDZF78-unsplash.jpg
+og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.jpg
 
 permalink: /blog/:year/:month/:day/:title/
 paginate: 10
