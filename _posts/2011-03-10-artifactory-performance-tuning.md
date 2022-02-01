@@ -1,7 +1,7 @@
 ---
 title: "Artifactory Performance Tuning"
 date: 2011-03-10
-categories: [artifactory, jvm, performance, linux]
+categories: [Performance, Java, Linux]
 ---
 
 Few years ago I participated in Kirk Pepperdine Java performance tuning
