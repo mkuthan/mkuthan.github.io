@@ -1,7 +1,7 @@
 ---
 title: "Spark and Spark Streaming unit testing"
 date: 2015-03-01
-categories: [spark, TDD, scala]
+categories: [Apache Spark, Scala]
 tagline: ""
 header:
     overlay_image: /assets/images/jakub-skafiriak-AljDaiCbCVY-unsplash.webp

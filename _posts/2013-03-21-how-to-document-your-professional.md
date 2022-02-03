@@ -1,7 +1,7 @@
 ---
 title: "How to document your professional experiences"
 date: 2013-03-21
-categories: [craftsmanship]
+categories: [Craftsmanship]
 ---
 
 Have you considered what is important for prospective employer? 
@@ -19,7 +19,7 @@ Below you can find some of my tricks:
 * Manage your profile @ [Goodreads](https://www.goodreads.com/mkuthan)
 * Manage your profile @ [LinkedIn](http://pl.linkedin.com/in/marcinkuthan/)
 * Post to discussion [groups](http://maven.40175.n5.nabble.com/template/NamlServlet.jtp?macro=user_nodes&user=146149), be helpful for others
-* Be active in local software groups (e.g JUG)
+* Be active in local software groups (e.g. JUG)
 * Attend university lectures (@ [Coursera](https://www.coursera.org/user/i/3d908cbf919e14af793fae9a5fc732f4)), 100% free
   
 To be honest, I have done only few of them for myself :-(

@@ -1,7 +1,7 @@
 ---
 title: Programming language does not matter
 date: 2014-09-15
-categories: [architecture, PHP]
+categories: [Architecture, PHP]
 ---
 
 A few days ago I participated in quick presentation of significant e-commerce platform. 

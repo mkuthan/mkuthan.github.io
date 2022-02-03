@@ -1,7 +1,7 @@
 ---
 title: Rrelease It! - book review
 date: 2014-06-21
-categories: books
+categories: [Books, Craftsmanship]
 ---
 
 Recently I read excellent book _Release It!_ written by Michael Nygard. 

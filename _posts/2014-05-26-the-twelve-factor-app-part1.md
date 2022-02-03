@@ -1,7 +1,7 @@
 ---
 title: "The Twelve-Factor App - part 1"
 date: 2014-05-26
-categories: architecture
+categories: [Architecture]
 ---
 
 During my studies about "Micro Services" I found comprehensive (but short) document about _Twelve-Factor App_ methodology

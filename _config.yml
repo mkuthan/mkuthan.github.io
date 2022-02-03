@@ -77,7 +77,7 @@ defaults:
       classes: wide
       author_profile: true
       comments: true
-      share: true
+      share: false
       show_date: true
       toc: true
       read_time: true

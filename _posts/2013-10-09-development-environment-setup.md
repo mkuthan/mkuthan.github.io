@@ -1,7 +1,7 @@
 ---
 title: "Development Environment Setup"
 date: 2013-10-09
-categories: [linux, bash, ruby, java, node.js, python]
+categories: [Craftsmanship, Java, Node.js, Python, Ruby, Linux]
 ---
 
 This document is a manual how to configure flexible development environment for _Java_, _JavaScript_, _Ruby_ and _Python_ - my primary set of tools.

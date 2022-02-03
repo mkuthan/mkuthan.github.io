@@ -1,7 +1,7 @@
 ---
 title: "How to send email from JEE application"
 date: 2013-12-06
-categories: [JMS, smtp, spring]
+categories: [Architecture, Spring]
 ---
 
 Sending email notifications from enterprise application is very common scenario. 

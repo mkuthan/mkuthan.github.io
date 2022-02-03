@@ -1,7 +1,7 @@
 ---
 title: "Long-running Spark Streaming jobs on YARN cluster"
 date: 2016-09-30
-categories: [spark, yarn, hdfs]
+categories: [Apache Spark, Apache Hadoop]
 tagline: ""
 header:
     overlay_image: /assets/images/oktay-yildiz-ZvxMNELAVDU-unsplash.webp
