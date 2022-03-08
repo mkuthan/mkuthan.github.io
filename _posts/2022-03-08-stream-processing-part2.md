@@ -501,7 +501,7 @@ def activitiesInSessionWindow(
 
 private def sortByTimestamp(activities: Iterable[(Activity, Instant)]): Iterable[(Activity, Instant)] = {
   val ordering: Ordering[(Activity, Instant)] = Ordering.by { case (_, instant) => instant.getMillis }
-  actions.toSeq.sorted(ordering)
+  activities.toSeq.sorted(ordering)
 }
 
 private def withoutTimestamp(activities: Iterable[(Activity, Instant)]): Iterable[Activity] =
