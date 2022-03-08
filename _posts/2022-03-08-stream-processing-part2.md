@@ -1,7 +1,7 @@
 ---
 title: "Stream Processing - Part 2"
 date: 2022-03-08
-categories: [stream processing, apache beam, scala]
+categories: [Stream Processing, Apache Beam, Scala]
 tagline: Apache Beam - dynamic aggregation
 header:
     overlay_image: /assets/images/forest-simon-yQ1IDlOe-6k-unsplash.webp
