@@ -85,7 +85,7 @@ Unclear? If so, check the first [part](/blog/2022/01/28/stream-processing-part1/
 
 ## Single session
 
-The scenario where all activities are aggregated into a single session.
+The scenario in which all activities are aggregated into a single session.
 
 ```scala
 "Activities" should "be aggregated into single session" in runWithContext { sc =>
