@@ -43,7 +43,7 @@ If the allowed gap between activities is shorter, e.g. for 5 minutes gap we will
 00:18:10 -> "checkout", "close app"
 ```
 
-This is an over-simplified aggregation example just for the blog academic purposes, notice that it does not scale at all. 
+This is an over-simplified aggregation example just for the blog academic purposes. Careful reader will notice that it does not scale at all. 
 All user activities during the session must fit into memory of the single machine.
 In real-world scenario the actions should be reduced into scalable [algebraic](https://en.wikipedia.org/wiki/Algebraic_structure) data structures, e.g: 
 
