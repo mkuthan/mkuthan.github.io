@@ -452,7 +452,7 @@ results.withTimestamp should inOnTimePane("00:00:00", "00:15:00") {
 ```
 
 * The on-time pane is produced when watermark has passed
-* Window and elements times are exactly like for the latest early-pane, because there has not been any new activity observed since the late pane was emitted
+* Window and elements times are exactly like for the latest early-pane, because there has not been any new activity observed since the last early-pane was emitted
 
 Late results:
 
