@@ -358,7 +358,7 @@ To accumulate activities from already fired panes the accumulation mode has to b
 
 The aggregation in `ACCUMULATING_FIRED_PANES` mode could effectively produce some duplicates.
 All downstream processing steps must be aware of that fact. 
-In the above scenario they could use the latest observed session as the most completed one. 
+In the above scenario they could use the latest observed session as the most complete one. 
 The previously emitted, partially overlapped session for user "joe" might be discarded.
 
 ## Speculative results
