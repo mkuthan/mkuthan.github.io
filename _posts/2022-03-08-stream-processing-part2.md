@@ -16,7 +16,7 @@ At the end, I also show the complex triggering policy to get speculative results
 
 ## User sessions
 
-One of the most popular dynamic aggregations is a session window. 
+One of the most popular dynamic aggregations is based on a session window.
 The single session captures user activities within some period of time followed by the gap of inactivity.
 
 As an example, the following stream of user activities is ingested from hypothetical mobile e-commerce application:
