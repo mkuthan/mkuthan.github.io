@@ -225,9 +225,10 @@ What if the gap between events is longer than ten minutes?
 * Two independent sessions are produced
 * Result element always gets end-of-window time, ten minutes more than the oldest observed activity for the given session
 
-## Late activity
+## Late activity without allowed lateness
 
-We have slowly moved into the more interesting scenarios. What happens if the late activity will be observed in the stream?
+We have slowly moved into the more interesting scenarios.
+What happens if the late activity will be observed in the stream and the allowed lateness [is not explicitly defined](https://github.com/apache/beam/blob/v2.37.0/sdks/java/core/src/main/java/org/apache/beam/sdk/values/WindowingStrategy.java#L65)?
 
 ```scala
 "Late activity" should "be silently discarded" in runWithContext { sc =>
@@ -258,8 +259,8 @@ We have slowly moved into the more interesting scenarios. What happens if the la
 }
 ```
 
-* The activity "add to cart" at *00:03:00* is late event, watermark has been already advanced to *00:13:00*
 * Late event is simply discarded, there is no result produced for window *[00:00:00, 00:13:00)*!
+* The activity "add to cart" at *00:03:00* is late event, watermark has been already advanced to *00:13:00*
 * The first session is produces as expected, when watermark has passed allowed gap after the last observed event
 
 Did you guess that the second session should have only the "close app" event? 
@@ -371,7 +372,7 @@ It could take hours, what if we need more up-to-date results, even if the user s
 We should define the more comprehensive trigger for the session window.
 The following trigger defines that the aggregation will produce early, speculative results every minute after the first element has been seen.
 Then the trigger produces an on-time result when the watermark passes the end of the window (a default behaviour).
-Finally, the late results will be produced as well, on every observed late activity (also a default behaviour).
+Finally, the late results will be produced as well, on every observed late activity.
 
 ```scala
 AfterWatermark
@@ -383,7 +384,7 @@ AfterWatermark
 ```
 
 Instead of e-commerce action names I decided to introduce simple indices: 0, 1, 2 ...
-It should make the reasoning about processing time a little easier :)
+It should make the reasoning about processing time a little easier for the readers :)
 
 ```scala
 "Activities" should "be aggregated speculatively on every minute, on-time, and finally on every late activity" in runWithContext { sc =>
@@ -417,7 +418,7 @@ It should make the reasoning about processing time a little easier :)
 }
 ```
 
-* In addition to the watermark, the processing time is advanced as well to fire early speculative results
+* In addition to the watermark, the processing time is advanced as well to fire early, speculative results
 * To make a speculative results more meaningful, the `ACCUMULATING_FIRED_PANES` mode is configured
 
 Early, speculative results:
@@ -441,6 +442,7 @@ results.withTimestamp should inEarlyPane("00:00:00", "00:15:00") {
 * The first pane emission resets the trigger, so the second speculative result is again produced 1 minute after "2" activity and contains activities from "0" to "3"
 * There is also a third early pane, with all already observed activities
 * The event time of the results is always the oldest observed event time plus the configured gap of ten minutes
+* The downstream steps in the pipeline get the speculative results even if the session has not been completed yet
 
 On-time result:
 
@@ -453,6 +455,7 @@ results.withTimestamp should inOnTimePane("00:00:00", "00:15:00") {
 
 * The on-time pane is produced when watermark has passed
 * Window and elements times are exactly like for the latest early-pane, because there has not been any new activity observed since the last early-pane was emitted
+* When on-time pane is emitted, the downstream steps in the pipeline could decide to invalidate the speculative results and use the complete session instead
 
 Late results:
 
@@ -465,8 +468,9 @@ results.withTimestamp should inLatePane("00:00:00", "00:17:00") {
 }
 ```
 
-* The late panes are triggered on every late element and the session contains all already observed actions
+* The late panes are triggered on every late element and the session contains all already observed actions (`ACCUMULATING_FIRED_PANES` mode)
 * You should already know why all the panes get the *00:00:00* as a start of the window, if not - study the previous examples again :)
+* The downstream steps in the pipeline could decide to take into account late results or not
 
 ## Summary
 
@@ -513,6 +517,7 @@ Key takeaways:
 * Data-driven windows like session window greatly widen the streaming processing design patterns
 * Session window is much more complex for reasoning and test than fixed window
 * Late event under allowed lateness closes the gap of already produced sessions, the results could be surprising
-* Session window could never end, but to get the speculative, early results you can define the special trigger in processing time domain
+* Session window could never end, but to get the speculative, early results you can define the special trigger
+* Early results are always triggered when the processing time advances, there is no correlation with the event time
 
 Let me know what you think as a comment below.
