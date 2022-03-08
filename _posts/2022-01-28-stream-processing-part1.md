@@ -2,7 +2,7 @@
 title: "Stream Processing - Part 1"
 date: 2022-01-28
 categories: [Stream Processing, Apache Beam, scala]
-tagline: Apache Beam
+tagline: Apache Beam - fixed windows
 header:
   overlay_image: /assets/images/jeff-dewitt-K4io-aDZF78-unsplash.webp
   overlay_filter: 0.2
