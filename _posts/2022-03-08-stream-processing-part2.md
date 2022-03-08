@@ -10,8 +10,8 @@ header:
 
 This is the second part of the [stream processing](/categories/stream-processing/) blog post series.
 In the first [part](/blog/2022/01/28/stream-processing-part1/) I presented aggregations in a fixed, non-overlapping windows.
-Now you will learn dynamic aggregations in data-driven window, 
-when the size of the window depends on the input data themselves instead of predefined time based pattern.
+Now you will learn dynamic aggregations in data-driven windows, 
+for which the size of each window depends on the input data instead of a predefined time based pattern.
 At the end, I also show the complex triggering policy to get speculative results for the latency sensitive pipelines.
 
 ## User sessions
