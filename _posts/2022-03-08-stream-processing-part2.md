@@ -505,7 +505,7 @@ private def sortByTimestamp(activities: Iterable[(Activity, Instant)]): Iterable
 }
 
 private def withoutTimestamp(activities: Iterable[(Activity, Instant)]): Iterable[Activity] =
-  actions.map(_._1)
+  activities.map(_._1)
 ```
 
 Key takeaways:
