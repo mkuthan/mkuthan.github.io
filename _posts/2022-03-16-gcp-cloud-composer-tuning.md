@@ -1,8 +1,8 @@
 ---
-title: "Cloud Composer 1.x Tuning"
-date: 2022-03-14
-categories: [Cloud Composer, Apache Airflow, GCP, Performance]
-tagline: Cloud Composer 1.x - tuning
+title: "GCP Cloud Composer 1.x Tuning"
+date: 2022-03-16
+categories: [GCP, Cloud Composer, Apache Airflow, Performance]
+tagline: ""
 header:
     overlay_image: /assets/images/aron-visuals-BXOXnQ26B7o-unsplash.webp
     overlay_filter: 0.2
@@ -13,8 +13,8 @@ Today you will learn how to configure Google Cloud Platform scheduler - [Cloud C
 in the performance and costs effective way.
 
 The article is for *Cloud Composer* version `1.x` only.
-Why not to use version `2.x`? It is a very good question, indeed.
-But the reality of the real life has forced me to tune the obsolete version.
+Why not use version `2.x`? It is a very good question, indeed.
+But the reality of real life has forced me to tune to the obsolete version.
 {: .notice}
 
 ## Overview
@@ -36,16 +36,16 @@ On my *Cloud Composer* installation operators are responsible for creating the e
 The sensors wait for [BigQuery](https://cloud.google.com/bigquery) data, the payload for the Spark jobs.
 From the performance perspective, the operators are much more resource heavy than sensors.
 
-The *BigQuery* sensors are short living tasks, the sensor checks for the data and if data exits the sensor quickly finishes.
+The *BigQuery* sensors are short living tasks, the sensor checks for the data and if data exists the sensor quickly finishes.
 If data is not available yet, the sensor also finishes, but it is also rescheduled for the next execution 
 (see [poke_interval](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/base/index.html#airflow.sensors.base.BaseSensorOperator) parameter).
 
 The resources allocated by the *Spark* operator is kept for the whole *Spark* job's execution time.
 It could take several minutes or even hours. 
-For most of the time, the operator does not much more than checking for the Spark job status, so it is memory bound process.
+For most of the time, the operator does not do much more than checking for the Spark job status, so it is a memory bound process.
 Even if there is a CPU time slots shortage on the *Cloud Composer* worker, the negative impact on the Spark job itself is negligible.
 
-So for the further capacity planning we may count operators memory allocation and add some safety margin for the sensors.
+So for further capacity planning we may count operators memory allocation and add some safety margin for the sensors.
 
 How to check how much memory is allocated by the operators?
 It's not easy task, the *Cloud Composer* workers form a [Kubernetes](https://kubernetes.io/) cluster.
@@ -60,7 +60,10 @@ The first insight in our tuning journey: every operator allocates approximately 
 You should ask: Whaaaat 250MiB for the REST call to the *Dataproc* cluster API?
 The architecture of the *Apache Airflow* is quite complex, every task is executed as [Celery worker](https://docs.celeryproject.org/en/stable/userguide/workers.html) with its own overhead.
 Every task needs a connection to the *Apache Airflow* database, it also consumes resources.
-Perhaps there are other factors I'm not aware of, just let me know in the blog post comment.
+Perhaps there are other factors I'm not aware of, please let me know in the blog post comment.
+
+You should measure the task memory usage by yourself, all further calculation heavily depends on it.
+{: .notice}
 
 ## Worker Size
 
@@ -81,29 +84,27 @@ The allocatable memory on Kubernetes cluster is calculated in the [following way
 
 So, for the standard virtual machines allocatable memory is as follows:
 
-| Worker        | Allocatable Memory                   |
-| ------------- | ------------------------------------ |
-| n1-standard-1 | 3.75GiB - 25% = 2.8GiB               |
-| n2-standard-2 | (4GiB - 25%) + (4GiB - 20%) = 6.2GiB |
-| n2-highmem-2  | 6.2GiB + (8GiB - 10%) = 13.4GiB      |
-+------------------------------------------------------+
+| Worker         | Allocatable Memory                   |
+| ---------------| -----------------------------------: |
+| n1-standard-1  | 3.75GiB - 25% = 2.8GiB               |
+| n2-standard-2  | (4GiB - 25%) + (4GiB - 20%) = 6.2GiB |
+| n2-highmem-2   | 6.2GiB + (8GiB - 10%) = 13.4GiB      |
 
 Please keep in mind that minimal *Cloud Composer* cluster has to have three workers.
 And the workers is only a part of total *Cloud Composer* [costs](https://cloud.google.com/products/calculator#tab=composer).
 Below you can find the estimated monthly costs for 3-nodes *Cloud Composer* installation in eu-west1 region.
-You can assume that real usage when *Cloud Composer* schedules real tasks is ~20% higher than presented numbers.
+You can assume that real usage when *Cloud Composer* schedules real tasks are ~20% higher than presented numbers.
 
 | Worker        | Estimated monthly cost (eu-west1) |
-| ------------- | --------------------------------- |
-| n1-standard-1 | ~410 USD                          |
-| n2-standard-2 | ~510 USD                          |
-| n2-highmem-2  | ~570 USD                          |
-+---------------------------------------------------+
+| ------------- | --------------------------------: |
+| n1-standard-1 | ~ $410                            |
+| n2-standard-2 | ~ $510                            |
+| n2-highmem-2  | ~ $570                            |
 
 ### *Cloud Composer* overhead
 
 There are also many built-in *Cloud Composer* processes run on every worker. TODO - show the pods ...
-As long as the *Cloud Composer* is a managed service, you don't have a control over these processes.
+As long as the *Cloud Composer* is a managed service, you don't have control over these processes.
 Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting will be a bumpy walk.
 Just measure the memory utilization on the clean *Cloud Composer* installation and add the result to the final estimate.
 
@@ -114,11 +115,12 @@ My measures show 1.7GB of RAM for built-in *Cloud Composer* processes on every w
 Now we are ready to estimate available memory and the maximum number of concurrent tasks.
 
 | Worker        | Available Memory                     | Maximum Tasks          |
-| ------------- | ------------------------------------ | ---------------------- |
+| ------------- | -----------------------------------: | ---------------------: |
 | n1-standard-1 | 3 * (2.8GiB - 1.7GiB) = 3.3GiB       | 3.3GiB / 250MiB = 13   |
 | n2-standard-2 | 3 * (6.2GiB - 1.7GiB) = 13.5GiB      | 13.5GiB / 250MiB = 55  |
 | n2-highmem-2  | 3 * (13.4GiB - 1.7GiB) = 35.1GiB     | 35.1GiB / 250MiB = 143 |
-+-------------------------------------------------------------------------------+
+
+TODO: add some safety reservations
 
 ## *Apache Airflow* tuning
 
@@ -133,15 +135,14 @@ If not, *Cloud Composer* sets the defaults and the workers will be under-utilize
 In my 3-workers cluster scenario the following settings should be applied.
 
 | Worker        | core.parallelism | celery.worker_concurrency |
-| ------------- | ---------------- | ------------------------- |
+| ------------- | ---------------: | ------------------------: |
 | n1-standard-1 | 12               | 4                         |
 | n2-standard-2 | 54               | 18                        |
 | n2-highmem-2  | 141              | 47                        |
-+--------------------------------------------------------------+
 
-As you can see, *Cloud Composer* defaults do not match to any of the presented worker types.
+As you can see, *Cloud Composer* defaults do not match any of the presented worker types.
 
-### Scheduler CPU utilization
+### Scheduler
 
 I have also found two another *Apache Airflow* properties worth to modify: 
 
@@ -161,3 +162,10 @@ pod evictions / failures
 dag parsing time
 memory utilization (does it close to the limits)
 cpu utilization (is it evenly distributed across the workers)
+
+## Summary
+
+TODO
+
+Last but not least, I would like to thank [Patryk](https://www.linkedin.com/in/patryk-gala/)
+for the fruitful discussions.

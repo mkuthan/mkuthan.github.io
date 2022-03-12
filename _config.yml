@@ -29,6 +29,9 @@ kramdown:
     block:
       line_numbers: true
 
+# default is 200, too high for the technical content read time estimation
+words_per_minute: 150
+
 author:
   name: "Marcin Kuthan"
   avatar: "/assets/images/avatar.webp"
