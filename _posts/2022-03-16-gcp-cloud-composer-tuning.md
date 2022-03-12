@@ -53,23 +53,25 @@ You could try to connect to the Kubernetes *airflow-worker* [pod](https://kubern
 run a dozen of tasks and measure the real resource utilization.
 I would opt for the second option.
 
-TODO: diagrams and description
+![Cloud Composer worker memory usage](/assets/images/cloud_composer_worker_memory_usage.webp)
 
-The first insight in our tuning journey: every operator allocates approximately 250MiB of RAM.
+The workers' memory utilization increased from steady state 1.76GiB to 4.36GiB for 12 concurrent running operators.
+The first insight in our tuning journey: every operator allocates approximately (4.36GiB - 1.76GiB) / 12 =~ 220MiB of RAM.
 
-You should ask: Whaaaat 250MiB for the REST call to the *Dataproc* cluster API?
+You should ask: Whaaaat 220MiB for the REST call to the *Dataproc* cluster API?
 The architecture of the *Apache Airflow* is quite complex, every task is executed as [Celery worker](https://docs.celeryproject.org/en/stable/userguide/workers.html) with its own overhead.
 Every task needs a connection to the *Apache Airflow* database, it also consumes resources.
-Perhaps there are other factors I'm not aware of, please let me know in the blog post comment.
+Perhaps there are other factors I'm not even aware of ...
 
-You should measure the task memory usage by yourself, all further calculation heavily depends on it.
+You should always measure the task memory usage by yourself, all further calculation heavily depends on it.
+The memory usage might be varying for different *Apache Airflow* operators.
 {: .notice}
 
 ## Worker Size
 
 We have already known the memory utilization by the single task. Although, how many tasks can be executed concurrently on the worker?
 It depends on:
-* The type of *Apache Airflow* task (for my scenario - 250MiB)
+* The type of *Apache Airflow* task (for my scenario - 220MiB)
 * Allocatable memory on *Kubernetes* cluster
 * The *Cloud Composer* built-in processes overhead
 * The type of the virtual machine, finally
@@ -82,13 +84,25 @@ The allocatable memory on Kubernetes cluster is calculated in the [following way
 * `Capacity - 20%` for the next 4GiB (up to 8GiB)
 * `Capacity - 10%` for the next 8GiB (up to 16GiB)
 
-So, for the standard virtual machines allocatable memory is as follows:
+So, for the standard virtual machines allocatable memory should be as follows:
 
 | Worker         | Allocatable Memory                   |
 | ---------------| -----------------------------------: |
 | n1-standard-1  | 3.75GiB - 25% = 2.8GiB               |
 | n2-standard-2  | (4GiB - 25%) + (4GiB - 20%) = 6.2GiB |
 | n2-highmem-2   | 6.2GiB + (8GiB - 10%) = 13.4GiB      |
+
+How it looks in practice? It is always worth to check because the real allocatable memory is lower than in the calculations :)
+
+*n1-standard-1* virtual machines: 2.75GB (**2.56GiB**)
+![Cloud Composer nodes for n1-standard-1](/assets/images/cloud_composer_nodes_n1_standard_1.webp)
+
+*n2-standard-2* virtual machines: 6.34GB (**5.9GiB**)
+![Cloud Composer nodes for n2-standard-2](/assets/images/cloud_composer_nodes_n2_standard_2.webp)
+
+Thank you, Google, for using different units across the console. 
+An intellectual challenge every time when I have to convert GB to GiB and vice-versa.
+{: .notice}
 
 Please keep in mind that minimal *Cloud Composer* cluster has to have three workers.
 And the workers is only a part of total *Cloud Composer* [costs](https://cloud.google.com/products/calculator#tab=composer).
@@ -103,24 +117,38 @@ You can assume that real usage when *Cloud Composer* schedules real tasks are ~2
 
 ### *Cloud Composer* overhead
 
-There are also many built-in *Cloud Composer* processes run on every worker. TODO - show the pods ...
+There are also many built-in *Cloud Composer* processes run on every worker.
 As long as the *Cloud Composer* is a managed service, you don't have control over these processes.
 Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting will be a bumpy walk.
-Just measure the memory utilization on the clean *Cloud Composer* installation and add the result to the final estimate.
 
-My measures show 1.7GB of RAM for built-in *Cloud Composer* processes on every worker.
+![Cloud Composer pods](/assets/images/cloud_composer_pods.webp)
+
+Do not rely on the reported requested memory, it is just a garbage. 
+Just measure the maximum worker memory utilization on the clean *Cloud Composer* installation and add the result to the final estimate.
+
+![Cloud Composer memory overhead](/assets/images/cloud_composer_memory_overhead.webp)
+
+My measures show 1.6GiB of RAM for built-in *Cloud Composer* processes on every worker.
 
 ### Tasks' space
 
 Now we are ready to estimate available memory and the maximum number of concurrent tasks.
 
-| Worker        | Available Memory                     | Maximum Tasks          |
-| ------------- | -----------------------------------: | ---------------------: |
-| n1-standard-1 | 3 * (2.8GiB - 1.7GiB) = 3.3GiB       | 3.3GiB / 250MiB = 13   |
-| n2-standard-2 | 3 * (6.2GiB - 1.7GiB) = 13.5GiB      | 13.5GiB / 250MiB = 55  |
-| n2-highmem-2  | 3 * (13.4GiB - 1.7GiB) = 35.1GiB     | 35.1GiB / 250MiB = 143 |
+| Worker        |                  Available Memory |          Maximum Tasks |
+| ------------- |----------------------------------:|-----------------------:|
+| n1-standard-1 |  3 * (2.56GiB - 1.6GiB) = 2.88GiB |  2.88GiB / 220MiB = 13 |
+| n2-standard-2 |   3 * (5.9GiB - 1.6GiB) = 12.9GiB |  12.9GiB / 220MiB = 60 |
+| n2-highmem-2  | 3 * (~13.4GiB - 1.6GiB) = 35.4GiB | 35.4GiB / 220MiB = 164 |
 
-TODO: add some safety reservations
+I would also recommend making some reservation if you want the stable environment without unexpected incidents during your on-duty shift.
+For 20% reservation, the *Cloud Composer* cluster capacity will be defined as follows:
+
+| Worker         | Maximum Tasks |
+| ------------- :|--------------:|
+| n1-standard-1  |            10 |
+| n2-standard-2  |            48 |
+| n2-highmem-2   |           131 |
+
 
 ## *Apache Airflow* tuning
 
@@ -129,16 +157,16 @@ TODO: add some safety reservations
 When the maximum number of tasks is known, it must be applied manually in the *Apache Airflow* configuration.
 If not, *Cloud Composer* sets the defaults and the workers will be under-utilized or *airflow-worker* pods will be [evicted](https://cloud.google.com/composer/docs/how-to/using/troubleshooting-dags) due to memory overuse.
 
-`core.parallelism` - The maximum number of task instances that can run concurrently in Airflow regardless of worker count, 18 if not specified explicitly.
-`celery.worker_concurrency` - Defines the number of task instances that a worker will take, 6 for 3-nodes cluster if not specified explicitly.
+* `core.parallelism` - The maximum number of task instances that can run concurrently in Airflow regardless of worker count, 18 if not specified explicitly.
+* `celery.worker_concurrency` - Defines the number of task instances that a worker will take, 6 for 3-nodes cluster if not specified explicitly.
 
 In my 3-workers cluster scenario the following settings should be applied.
 
 | Worker        | core.parallelism | celery.worker_concurrency |
-| ------------- | ---------------: | ------------------------: |
-| n1-standard-1 | 12               | 4                         |
-| n2-standard-2 | 54               | 18                        |
-| n2-highmem-2  | 141              | 47                        |
+| ------------- |-----------------:|--------------------------:|
+| n1-standard-1 |               10 |                       3~4 |
+| n2-standard-2 |               48 |                        16 |
+| n2-highmem-2  |              131 |                        43 |
 
 As you can see, *Cloud Composer* defaults do not match any of the presented worker types.
 
@@ -156,6 +184,7 @@ so it heavily impacts the other processes and tasks on this worker.
 The `scheduler.parsing_processes` should be set to `max(1, number of CPUs - 1)`, set to 1 unless you define workers with 4 CPU or more.
 Again it should lower the CPU utilization on the worker when *airflow-scheduler* is running.
 
+
 ## Monitoring
 
 pod evictions / failures
@@ -167,5 +196,5 @@ cpu utilization (is it evenly distributed across the workers)
 
 TODO
 
-Last but not least, I would like to thank [Patryk](https://www.linkedin.com/in/patryk-gala/)
+Last but not least, I would like to thank Piotrek, Mariusz, Paweł, Patryk and Michał
 for the fruitful discussions.
