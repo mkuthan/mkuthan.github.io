@@ -37,7 +37,7 @@ In contrast, the sensors wait for [BigQuery](https://cloud.google.com/bigquery) 
 From the performance perspective, the operators are much more resource heavy than sensors.
 
 *BigQuery* sensors are short-lived tasks, the sensor checks for the data and if data exists the sensor quickly finishes.
-If data is not available yet, the sensor also finishes, but it is also rescheduled for the next execution after [poke_interval](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/base/index.html#airflow.sensors.base.BaseSensorOperator).
+If data is not available yet, the sensor finishes as well, but it is also rescheduled for the next execution after [poke_interval](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/base/index.html#airflow.sensors.base.BaseSensorOperator).
 
 On the contrary *Spark* operator allocates resources for the whole *Spark* job's execution time.
 It could take several minutes or even hours. 
@@ -56,7 +56,7 @@ I would opt for the second, more practical option.
 ![Cloud Composer worker memory usage](/assets/images/cloud_composer_worker_memory_usage.webp)
 
 For 12 concurrent running operators the workers' memory utilization increased from the steady state of 1.76GiB to 4.36GiB.
-We do have the first insight in our tuning journey: every operator allocates approximately (4.36GiB - 1.76GiB) / 12 =~ 220MiB of RAM.
+We do have the first insight in our tuning journey: every operator allocates approximately `(4.36GiB - 1.76GiB) / 12 =~ 220MiB` of RAM.
 It is important that you should measure the task memory usage by yourself, all further calculations heavily depend on it.
 The memory usage might be also varying for different *Apache Airflow* operators.
 
@@ -125,7 +125,7 @@ Based on my experiences, real costs are ~20% higher than presented numbers.
 Kubernetes is not the only overhead you have to count into the calculations.
 There are also many built-in *Cloud Composer* processes run on every worker.
 As long as the *Cloud Composer* is a managed service, you don't have control over these processes.
-Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting will be a bumpy walk.
+Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting would be a bumpy walk.
 
 ![Cloud Composer pods](/assets/images/cloud_composer_pods.webp)
 
@@ -221,7 +221,7 @@ The processing time should be 30 seconds or less, if not the tasks scheduling se
 If the parsing time is too high:
 * Optimize DAGs, see the official recommendation for the [top level Python code](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html#top-level-python-code)
 * Increase `scheduler.min_file_process_interval`, but longer interval also causes higher latency for the task scheduling.
-* Use workers with 4 CPUs or more, and increase `scheduler.parsing_processes` accordingly to allow parallel DAGs parsing.
+* Use workers with 3 CPUs or more, and increase `scheduler.parsing_processes` accordingly to allow parallel DAGs parsing.
 
 **kubernetes.io/container/cpu/core_usage_time** -- CPU usage on the workers.
 Pay special attention to the worker with the *airflow-scheduler* pod.
@@ -239,5 +239,6 @@ In the end, *Cloud Composer* is not the cheapest and *Apache Airflow* is not the
 
 You should also remember that *Cloud Composer 1.x* and *Apache Airflow 1.x* are not actively developed anymore.
 I'm really keen to repeat the same tuning exercise for *Cloud Composer 2.x* and check how far better it is from the predecessor.
+The official documentation [Optimize environment performance and costs](https://cloud.google.com/composer/docs/composer-2/optimize-environments#gcloud_1) looks promising.
 
 Last but not least, I would like to thank Piotrek and Patryk for the fruitful discussions.
