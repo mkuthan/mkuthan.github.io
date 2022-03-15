@@ -69,7 +69,7 @@ Perhaps there are other factors I'm not even aware of ...
 
 ## Worker Size
 
-We have already known the memory utilization by the single task. Although, how many tasks can be executed concurrently on the worker?
+We already know the memory utilization of the single task. Let's find out how many tasks can be executed concurrently on the worker.
 It depends on:
 * The type of *Apache Airflow* task
 * Allocatable memory on *Kubernetes* cluster
