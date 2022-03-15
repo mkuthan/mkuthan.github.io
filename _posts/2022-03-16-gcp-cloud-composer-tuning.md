@@ -36,8 +36,10 @@ In my *Cloud Composer* installation operators are mainly responsible for creatin
 In contrast, the sensors wait for [BigQuery](https://cloud.google.com/bigquery) data, the payload for the Spark jobs.
 From the performance perspective, the operators are much more resource heavy than sensors.
 
-*BigQuery* sensors are short-lived tasks, the sensor checks for the data and if data exists the sensor quickly finishes.
-If data is not available yet, the sensor finishes as well, but it is also rescheduled for the next execution after [poke_interval](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/base/index.html#airflow.sensors.base.BaseSensorOperator).
+*BigQuery* sensors are short-lived tasks if configured in the [rescheduling mode](https://airflow.apache.org/docs/apache-airflow/1.10.15/_api/airflow/sensors/base_sensor_operator/index.html#airflow.sensors.base_sensor_operator.BaseSensorOperator)
+The sensor checks for the data and if data exists the sensor quickly finishes.
+If data is not available yet, the sensor finishes as well, but it is also rescheduled for the next execution after 
+[poke_interval](https://airflow.apache.org/docs/apache-airflow/1.10.15/_api/airflow/sensors/base_sensor_operator/index.html#airflow.sensors.base_sensor_operator.BaseSensorOperator).
 
 On the contrary *Spark* operator allocates resources for the whole *Spark* job's execution time.
 It could take several minutes or even hours. 
@@ -118,7 +120,12 @@ As you can see, for larger workers you will get more compute power for just a li
 | n2-highmem-2  | 2    | 16GB    | ~ $570                 |
 
 Based on my experiences, real costs are ~20% higher than presented numbers.
-{: .notice--info}
+
+![Cloud Composer monthly costs](/assets/images/cloud_composer_monthly_costs.webp)
+
+The monthly costs report for n1-standard-1 cluster which was doing literally nothing.
+Total of $444 for the short February, but please keep in mind that my company has negotiated some discounts already applied in the report.
+So for the regular client the costs will be even higher.
 
 ### *Cloud Composer* overhead
 
@@ -167,8 +174,10 @@ Not so many, at least not on the cluster of the cheapest virtual machines.
 When the maximum number of tasks is known, it must be applied manually in the *Apache Airflow* configuration.
 If not, *Cloud Composer* sets the defaults and the workers will be under-utilized or *airflow-worker* pods will be [evicted](https://cloud.google.com/composer/docs/how-to/using/troubleshooting-dags) due to memory overuse.
 
-* **core.parallelism** -- The maximum number of task instances that can run concurrently in Airflow regardless of worker count, 18 if not specified explicitly.
-* **celery.worker_concurrency** -- Defines the number of task instances that a worker will take, 6 for 3-nodes cluster if not specified explicitly.
+* **core.parallelism** -- The maximum number of task instances that can run concurrently in Airflow regardless of worker count.
+  Set to 18 for 3-nodes *Cloud Composer* cluster if not specified explicitly.
+* **celery.worker_concurrency** -- Defines the number of task instances that a worker will take.
+  Set to 6 by *Cloud Composer* if not specified explicitly.
 
 In my 3-workers cluster scenario the following settings should be applied.
 
@@ -187,8 +196,8 @@ For the virtual machines with 4GiB of RAM or more, the cluster with default sett
 
 I have also found two other *Apache Airflow* properties worth modifying: 
 
-* **scheduler.min_file_process_interval** -- The minimum interval after which a DAG file is parsed and tasks are scheduled, 0 if not specified.
-* **scheduler.parsing_processes** -- Defines how many DAGs parsing processes will run in parallel, 2 if not specified.
+* **scheduler.min_file_process_interval** -- The minimum interval after which a DAG file is parsed and tasks are scheduled, 0 [if not specified](https://airflow.apache.org/docs/apache-airflow/1.10.15/configurations-ref.html#min-file-process-interval).
+* **scheduler.parsing_processes** -- Defines how many DAGs parsing processes will run in parallel, 2 [if not specified](https://airflow.apache.org/docs/apache-airflow/1.10.15/configurations-ref.html#parsing-processes).
 
 I highly recommend setting `scheduler.min_file_process_interval` to at least 30 seconds, to avoid high CPU usage on the worker where the *airflow-scheduler* pod is running.
 The [scheduler](https://airflow.apache.org/docs/apache-airflow/stable/concepts/scheduler.html) is running only on the single worker,
