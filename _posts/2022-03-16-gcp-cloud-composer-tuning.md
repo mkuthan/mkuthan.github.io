@@ -124,7 +124,7 @@ Based on my experiences, real costs are ~20% higher than presented numbers.
 
 Kubernetes is not the only overhead you have to count into the calculations.
 There are also many built-in *Cloud Composer* processes run on every worker.
-As long as the *Cloud Composer* is a managed service, you don't have control over these processes.
+Because the *Cloud Composer* is a managed service, you don't have control over these processes.
 Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting would be a bumpy walk.
 
 ![Cloud Composer pods](/assets/images/cloud_composer_pods.webp)
