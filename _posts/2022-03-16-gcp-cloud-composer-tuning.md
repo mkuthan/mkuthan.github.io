@@ -32,7 +32,7 @@ But the reality of real life has forced me to tune to the obsolete version.
 Let's begin with the *Apache Airflow* basic unit of work - [task](https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html).
 There are two main kind of tasks: [operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) 
 and [sensors](https://airflow.apache.org/docs/apache-airflow/stable/concepts/sensors.html).
-On my *Cloud Composer* installation operators are mainly responsible for creating the ephemeral [Dataproc](https://cloud.google.com/dataproc) clusters and submit [Apache Spark](https://spark.apache.org) batch jobs to this clusters.
+In my *Cloud Composer* installation operators are mainly responsible for creating the ephemeral [Dataproc](https://cloud.google.com/dataproc) clusters and submit [Apache Spark](https://spark.apache.org) batch jobs to this clusters.
 In contrast, the sensors wait for [BigQuery](https://cloud.google.com/bigquery) data, the payload for the Spark jobs.
 From the performance perspective, the operators are much more resource heavy than sensors.
 
