@@ -195,7 +195,7 @@ The [scheduler](https://airflow.apache.org/docs/apache-airflow/stable/concepts/s
 so it heavily impacts the other processes and tasks on this worker.
 
 The `scheduler.parsing_processes` should be set to `max(1, number of CPUs - 1)`, set to 1 unless you define workers with 3 CPUs or more.
-Again it should lower the CPU utilization on the worker when the *airflow-scheduler* pod is running.
+Again it should lower the CPU utilization on the worker which is running the *airflow-scheduler* pod.
 
 {: .notice--info}
 Scheduler is a very important process of *Apache Airflow*, when it does not work properly you will observe many weird and hard to debug flaws.
