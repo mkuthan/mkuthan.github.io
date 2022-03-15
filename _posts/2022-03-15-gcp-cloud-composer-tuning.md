@@ -1,6 +1,6 @@
 ---
 title: "GCP Cloud Composer 1.x Tuning"
-date: 2022-03-16
+date: 2022-03-15
 categories: [GCP, Cloud Composer, Apache Airflow, Performance]
 tagline: ""
 header:
@@ -125,7 +125,7 @@ Based on my experiences, real costs are ~20% higher than presented numbers.
 
 The monthly costs report for n1-standard-1 cluster which was doing literally nothing.
 Total of $444 for the short February, but please keep in mind that my company has negotiated some discounts already applied in the report.
-So for the regular client the costs will be even higher.
+So for the standard customers the costs will be even higher.
 
 ### *Cloud Composer* overhead
 
