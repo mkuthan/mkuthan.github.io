@@ -198,7 +198,7 @@ The `scheduler.parsing_processes` should be set to `max(1, number of CPUs - 1)`,
 Again it should lower the CPU utilization on the worker which is running the *airflow-scheduler* pod.
 
 {: .notice--info}
-Scheduler is a very important process of *Apache Airflow*, when it does not work properly you will observe many weird and hard to debug flaws.
+Scheduler is a very important process of *Apache Airflow*. When it does not work properly you will observe many weird and hard to debug flaws.
 
 ## Monitoring
 
