@@ -185,7 +185,7 @@ For the virtual machines with 4GiB of RAM or more, the cluster with default sett
 
 ### Scheduler
 
-I have also found two another *Apache Airflow* properties worth to modify: 
+I have also found two other *Apache Airflow* properties worth modifying: 
 
 * **scheduler.min_file_process_interval** -- The minimum interval after which a DAG file is parsed and tasks are scheduled, 0 if not specified.
 * **scheduler.parsing_processes** -- Defines how many DAGs parsing processes will run in parallel, 2 if not specified.
