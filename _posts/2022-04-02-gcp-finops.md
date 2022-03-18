@@ -25,8 +25,8 @@ FinOps is a very broad term, but what is especially important from a data engine
 All my blog posts are written based on my own experiences, everything is battle tested and all presented screens are taken from the real systems.
 And this time it will not be different, I will share how to keep costs of the streaming and batch pipelines on Google Cloud Platform under control.
 On daily basis I manage the analytical data platform, the project with $100k+ monthly budget.
-I'm also early cloud adopter and early FinOps practitioner in the organization, so
-at the end of the post you will also learn how to scale the methodology. 
+I'm also early Google Cloud Platform adopter and early FinOps practitioner in the organization, so
+at the end of the post you will also learn how to scale the methodology across the teams and departments. 
 
 ## Google Cloud Platform resources
 
