@@ -21,6 +21,7 @@ FinOps is a very broad term, but what is especially important from a data engine
 * Cost is introduced as a regular metric of every data pipeline
 * To optimize the costs you have to know detailed billing of every cloud resource  
 * Cost analysis becomes a part of [definition of done](https://www.agilealliance.org/glossary/definition-of-done/)
+* Premature costs optimization is the root of all evil (do you remember Donald Knuth paper about [performance](https://wiki.c2.com/?PrematureOptimization)?)
 
 All my blog posts are written based on my own experiences, everything is battle tested and all presented screens are taken from the real systems.
 And this time it will not be different, I will share how to keep costs of the streaming and batch pipelines on Google Cloud Platform under control.
