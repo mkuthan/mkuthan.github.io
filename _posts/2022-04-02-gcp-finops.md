@@ -46,15 +46,15 @@ What are the most important cost factors in the Google Cloud Platform for data p
     - Shuffle service (for batch pipelines)
 * Dataproc
     - Licensing Fee
-* Pubsub
-    - Message delivery basic  
-    - Inter-region data delivery
-    - Topic/Subscription message backlog
 * BigQuery
     - Active, Long Term or Physical storage
     - Analysis
     - Streaming inserts
     - Storage API
+* Pubsub
+  - Message delivery basic
+  - Inter-region data delivery
+  - Topic/Subscription message backlog
 * Cloud Storage
     - Standard, Nearline, Coldline or Archive storage
     - Class A operations
@@ -121,32 +121,62 @@ I would say that 2) and 5) are the toughest parts of the journey.
 There is no single, suggested and well documented cloud resources labelling conventions to apply.
 You have to develop your own methodology, but I would like to share a few best practices:
 
-* Use the prefix for all labels to easily recognize your labels from the built-in ones
-* If there is a built-in label use the label as a part of the convention  
+* Introduce labelling naming convention at the very beginning
 * Prepare and share the documentation, it should be clear for any adopter how to apply and how to interpret the labels
-* Add new labels only when they are needed, too many labels do not help
+* Add new labels only when they are really needed, too many labels do not help
 * Continuously check the billing report for the resources without labels and fill the gaps
+* Use the prefix for all labels to easily recognize your labels from the built-in ones
 
-Below you can find the labelling convention I have created (Allegro is my company name):
+Below you can find the labelling convention I have created in my company:
 
-Common labels for all resources:
-
-* **allegro__sc_id** - Every library, application or data pipeline is registered in the service catalog. 
-  The label defines the identifier of the data pipeline in this catalog.
-* **allegro__job_name** - Data pipeline could consist of many processing jobs. 
-  It is very convenient to assign user-friendly, descriptive name for every job.
-* **allegro__branch_name** - When you develop and test new feature it is handy to assign the branch/feature name as a label. 
+* **allegro__sc_id** - Every Allegro library, application or data pipeline is registered in the internal service catalog. 
+  This is a central repository of metadata like the service business or technical owners, responsible team, issue tracker etc.
+  The perfect identifier for cloud resources labelling.
+* **allegro__job_name** - Every data pipeline could consist of many processing jobs, so service identifier is not enough to identify every part of the pipeline.
+  Job name is also more convenient to use than synthetic service identifier. 
+  Many dashboards are organized around the job name.
+* **allegro__branch_name** - When you develop and test new feature it is handy to assign the branch/feature name as a label.
   You will exactly know the cost of the experimentation phase.
+  It is also quite useful during any technical upgrades, to verify that after change the job is still as cost-effective as before.
+  Deploy the copy of the job aside and compare the costs to the current production.
 
-I was really surprised when I realized that billing export does not provide any built-in labels for the well-known resources like BigQuery datasets, Pubsub topics or Cloud Storage buckets.
-To mitigate this limitation the following labels are introduced and applied on the resources:
+I was also surprised when I realized that billing export does not provide any built-in labels for the well-known resources like BigQuery datasets, Pubsub topics or Cloud Storage buckets.
+To mitigate this limitation the following additional labels are applied on the cloud resources:
 
 * **allegro__topic_name** - The name of the Pubsub topic
 * **allegro__dataset_name** - The name of the BigQuery dataset
-* **allegro__query_name** - Descriptive BigQuery query name 
 * **allegro__bucket_name** - The name of the Cloud Storage bucket
 
-### Applying labels
+If the data pipeline subscribes or publish to multiple Pubsub topics, produces multiple BigQuery datasets or writes to multiple Cloud Storage buckets 
+the billing export will provide detailed costs for every single resource.
+
+### Reports
+
+Before I go into technical details I will present a few screens with the final reports I'm using on daily basis.
+All reports are organized around the processing jobs, you can filter by job identifier, name or feature branch.
+By default, the reports show cost for the last month within daily granularity, but you can always specify a different time range.
+For every cloud product the most important SKUs are grouped and organized as "big numbers" to provide quick overview of the costs structure.
+You can also filter by original product and SKU like on the built-in dashboards.
+
+TODO: Overall
+
+The summary page which shows the total costs of data pipelines, grouped by the job name.
+You can easily compare the costs of different pipelines, it is often the best method to verify if the data pipeline is optimal or not.
+If the job processes a given amount of data and costs ten times more than another similar job it is a first candidate for further inspection.
+The report gives also a sneak peek of the job costs structure, you should look for savings where you spend the most.
+
+TODO: Dataflow
+
+The report crafted for Dataflow data pipelines. Dataflow is a fully managed ...
+Pay special attention for Streaming and Shuffle services, 
+
+TODO: Dataproc
+
+TODO: BigQuery
+
+TODO: Pubsub
+
+TODO: Cloud Storage
 
 -----------
 
