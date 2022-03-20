@@ -72,41 +72,43 @@ There are even more products relevant to the data pipelines like [Vertex AI](htt
 [Bigtable](https://cloud.google.com/bigtable) (expensive beast), 
 [Firestore](https://cloud.google.com/firestore) or 
 [Memory Store](https://cloud.google.com/memorystore).
-I do not use them on daily basis, so they are out of this blog post scope.
 
 ## Resource oriented costs tracking
 
 Because Google Cloud Platform billings are oriented around projects, products and SKUs, the built-in cost reports are focused on projects, products and SKUs as well.
-Below you can find the real example of the report for my test projects, the costs for the last 30 days grouped by product.
+Below you can find the real example of the report for one of my test projects, the costs for the last 30 days grouped by the cloud product.
 As you can see "Compute Engine" is a dominant factor in the billing.
 
 ![Billing dashboard](/assets/images/finops_billing_dashboard.webp)
 
-Unfortunately, I must not enclose any financial details from production environments, my employer is a [listed company](https://www.google.com/finance/quote/ALE:WSE).
+Unfortunately, I must not enclose any financial details from the production environments because my employer is a [listed company](https://www.google.com/finance/quote/ALE:WSE).
+If I had shown the real numbers I would have had severe troubles.
 {: .notice--info}
 
-The built-in [Cloud Billing Report](https://cloud.google.com/billing/docs/how-to/reports) page provides:
+As shown before, the built-in [Cloud Billing Report](https://cloud.google.com/billing/docs/how-to/reports) page provides:
 
 * Spending timeline with daily data granularity
-* Basic forecasts at the end of the current billing period
-* Change to the previous billing period  
-* Ability to filter or split the costs by project, product or SKU
-* Insight into credits, discounts and promotions
+* Change since the previous billing period  
+* Ability to filter or split the total costs by project, product or SKU
+* Insight into discounts, promotions and negotiated savings
 
 At first, it looks that the cloud billing report plots everything you need, doesn't it?
+Unluckily it has many shortcomings. 
 Imagine the project with a dozen of different data pipelines using the same type of resources.
 
-* How do you know the total cost of every single pipeline? 
+* How do you know the cost of every single pipeline? 
+* How to compare the costs of different data pipelines?
 * Does the cost of all resources utilized by the pipeline "A" fit to its business case budget? 
-* Billing report shows that 60% the monthly budget is utilized by SKU "X", which data pipeline should be optimized to lower the costs?
-* Which resource causes the highest cost for the data pipeline?
+* Billing report shows that most of the monthly budget is utilized by SKU "X", which data pipeline should be optimized to lower the costs?
+* Which resource causes the highest cost for the given data pipeline?
 
 As a data engineer I'm interested in the total costs of the selected data pipeline.
-Then I need to have an ability to drill down into cost of every single resource used by this pipeline.
+Then I need to have an ability to drill down into the cost of every single resource used by this pipeline.
 {: .notice--info}
 
 ## Data pipeline oriented costs tracking
 
+Now we have already defined the requirements for billing reports which helps us to get better costs understanding.
 How to get data pipeline oriented costs tracking in Google Cloud Platform?
 
 1. Develop cloud resources [labelling convention](https://cloud.google.com/resource-manager/docs/creating-managing-labels#common-uses)
@@ -119,110 +121,111 @@ I would say that 2) and 5) are the toughest parts of the journey.
 
 ### Labeling convention
 
-There is no single, suggested and well documented cloud resources labelling conventions to apply.
+There is no single, the best cloud resources labelling conventions to apply.
 You have to develop your own methodology, but I would like to share a few best practices:
 
 * Introduce labelling naming convention at the very beginning
 * Prepare and share the documentation, it should be clear for any adopter how to apply and how to interpret the labels
-* Add new labels only when they are really needed, too many labels do not help
+* Add a new labels only when they are really needed, too many labels do not help
 * Continuously check the billing report for the resources without labels and fill the gaps
-* Use the prefix for all labels to easily recognize your labels from the built-in ones
+* Use the prefix for all custom labels to easily recognize them from the built-in ones
 
 Below you can find the labelling convention I have created in my company:
 
 * **allegro__sc_id** - Every Allegro library, application or data pipeline is registered in the internal service catalog. 
-  This is a central repository of metadata like the service business or technical owners, responsible team, issue tracker etc.
+  This is a central repository of metadata like service business/technical owners, responsible team, issue tracker etc.
   The perfect identifier for cloud resources labelling.
-* **allegro__job_name** - Every data pipeline could consist of many processing jobs, so service identifier is not enough to identify every part of the pipeline.
+* **allegro__job_name** - Every data pipeline could consist of many processing jobs, so the service identifier is not enough to identify every part of the pipeline.
   Job name is also more convenient to use than synthetic service identifier. 
   Many dashboards are organized around the job name.
 * **allegro__branch_name** - When you develop and test new feature it is handy to assign the branch/feature name as a label.
-  You will exactly know the cost of the experimentation phase.
+  You will exactly know the cost of the experimentation phase for this feature/branch.
   It is also quite useful during any technical upgrades, to verify that after change the job is still as cost-effective as before.
-  Deploy the copy of the job aside and compare the costs to the current production.
+  Deploy the copy of the job aside the current production, and compare the costs.
 
 I was also surprised when I realized that billing export does not provide any built-in labels for the well-known resources like BigQuery datasets, Pubsub topics or Cloud Storage buckets.
-To mitigate this limitation the following additional labels are applied on the cloud resources:
+To mitigate this limitation the following additional labels should be applied on the cloud resources:
 
-* **allegro__topic_name** - The name of the Pubsub topic
-* **allegro__dataset_name** - The name of the BigQuery dataset
-* **allegro__bucket_name** - The name of the Cloud Storage bucket
+* **allegro__topic_name** - The name of the Pubsub topic, apply the label to every topic of subscription
+* **allegro__dataset_name** - The name of the BigQuery dataset, apply the label to every dataset
+* **allegro__bucket_name** - The name of the Cloud Storage bucket, apply the label to every bucket
 
-If the data pipeline subscribes or publish to multiple Pubsub topics, produces multiple BigQuery datasets or writes to multiple Cloud Storage buckets 
+If the data pipeline subscribes or publishes to multiple Pubsub topics, produces multiple BigQuery datasets or writes to multiple Cloud Storage buckets 
 the billing export will provide detailed costs for every single resource.
 
-### Reports
+### Summary reports
 
-Before I go into technical details I will present a few screens with the final reports I'm using on daily basis.
-All reports are organized around the processing jobs, you can filter by job identifier, name or feature branch.
-By default, the reports show cost for the last month within daily granularity, but you can always specify a different time range.
-For every cloud product the most important SKUs are grouped and organized as "big numbers" to provide quick overview of the costs structure.
-You can also filter by original product and SKU like on the built-in dashboards.
+Before I start writing about technical details I will present a few screens with the final reports I'm using on daily basis.
 
-![Summary dashboard](/assets/images/finops_summary1_dashboard.webp)
+![Summary dashboard with shared costs](/assets/images/finops_summary1_dashboard.webp)
 
-TODO
+The summary dashboard for given project (sc-9936-nga-dev) with calculated costs for the last 30 days.
+The total spending of $3.9k with the major participation from Dataproc and Cloud Composer.
+The most interesting part of the dashboard is a timeline with spending grouped by the jobs deployed in the project.
+The majority of the costs in the development environment come from the shared infrastructure, and can not be assigned to any particular job.
+In the production environment with the large dataset to process the situation is fully opposite.
+The shared cost is only a small portion of the billing.
 
-![Summary dashboard without unlabelled costs](/assets/images/finops_summary2_dashboard.webp)
+What if the shared infrastructure is filtered out for development environment to get more realistic view?
 
-TODO
-
-![Summary dashboard for single data pipeline](/assets/images/finops_summary3_dashboard.webp)
+![Summary dashboard without shared costs](/assets/images/finops_summary2_dashboard.webp)
 
 
-The summary page which shows the total costs of data pipelines, grouped by the job name.
-You can easily compare the costs of different pipelines, it is often the best method to verify if the data pipeline is optimal or not.
-If the job processes a given amount of data and costs ten times more than another similar job it is a first candidate for further inspection.
-The report gives also a sneak peek of the job costs structure, you should look for savings where you spend the most.
+You will get the exact cost of every single data pipeline deployed in the project.
+Easy to compare each other, easy to spot any anomaly or trends.
+
+The next step is to filter the report by job identifier, name or feature branch.
+
+![Summary dashboard for the single job](/assets/images/finops_summary3_dashboard.webp)
+
+The job "event_v1" is a Dataflow data pipeline. It reads data from Pubsub, publishes results to Pubsub and also writes some data to BigQuery.
+The costs structure is as follows:
+
+* $61.8 for Dataflow, the highest share in the billing -- again it is a development environment with minimal amount of data. 
+But the Dataflow streaming pipeline is deployed on 24/7 so the cost is relatively high even for small virtual machines.
+* $4.7 for reading and publishing from/to Pubsub
+* $0.7 for writing to BigQuery
+* $0.1 tiny amount for Cloud Storage, perhaps for Dataflow staging bucket
+
+### Dataflow report
 
 ![Dataflow dashboard](/assets/images/finops_dataflow_dashboard.webp)
 
-The report crafted for Dataflow data pipelines. Dataflow is a fully managed ...
-Pay special attention for Streaming and Shuffle services, 
-
-TODO: Dataproc
+### Dataproc report
 
 ![Dataprod dashboard](/assets/images/finops_dataproc_dashboard.webp)
 
-TODO: BigQuery
+### BigQuery report
 
 ![BigQuery dashboard](/assets/images/finops_bigquery_dashboard.webp)
 
-TODO: Pubsub
+### Pubsub report
 
 ![Pubsub dashboard](/assets/images/finops_pubsub_dashboard.webp)
 
-TODO: Cloud Storage
+### Cloud Storage report
 
 ![Pubsub dashboard](/assets/images/finops_storage_dashboard.webp)
 
+## The challenges
 
+TODO
 
------------
+### BigQuery Analysis
 
-## FinOps sources
+TODO
 
-Billing Export
-BigQuery audit logs / information schema?
+### BigQuery Storage API
 
-## Labelling convention
+TODO
 
-## Streaming use case
+### Dataflow internal subscriptions
 
-* pubsub topic
-* pubsub subscriptions (regular + internal)
-* dataflow
-* logging
-
-## Batch use case
-
-* bigquery analysis
-* bigquery storage api
-* compute
-* storage
-* logging
+TODO
 
 ## Scaling the discipline for the whole organization
+
+TODO
 
 ## Summary
 
