@@ -77,9 +77,10 @@ I do not use them on daily basis, so they are out of this blog post scope.
 ## Resource oriented costs tracking
 
 Because Google Cloud Platform billings are oriented around projects, products and SKUs, the built-in cost reports are focused on projects, products and SKUs as well.
-Below you can find the real example of the report for my test environment. 
+Below you can find the real example of the report for my test projects, the costs for the last 30 days grouped by product.
+As you can see "Compute Engine" is a dominant factor in the billing.
 
-TODO: screen
+![Billing dashboard](/assets/images/finops_billing_dashboard.webp)
 
 Unfortunately, I must not enclose any financial details from production environments, my employer is a [listed company](https://www.google.com/finance/quote/ALE:WSE).
 {: .notice--info}
@@ -158,25 +159,44 @@ By default, the reports show cost for the last month within daily granularity, b
 For every cloud product the most important SKUs are grouped and organized as "big numbers" to provide quick overview of the costs structure.
 You can also filter by original product and SKU like on the built-in dashboards.
 
-TODO: Overall
+![Summary dashboard](/assets/images/finops_summary1_dashboard.webp)
+
+TODO
+
+![Summary dashboard without unlabelled costs](/assets/images/finops_summary2_dashboard.webp)
+
+TODO
+
+![Summary dashboard for single data pipeline](/assets/images/finops_summary3_dashboard.webp)
+
 
 The summary page which shows the total costs of data pipelines, grouped by the job name.
 You can easily compare the costs of different pipelines, it is often the best method to verify if the data pipeline is optimal or not.
 If the job processes a given amount of data and costs ten times more than another similar job it is a first candidate for further inspection.
 The report gives also a sneak peek of the job costs structure, you should look for savings where you spend the most.
 
-TODO: Dataflow
+![Dataflow dashboard](/assets/images/finops_dataflow_dashboard.webp)
 
 The report crafted for Dataflow data pipelines. Dataflow is a fully managed ...
 Pay special attention for Streaming and Shuffle services, 
 
 TODO: Dataproc
 
+![Dataprod dashboard](/assets/images/finops_dataproc_dashboard.webp)
+
 TODO: BigQuery
+
+![BigQuery dashboard](/assets/images/finops_bigquery_dashboard.webp)
 
 TODO: Pubsub
 
+![Pubsub dashboard](/assets/images/finops_pubsub_dashboard.webp)
+
 TODO: Cloud Storage
+
+![Pubsub dashboard](/assets/images/finops_storage_dashboard.webp)
+
+
 
 -----------
 
