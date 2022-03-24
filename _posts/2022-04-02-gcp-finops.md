@@ -1,8 +1,8 @@
 ---
-title: "GCP FinOps for Data Pipelines"
+title: "GCP FinOps for data pipelines"
 date: 2022-04-02
 categories: [GCP, FinOps]
-tagline: "Streaming and batch use cases"
+tagline: ""
 header:
     overlay_image: /assets/images/katie-harp-w45gZMWrJWc-unsplash.webp
     overlay_filter: 0.2
