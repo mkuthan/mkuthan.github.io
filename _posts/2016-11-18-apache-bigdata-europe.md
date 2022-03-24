@@ -1,5 +1,5 @@
 ---
-title: "Apache BigData Europe Conference Summary"
+title: "Apache BigData Europe conference summary"
 date: 2016-11-18
 categories: [Conferences]
 tagline: Seville

@@ -1,5 +1,5 @@
 ---
-title: "Stream Processing - Part 1"
+title: "Stream processing - part 1"
 date: 2022-01-28
 categories: [Stream Processing, Apache Beam, Scala]
 tagline: Apache Beam - fixed windows

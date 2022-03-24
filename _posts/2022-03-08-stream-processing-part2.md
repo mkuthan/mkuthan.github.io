@@ -1,5 +1,5 @@
 ---
-title: "Stream Processing - Part 2"
+title: "Stream processing - part 2"
 date: 2022-03-08
 categories: [Stream Processing, Apache Beam, Scala]
 tagline: Apache Beam - dynamic aggregation

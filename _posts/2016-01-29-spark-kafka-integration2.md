@@ -1,5 +1,5 @@
 ---
-title: "Spark and Kafka integration patterns, part 2"
+title: "Spark and Kafka integration patterns - part 2"
 date: 2016-01-29
 categories: [Apache Spark, Apache Kafka, Scala]
 ---
