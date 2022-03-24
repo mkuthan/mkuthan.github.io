@@ -43,7 +43,11 @@ Below you can see the YARN allocations for the cluster of 16 "n2-highmem-4" virt
 
 ![Dataproc YARN memory](/assets/images/dataproc_yarn_memory.webp)
 
-The Spark job scales up to the maximum in ~ 8-9 minutes.
+The Spark job scales up to the maximum in ~ 8-9 minutes, but it heavily depends on the job logic.
+My jobs read data from BigQuery using [Spark BigData Connector](https://github.com/GoogleCloudDataproc/spark-bigquery-connector).
+During the first minutes BigQuery jobs store query results into materialization dataset.
+Nothing to do for the Spark job itself, so the job does not scale up at the very beginning.
+
 
 ![Apache Spark dynamic allocation](/assets/images/dataproc_spark_dynamic_allocation.webp)
 
