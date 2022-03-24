@@ -105,7 +105,7 @@ hdfs:dfs.replication: 1
 I’ve found one important lower-bound constraint for the number of primary Dataproc workers. 
 The local HDFS is located on the primary workers only, and all Spark shuffle results must fit into this space. 
 Each local SSD disk has 375GiB but YARN allocates only up to 90% of total capacity. 
-For 4 primary workers with the single local SSD disk the total HDFS capacity is `8 * 375GiB * 0.9 = 2.7TiB` - exactly as shown below:
+For 8 primary workers with the single local SSD disk the total HDFS capacity is `8 * 375GiB * 0.9 = 2.7TiB` - exactly as shown below:
 
 ![Dataproc YARN HDFS capacity](/assets/images/dataproc_yarn_hdfs_capacity.webp)
 
@@ -114,7 +114,7 @@ I would not recommend assigning more than one local ssd to the primary node to i
 Just increase the number of primary workers.
 
 The local SSD disks have impressive [performance](https://cloud.google.com/compute/docs/disks/performance#type_comparison), and the metrics shows that disks' IO is only partially utilized. 
-Up to 3GiB/sec for 4 primary nodes with a total of 4 local SSDs, where a single SSD should handle over 9GB/sec (read) and 4GB/sec (write).
+Up to 3GiB/sec for 8 primary nodes with a total of 8 local SSDs, where a single SSD should handle over 9GB/sec (read) and 4GB/sec (write).
 
 ![Dataproc disk bytes](/assets/images/dataproc_disk_bytes.webp)
 
