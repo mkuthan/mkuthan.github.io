@@ -8,10 +8,10 @@ header:
     overlay_filter: 0.2
 ---
 
-Do you monitor costs of the data pipelines in exactly the same way as you monitor the processing job health, latency or throughput?
+Do you monitor costs of the data pipelines in exactly the same way as you monitor the processing jobs' health, latency or throughput?
 Nowadays, taking care of costs efficiency is an integral part of every data engineer job.
 I would like to share my own experiences with applying [FinOps](https://www.finops.org/introduction/what-is-finops/) discipline 
-in organization within tens of data engineering teams and thousands of data pipelines.
+in the organization within tens of data engineering teams and thousands of data pipelines.
 
 ## Overview
 
@@ -23,10 +23,11 @@ FinOps is a very broad term, but what is especially important from a data engine
 * Cost analysis becomes a part of [definition of done](https://www.agilealliance.org/glossary/definition-of-done/)
 * Premature costs optimization is the root of all evil (do you remember Donald Knuth paper about [performance](https://wiki.c2.com/?PrematureOptimization)?)
 
-All my blog posts are written based on my own experiences, everything is battle tested and all presented screens are taken from the real systems.
-And this time it will not be different, I will share how to keep costs of the streaming and batch pipelines on Google Cloud Platform under control.
+All my blog posts are based on my own practical experiences, everything is battle tested and all presented examples are taken from the real systems.
+And this time it will not be different.
+I will share how to keep costs of the streaming and batch pipelines on Google Cloud Platform under control.
 On daily basis I manage the analytical data platform, the project with $100k+ monthly budget.
-I'm also early Google Cloud Platform adopter and early FinOps practitioner in the organization, so
+I'm also early FinOps practitioner in the organization, so
 at the end of the post you will also learn how to scale the methodology across the teams and departments. 
 
 ## Google Cloud Platform resources
