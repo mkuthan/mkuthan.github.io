@@ -1,5 +1,5 @@
 ---
-title: "GCP Cloud Composer 1.x Tuning"
+title: "GCP Cloud Composer 1.x tuning"
 date: 2022-03-15
 categories: [GCP, Cloud Composer, Apache Airflow, Performance]
 tagline: ""

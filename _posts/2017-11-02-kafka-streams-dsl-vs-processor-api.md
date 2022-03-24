@@ -1,5 +1,5 @@
 ---
-title: "Kafka Streams DSL vs Processor API"
+title: "Kafka Streams DSL vs processor API"
 date: 2017-11-02
 categories: [Apache Kafka, Kafka Streams, Scala, Performance]
 tagline: ""
