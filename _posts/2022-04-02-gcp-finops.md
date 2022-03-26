@@ -122,10 +122,11 @@ The recipe:
 1. Develop cloud resources [labeling convention](https://cloud.google.com/resource-manager/docs/creating-managing-labels#common-uses)
 2. Apply the labels for ALL resources used by the data pipelines
 3. Configure the [cloud billing data export](https://cloud.google.com/billing/docs/how-to/export-data-bigquery) to BigQuery
-4. Craft Datastudio report aligned with the developed labeling convention, there is an [example](https://cloud.google.com/billing/docs/how-to/visualize-data)
+4. Craft Datastudio report aligned with the developed labeling convention, there is public [example](https://cloud.google.com/billing/docs/how-to/visualize-data) available
 5. Figure out the workarounds for GCP products which do not provide necessary details in the billing data export
 
 I would say that 2) and 5) are the toughest parts of the journey.
+{: .notice--info}
 
 ### Labeling convention
 
@@ -161,7 +162,7 @@ To mitigate this limitation the following additional labels are defined for the 
 If the data pipelines subscribe or publish to multiple Pubsub topics, produce multiple BigQuery datasets or write to multiple Cloud Storage buckets 
 the billing export will provide detailed costs for every single labeled resource.
 
-### Overview report
+### Overview reports
 
 Before I move to the technical details I will present a few screens with the reports I'm using on a daily basis.
 In the end, applying the labels for all resources in the cloud is a huge effort, so it should pay off somehow.
@@ -249,14 +250,91 @@ The filtering is available only if the **allegro__bucket_name** label was set.
 
 ## The challenges
 
-Right now you should have a much better understanding of the difference between "resource" and "data pipelines" oriented billings.
+Right now you should have a much better understanding of the difference between "resources" and "data pipelines" oriented billings.
+The final reports may look relatively simple but this is easier said than done.
 
+* How to automate labeling to avoid gaps in the reports?
+* What if the GCP product does not support labels at all?
+* What if the labels set on the resources for unknown reasons are not available in the billing export?
+* How track costs of resources created automatically by managed GCP services, even if we set labels on the service itself they are not propagated?
+* What if you are using the library like Apache Beam or Apache Spark, and the API for setting labels is not publicly exposed?
+* There is also a shared infrastructure like Composer or Cloud Logging/Monitoring, they also generate significant costs
+
+Let tackle all identified challenges one by one.
+
+### Labeling automation
+
+* Use [Terraform](https://www.terraform.io) for "static" cloud resources management like BigQuery datasets, Pubsub topics and subscriptions and Cloud storage buckets.
+Prepare the reusable modules with input parameters required to set the mandatory labels.
+* Deliver GitHub [actions](https://docs.github.com/en/actions/learn-github-actions) or [composite actions](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action) for deploying Dataflow jobs.
+The action will set all required labels every time when the job is deployed.
+* Develop a thin wrappers for [Dataproc Apache Operators](https://airflow.apache.org/docs/apache-airflow-providers-google/stable/operators/cloud/dataproc.html) or even better the [decorators](https://airflow.apache.org/docs/apache-airflow/stable/howto/create-custom-decorator.html).
+They are responsible for setting all required labels when the Spark job is deployed into Cloud Composer.
+
+Looks complex and very time-consuming? It is for sure, but for the dynamic resources like BigQuery queries the situation is even worse.
+If you do not set any label on the [JobConfiguration](https://developers.google.com/resources/api-libraries/documentation/bigquery/v2/java/latest/com/google/api/services/bigquery/model/JobConfiguration.html#setLabels-java.util.Map-)
+the costs of all queries sums under "BigQuery / Analysis" SKU. 
+
+### BigQuery jobs
+
+Fortunately all BigQuery jobs are reported in the BigQuery [information schema](https://cloud.google.com/bigquery/docs/information-schema-jobs).
+In the information schema you can find the "total_bytes_billed" column with billed bytes.
+As long as cost per TiB is well [known](https://cloud.google.com/bigquery/pricing#on_demand_pricing), the final cost of the query might be estimated. 
+Instead of labeling every single query it is better to prepare the estimated costs report based on information schema.
+
+TODO: diagram
+
+Although, there are at least two disadvantages:
+
+* No direct connection with the pipeline, you have to manually "assign" the query to the pipeline - not a big deal for the data engineer who is the author of the queries
+* Daily or hourly jobs do not generate exactly the same query on every run, the time related expressions are typically varying
+
+You can use the following regular expression for query normalization:
+
+```
 TODO
+```
 
-## Scaling the discipline for the whole organization
+### Labels not supported
+
+There is at least one very important GCP product without support for labels: [BigQuery Storage API](https://cloud.google.com/bigquery/docs/reference/storage/libraries).
+All costs are aggregated under "BigQuery Storage API / [write | read]" SKUs.
+I do not understand how the BigQuery Storage API has got GA status if such limitation exists.
+
+I have not found any workaround to estimate the costs, if you read or write to BigQuery using this API.
+Be sure to let me know if you know any.
+{: .notice--info}
+
+### Labels not available in the billing export
+
+Do you know why BigQuery report for storage costs is organized around datasets not tables?
+Because the labels on the BigQuery tables are not available in the billing export, only labels from datasets are exported.
+Due to this limitation, I have many fine-grained datasets in the project instead of a few datasets with many tables inside.
+
+TODO: issue
+
+### No labels for automatically created resources
+
+When you make a Pubsub subscription for Dataflow job 
+and configure [timestamp attribute](https://beam.apache.org/releases/javadoc/2.37.0/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.Read.html#withTimestampAttribute-java.lang.String-) for watermark tracking.
+additional internal Pubsub subscription is created. TODO - reference.
+Unfortunately the internal subscriptions do not get labels from Dataflow job nor original subscription.
+
+Workaround: the internal subscriptions cost exactly like the original subscriptions, so you can estimate the total costs (multiply by 2).
+{: .notice--info}
+
+### Labels are not exposed in the high-level API
+
+TODO: issue w beam
+TODO: issue w scio
+TODO: issue w spark connector
+
+### Shared infrastructure
 
 TODO
 
 ## Summary
 
-TODO
+* finops
+* data pipeline oriented billing reports
+* many open issues, please vote for them
