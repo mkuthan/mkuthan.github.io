@@ -256,85 +256,116 @@ The final reports may look relatively simple but this is easier said than done.
 * How to automate labeling to avoid gaps in the reports?
 * What if the GCP product does not support labels at all?
 * What if the labels set on the resources for unknown reasons are not available in the billing export?
-* How track costs of resources created automatically by managed GCP services, even if we set labels on the service itself they are not propagated?
+* How to track costs of resources created automatically by managed GCP services? 
+  Even if we set labels on the service itself they are not propagated to the underlying resources.
 * What if you are using the library like Apache Beam or Apache Spark, and the API for setting labels is not publicly exposed?
-* There is also a shared infrastructure like Composer or Cloud Logging/Monitoring, they also generate significant costs
+* There is also a shared infrastructure like Cloud Composer or Cloud Logging, they also generate significant costs
 
-Let tackle all identified challenges one by one.
+Let's tackle all identified challenges one by one.
 
 ### Labeling automation
 
-* Use [Terraform](https://www.terraform.io) for "static" cloud resources management like BigQuery datasets, Pubsub topics and subscriptions and Cloud storage buckets.
+* Use [Terraform](https://www.terraform.io) for "static" cloud resources management like BigQuery datasets, Pubsub topics, Pubsub subscriptions and Cloud storage buckets.
 Prepare the reusable modules with input parameters required to set the mandatory labels.
-* Deliver GitHub [actions](https://docs.github.com/en/actions/learn-github-actions) or [composite actions](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action) for deploying Dataflow jobs.
+* Deliver GitHub [actions](https://docs.github.com/en/actions/learn-github-actions) or [composite actions](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action) for deploying Dataflow streaming jobs.
 The action will set all required labels every time when the job is deployed.
-* Develop a thin wrappers for [Dataproc Apache Operators](https://airflow.apache.org/docs/apache-airflow-providers-google/stable/operators/cloud/dataproc.html) or even better the [decorators](https://airflow.apache.org/docs/apache-airflow/stable/howto/create-custom-decorator.html).
-They are responsible for setting all required labels when the Spark job is deployed into Cloud Composer.
+* Develop thin wrappers for [Dataproc Apache Operators](https://airflow.apache.org/docs/apache-airflow-providers-google/stable/operators/cloud/dataproc.html) or even better the [decorators](https://airflow.apache.org/docs/apache-airflow/stable/howto/create-custom-decorator.html).
+They are responsible for setting all required labels when the batch job is deployed into Cloud Composer.
 
-Looks complex and very time-consuming? It is for sure, but for the dynamic resources like BigQuery queries the situation is even worse.
+Looks complex and very time-consuming? It is for sure, but for dynamic resources like BigQuery queries the situation is even worse.
 If you do not set any label on the [JobConfiguration](https://developers.google.com/resources/api-libraries/documentation/bigquery/v2/java/latest/com/google/api/services/bigquery/model/JobConfiguration.html#setLabels-java.util.Map-)
-the costs of all queries sums under "BigQuery / Analysis" SKU. 
+the costs of all queries are just aggregated under "BigQuery / Analysis" SKU. 
 
 ### BigQuery jobs
 
 Fortunately all BigQuery jobs are reported in the BigQuery [information schema](https://cloud.google.com/bigquery/docs/information-schema-jobs).
-In the information schema you can find the "total_bytes_billed" column with billed bytes.
-As long as cost per TiB is well [known](https://cloud.google.com/bigquery/pricing#on_demand_pricing), the final cost of the query might be estimated. 
-Instead of labeling every single query it is better to prepare the estimated costs report based on information schema.
+In the information schema you can find the query expression and "total_bytes_billed" column with billed bytes.
+As long as cost per TiB is well [known](https://cloud.google.com/bigquery/pricing#on_demand_pricing), the final cost of the query may be estimated. 
+Instead of labeling every single query it is easier to prepare the estimated costs report based on queries found in the information schema.
 
-TODO: diagram
+![BigQuery jobs dashboard](/assets/images/finops_bigquery_jobs.webp)
 
 Although, there are at least two disadvantages:
 
-* No direct connection with the pipeline, you have to manually "assign" the query to the pipeline - not a big deal for the data engineer who is the author of the queries
-* Daily or hourly jobs do not generate exactly the same query on every run, the time related expressions are typically varying
+* No direct connection with the pipelines, you have to manually "assign" the query to the pipeline. 
+  Not a big deal for the data engineer who is the author of the queries.
+* Daily or hourly jobs do not generate exactly the same query on every run. 
+  The time related expressions are typically varying and need to be normalized
 
 You can use the following regular expression for query normalization:
 
 ```
-TODO
+REGEXP_REPLACE(query, '\\d{8,10}|\\d{4}-\\d{2}-\\d{2}([T\\s]\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?)?', 'DATE_PLACEHOLDER')
 ```
 
-### Labels not supported
+### BigQuery Storage API
 
-There is at least one very important GCP product without support for labels: [BigQuery Storage API](https://cloud.google.com/bigquery/docs/reference/storage/libraries).
-All costs are aggregated under "BigQuery Storage API / [write | read]" SKUs.
-I do not understand how the BigQuery Storage API has got GA status if such limitation exists.
+There is at least one crucial GCP product without support for labels: [BigQuery Storage API](https://cloud.google.com/bigquery/docs/reference/storage/libraries).
+All costs are aggregated under "BigQuery Storage API / [Write | Read]" SKUs, 
+very similar situation to the BigQuery Jobs when all costs go to the "Analysis" SKU.
+There is an [open issue](https://issuetracker.google.com/185163366) in the bug tracker.
+BigQuery Storage API does not expose any details in the BigQuery information schema as well.
+I do not understand how the BigQuery Storage API has got GA status if such limitations still exist.
 
-I have not found any workaround to estimate the costs, if you read or write to BigQuery using this API.
+I have not found any workaround to estimate the costs for BigQuery Storage API, yet. 
 Be sure to let me know if you know any.
 {: .notice--info}
 
-### Labels not available in the billing export
+### BigQuery 3rd party APIs
 
-Do you know why BigQuery report for storage costs is organized around datasets not tables?
+The most data pipelines are not implemented within the BigQuery API directly but with some 3rd party higher level API.
+The high level APIs need to expose the underlying BigQuery API for setting the labels.
+
+* Apache Beam still does not support job labels on BigQuery read/write transforms [BEAM-9967](https://issues.apache.org/jira/browse/BEAM-9967)
+* BigQuery Spark Connector has recently got the support for setting job labels [PR-586](https://github.com/GoogleCloudDataproc/spark-bigquery-connector/pull/568)
+* Spotify Scio has support for the labels for the long time [PR-3375](https://github.com/spotify/scio/pull/3375)
+
+### BigQuery tables
+
+Do you know why BigQuery report for storage costs is organized around datasets, not tables?
 Because the labels on the BigQuery tables are not available in the billing export, only labels from datasets are exported.
-Due to this limitation, I have many fine-grained datasets in the project instead of a few datasets with many tables inside.
+Due to this limitation, I have many fine-grained datasets in the project, just to get proper accountability.
 
-TODO: issue
+Please vote for the following [issue](https://issuetracker.google.com/issues/227218385).
 
-### No labels for automatically created resources
+### Dataflow internal subscriptions
 
-When you make a Pubsub subscription for Dataflow job 
-and configure [timestamp attribute](https://beam.apache.org/releases/javadoc/2.37.0/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.Read.html#withTimestampAttribute-java.lang.String-) for watermark tracking.
-additional internal Pubsub subscription is created. TODO - reference.
-Unfortunately the internal subscriptions do not get labels from Dataflow job nor original subscription.
+When you make a Pubsub subscription for a Dataflow job 
+and configure [timestamp attribute](https://beam.apache.org/releases/javadoc/2.37.0/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.Read.html#withTimestampAttribute-java.lang.String-) for watermark tracking
+additional tracking Pubsub subscription is created.
+See the [official documentation](https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub#high_watermark_accuracy) 
+or [stack overflow question](https://stackoverflow.com/questions/42169004/what-is-the-watermark-heuristic-for-pubsubio-running-on-gcd) for more details.
+Unfortunately the tracking subscriptions do not get labels from Dataflow jobs nor original subscriptions.
 
-Workaround: the internal subscriptions cost exactly like the original subscriptions, so you can estimate the total costs (multiply by 2).
+Please vote for the following [issue](https://issuetracker.google.com/issues/227218387).
+
+Workaround: the internal subscriptions cost exactly like the original subscriptions, so you can easily estimate the total costs.
 {: .notice--info}
-
-### Labels are not exposed in the high-level API
-
-TODO: issue w beam
-TODO: issue w scio
-TODO: issue w spark connector
 
 ### Shared infrastructure
 
-TODO
+The costs of shared infrastructure can not be assigned to any particular data pipeline. 
+Just stay with the "resource oriented" billing and try to minimize the overall costs.
+From my experience there are two of the most expensive shared infrastructure costs on Google Cloud Platform for data pipelines.
+
+* [Cloud Composer](https://cloud.google.com/composer) -- if you want to optimize Cloud Composer I highly recommend one of my blog posts - [GCP Cloud Composer 1.x tuning](/blog/2022/03/15/gcp-cloud-composer-tuning/)
+* [Cloud Logging](https://cloud.google.com/logging) -- to minimize the costs, minimize the number of log entries produced by the data pipelines and their infrastructure
+
+Below you find the number of log entries from my production environment for the one day.
+
+![Number of log entries](/assets/images/finops_logging.webp)
+
+As you can see, a lot of logs come from the Dataproc ephemeral clusters. 
+The best thing you can do is to apply [exclusion filters](https://cloud.google.com/logging/docs/routing/overview#exclusions) on the log router. 
+Filtered logs are not counted in the billings.
 
 ## Summary
 
-* finops
-* data pipeline oriented billing reports
-* many open issues, please vote for them
+I fully realize that FinOps discipline is not easy for data engineers.
+Finally, we would like to develop data pipelines, not to think about billings, budgets and overspending.
+
+But in the public cloud era there is no choice, you have to monitor costs of the data pipelines in exactly the same way as you monitor overall health, latency or throughput.
+The built-in cloud billing tools organized around products do not help a lot.
+To get detailed costs reports you have put a lot of effort to create data pipeline oriented costs monitoring.
+
+I hope that this blog post gives you some ideas on how to develop your own toolset for applying FinOps discipline.
