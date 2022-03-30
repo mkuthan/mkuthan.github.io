@@ -31,19 +31,20 @@ FinOps is a very broad term, but what is especially important from a data engine
 * Cost analysis becomes a part of [definition of done](https://www.agilealliance.org/glossary/definition-of-done/).
   After major changes you should also check the billings for any regression.
 * Premature cost optimization is the root of all evil.
+  Develop, deploy, measure and then optimize if needed.
   Do you remember Donald Knuth's paper about [performance](https://wiki.c2.com/?PrematureOptimization)?
   
 ## Google Cloud Platform resources
 
 You may be surprised how complex Google Cloud Platform billing is.
 There are dozens of [products](https://cloud.google.com/products), every product has tens of [SKUs](https://cloud.google.com/skus), hundreds of different elements to track and count.
-What are the most important cost factors in the Google Cloud Platform for data pipelines I'm familiar with?
+What are the most important cost factors in the Google Cloud Platform for data pipelines in my projects?
 
 * Common resources
   - vCPU
   - Memory
-  - Persistent disks (standard or SSD)
-  - Local disks (standard or SSD)
+  - Persistent disks
+  - Local disks
   - Network egress 
 * Dataflow
   - Streaming service (for real-time pipelines)
@@ -72,7 +73,8 @@ What are the most important cost factors in the Google Cloud Platform for data p
   - Metric Volume
   - Log Volume
   
-There are other products relevant to the data pipelines, but unfortunately I do not use them on daily basis:
+There are many other GCP products relevant to the data pipelines, so the cost structure could be different in your organization.
+I would check the following products, not used by me on a daily basis.
 
 * [Vertex AI](https://cloud.google.com/vertex-ai)
 * [Bigtable](https://cloud.google.com/bigtable)
@@ -104,12 +106,15 @@ Imagine a project with a dozen different data pipelines using the same type of c
 
 * How do you know the cost of every single pipeline? 
 * How to compare the costs of different data pipelines?
-* Does the cost of all resources utilized by the pipeline "A" fit to its business case budget? 
-* Billing report shows that most of the monthly budget is utilized by SKU "X", which data pipeline should be optimized first?
+* Does the cost of all resources utilized by the pipeline fit to its business case budget? 
+* My billing report shows that most of the monthly budget is utilized by BigQuery, which data pipeline should be optimized first?
 * Which resource causes the highest cost for the given data pipeline?
 
 As a data engineer I'm interested in the total costs of the selected data pipeline.
 Then I need to have an ability to drill down into the cost of every single resource used by this pipeline.
+
+The data pipeline oriented cost reports are the missing part of the platform.
+Resource oriented costs report are not sufficient.
 {: .notice--info}
 
 ## Data pipeline oriented costs tracking
@@ -150,17 +155,17 @@ Below you can find the labeling convention I have created in my company:
 * **allegro__branch_name** - When you develop and test a new feature it is handy to assign the branch/feature name as a label.
   You will exactly know the cost of the experimentation phase for this feature/branch.
   It is also quite useful during major upgrades, to verify that after change the job is still as cost-effective as before.
-  Deploy the copy of the job aside the current production, and compare the costs using the label.
+  Deploy the copy of the job aside the current production, and compare the costs using this label.
 
 I also realized very quickly that billing export does not provide any built-in labels for the well-known resources like BigQuery datasets, Pubsub topics or Cloud Storage buckets.
 To mitigate this limitation the following additional labels are defined for the cloud resources used by the data pipelines:
 
-* **allegro__topic_name** - The name of the Pubsub topic, apply the label to every topic of subscription
+* **allegro__topic_name** - The name of the Pubsub topic, apply the label to every topic and subscription
 * **allegro__dataset_name** - The name of the BigQuery dataset, apply the label to every dataset
 * **allegro__bucket_name** - The name of the Cloud Storage bucket, apply the label to every bucket
 
 If the data pipelines subscribe or publish to multiple Pubsub topics, produce multiple BigQuery datasets or write to multiple Cloud Storage buckets 
-the billing export will provide detailed costs for every single labeled resource.
+the billing export will provide detailed costs for every labeled resource.
 
 ### Overview reports
 
@@ -201,7 +206,7 @@ In the presented project "sc-9366-nga-prod" there are two types of data pipeline
 * [Dataflow](https://cloud.google.com/dataflow) / [Apache Beam](https://beam.apache.org) for the real-time jobs
 * [Dataproc](https://cloud.google.com/dataproc) / [Apache Spark](https://spark.apache.org) for the batch jobs
 
-Let start with the next report crafted for Dataflow pipelines:
+Let start with the next report crafted for Dataflow real-time pipelines:
 
 ![Dataflow dashboard](/assets/images/finops_dataflow.webp)
 
@@ -258,7 +263,7 @@ The final reports may look relatively simple but this is easier said than done.
 * What if the labels set on the resources for unknown reasons are not available in the billing export?
 * How to track costs of resources created automatically by managed GCP services? 
   Even if we set labels on the service itself they are not propagated to the underlying resources.
-* What if you are using the library like Apache Beam or Apache Spark, and the API for setting labels is not publicly exposed?
+* What if you are using the libraries like Apache Beam or Apache Spark, and the API for setting labels is not publicly exposed?
 * There is also a shared infrastructure like Cloud Composer or Cloud Logging, they also generate significant costs
 
 Let's tackle all identified challenges one by one.
@@ -304,7 +309,8 @@ There is at least one crucial GCP product without support for labels: [BigQuery 
 All costs are aggregated under "BigQuery Storage API / [Write | Read]" SKUs, 
 very similar situation to the BigQuery Jobs when all costs go to the "Analysis" SKU.
 There is an [open issue](https://issuetracker.google.com/185163366) in the bug tracker.
-BigQuery Storage API does not expose any details in the BigQuery information schema as well.
+
+Unfortunately, BigQuery Storage API does not expose any details in the BigQuery information schema to estimate the costs like for BigQuery jobs.
 I do not understand how the BigQuery Storage API has got GA status if such limitations still exist.
 
 I have not found any workaround to estimate the costs for BigQuery Storage API, yet. 
@@ -313,12 +319,12 @@ Be sure to let me know if you know any.
 
 ### BigQuery 3rd party APIs
 
-The most data pipelines are not implemented within the BigQuery API directly but with some 3rd party higher level API.
+The most data pipelines are not implemented within the BigQuery API directly but with some 3rd party, higher level API.
 The high level APIs need to expose the underlying BigQuery API for setting the labels.
 
 * Apache Beam still does not support job labels on BigQuery read/write transforms [BEAM-9967](https://issues.apache.org/jira/browse/BEAM-9967)
 * BigQuery Spark Connector has recently got the support for setting job labels [PR-586](https://github.com/GoogleCloudDataproc/spark-bigquery-connector/pull/568)
-* Spotify Scio has support for the labels for the long time [PR-3375](https://github.com/spotify/scio/pull/3375)
+* Spotify Scio has support for the labels for the long time, but only if the Scio specific BigQuery connector is used [PR-3375](https://github.com/spotify/scio/pull/3375)
 
 ### BigQuery tables
 
@@ -332,7 +338,7 @@ Please vote for the following [issue](https://issuetracker.google.com/issues/227
 
 When you make a Pubsub subscription for a Dataflow job 
 and configure [timestamp attribute](https://beam.apache.org/releases/javadoc/2.37.0/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.Read.html#withTimestampAttribute-java.lang.String-) for watermark tracking
-additional tracking Pubsub subscription is created.
+additional tracking subscription is created.
 See the [official documentation](https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub#high_watermark_accuracy) 
 or [stack overflow question](https://stackoverflow.com/questions/42169004/what-is-the-watermark-heuristic-for-pubsubio-running-on-gcd) for more details.
 Unfortunately the tracking subscriptions do not get labels from Dataflow jobs nor original subscriptions.
@@ -348,7 +354,7 @@ The costs of shared infrastructure can not be assigned to any particular data pi
 Just stay with the "resource oriented" billing and try to minimize the overall costs.
 From my experience there are two of the most expensive shared infrastructure costs on Google Cloud Platform for data pipelines.
 
-* [Cloud Composer](https://cloud.google.com/composer) -- if you want to optimize Cloud Composer I highly recommend one of my blog posts - [GCP Cloud Composer 1.x tuning](/blog/2022/03/15/gcp-cloud-composer-tuning/)
+* [Cloud Composer](https://cloud.google.com/composer) -- if you want to optimize Cloud Composer I highly recommend reading one of my blog posts - [GCP Cloud Composer 1.x tuning](/blog/2022/03/15/gcp-cloud-composer-tuning/)
 * [Cloud Logging](https://cloud.google.com/logging) -- to minimize the costs, minimize the number of log entries produced by the data pipelines and their infrastructure
 
 Below you find the number of log entries from my production environment for the one day.
@@ -359,9 +365,12 @@ As you can see, a lot of logs come from the Dataproc ephemeral clusters.
 The best thing you can do is to apply [exclusion filters](https://cloud.google.com/logging/docs/routing/overview#exclusions) on the log router. 
 Filtered logs are not counted in the billings.
 
+If you have any other practices for shared infrastructure cost optimizations, let me know in the comments.
+{: .notice--info}
+
 ## Summary
 
-I fully realize that FinOps discipline is not easy for data engineers.
+I fully realize that FinOps discipline is not easy to adopt for data engineers.
 Finally, we would like to develop data pipelines, not to think about billings, budgets and overspending.
 
 But in the public cloud era there is no choice, you have to monitor costs of the data pipelines in exactly the same way as you monitor overall health, latency or throughput.
@@ -369,3 +378,4 @@ The built-in cloud billing tools organized around products do not help a lot.
 To get detailed costs reports you have put a lot of effort to create data pipeline oriented costs monitoring.
 
 I hope that this blog post gives you some ideas on how to develop your own toolset for applying FinOps discipline.
+The sooner the discipline is adopted the more savings could be expected.
