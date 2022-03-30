@@ -15,7 +15,7 @@ Today you will learn the easiest method to configure Dataproc and Spark together
 The article is for Dataproc 1.5 and Spark 2.x only. It might also work for Dataproc 2.x and Spark 3.x, but I have not verified the latest versions.
 {: .notice--warning}
 
-## Clear the spark.properties
+## Clear spark.properties
 
 The setup heavily depends on the defaults applied by Dataproc, [spark.properties](https://spark.apache.org/docs/latest/configuration.html#spark-properties) must not interfere with them. 
 Ensure that you **DO NOT DEFINE** any of the following parameters:
@@ -74,19 +74,19 @@ Please pay attention to the fact that the allocated memory already takes into ac
 If you observe behavior of Spark executors being killed by YARN due to memory over-allocation, **DO NOT CHANGE** “spark.executor.memoryOverhead” as usual. 
 It would break the whole Dataproc defaults magic.
 
-When your cluster is defined within "n2-standard-4" machines, the following settings are applied for each Spark executor.
-From my experiences, 558MiB memory overhead is not enough for the Spark job running on two cores. 
+When your cluster is defined within "n2-standard-4" machines, the following settings are applied for each Spark executor:
 
 ```
 spark.executor.memory: 5586m
 spark.executor.memoryOverhead: 5586m * 0.1 = 558.6m.
 ```
 
+From my experiences, 558MiB memory overhead is not enough for the Spark job running on two cores.
 The [documentation](https://cloud.google.com/dataproc/docs/support/spark-job-tuning#out_of_memory) recommends using *highmem* virtual machines if Spark workers are killed by YARN due to memory errors.
 
 * It does not break the automagical memory calculation
 * The memory overhead for "n2-highmem-4" is `11171m * 0.1 = 1117m`
-* The memory overhead depends on the Spark parallelism, so when the spark.executor.cores stays unchanged it should solve the memory over-allocation issue
+* The memory overhead depends on the Spark parallelism, so when the "spark.executor.cores" stays unchanged it should solve the memory over-allocation issue
 
 ## Dataproc Enhanced Flexibility Mode
 
@@ -94,10 +94,11 @@ The [documentation](https://cloud.google.com/dataproc/docs/support/spark-job-tun
 Without EFM the job execution could be very unpredictable (think about black week when the resources might not be easily available even in GCP). 
 There are two important rules to apply:
 
-* If your Spark job requires more than 2 virtual machines you cloud delegate ~ 75% of workload to the secondary, preemptible machines. 
+* If your Spark job requires more than 2 virtual machines you could delegate ~ 75% of workload to the secondary, preemptible machines. 
   Look for “Spot VM” pricing, the spot instances are 3x-10x [cheaper](https://cloud.google.com/compute/docs/instances/spot#pricing) than regular ones - it is a huge saving.
 * Use local SSD disks for the primary workers. 
-  One disk for every 4 CPUs according to the [documentation](https://cloud.google.com/dataproc/docs/concepts/configuring-clusters/flex#configuring_local_ssds_for_primary_worker_shuffle).
+  Primary workers are responsible for data shuffling, so the best available IO is a must.
+  According to the [documentation](https://cloud.google.com/dataproc/docs/concepts/configuring-clusters/flex#configuring_local_ssds_for_primary_worker_shuffle) one local disk should be assigned for every 4 CPUs.
 
 To configure EFM mode use the following Dataproc cluster properties:
 
