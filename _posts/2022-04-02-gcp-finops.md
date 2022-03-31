@@ -47,7 +47,7 @@ What are the most important cost factors in the Google Cloud Platform for data p
   - Local disks
   - Network egress 
 * Dataflow
-  - Streaming service (for real-time pipelines)
+  - Streaming Engine (for real-time pipelines)
   - Shuffle service (for batch pipelines)
 * Dataproc
   - Licensing Fee
