@@ -135,7 +135,7 @@ I would say that 2) and 5) are the toughest parts of the journey.
 
 ### Labeling convention
 
-There is no silver bullet, the best cloud resources labeling conventions do not exist.
+There is no silver bullet - perfect cloud resources labeling conventions do not exist.
 You have to develop your own labeling convention, but I would like to share a few best practices:
 
 * Introduce labeling naming convention at the very beginning
