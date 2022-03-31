@@ -48,7 +48,7 @@ What are the most important cost factors in the Google Cloud Platform for data p
   - Network egress 
 * Dataflow
   - Streaming Engine (for real-time pipelines)
-  - Shuffle service (for batch pipelines)
+  - Shuffle Service (for batch pipelines)
 * Dataproc
   - Licensing Fee
 * BigQuery
@@ -74,7 +74,7 @@ What are the most important cost factors in the Google Cloud Platform for data p
   - Log Volume
   
 There are many other GCP products relevant to the data pipelines, so the cost structure could be different in your organization.
-I would check the following products, not used by me on a daily basis.
+I would also look at the following products, not used by me on a daily basis.
 
 * [Vertex AI](https://cloud.google.com/vertex-ai)
 * [Bigtable](https://cloud.google.com/bigtable)
@@ -83,8 +83,8 @@ I would check the following products, not used by me on a daily basis.
 
 ## Resource oriented costs tracking
 
-Because Google Cloud Platform billings are oriented around projects, products and SKUs, the built-in cost reports are focused on projects, products and SKUs as well.
-Below you can find the real example of the report for my primary project, the costs for the last 30 days grouped by the cloud product.
+Because Google Cloud Platform billings are oriented around projects, services and SKUs, the built-in cost reports are focused on projects, services and SKUs as well.
+Below you can find the real example of the report for my primary project, the costs for the last 30 days grouped by the cloud service.
 As you can see "BigQuery" is a dominant factor in the billing.
 
 ![Billing dashboard](/assets/images/finops_cloud_billing_report.webp)
@@ -97,7 +97,7 @@ The presented built-in [Cloud Billing Report](https://cloud.google.com/billing/d
 
 * Spending timeline within daily or monthly data granularity
 * Change since the previous billing period 
-* Ability to filter or split the total costs by projects, products or SKUs
+* Ability to filter or split the total costs by projects, services or SKUs
 * Insight into discounts, promotions and negotiated savings
 
 At first, it looks like the cloud billing report plots everything you need, doesn't it?
@@ -113,14 +113,14 @@ Imagine a project with a dozen different data pipelines using the same type of c
 As a data engineer I'm interested in the total costs of the selected data pipeline.
 Then I need to have an ability to drill down into the cost of every single resource used by this pipeline.
 
-The data pipeline oriented cost reports are the missing part of the platform.
-Resource oriented costs report are not sufficient.
+Resource oriented costs reports are not sufficient, they do not provide necessary insight into the data pipelines.
 {: .notice--info}
 
 ## Data pipeline oriented costs tracking
 
-Now we have already defined the requirements for billing reports which helps us to get better costs understanding.
-How to create data pipeline oriented costs tracking in Google Cloud Platform?
+Now we have already known the gaps in the "resource oriented costs tracking", the gaps from a data engineer perspective.
+How to create "data pipeline oriented costs tracking" in Google Cloud Platform?
+The reports which show exactly how much every datapipeline in the project cost.
 
 The recipe:
 
@@ -135,7 +135,7 @@ I would say that 2) and 5) are the toughest parts of the journey.
 
 ### Labeling convention
 
-There is no silver bullet - perfect cloud resources labeling conventions do not exist.
+There is no silver bullet -- perfect cloud resources labeling conventions do not exist.
 You have to develop your own labeling convention, but I would like to share a few best practices:
 
 * Introduce labeling naming convention at the very beginning
@@ -218,7 +218,7 @@ Very similar dashboard is prepared for the batch jobs deployed on ephemeral Data
 
 ![Dataprod dashboard](/assets/images/finops_dataproc.webp)
 
-There is a Dataproc specific SKU "Licencing fee" instead of "Streaming" and "Shuffle" in Dataflow.
+There is a Dataproc specific SKU "Licencing" instead of "Streaming" and "Shuffle" in Dataflow.
 The definition of the timeline is exactly the same, daily costs organized around jobs.
 
 There is one more important advantage of the presented reports. 
@@ -255,7 +255,7 @@ The filtering is available only if the **allegro__bucket_name** label was set.
 
 ## The challenges
 
-Right now you should have a much better understanding of the difference between "resources" and "data pipelines" oriented billings.
+Right now you should have a much better understanding of the difference between "resources" and "data pipelines" oriented cost reports.
 The final reports may look relatively simple but this is easier said than done.
 
 * How to automate labeling to avoid gaps in the reports?
@@ -264,7 +264,7 @@ The final reports may look relatively simple but this is easier said than done.
 * How to track costs of resources created automatically by managed GCP services? 
   Even if we set labels on the service itself they are not propagated to the underlying resources.
 * What if you are using the libraries like Apache Beam or Apache Spark, and the API for setting labels is not publicly exposed?
-* There is also a shared infrastructure like Cloud Composer or Cloud Logging, they also generate significant costs
+* There is also a shared infrastructure like Cloud Composer or Cloud Logging, they also generate significant costs.
 
 Let's tackle all identified challenges one by one.
 
@@ -272,6 +272,9 @@ Let's tackle all identified challenges one by one.
 
 * Use [Terraform](https://www.terraform.io) for "static" cloud resources management like BigQuery datasets, Pubsub topics, Pubsub subscriptions and Cloud storage buckets.
 Prepare the reusable modules with input parameters required to set the mandatory labels.
+If Terraform is too low-level, create some [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) on top. 
+We have internally developed [Gradle](https://gradle.org) plugin for deploying Dataflow real-time jobs and cloud infrastructure together.
+The plugin is responsible for setting all labels.
 * Deliver GitHub [actions](https://docs.github.com/en/actions/learn-github-actions) or [composite actions](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action) for deploying Dataflow streaming jobs.
 The action will set all required labels every time when the job is deployed.
 * Develop thin wrappers for [Dataproc Apache Operators](https://airflow.apache.org/docs/apache-airflow-providers-google/stable/operators/cloud/dataproc.html) or even better the [decorators](https://airflow.apache.org/docs/apache-airflow/stable/howto/create-custom-decorator.html).
@@ -292,12 +295,12 @@ Instead of labeling every single query it is easier to prepare the estimated cos
 
 Although, there are at least two disadvantages:
 
-* No direct connection with the pipelines, you have to manually "assign" the query to the pipeline. 
-  Not a big deal for the data engineer who is the author of the queries.
+* No direct connection with the data pipelines, you have to manually "assign" the query to the pipeline. 
+  Not a big deal for the data engineer who is the author of the queries but annoying if the pipeline executes a dozen of them.
 * Daily or hourly jobs do not generate exactly the same query on every run. 
   The time related expressions are typically varying and need to be normalized
 
-You can use the following regular expression for query normalization:
+You can use the following regular expression for query normalization, all datetime expressions are replaced by the static placeholder:
 
 ```
 REGEXP_REPLACE(query, '\\d{8,10}|\\d{4}-\\d{2}-\\d{2}([T\\s]\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?)?', 'DATE_PLACEHOLDER')
@@ -319,8 +322,9 @@ Be sure to let me know if you know any.
 
 ### BigQuery 3rd party APIs
 
-The most data pipelines are not implemented within the BigQuery API directly but with some 3rd party, higher level API.
-The high level APIs need to expose the underlying BigQuery API for setting the labels.
+The most data pipelines are not implemented within the BigQuery API directly but with some 3rd party, higher level APIs.
+The high level APIs should expose the underlying BigQuery API for setting the labels.
+But in reality it is not always true.
 
 * Apache Beam still does not support job labels on BigQuery read/write transforms [BEAM-9967](https://issues.apache.org/jira/browse/BEAM-9967)
 * BigQuery Spark Connector has recently got the support for setting job labels [PR-586](https://github.com/GoogleCloudDataproc/spark-bigquery-connector/pull/568)
@@ -332,20 +336,20 @@ Do you know why BigQuery report for storage costs is organized around datasets, 
 Because the labels on the BigQuery tables are not available in the billing export, only labels from datasets are exported.
 Due to this limitation, I have many fine-grained datasets in the project, just to get proper accountability.
 
-Please vote for the following [issue](https://issuetracker.google.com/issues/227218385).
+Please vote for the following [issue](https://issuetracker.google.com/issues/227218385) if you need costs tracking on the table level.
 
 ### Dataflow internal subscriptions
 
 When you make a Pubsub subscription for a Dataflow job 
-and configure [timestamp attribute](https://beam.apache.org/releases/javadoc/2.37.0/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.Read.html#withTimestampAttribute-java.lang.String-) for watermark tracking
+and configure [timestamp attribute](https://beam.apache.org/releases/javadoc/2.37.0/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.Read.html#withTimestampAttribute-java.lang.String-) for watermark tracking,
 additional tracking subscription is created.
 See the [official documentation](https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub#high_watermark_accuracy) 
 or [stack overflow question](https://stackoverflow.com/questions/42169004/what-is-the-watermark-heuristic-for-pubsubio-running-on-gcd) for more details.
 Unfortunately the tracking subscriptions do not get labels from Dataflow jobs nor original subscriptions.
 
-Please vote for the following [issue](https://issuetracker.google.com/issues/227218387).
+Please vote for the following [issue](https://issuetracker.google.com/issues/227218387) if you need 100% labels coverage on the Pubsub subscriptions.
 
-Workaround: the internal subscriptions cost exactly like the original subscriptions, so you can easily estimate the total costs.
+The internal subscriptions cost exactly like the original subscriptions, so you can estimate the total costs for both subscriptions.
 {: .notice--info}
 
 ### Shared infrastructure
@@ -361,7 +365,8 @@ Below you find the number of log entries from my production environment for the 
 
 ![Number of log entries](/assets/images/finops_logging.webp)
 
-As you can see, a lot of logs come from the Dataproc ephemeral clusters. 
+As you can see, a lot of logs come from the Dataproc ephemeral clusters.
+The logging from the cluster [may be enabled or disabled](https://cloud.google.com/dataproc/docs/guides/logging), nothing in between.
 The best thing you can do is to apply [exclusion filters](https://cloud.google.com/logging/docs/routing/overview#exclusions) on the log router. 
 Filtered logs are not counted in the billings.
 
@@ -374,8 +379,8 @@ I fully realize that FinOps discipline is not easy to adopt for data engineers.
 Finally, we would like to develop data pipelines, not to think about billings, budgets and overspending.
 
 But in the public cloud era there is no choice, you have to monitor costs of the data pipelines in exactly the same way as you monitor overall health, latency or throughput.
-The built-in cloud billing tools organized around products do not help a lot.
+The built-in cloud billing tools organized around cloud services and SKUs do not help a lot.
 To get detailed costs reports you have put a lot of effort to create data pipeline oriented costs monitoring.
 
 I hope that this blog post gives you some ideas on how to develop your own toolset for applying FinOps discipline.
-The sooner the discipline is adopted the more savings could be expected.
+Remember, the sooner the discipline is adopted the more savings could be expected.
