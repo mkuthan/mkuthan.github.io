@@ -1,7 +1,7 @@
 ---
-title: "GCP FinOps for data pipelines"
-date: 2022-04-02
-categories: [GCP, FinOps]
+title: "FinOps for data pipelines in the public cloud"
+date: 2022-04-04
+categories: [FinOps, GCP]
 tagline: ""
 header:
     overlay_image: /assets/images/katie-harp-w45gZMWrJWc-unsplash.webp
