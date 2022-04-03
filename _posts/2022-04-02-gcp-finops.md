@@ -1,6 +1,6 @@
 ---
-title: "FinOps for data pipelines in the public cloud"
-date: 2022-04-04
+title: "FinOps for data pipelines on Google Cloud Platform"
+date: 2022-04-02
 categories: [FinOps, GCP]
 tagline: ""
 header:
