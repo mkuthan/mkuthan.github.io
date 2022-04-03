@@ -101,7 +101,7 @@ The presented built-in [Cloud Billing Report](https://cloud.google.com/billing/d
 * Insight into discounts, promotions and negotiated savings
 
 At first, it looks like the cloud billing report plots everything you need, doesn't it?
-Unluckily it has many shortcomings. 
+Unfortunately it has many shortcomings. 
 Imagine a project with a dozen different data pipelines using the same type of cloud resources.
 
 * How do you know the cost of every single pipeline? 
