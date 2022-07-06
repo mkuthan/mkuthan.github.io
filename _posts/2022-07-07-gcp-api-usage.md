@@ -32,7 +32,7 @@ For comparison, the same job on the same data before the incident:
 
 What could we do? Open a ticket to the Dataproc support that we observe degradation of managed service?
 
-Wrong! If the root cause of the issue is not in Dataproc itself, the support does not help.
+Wrong! If the root cause of the issue is not in Dataproc itself, Dataproc support does not help.
 {: .notice--warning}
 
 When you fill the ticket for given Google Cloud Platform service (e.g. Dataproc), the support takes a look at internal metrics and logs of **this** service.
