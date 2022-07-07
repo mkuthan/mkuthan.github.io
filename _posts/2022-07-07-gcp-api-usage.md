@@ -248,5 +248,5 @@ Final dashboard for ReadRows method in Storage Read API.
 Key takeaways:
 
 * Distributed systems troubleshooting is hard, especially for managed service in the public cloud
-* Ensure that you found the root cause of the problem before you open the support ticket to the support
+* Ensure that you found the root cause of the problem before you open the support ticket
 * Be prepared, monitor metrics of the most important Google Cloud APIs 
