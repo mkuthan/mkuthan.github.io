@@ -16,21 +16,21 @@ If some aspect was particularly appealing I put the reference to supplementary m
 
 ## Overview
 
-The conference was a hybrid event, all sessions (except for workshops) was live-streamed for online audience for free.
+The conference was a hybrid event, all sessions (except for workshops) were live-streamed for an online audience for free.
 
 During the sessions you could ask the questions on the streaming platform, 
 and the questions from the online audience were answered by the speakers.
 When the sessions had finished, they were available on the streaming platform.
-I was able to replay afternoon sessions next day in the morning, very convenient for people in other timezones like me. 
+I was able to replay afternoon sessions the next day in the morning, very convenient for people in other timezones like me. 
 
 For the two days the program was organized within three tracks, the third day was dedicated to the onsite workshops
-but there was also one track for online audience.
+but there was also one track for the online audience.
 
 ## Highly recommended sessions
 
 ### Google's investment on Beam, and internal use of Beam at Google
 
-[The keynote session](https://2022.beamsummit.org/sessions/google/) presented by
+[The keynote session](https://2022.beamsummit.org/sessions/google/) was presented by
 Kerry Donny-Clark (manager of the Apache Beam team at Google).
 
 * Google centric keynotes, I missed some comparison between Apache Beam / Dataflow and other data processing industry leaders
@@ -42,7 +42,7 @@ Kerry Donny-Clark (manager of the Apache Beam team at Google).
 
 ### How the sausage gets made: Dataflow under the covers
 
-[The session](https://2022.beamsummit.org/sessions/dataflow-under-the-covers/) presented by 
+[The session](https://2022.beamsummit.org/sessions/dataflow-under-the-covers/) was presented by 
 Pablo Estrada (software engineer at Google, PMC member).
 
 * **Excellent session**, highly recommended if you deploy non-trivial Apache Beam pipelines on Dataflow runner
@@ -65,7 +65,7 @@ Pablo Estrada (software engineer at Google, PMC member).
 
 ### Introduction to performance testing in Apache Beam
 
-[The session](https://2022.beamsummit.org/sessions/introduction-to-the-benchmarks-in-apache-beam/) presented by 
+[The session](https://2022.beamsummit.org/sessions/introduction-to-the-benchmarks-in-apache-beam/) was presented by 
 Alexey Romanenko (principal software engineer at Talend, PMC member).
 
 There are 4 performance tests categories in Apache Beam 
@@ -98,7 +98,7 @@ and the tests results are available at [https://metrics.beam.apache.org](https:/
 
 ### How to benchmark your Beam pipelines for cost optimization and capacity planning
 
-[The session](https://2022.beamsummit.org/sessions/benchmark-pipelines/) presented by
+[The session](https://2022.beamsummit.org/sessions/benchmark-pipelines/) was presented by
 Roy Arsan (solution architect at Google).
 
 * How to verify performance and costs for different Dataflow setups using predefined scenarios?
@@ -113,7 +113,7 @@ Roy Arsan (solution architect at Google).
 
 ### Palo Alto Networks' massive-scale deployment of Beam
 
-[The session](https://2022.beamsummit.org/sessions/beam-palo-alto/) presented by
+[The session](https://2022.beamsummit.org/sessions/beam-palo-alto/) was presented by
 Talat Uyarer (Senior Principal Software Engineer at Palo Alto Networks).
 
 * 10k streaming jobs!
@@ -129,7 +129,7 @@ Talat Uyarer (Senior Principal Software Engineer at Palo Alto Networks).
 
 ### New Avro Serialization And Deserialization In Beam SQL
 
-[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/avro-serialization-deserialization/) presented by
+[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/avro-serialization-deserialization/) was presented by
 Talat Uyarer (Senior Principal Software Engineer at Palo Alto Networks).
 
 * How can we improve latency while using BeamSQL and Avro payloads?
@@ -144,7 +144,7 @@ Talat Uyarer (Senior Principal Software Engineer at Palo Alto Networks).
 
 ### RunInference: Machine Learning Inferences in Beam
 
-[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/runinference/) presented by
+[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/runinference/) was presented by
 Andy Ye (software engineer at Google).
 
 * Reusable transform to run ML inferences, see [documentation](https://beam.apache.org/documentation/sdks/python-machine-learning/)
@@ -155,7 +155,7 @@ Andy Ye (software engineer at Google).
 
 ### Unified Streaming And Batch Pipelines At LinkedIn Using Beam
 
-[The session](https://2022.beamsummit.org/sessions/unified-stream-and-batch-pipelines-at-linkedin-using-beam/) presented by
+[The session](https://2022.beamsummit.org/sessions/unified-stream-and-batch-pipelines-at-linkedin-using-beam/) was presented by
 Shangjin Zhang (staff software engineer at LinkedIn) and Yuhong Cheng (software engineer at Linkedin).
 
 ![LinkedIn kappa architecture](/assets/images/beam_summit_linkedin_kappa.png)
@@ -175,16 +175,16 @@ Shangjin Zhang (staff software engineer at LinkedIn) and Yuhong Cheng (software 
 
 ### Log ingestion and data replication at Twitter
 
-[The session](https://2022.beamsummit.org/sessions/log-ingestion-replication-twitter/) presented by
+[The session](https://2022.beamsummit.org/sessions/log-ingestion-replication-twitter/) was presented by
 Praveen Killamsetti and Zhenzhao Wang (staff engineers at Twitter) .
 
 Batch ingestion architecture - Data Lifecycle Manager:
 
 ![Twitter batch ingestion architecture](/assets/images/beam_summit_twitter_batch.png)
 
-* Many datasources: HDFS, GCS, S3, BigQuery, [Manhattan](https://blog.twitter.com/engineering/en_us/a/2014/manhattan-our-real-time-multi-tenant-distributed-database-for-twitter-scale)
+* Many data sources: HDFS, GCS, S3, BigQuery, [Manhattan](https://blog.twitter.com/engineering/en_us/a/2014/manhattan-our-real-time-multi-tenant-distributed-database-for-twitter-scale)
 * Versioned datasets with metadata layer
-* Replicates data to all datasources (seems to be very expensive)
+* Replicates data to all data sources (seems to be very expensive)
 * GUI for configuration, DLM manages all the jobs
 * Plans: migrate 600+ custom data pipelines to DLM platform
 
@@ -200,7 +200,7 @@ Streaming log ingestion - [Sparrow](https://blog.twitter.com/engineering/en_us/t
 
 ### Detecting Change-Points in Real-Time with Apache Beam
 
-[The session](https://2022.beamsummit.org/sessions/detecting-change-points-in-real-time/) presented by
+[The session](https://2022.beamsummit.org/sessions/detecting-change-points-in-real-time/) was presented by
 Devon Peticolas (principal engineer at Oden Technologies).
 
 * Nice session with realistic, non-trivial streaming IOT scenarios
@@ -212,7 +212,7 @@ Devon Peticolas (principal engineer at Oden Technologies).
 
 ![Oden stateful DoFn](/assets/images/beam_summit_oden_stateful_dofn.png)
 
-* Attempt 2: watermark triggered window - problem: lag for non-homogeneous datasources
+* Attempt 2: watermark triggered window - problem: lag for non-homogeneous data sources
 
 ![Oden watermark trigger](/assets/images/beam_summit_oden_trigger1.png)
 
@@ -229,17 +229,17 @@ Devon Peticolas (principal engineer at Oden Technologies).
 
 ### Tailoring pipelines at Spotify
 
-[The session](https://2022.beamsummit.org/sessions/spotify/) presented by
+[The session](https://2022.beamsummit.org/sessions/spotify/) was presented by
 Rickard Zwahlen (data engineer at Spotify).
 
 * Thousands of relatively similar data pipelines to manage
-* Reusable Apache Beam jobs packed as Dokcer images and managed by [Backstage](https://backstage.spotify.com/)
+* Reusable Apache Beam jobs packed as Docker images and managed by [Backstage](https://backstage.spotify.com/)
 * Typical use cases: data profiling, anomaly detection
 * More complex use cases - custom pipeline development
 
 ### Houston, we've got a problem: 6 principles for pipelines design taken from the Apollo missions
 
-[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/6-principles-for-pipeline-design/) presented by 
+[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/6-principles-for-pipeline-design/) was presented by 
 Israel Herraiz and Paul Balm (strategic cloud engineers at Google).
 
 * Nothing spectacular but worth seeing, below you can find the agenda
@@ -248,7 +248,7 @@ Israel Herraiz and Paul Balm (strategic cloud engineers at Google).
 
 ### Strategies for caching data in Dataflow using Beam SDK
 
-[The session](https://2022.beamsummit.org/sessions/strategies-for-caching-data-in-dataflow-using-beam-sdk/) presented by
+[The session](https://2022.beamsummit.org/sessions/strategies-for-caching-data-in-dataflow-using-beam-sdk/) was presented by
 Zeeshan (cloud engineer).
 
 * Side input (for streaming engine stored in BigTable)
@@ -258,17 +258,17 @@ Zeeshan (cloud engineer).
 
 ### Migration Spark to Apache Beam/Dataflow and hexagonal architecture + DDD
 
-[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/migration-spark/) presented by Mazlum Tosun.
+[The session](https://www.google.com/url?q=https://2022.beamsummit.org/sessions/migration-spark/) was presented by Mazlum Tosun.
 
 * DDD/Hexagonal architecture pipeline code organization
 * Static dependency injection with [Dagger](https://www.google.com/url?q=https://github.com/google/dagger)
 * Test data defined as JSON files
 
 I would say: **overkill** ... 
-I'm going to write the blog post how to achieve testable Apache Beam pipelines aligned to DDD architecture in a simpler way :)
+I'm going to write the blog post on how to achieve testable Apache Beam pipelines aligned to DDD architecture in a simpler way :)
 
 ### Error handling with Apache Beam and Asgarde library
-[The session](https://2022.beamsummit.org/sessions/error-handling-asgarde/) presented by Mazlum Tosun.
+[The session](https://2022.beamsummit.org/sessions/error-handling-asgarde/) was presented by Mazlum Tosun.
 
 * Functional way to handle and combine Failures, Beam native method is too verbose (try/catch, exceptionsInto, exceptionsVia)
 * See [https://github.com/project-asgard/asgard](https://github.com/project-asgard/asgard)
@@ -281,7 +281,7 @@ Asgard error handling for Python:
 
 ### Beam as a High-Performance Compute Grid
 
-[The session](https://2022.beamsummit.org/sessions/hpc-grid/) presented by
+[The session](https://2022.beamsummit.org/sessions/hpc-grid/) was presented by
 Peter Coyle (Head of Risk Technology Engineering Excellence at HSBC) and Raj Subramani.
 
 * Risk management system for investment banking at HSBC
@@ -295,7 +295,7 @@ Peter Coyle (Head of Risk Technology Engineering Excellence at HSBC) and Raj Sub
 
 ### Optimizing a Dataflow pipeline for cost efficiency: lessons learned at Orange
 
-[The session](https://2022.beamsummit.org/sessions/optimizing-cost-efficiency/) presented by 
+[The session](https://2022.beamsummit.org/sessions/optimizing-cost-efficiency/) was presented by 
 Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer at Orange).
 
 * How to store [Orange LiveBox](https://en.wikipedia.org/wiki/Orange_Livebox) data into BigQuery (33TB of billed bytes daily)?
@@ -314,7 +314,7 @@ Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer
 
 ### Relational Beam: Process columns, not rows!
 
-[The session](https://2022.beamsummit.org/sessions/relational-beam/) presented by 
+[The session](https://2022.beamsummit.org/sessions/relational-beam/) was presented by 
 Andrew Pilloud and Brian Hulette (software engineers at Google, Apache Beam committers)
 
 * Beam is not relational, is row oriented, data is represented as bytes
@@ -329,7 +329,7 @@ Andrew Pilloud and Brian Hulette (software engineers at Google, Apache Beam comm
 
 ### Scaling up pandas with the Beam DataFrame API
 
-[The session](https://2022.beamsummit.org/sessions/scaling-up-pandas-with-the-beam-dataframe-api/) presented by
+[The session](https://2022.beamsummit.org/sessions/scaling-up-pandas-with-the-beam-dataframe-api/) was presented by
 Brian Hulette (software engineer at Google, Apache Beam committer).
 
 * Nice introduction to Pandas
@@ -358,15 +358,15 @@ by Sayak Paul and Nilabhra Roy Chowdhury (ML engineers at Carted)
 ## Summary
 
 I would thank organizers and speakers for the Beam Summit conference.
-The project needs such events to share the knowledge how leading organizations use Apache Beam, 
-how to apply advanced data processing techniques and how the runners execute the pipelines finally.
+The project needs such events to share the knowledge of how leading organizations use Apache Beam, 
+how to apply advanced data processing techniques and how the runners execute the pipelines.
 
 Below you could find a few takeaways from the sessions:
 
 * Companies like Spotify, Palo Alto Networks or Twitter develop custom, fully managed, declarative layer on top of Apache Beam. 
-To run thousands data pipelines without coding and excessive operations. 
+To run thousands of data pipelines without coding and excessive operations. 
 * Streaming pipelines are sexy but much more expensive (and complex) than batch pipelines.
-* Use existing tools like [PerfKit](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) for performance/costs evaluation. 
+* Use existing tools like [PerfKit](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) for performance/cost evaluation. 
 Check Apache Beam [performance metrics](https://metrics.beam.apache.org) to compare different runners (e.g. if you want to migrate from JDK 1.8 to JDK 11).
 * Understand the framework and the runner internals, unfortunately it is necessary for troubleshooting. 
 Be aware that Dataflow batch and streaming engines are developed by different engineering teams.
