@@ -21,7 +21,7 @@ The conference was a hybrid event, all sessions (except for workshops) were live
 During the sessions you could ask the questions on the streaming platform, 
 and the questions from the online audience were answered by the speakers.
 When the sessions had finished, they were available on the streaming platform.
-I was able to replay afternoon sessions the next day in the morning, very convenient for people in other timezones like me. 
+I was able to replay afternoon sessions the next day in the morning, very convenient for people in non US timezones like me. 
 
 For the two days the program was organized within three tracks, the third day was dedicated to the onsite workshops
 but there was also one track for the online audience.
@@ -35,7 +35,7 @@ Kerry Donny-Clark (manager of the Apache Beam team at Google).
 
 * Google centric keynotes, I missed some comparison between Apache Beam / Dataflow and other data processing industry leaders
 * A few words about new runners: Hazelcast, Ray, Dask
-* TypeScript SDK as an effect of internal Google hackaton
+* TypeScript SDK as an effect of internal Google hackathon
 * Google engagement in Apache Beam community
 
 ![Beam team at Google](/assets/images/beam_summit_google_team.png)
@@ -160,7 +160,7 @@ Shangjin Zhang (staff software engineer at LinkedIn) and Yuhong Cheng (software 
 
 ![LinkedIn kappa architecture](/assets/images/beam_summit_linkedin_kappa.png)
 
-* Streaming back-filling issues : hard to scale, flood on lookup tables, noisy neighbour to regular streaming pipelines
+* Streaming back-filling issues : hard to scale, flood on lookup tables, noisy neighbor to regular streaming pipelines
 
 ![LinkedIn unified architecture](/assets/images/beam_summit_linkedin_unified.png)
 
@@ -363,7 +363,7 @@ how to apply advanced data processing techniques and how the runners execute the
 
 Below you could find a few takeaways from the sessions:
 
-* Companies like Spotify, Palo Alto Networks or Twitter develop custom, fully managed, declarative layer on top of Apache Beam. 
+* Companies like Spotify, Palo Alto Networks or Twitter develop custom, fully managed, declarative layers on top of Apache Beam. 
 To run thousands of data pipelines without coding and excessive operations. 
 * Streaming pipelines are sexy but much more expensive (and complex) than batch pipelines.
 * Use existing tools like [PerfKit](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) for performance/cost evaluation. 
