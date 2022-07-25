@@ -1,5 +1,5 @@
 ---
-title: "Apache BigData Europe conference summary"
+title: "Apache BigData Europe"
 date: 2016-11-18
 categories: [Conferences]
 tagline: Seville
@@ -11,7 +11,7 @@ header:
 Last week I attended [Apache Big Data Europe](http://events.linuxfoundation.org/events/apache-big-data-europe) held in Sevilla, Spain. 
 The event concentrates around big data projects under [Apache Foundation](https://www.apache.org/) umbrella. 
 Below you can find my overall impression on the conference and notes from several interesting sessions.
-The notes are presented as short checklists, if some aspect was particularly interesting I put the reference to supplementary materials. 
+The notes are presented as short checklists, if some aspect was particularly appealing I put the reference to supplementary materials. 
 
 ## Key takeaways
 
