@@ -34,7 +34,7 @@ words_per_minute: 120
 
 author:
   name: "Marcin Kuthan"
-  avatar: "/assets/images/avatar.webp"
+  avatar: "https://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5?s=400"
   bio: "Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform."
   links:
     - label: "GitHub"
