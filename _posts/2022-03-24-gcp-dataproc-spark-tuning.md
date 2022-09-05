@@ -118,10 +118,16 @@ You have to allocate as many primary workers as needed to keep all Spark job shu
 I would not recommend assigning more than one local ssd to the primary node to increase the capacity. 
 Just increase the number of primary workers.
 
-The local SSD disks have impressive [performance](https://cloud.google.com/compute/docs/disks/performance#type_comparison), and the metrics shows that disks' IO is only partially utilized. 
-Up to 3GiB/sec for 8 primary nodes with a total of 8 local SSDs, where a single SSD should handle over 9GB/sec (read) and 4GB/sec (write).
+The local SSD disks have impressive [performance](https://cloud.google.com/compute/docs/disks/local-ssd#performance), and the metrics shows that disks' IO is only partially utilized.
+A single SSD connected with [SCSI](http://wikipedia.org/wiki/SCSI) should handle 390 MB/sec (read) and 270 MB/sec (write).
+It gives a total `8 * 390MB = 3.12GB = 2.9GiB` (read) and `8 * 270MB = 2.16MB = 2.01 GiB` (write).
+You could also attach local disks using [NVMe](http://wikipedia.org/wiki/NVM_Express) to get better performance, 660 MB/sec (read) and 350 MB/sec (write).
+See the [official documentation](https://cloud.google.com/dataproc/docs/concepts/compute/dataproc-local-ssds) for more details.
 
 ![Dataproc disk bytes](/assets/images/dataproc_disk_bytes.webp)
+
+I would thank [Michał Misiewicz](https://github.com/michalmisiewicz) for reporting a bug in my initial calculations ❤️
+{: .notice--info}
 
 ## CPU utilization
 
