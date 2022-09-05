@@ -120,7 +120,7 @@ Just increase the number of primary workers.
 
 The local SSD disks have impressive [performance](https://cloud.google.com/compute/docs/disks/local-ssd#performance), and the metrics shows that disks' IO is only partially utilized.
 A single SSD connected with [SCSI](http://wikipedia.org/wiki/SCSI) should handle 390 MB/sec (read) and 270 MB/sec (write).
-It gives a total `8 * 390MB = 3.12GB = 2.9GiB` (read) and `8 * 270MB = 2.16MB = 2.01 GiB` (write).
+It gives a total `8 * 390MB = 3.12GB = 2.9GiB` (read) and `8 * 270MB = 2.16GB = 2.01 GiB` (write).
 You could also attach local disks using [NVMe](http://wikipedia.org/wiki/NVM_Express) to get better performance, 660 MB/sec (read) and 350 MB/sec (write).
 See the [official documentation](https://cloud.google.com/dataproc/docs/concepts/compute/dataproc-local-ssds) for more details.
 
