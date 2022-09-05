@@ -126,7 +126,7 @@ See the [official documentation](https://cloud.google.com/dataproc/docs/concepts
 
 ![Dataproc disk bytes](/assets/images/dataproc_disk_bytes.webp)
 
-I would thank [Michał Misiewicz](https://github.com/michalmisiewicz) for reporting a bug in my initial local SSD calculation ❤️
+I would thank [Michał Misiewicz](https://github.com/michalmisiewicz) for reporting a bug in my initial calculations ❤️
 {: .notice--info}
 
 ## CPU utilization
