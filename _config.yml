@@ -4,17 +4,7 @@ url: http://mkuthan.github.io
 theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "dirt"
 
-plugins:
-  - jekyll-archives
-
-sass:
-  style: compressed
-
-search: true
-search_full_content: false
-
 logo: /assets/images/logo.webp
-og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.webp
 
 permalink: /blog/:year/:month/:day/:title/
 paginate: 10
@@ -29,8 +19,21 @@ kramdown:
     block:
       line_numbers: true
 
+# enable Google search engine instead of Lunr
+search: true
+search_provider: google
+google:
+  search_engine_id: c7d3624a168d340fe
+
+# Compress CSS, see: https://sass-lang.com/documentation/cli/dart-sass#style
+sass:
+  style: compressed
+
 # default is 200, too high estimation for the technical content
 words_per_minute: 120
+
+# open graph image for pages that don't have header.image in front matter
+og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.webp
 
 author:
   name: "Marcin Kuthan"
@@ -43,23 +46,6 @@ author:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       url: "https://github.com/MarcinKuthan"
-
-category_archive:
-  type: jekyll-archives
-  path: /categories/
-tag_archive:
-  type: jekyll-archives
-  path: /tags/
-jekyll-archives:
-  enabled:
-    - categories
-    - tags
-  layouts:
-    category: archive-taxonomy
-    tag: archive-taxonomy
-  permalinks:
-    category: /categories/:name/
-    tag: /tags/:name/
 
 comments:
   provider: "disqus"
@@ -95,3 +81,21 @@ defaults:
       type: category
     values:
       author_profile: true
+
+# archives (categories and tags), see: https://github.com/jekyll/jekyll-archives
+category_archive:
+  type: jekyll-archives
+  path: /categories/
+tag_archive:
+  type: jekyll-archives
+  path: /tags/
+jekyll-archives:
+  enabled:
+    - categories
+    - tags
+  layouts:
+    category: archive-taxonomy
+    tag: archive-taxonomy
+  permalinks:
+    category: /categories/:name/
+    tag: /tags/:name/
