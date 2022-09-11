@@ -11,6 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: errata-ai/vale-action@reviewdog
+        with:
+          files: _posts/
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
       - uses: actions/cache@v2
         with:
           path: vendor/bundle
