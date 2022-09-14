@@ -6,6 +6,20 @@ minimal_mistakes_skin: "dirt"
 
 logo: /assets/images/logo.webp
 
+author:
+  name: "Marcin Kuthan"
+  avatar: "https://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5?s=400"
+  bio: Big data engineer leading Allegro engineering team
+    that develops highly scalable and fault-tolerant data ingestion and visualisation platform.
+    Our systems process a few billion events every day with e2e latency below one minute.
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github-square"
+      url: "https://github.com/mkuthan"
+    - label: "Twitter"
+      icon: "fab fa-fw fa-twitter-square"
+      url: "https://github.com/MarcinKuthan"
+
 permalink: /blog/:year/:month/:day/:title/
 paginate: 10
 paginate_path: /page:num/
@@ -25,7 +39,7 @@ search_provider: google
 google:
   search_engine_id: c7d3624a168d340fe
 
-# Compress CSS, see: https://sass-lang.com/documentation/cli/dart-sass#style
+# compress CSS, see: https://sass-lang.com/documentation/cli/dart-sass#style
 sass:
   style: compressed
 
@@ -35,17 +49,9 @@ words_per_minute: 120
 # open graph image for pages that don't have header.image in front matter
 og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.webp
 
-author:
-  name: "Marcin Kuthan"
-  avatar: "https://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5?s=400"
-  bio: "Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform."
-  links:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github-square"
-      url: "https://github.com/mkuthan"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://github.com/MarcinKuthan"
+# mermaid diagrams
+mermaid:
+  src: 'https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js'
 
 comments:
   provider: "disqus"
