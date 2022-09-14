@@ -4,34 +4,7 @@ url: http://mkuthan.github.io
 theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "dirt"
 
-plugins:
-  - jekyll-archives
-  - jekyll-mermaid
-
-sass:
-  style: compressed
-
-search: true
-search_full_content: false
-
 logo: /assets/images/logo.webp
-og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.webp
-
-permalink: /blog/:year/:month/:day/:title/
-paginate: 10
-paginate_path: /page:num/
-
-markdown: kramdown
-kramdown:
-  syntax_highlighter: rouge
-  syntax_highlighter_opts:
-    span:
-      line_numbers: false
-    block:
-      line_numbers: true
-
-# default is 200, too high estimation for the technical content
-words_per_minute: 120
 
 author:
   name: "Marcin Kuthan"
@@ -47,22 +20,38 @@ author:
       icon: "fab fa-fw fa-twitter-square"
       url: "https://github.com/MarcinKuthan"
 
-category_archive:
-  type: jekyll-archives
-  path: /categories/
-tag_archive:
-  type: jekyll-archives
-  path: /tags/
-jekyll-archives:
-  enabled:
-    - categories
-    - tags
-  layouts:
-    category: archive-taxonomy
-    tag: archive-taxonomy
-  permalinks:
-    category: /categories/:name/
-    tag: /tags/:name/
+permalink: /blog/:year/:month/:day/:title/
+paginate: 10
+paginate_path: /page:num/
+
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+
+# enable Google search engine instead of Lunr
+search: true
+search_provider: google
+google:
+  search_engine_id: c7d3624a168d340fe
+
+# compress CSS, see: https://sass-lang.com/documentation/cli/dart-sass#style
+sass:
+  style: compressed
+
+# default is 200, too high estimation for the technical content
+words_per_minute: 120
+
+# open graph image for pages that don't have header.image in front matter
+og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.webp
+
+# mermaid diagrams
+mermaid:
+  src: 'https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js'
 
 comments:
   provider: "disqus"
@@ -99,5 +88,20 @@ defaults:
     values:
       author_profile: true
 
-mermaid:
-  src: 'https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js'
+# archives (categories and tags), see: https://github.com/jekyll/jekyll-archives
+category_archive:
+  type: jekyll-archives
+  path: /categories/
+tag_archive:
+  type: jekyll-archives
+  path: /tags/
+jekyll-archives:
+  enabled:
+    - categories
+    - tags
+  layouts:
+    category: archive-taxonomy
+    tag: archive-taxonomy
+  permalinks:
+    category: /categories/:name/
+    tag: /tags/:name/
