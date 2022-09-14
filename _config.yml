@@ -36,7 +36,9 @@ words_per_minute: 120
 author:
   name: "Marcin Kuthan"
   avatar: "https://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5?s=400"
-  bio: "Big data engineer leading Allegro engineering team that develops highly scalable and fault-tolerant data ingestion and analytics platform."
+  bio: Big data engineer leading Allegro engineering team
+    that develops highly scalable and fault-tolerant data ingestion and visualisation platform.
+    Our systems process a few billion events every day with e2e latency below one minute.
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github-square"
@@ -98,4 +100,4 @@ defaults:
       author_profile: true
 
 mermaid:
-    src: 'https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js'
+  src: 'https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js'
