@@ -4,7 +4,7 @@ date: 2022-04-02
 categories: [FinOps, GCP]
 tagline: ""
 header:
-    overlay_image: /assets/images/katie-harp-w45gZMWrJWc-unsplash.webp
+    overlay_image: /assets/images/2022-04-02-gcp-finops/katie-harp-w45gZMWrJWc-unsplash.webp
     overlay_filter: 0.2
 ---
 
@@ -87,7 +87,7 @@ Because Google Cloud Platform billings are oriented around projects, services an
 Below you can find the real example of the report for my primary project, the costs for the last 30 days grouped by the cloud service.
 As you can see "BigQuery" is a dominant factor in the billing.
 
-![Billing dashboard](/assets/images/finops_cloud_billing_report.webp)
+![Billing dashboard](/assets/images/2022-04-02-gcp-finops/cloud-billing-report.webp)
 
 Unfortunately, I must not enclose any financial details from the production environments because my employer is a [listed company](https://www.google.com/finance/quote/ALE:WSE).
 If I had shown the real numbers I would have had severe troubles.
@@ -172,7 +172,7 @@ the billing export will provide detailed costs for every labeled resource.
 Before I move to the technical details I will present a few screens with the reports I'm using on a daily basis.
 In the end, applying the labels for all resources in the cloud is a huge effort, so it should pay off somehow.
 
-![Overview dashboards](/assets/images/finops_overview1.webp)
+![Overview dashboards](/assets/images/2022-04-02-gcp-finops/overview1.webp)
 
 The overview dashboard provides a short manual for newcomers and the total costs of all projects.
 It also gives full transparency, you can easily compare the costs of every project in the company.
@@ -182,12 +182,12 @@ Nobody wants to be at the top.
 The overview page is the landing page, at the very beginning data engineer should select the project he/she is interested in.
 You can search for the project by name, and the list is ordered by spending.
 
-![Overview dashboard - single project](/assets/images/finops_overview2.webp)
+![Overview dashboard - single project](/assets/images/2022-04-02-gcp-finops/overview2.webp)
 
 When you select the project, there is a second page of the report. 
 The page with the project costs is **organized around data pipelines**.
 
-![Project dashboard](/assets/images/finops_project.webp)
+![Project dashboard](/assets/images/2022-04-02-gcp-finops/project.webp)
 
 You can see the timeline with daily costs split by job name based on **allegro__job_name** label.
 The most expensive named jobs in the project are: "event_raw", "clickstream-enrichment" and "meta_event".
@@ -208,7 +208,7 @@ In the presented project "sc-9366-nga-prod" there are two types of data pipeline
 
 Let start with the next report crafted for Dataflow real-time pipelines:
 
-![Dataflow dashboard](/assets/images/finops_dataflow.webp)
+![Dataflow dashboard](/assets/images/2022-04-02-gcp-finops/dataflow.webp)
 
 Again, the timeline is organized around the data pipelines. 
 But now, the presented costs come from the Dataflow product only.
@@ -216,7 +216,7 @@ You can easily spot which job is the most expensive one ("event_raw_v1") and for
 
 Very similar dashboard is prepared for the batch jobs deployed on ephemeral Dataproc clusters.
 
-![Dataprod dashboard](/assets/images/finops_dataproc.webp)
+![Dataprod dashboard](/assets/images/2022-04-02-gcp-finops/dataproc.webp)
 
 There is a Dataproc specific SKU "Licencing" instead of "Streaming" and "Shuffle" in Dataflow.
 The definition of the timeline is exactly the same, daily costs organized around jobs.
@@ -239,19 +239,19 @@ On the BigQuery costs dashboard you can filter by the dataset name.
 It is very important when the data pipeline stores results into more than one dataset.
 The filtering is available only if the **allegro__dataset_name** label was set.
 
-![BigQuery dashboard](/assets/images/finops_bigquery.webp)
+![BigQuery dashboard](/assets/images/2022-04-02-gcp-finops/bigquery.webp)
 
 On the Pubsub costs dashboard you can filter by the topic name.
 It is very important when the data pipeline publishes to or subscribes on many topics.
 The filtering is available only if the **allegro__topic_name** label was set.
 
-![Pubsub dashboard](/assets/images/finops_pubsub.webp)
+![Pubsub dashboard](/assets/images/2022-04-02-gcp-finops/pubsub.webp)
 
 On the Cloud Storage dashboard you can filter by the bucket name.
 It is very important when the data pipeline stores results into more than one bucket.
 The filtering is available only if the **allegro__bucket_name** label was set.
 
-![Cloud Storage dashboard](/assets/images/finops_gcs.webp)
+![Cloud Storage dashboard](/assets/images/2022-04-02-gcp-finops/gcs.webp)
 
 ## The challenges
 
@@ -291,7 +291,7 @@ In the information schema you can find the query expression and "total_bytes_bil
 As long as cost per TiB is well [known](https://cloud.google.com/bigquery/pricing#on_demand_pricing), the final cost of the query may be estimated. 
 Instead of labeling every single query it is easier to prepare the estimated costs report based on queries found in the information schema.
 
-![BigQuery jobs dashboard](/assets/images/finops_bigquery_jobs.webp)
+![BigQuery jobs dashboard](/assets/images/2022-04-02-gcp-finops/bigquery-jobs.webp)
 
 Although, there are at least two disadvantages:
 
@@ -363,7 +363,7 @@ From my experience there are two of the most expensive shared infrastructure cos
 
 Below you find the number of log entries from my production environment for the one day.
 
-![Number of log entries](/assets/images/finops_logging.webp)
+![Number of log entries](/assets/images/2022-04-02-gcp-finops/logging.webp)
 
 As you can see, a lot of logs come from the Dataproc ephemeral clusters.
 The logging from the cluster [may be enabled or disabled](https://cloud.google.com/dataproc/docs/guides/logging), nothing in between.
