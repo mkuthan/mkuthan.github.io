@@ -4,7 +4,7 @@ date: 2016-09-30
 categories: [Apache Spark, Apache Hadoop]
 tagline: ""
 header:
-    overlay_image: /assets/images/oktay-yildiz-ZvxMNELAVDU-unsplash.webp
+    overlay_image: /assets/images/2016-09-30-spark-streaming-on-yarn/oktay-yildiz-ZvxMNELAVDU-unsplash.webp
     overlay_filter: 0.2
 ---
 
@@ -185,7 +185,7 @@ spark-submit --master yarn --deploy-mode cluster \
 
 Finally Kibana dashboard for Spark Job might look like:
 
-![](/assets/images/spark_job_logging.webp)
+![](/assets/images/2016-09-30-spark-streaming-on-yarn/logging.webp)
 
 ## Monitoring
 
@@ -324,7 +324,7 @@ aliasSub(groupByNode(stats.analytics.$job_name.*.prod.$dc.*.[0-9]*.jvm.heap.used
 
 Finally Grafana dashboard for Spark Job might look like:
 
-![](/assets/images/spark_job_monitoring.webp)
+![](/assets/images/2016-09-30-spark-streaming-on-yarn/monitoring.webp)
 
 If Spark application is restarted frequently, metrics for old, already finished runs should be deleted from Graphite.
 Because Graphite does not compact inactive metrics, old metrics slow down Graphite itself and Grafana queries.
