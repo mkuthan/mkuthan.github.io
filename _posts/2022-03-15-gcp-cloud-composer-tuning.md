@@ -4,7 +4,7 @@ date: 2022-03-15
 categories: [GCP, Cloud Composer, Apache Airflow, Performance]
 tagline: ""
 header:
-    overlay_image: /assets/images/aron-visuals-BXOXnQ26B7o-unsplash.webp
+    overlay_image: /assets/images/2022-03-15-gcp-cloud-composer-tuning/aron-visuals-BXOXnQ26B7o-unsplash.webp
     overlay_filter: 0.2
 ---
 
@@ -55,7 +55,7 @@ You could try to connect to the Kubernetes *airflow-worker* [pod](https://kubern
 run a dozen of tasks and measure the real resource utilization.
 I would opt for the second, more practical option.
 
-![Cloud Composer worker memory usage](/assets/images/cloud_composer_worker_memory_usage.webp)
+![Cloud Composer worker memory usage](/assets/images/2022-03-15-gcp-cloud-composer-tuning/worker-memory-usage.webp)
 
 For 12 concurrent running operators the workers' memory utilization increased from the steady state of 1.76GiB to 4.36GiB.
 We do have the first insight in our tuning journey: every operator allocates approximately `(4.36GiB - 1.76GiB) / 12 =~ 220MiB` of RAM.
@@ -97,10 +97,10 @@ So, for the standard virtual machines, allocatable memory should be as follows:
 How does it look in practice? It is always worth checking because the real allocatable memory is a bit lower than in the calculations.
 
 *n1-standard-1* virtual machines: 2.75GB (**2.56GiB**)
-![Cloud Composer nodes for n1-standard-1](/assets/images/cloud_composer_nodes_n1_standard_1.webp)
+![Cloud Composer nodes for n1-standard-1](/assets/images/2022-03-15-gcp-cloud-composer-tuning/nodes-n1-standard-1.webp)
 
 *n2-standard-2* virtual machines: 6.34GB (**5.9GiB**)
-![Cloud Composer nodes for n2-standard-2](/assets/images/cloud_composer_nodes_n2_standard_2.webp)
+![Cloud Composer nodes for n2-standard-2](/assets/images/2022-03-15-gcp-cloud-composer-tuning/nodes-n2-standard-2.webp)
 
 Thank you, Google, for using different units across the console. 
 An intellectual challenge every time when I have to convert GB to GiB and vice-versa.
@@ -121,7 +121,7 @@ As you can see, for larger workers you will get more compute power for just a li
 
 Based on my experiences, real costs are ~20% higher than presented numbers.
 
-![Cloud Composer monthly costs](/assets/images/cloud_composer_monthly_costs.webp)
+![Cloud Composer monthly costs](/assets/images/2022-03-15-gcp-cloud-composer-tuning/monthly-costs.webp)
 
 The monthly costs report for n1-standard-1 cluster which was doing literally nothing.
 Total of $444 for the short February, but please keep in mind that my company has negotiated some discounts already applied in the report.
@@ -134,12 +134,12 @@ There are also many built-in *Cloud Composer* processes run on every worker.
 Because the *Cloud Composer* is a managed service, you don't have control over these processes.
 Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting would be a bumpy walk.
 
-![Cloud Composer pods](/assets/images/cloud_composer_pods.webp)
+![Cloud Composer pods](/assets/images/2022-03-15-gcp-cloud-composer-tuning/pods.webp)
 
 Do not rely on the reported requested memory, it is just garbage. 
 Just measure the maximum worker memory utilization on the clean *Cloud Composer* installation and add the result to the final estimate.
 
-![Cloud Composer memory overhead](/assets/images/cloud_composer_memory_overhead.webp)
+![Cloud Composer memory overhead](/assets/images/2022-03-15-gcp-cloud-composer-tuning/memory-overhead.webp)
 
 The overhead: 1.6GiB of RAM for built-in *Cloud Composer* processes on every worker.
 {: .notice--info}
