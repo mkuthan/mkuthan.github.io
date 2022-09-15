@@ -4,7 +4,7 @@ date: 2022-07-07
 categories: [Conferences, Apache Beam]
 tagline: "Austin"
 header:
-    overlay_image: /assets/images/mj-tangonan-wKfTNWaDYgs-unsplash.webp
+    overlay_image: /assets/images/2022-07-25-beam-summit/mj-tangonan-wKfTNWaDYgs-unsplash.webp
     overlay_filter: 0.2
 ---
 
@@ -38,7 +38,7 @@ Kerry Donny-Clark (manager of the Apache Beam team at Google).
 * TypeScript SDK as an effect of internal Google hackathon
 * Google engagement in Apache Beam community
 
-![Beam team at Google](/assets/images/beam_summit_google_team.png)
+![Beam team at Google](/assets/images/2022-07-25-beam-summit/google-team.png)
 
 ### How the sausage gets made: Dataflow under the covers
 
@@ -48,7 +48,7 @@ Pablo Estrada (software engineer at Google, PMC member).
 * **Excellent session**, highly recommended if you deploy non-trivial Apache Beam pipelines on Dataflow runner
 * What does "exactly once" really mean in Apache Beam / Dataflow runner
 
-![Exactly once](/assets/images/beam_summit_exactly_once.png)
+![Exactly once](/assets/images/2022-07-25-beam-summit/exactly-once.png)
 
 * Runner optimizations: fusion, flatten sinking, combiner lifting
 * Interesting papers, they help to understand Dataflow runner principles: [Photon](https://research.google/pubs/pub41318/), [MillWheel](https://research.google/pubs/pub41378/)
@@ -57,11 +57,11 @@ Pablo Estrada (software engineer at Google, PMC member).
 * Controlling batches: [GroupIntoBatches](https://beam.apache.org/releases/javadoc/current/org/apache/beam/sdk/transforms/GroupIntoBatches.html)
 * In streaming EACH element has a key (implicit or explicit)
 
-![Elements keys in streaming](/assets/images/beam_summit_streaming_keys1.png)
+![Elements keys in streaming](/assets/images/2022-07-25-beam-summit/streaming-keys1.png)
 
 * Processing is serial for each key!
 
-![Elements keys in streaming](/assets/images/beam_summit_streaming_keys2.png)
+![Elements keys in streaming](/assets/images/2022-07-25-beam-summit/streaming-keys2.png)
 
 ### Introduction to performance testing in Apache Beam
 
@@ -105,11 +105,11 @@ Roy Arsan (solution architect at Google).
 * Use [PerfKit](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) benchmark!
 * Runtime, CPU utilization and costs for different workers
 
-![WordCount PerfKit results for WordCount](/assets/images/beam_summit_perfkit1.png)
+![WordCount PerfKit results for WordCount](/assets/images/2022-07-25-beam-summit/perfkit1.png)
 
 * Results for the streaming job scenario
 
-![WordCount PerfKit results for streaming job](/assets/images/beam_summit_perfkit2.png)
+![WordCount PerfKit results for streaming job](/assets/images/2022-07-25-beam-summit/perfkit2.png)
 
 ### Palo Alto Networks' massive-scale deployment of Beam
 
@@ -121,7 +121,7 @@ Talat Uyarer (Senior Principal Software Engineer at Palo Alto Networks).
 * Custom solution for managing Kafka clusters
 * Example job definition
 
-![Job definition](/assets/images/beam_summit_paoalto_job_definition.png)
+![Job definition](/assets/images/2022-07-25-beam-summit/paoalto-job-definition.png)
 
 * Custom sinks (unfortunately no details)
 * Rolling updates or fallback to drain/start (but with the job cold start to minimize downtime)
@@ -134,13 +134,13 @@ Talat Uyarer (Senior Principal Software Engineer at Palo Alto Networks).
 
 * How can we improve latency while using BeamSQL and Avro payloads?
 
-![Beam SQL](/assets/images/beam_summit_avro_sql.png)
+![Beam SQL](/assets/images/2022-07-25-beam-summit/avro-sql.png)
 
 * Critical elements: Table Provider + Data to Beam Row converters
 * New [Avro converter](https://github.com/talatuyarer/beam-avro-row-serializer) inspired by [RTB House Fast Avro](https://techblog.rtbhouse.com/2017/04/18/fast-avro/)
 * The future
 
-![Beam SQL](/assets/images/beam_summit_avro_future.png)
+![Beam SQL](/assets/images/2022-07-25-beam-summit/avro-future.png)
 
 ### RunInference: Machine Learning Inferences in Beam
 
@@ -151,25 +151,25 @@ Andy Ye (software engineer at Google).
 * Support for PyTorch, SciKit and TensorFlow
 * More in the future
 
-![RunInference future](/assets/images/beam_summit_run_inference.png)
+![RunInference future](/assets/images/2022-07-25-beam-summit/run-inference.png)
 
 ### Unified Streaming And Batch Pipelines At LinkedIn Using Beam
 
 [The session](https://2022.beamsummit.org/sessions/unified-stream-and-batch-pipelines-at-linkedin-using-beam/) was presented by
 Shangjin Zhang (staff software engineer at LinkedIn) and Yuhong Cheng (software engineer at Linkedin).
 
-![LinkedIn kappa architecture](/assets/images/beam_summit_linkedin_kappa.png)
+![LinkedIn kappa architecture](/assets/images/2022-07-25-beam-summit/linkedin-kappa.png)
 
 * Streaming back-filling issues : hard to scale, flood on lookup tables, noisy neighbor to regular streaming pipelines
 
-![LinkedIn unified architecture](/assets/images/beam_summit_linkedin_unified.png)
+![LinkedIn unified architecture](/assets/images/2022-07-25-beam-summit/linkedin-unified.png)
 
 * Single codebase: Samza runner for streaming, Spark runner for batch
 * Unified PTransform with expandStreaming and expandBatch methods
 * Unified table join: key lookup for streaming and coGroupByKey for batch
 * No windows in the pipeline (lucky them)
 
-![LinkedIn back-filling results](/assets/images/beam_summit_linkedin_results.png)
+![LinkedIn back-filling results](/assets/images/2022-07-25-beam-summit/linkedin-results.png)
 
 * Job duration decreased from 450 minutes (streaming) to 25 minutes (batch)
 
@@ -180,7 +180,7 @@ Praveen Killamsetti and Zhenzhao Wang (staff engineers at Twitter) .
 
 Batch ingestion architecture - Data Lifecycle Manager:
 
-![Twitter batch ingestion architecture](/assets/images/beam_summit_twitter_batch.png)
+![Twitter batch ingestion architecture](/assets/images/2022-07-25-beam-summit/twitter-batch.png)
 
 * Many data sources: HDFS, GCS, S3, BigQuery, [Manhattan](https://blog.twitter.com/engineering/en_us/a/2014/manhattan-our-real-time-multi-tenant-distributed-database-for-twitter-scale)
 * Versioned datasets with metadata layer
@@ -190,7 +190,7 @@ Batch ingestion architecture - Data Lifecycle Manager:
 
 Streaming log ingestion - [Sparrow](https://blog.twitter.com/engineering/en_us/topics/infrastructure/2022/twitter-sparrow-tackles-data-storage-challenges-of-scale) 
 
-![Twitter log ingestion](/assets/images/beam_summit_twitter_streaming.png)
+![Twitter log ingestion](/assets/images/2022-07-25-beam-summit/twitter-streaming.png)
 
 * E2E latency - up to 13 minutes instead of hours
 * One Beam Job and Pubsub Subscription per dataset per transformation (again seems to be very expensive)
@@ -206,23 +206,23 @@ Devon Peticolas (principal engineer at Oden Technologies).
 * Nice session with realistic, non-trivial streaming IOT scenarios
 * How Oden uses Beam: detecting categorical changes based on continues metrics
 
-![Oden use-case](/assets/images/beam_summit_oden_usecase.png)
+![Oden use-case](/assets/images/2022-07-25-beam-summit/oden-usecase.png)
 
 * Attempt 1: stateful DoFn - problem: out of order events (naive current and last elements' comparison)
 
-![Oden stateful DoFn](/assets/images/beam_summit_oden_stateful_dofn.png)
+![Oden stateful DoFn](/assets/images/2022-07-25-beam-summit/oden-stateful-dofn.png)
 
 * Attempt 2: watermark triggered window - problem: lag for non-homogeneous data sources
 
-![Oden watermark trigger](/assets/images/beam_summit_oden_trigger1.png)
+![Oden watermark trigger](/assets/images/2022-07-25-beam-summit/oden-trigger1.png)
 
 * Attempt 3: data triggered window - problem: sparse data when not all events are delivered
 
-![Oden data trigger](/assets/images/beam_summit_oden_trigger2.png)
+![Oden data trigger](/assets/images/2022-07-25-beam-summit/oden-trigger2.png)
 
 * Smoothing, see the original session it is hard to summarize concept in the single sentence
 
-![Oden smoothing](/assets/images/beam_summit_oden_smoothing.png)
+![Oden smoothing](/assets/images/2022-07-25-beam-summit/oden-smoothing.png)
 
 
 ## Worth seeing sessions
@@ -244,7 +244,7 @@ Israel Herraiz and Paul Balm (strategic cloud engineers at Google).
 
 * Nothing spectacular but worth seeing, below you can find the agenda
 
-![6 principles](/assets/images/beam_summit_6_principles.png)
+![6 principles](/assets/images/2022-07-25-beam-summit/6-principles.png)
 
 ### Strategies for caching data in Dataflow using Beam SDK
 
@@ -274,10 +274,10 @@ I'm going to write the blog post on how to achieve testable Apache Beam pipeline
 * See [https://github.com/project-asgard/asgard](https://github.com/project-asgard/asgard)
 
 Asgard error handling for Java:
-![Asgard error handling for Java](/assets/images/beam_summit_asgard_java.png)
+![Asgard error handling for Java](/assets/images/2022-07-25-beam-summit/asgard-java.png)
 
 Asgard error handling for Python:
-![Asgard error handling for Python](/assets/images/beam_summit_asgard_python.png)
+![Asgard error handling for Python](/assets/images/2022-07-25-beam-summit/asgard-python.png)
 
 ### Beam as a High-Performance Compute Grid
 
@@ -291,7 +291,7 @@ Peter Coyle (Head of Risk Technology Engineering Excellence at HSBC) and Raj Sub
 * Manage shuffle slots quotas for batch Dataflow
 * Instead of reservation (not available for Dataflow) define disaster recovery scenario and fallback to more common worker type
 
-![Dataflow disaster recovery planning](/assets/images/beam_summit_hsbc.png)
+![Dataflow disaster recovery planning](/assets/images/2022-07-25-beam-summit/hsbc.png)
 
 ### Optimizing a Dataflow pipeline for cost efficiency: lessons learned at Orange
 
@@ -303,7 +303,7 @@ Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer
 * It is not cheap stuff ;)
 * The optimization plan
 
-![Optimization plan](/assets/images/beam_summit_orange.png)
+![Optimization plan](/assets/images/2022-07-25-beam-summit/orange.png)
 
 * Storage Write API instead on Streaming Inserts
 * BigQuery batch loads did not work as well
@@ -320,7 +320,7 @@ Andrew Pilloud and Brian Hulette (software engineers at Google, Apache Beam comm
 * Beam is not relational, is row oriented, data is represented as bytes
 * What is needed: data schema, metadata of computation
 
-![Relational](/assets/images/beam_summit_relational.png)
+![Relational](/assets/images/2022-07-25-beam-summit/relational.png)
 
 * Batched DoFn (does not exist yet) https://s.apache.org/batched-dofns
 * Projection pushdown (currently for BigQueryIO.TypedRead only; 2.38 batch, 2.41 streaming)
@@ -335,7 +335,7 @@ Brian Hulette (software engineer at Google, Apache Beam committer).
 * Nice introduction to Pandas
 * DataframeTransform and DeferredDataFrame
 
-![Dataframe transform](/assets/images/beam_summit_dataframe_transform.png)
+![Dataframe transform](/assets/images/2022-07-25-beam-summit/dataframe-transform.png)
 
 * Dataframe code → Expression tree → Beam pipeline  
 * Compliance with Pandas is limited as for now
@@ -353,7 +353,7 @@ by Sayak Paul and Nilabhra Roy Chowdhury (ML engineers at Carted)
 * Separate tokenization and encoding steps to achieve full parallelism
 * More details in the [blog post](https://www.carted.com/blog/improving-dataflow-pipelines-for-text-data-processing/)
 
-![Pipeline optimization at Carted](/assets/images/beam_summit_carted.png)
+![Pipeline optimization at Carted](/assets/images/2022-07-25-beam-summit/carted.png)
 
 ## Summary
 
