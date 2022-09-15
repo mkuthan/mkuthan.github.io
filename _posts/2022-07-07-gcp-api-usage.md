@@ -4,7 +4,7 @@ date: 2022-07-07
 categories: [GCP, Performance, Dataproc, BigQuery, Terraform]
 tagline: ""
 header:
-    overlay_image: /assets/images/scott-webb-yekGLpc3vro-unsplash.webp
+    overlay_image: /assets/images/2022-07-07-gcp-api-usage/scott-webb-yekGLpc3vro-unsplash.webp
     overlay_filter: 0.2
 ---
 
@@ -24,11 +24,11 @@ Large jobs got timeouts from the [Cloud Composer](https://cloud.google.com/compo
 
 After quick analysis we found that CPU utilization for Dataproc ephemeral cluster is fairly low:
 
-![Dataproc low CPU utilization](/assets/images/api_usage_dataproc_cpu1.png)
+![Dataproc low CPU utilization](/assets/images/2022-07-07-gcp-api-usage/dataproc-cpu-1.png)
 
 For comparison, the same job on the same data before the incident:
 
-![Dataproc normal CPU utilization](/assets/images/api_usage_dataproc_cpu2.png)
+![Dataproc normal CPU utilization](/assets/images/2022-07-07-gcp-api-usage/dataproc-cpu-2.png)
 
 What could we do? Open a ticket to the Dataproc support that we observe degradation of managed service?
 
@@ -56,9 +56,9 @@ Fortunately, almost every Google Cloud Platform API provides the following [metr
 
 Let's look at Storage Read API latency metrics:
 
-![Storage Read API overall latency](/assets/images/api_usage_storage_read_api_latency1.png)
+![Storage Read API overall latency](/assets/images/2022-07-07-gcp-api-usage/storage-read-api-latency-1.png)
 
-![Storage Read API by-method latency](/assets/images/api_usage_storage_read_api_latency2.png)
+![Storage Read API by-method latency](/assets/images/2022-07-07-gcp-api-usage/storage-read-api-latency-2.png)
 
 The strong evidence that the root cause of the Spark job slowness is not in Dataproc but in BigQuery service!
 {: .notice--info}
@@ -241,7 +241,7 @@ Final dashboard for ReadRows method in Storage Read API.
 * Request count grouped by response status to see if there are errors
 * Request and response sizes, it gives an information about batching
 
-![Storage Read API custom dashboard](/assets/images/api_usage_dashboard.png)
+![Storage Read API custom dashboard](/assets/images/2022-07-07-gcp-api-usage/dashboard.png)
 
 ## Summary
 
