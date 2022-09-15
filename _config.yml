@@ -24,6 +24,31 @@ permalink: /blog/:year/:month/:day/:title/
 paginate: 10
 paginate_path: /page:num/
 
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      classes: wide
+      author_profile: true
+      comments: true
+      share: false
+      show_date: true
+      toc: true
+      read_time: true
+      related: true
+  - scope:
+      path: ""
+      type: tag
+    values:
+      author_profile: true
+  - scope:
+      path: ""
+      type: category
+    values:
+      author_profile: true
+
 markdown: kramdown
 kramdown:
   syntax_highlighter: rouge
@@ -62,31 +87,6 @@ analytics:
   provider: "google-gtag"
   google:
     tracking_id: "UA-50832428-2"
-
-defaults:
-  - scope:
-      path: ""
-      type: posts
-    values:
-      layout: single
-      classes: wide
-      author_profile: true
-      comments: true
-      share: false
-      show_date: true
-      toc: true
-      read_time: true
-      related: true
-  - scope:
-      path: ""
-      type: tag
-    values:
-      author_profile: true
-  - scope:
-      path: ""
-      type: category
-    values:
-      author_profile: true
 
 # archives (categories and tags), see: https://github.com/jekyll/jekyll-archives
 category_archive:
