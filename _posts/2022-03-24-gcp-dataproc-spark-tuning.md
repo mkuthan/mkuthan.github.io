@@ -4,7 +4,7 @@ date: 2022-03-24
 categories: [GCP, Dataproc, Apache Spark, Performance]
 tagline: ""
 header:
-    overlay_image: /assets/images/nana-smirnova-IEiAmhXehwE-unsplash.webp
+    overlay_image: /assets/images/2022-03-24-gcp-dataproc-spark-tuning/nana-smirnova-IEiAmhXehwE-unsplash.webp
     overlay_filter: 0.2
 ---
 
@@ -41,7 +41,7 @@ spark.dynamicAllocation.enabled: true
 Now the Spark jobs start on a single executor and scale up to fill all the available ephemeral Dataproc cluster resources. 
 Below you can see the YARN allocations for the cluster of 16 "n2-highmem-4" virtual machines.
 
-![Dataproc YARN memory](/assets/images/dataproc_yarn_memory.webp)
+![Dataproc YARN memory](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/yarn-memory.webp)
 
 The Spark job scales up to the maximum in ~ 8-9 minutes, but it heavily depends on the job logic.
 My jobs read data from BigQuery using [Spark BigData Connector](https://github.com/GoogleCloudDataproc/spark-bigquery-connector).
@@ -49,12 +49,12 @@ During the first minutes BigQuery jobs store query results into materialization 
 Nothing to do for the Spark job itself, so the job does not scale up at the very beginning.
 
 
-![Apache Spark dynamic allocation](/assets/images/dataproc_spark_dynamic_allocation.webp)
+![Apache Spark dynamic allocation](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/spark-dynamic-allocation.webp)
 
 What about Spark executor instances? By default, Dataproc configures two YARN containers on every virtual machine. 
 So, the cluster of 16 virtual machines has 32 available YARN containers:
 
-![Dataproc YARN node managers](/assets/images/dataproc_yarn_node_managers.webp)
+![Dataproc YARN node managers](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/yarn-node-managers.webp)
 
 Based on the number of containers Spark dynamically allocates up to 32 executors. 
 The properties "spark.executor.cores" and "spark.executor.memory" are set accordingly to the half of the virtual machine resources. 
@@ -112,7 +112,7 @@ The local HDFS is located on the primary workers only, and all Spark shuffle res
 Each local SSD disk has 375GiB but YARN allocates only up to 90% of total capacity. 
 For 8 primary workers with the single local SSD disk the total HDFS capacity is `8 * 375GiB * 0.9 = 2.7TiB` - exactly as shown below:
 
-![Dataproc YARN HDFS capacity](/assets/images/dataproc_yarn_hdfs_capacity.webp)
+![Dataproc YARN HDFS capacity](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/yarn-hdfs-capacity.webp)
 
 You have to allocate as many primary workers as needed to keep all Spark job shuffle data.
 I would not recommend assigning more than one local ssd to the primary node to increase the capacity. 
@@ -124,7 +124,7 @@ It gives a total `8 * 390MB = 3.12GB = 2.9GiB` (read) and `8 * 270MB = 2.16GB = 
 You could also attach local disks using [NVMe](http://wikipedia.org/wiki/NVM_Express) to get better performance, 660 MB/sec (read) and 350 MB/sec (write).
 See the [official documentation](https://cloud.google.com/dataproc/docs/concepts/compute/dataproc-local-ssds) for more details.
 
-![Dataproc disk bytes](/assets/images/dataproc_disk_bytes.webp)
+![Dataproc disk bytes](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/disk-bytes.webp)
 
 I would thank [Michał Misiewicz](https://github.com/michalmisiewicz) for reporting a bug in my initial calculations ❤️
 {: .notice--info}
@@ -134,7 +134,7 @@ I would thank [Michał Misiewicz](https://github.com/michalmisiewicz) for report
 Finally, the CPU utilization should be verified. 
 The north star is to utilize 100% of available CPU for the whole job running duration. As you can see below it is not always possible :)
 
-![Dataproc CPU](/assets/images/dataproc_cpu.webp)
+![Dataproc CPU](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/cpu.webp)
 
 If you observe low CPU utilization, follow the checklist:
 
@@ -145,7 +145,7 @@ If you observe low CPU utilization, follow the checklist:
 If the lower CPU usage is caused by shuffling, check the Spark metrics again.
 ”Shuffle Read Time” metric should be only a small portion of the total time as presented below.
 
-![Apache Spark shuffling](/assets/images/dataproc_spark_shuffling.webp)
+![Apache Spark shuffling](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/spark-shuffling.webp)
 
 ## Summary
 
