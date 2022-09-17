@@ -1,11 +1,10 @@
 ---
 title: "FinOps for data pipelines on Google Cloud Platform"
 date: 2022-04-02
-categories: [FinOps, GCP]
-tagline: ""
+tags: [FinOps, GCP]
 header:
     overlay_image: /assets/images/2022-04-02-gcp-finops/katie-harp-w45gZMWrJWc-unsplash.webp
-    overlay_filter: 0.2
+    caption: "[Unsplash](https://unsplash.com/@katieharp)"
 ---
 
 Do you monitor costs of the data pipelines in exactly the same way as you monitor overall health, latency or throughput?

@@ -1,11 +1,10 @@
 ---
 title: "Spark and Spark Streaming unit testing"
 date: 2015-03-01
-categories: [Apache Spark, Scala]
-tagline: ""
+tags: [Apache Spark, Scala]
 header:
-    overlay_image: /assets/images/jakub-skafiriak-AljDaiCbCVY-unsplash.webp
-    overlay_filter: 0.2
+    overlay_image: /assets/images/2015-03-01-spark-unit-testing/jakub-skafiriak-AljDaiCbCVY-unsplash.webp
+    caption: "[Unsplash](https://unsplash.com/@jakubskafiriak)"
 ---
 
 When you develop a distributed system, it is crucial to make it easy to test.

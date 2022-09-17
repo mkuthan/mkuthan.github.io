@@ -1,11 +1,10 @@
 ---
 title: "GCP Cloud Composer 1.x tuning"
 date: 2022-03-15
-categories: [GCP, Cloud Composer, Apache Airflow, Performance]
-tagline: ""
+tags: [GCP, Cloud Composer, Apache Airflow, Performance]
 header:
     overlay_image: /assets/images/2022-03-15-gcp-cloud-composer-tuning/aron-visuals-BXOXnQ26B7o-unsplash.webp
-    overlay_filter: 0.2
+    caption: "[Unsplash](https://unsplash.com/@aron-visuals)"   
 ---
 
 I would love to only develop [streaming pipelines](/categories/stream-processing/) but in reality some of them are still batch oriented.

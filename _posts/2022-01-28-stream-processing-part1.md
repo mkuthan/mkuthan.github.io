@@ -1,11 +1,11 @@
 ---
 title: "Stream processing - part 1"
 date: 2022-01-28
-categories: [Stream Processing, Apache Beam, Scala]
+tags: [Stream Processing, Apache Beam, Scala]
 tagline: Apache Beam - fixed windows
 header:
-  overlay_image: /assets/images/jeff-dewitt-K4io-aDZF78-unsplash.webp
-  overlay_filter: 0.2
+  overlay_image: /assets/images/2022-01-28-stream-processing-part1/jeff-dewitt-K4io-aDZF78-unsplash.webp
+  caption: "[Unsplash](https://unsplash.com/@jeffdewitt)"
 ---
 
 This is the very first part of the [stream processing](/categories/stream-processing/) blog post series.

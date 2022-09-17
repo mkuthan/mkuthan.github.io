@@ -1,11 +1,11 @@
 ---
 title: "Apache BigData Europe"
 date: 2016-11-18
-categories: [Conferences]
+tags: [Conferences]
 tagline: Seville
 header:
-    overlay_image: /assets/images/joan-oger-PWrNP4bQHB4-unsplash.webp
-    overlay_filter: 0.2
+    overlay_image: /assets/images/2016-11-18-apache-bigdata-europe/joan-oger-PWrNP4bQHB4-unsplash.webp
+    caption: "[Unsplash](https://unsplash.com/@joanoger)"
 ---
 
 Last week I attended [Apache Big Data Europe](http://events.linuxfoundation.org/events/apache-big-data-europe) held in Sevilla, Spain. 

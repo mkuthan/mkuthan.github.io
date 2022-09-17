@@ -1,11 +1,10 @@
 ---
 title: "GCP Dataproc and Apache Spark tuning"
 date: 2022-03-24
-categories: [GCP, Dataproc, Apache Spark, Performance]
-tagline: ""
+tags: [GCP, Dataproc, Apache Spark, Performance]
 header:
     overlay_image: /assets/images/2022-03-24-gcp-dataproc-spark-tuning/nana-smirnova-IEiAmhXehwE-unsplash.webp
-    overlay_filter: 0.2
+    caption: "[Unsplash](https://unsplash.com/@nanasmirnova)"
 ---
 
 [Dataproc](https://cloud.google.com/dataproc) is a fully managed and highly scalable Google Cloud Platform service for running [Apache Spark](https://spark.apache.org).

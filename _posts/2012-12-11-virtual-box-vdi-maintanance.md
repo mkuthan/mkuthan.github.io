@@ -1,7 +1,7 @@
 ---
 title: "Virtual Box VDI maintenance"
 date: 2012-12-11
-categories: [Linux]
+tags: [Linux]
 ---
 
 Virtual Disk Image (_VDI_) is a Virtual Box container format for guest hard

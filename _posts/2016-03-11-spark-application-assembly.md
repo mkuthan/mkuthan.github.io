@@ -1,7 +1,7 @@
 ---
 title: "Spark application assembly for cluster deployments"
 date: 2016-03-11
-categories: [Apache Spark, Apache Kafka, Scala]
+tags: [Apache Spark, Apache Kafka, Scala]
 ---
 
 When I tried to deploy my first Spark application on a YARN cluster, 

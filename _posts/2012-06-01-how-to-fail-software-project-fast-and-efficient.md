@@ -1,7 +1,7 @@
 ---
 title: "How to fail a software project fast and efficient?"
 date: 2012-06-01
-categories: [Craftsmanship]
+tags: [Software Engineering]
 ---
 
 The short list based on excellent Thomas Sundberg [presentation](http://s3-eu-west-1.amazonaws.com/presentations2012/41presentation.pdf).

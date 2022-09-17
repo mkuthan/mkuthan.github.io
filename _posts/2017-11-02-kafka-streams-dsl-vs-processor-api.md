@@ -1,11 +1,10 @@
 ---
 title: "Kafka Streams DSL vs processor API"
 date: 2017-11-02
-categories: [Apache Kafka, Kafka Streams, Scala, Performance]
-tagline: ""
+tags: [Apache Kafka, Kafka Streams, Scala, Performance]
 header:
-    overlay_image: /assets/images/mitchell-kmetz-5a3gboOg9qc-unsplash.webp
-    overlay_filter: 0.2
+    overlay_image: /assets/images/2017-11-02-kafka-streams-dsl-vs-processor-api/mitchell-kmetz-5a3gboOg9qc-unsplash.webp
+    caption: "[Unsplash](https://unsplash.com/@mitchellkmetz)"
 ---
 
 [Kafka Streams](https://docs.confluent.io/current/streams/index.html) is a Java library 

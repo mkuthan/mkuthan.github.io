@@ -1,7 +1,7 @@
 ---
 title: "GitFlow step by step"
 date: 2013-07-21
-categories: [Craftsmanship, Git]
+tags: [Git]
 ---
 
 Git Flow is a mainstream process for branch per feature development. Git Flow  is the best method I've found for 

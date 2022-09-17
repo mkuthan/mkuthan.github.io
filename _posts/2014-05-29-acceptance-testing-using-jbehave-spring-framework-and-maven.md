@@ -1,7 +1,7 @@
 ---
 title: "Acceptance testing using JBehave, Spring Framework and Maven"
 date: 2014-05-29
-categories: [Craftsmanship, JBehave, Spring]
+tags: [JBehave, Spring]
 ---
 
 This post documents acceptance testing best practices collected in regular projects I was working on.

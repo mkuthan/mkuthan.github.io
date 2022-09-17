@@ -1,10 +1,13 @@
 title: Passionate Developer
+name: Marcin Kuthan
+description: Software engineering blog
 url: http://mkuthan.github.io
+repository: "mkuthan/mkuthan.github.io"
+
+logo: /assets/images/logo.webp
 
 theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "dirt"
-
-logo: /assets/images/logo.webp
 
 author:
   name: "Marcin Kuthan"
@@ -20,49 +23,48 @@ author:
       icon: "fab fa-fw fa-twitter-square"
       url: "https://github.com/MarcinKuthan"
 
+# keep compatibility with the old blog platform layout
 permalink: /blog/:year/:month/:day/:title/
+
+# pagination
 paginate: 10
 paginate_path: /page:num/
 
+# front matter defaults
 defaults:
+  # blog posts
   - scope:
       path: ""
       type: posts
     values:
       layout: single
-      classes: wide
       author_profile: true
+      classes: wide
       comments: true
       share: false
       show_date: true
       toc: true
       read_time: true
       related: true
-  - scope:
-      path: ""
-      type: tag
-    values:
-      author_profile: true
-  - scope:
-      path: ""
-      type: category
-    values:
-      author_profile: true
+      tagline: ""
+      header:
+        overlay_image: /assets/images/overlay.webp
+        caption: "[Unsplash](https://unsplash.com/@lucabravo)"
+        overlay_filter: 0.2
 
+# additional folders to process
+include: ["_pages"]
+
+# kramdown, see: https://kramdown.gettalong.org/documentation.html
 markdown: kramdown
 kramdown:
+  input: GFM # https://docs.github.com/en/get-started/writing-on-github
   syntax_highlighter: rouge
   syntax_highlighter_opts:
     span:
       line_numbers: false
     block:
       line_numbers: true
-
-# enable Google search engine instead of Lunr
-search: true
-search_provider: google
-google:
-  search_engine_id: c7d3624a168d340fe
 
 # compress CSS, see: https://sass-lang.com/documentation/cli/dart-sass#style
 sass:
@@ -72,36 +74,33 @@ sass:
 words_per_minute: 120
 
 # open graph image for pages that don't have header.image in front matter
-og_image: /assets/images/luca-bravo-9l_326FISzk-unsplash.webp
+og_image: /assets/images/overlay.webp
 
 # mermaid diagrams
 mermaid:
   src: 'https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js'
 
+# post comments
 comments:
   provider: "disqus"
   disqus:
     shortname: "mkuthan"
 
+# analytics
 analytics:
   provider: "google-gtag"
   google:
     tracking_id: "UA-50832428-2"
 
-# archives (categories and tags), see: https://github.com/jekyll/jekyll-archives
-category_archive:
-  type: jekyll-archives
-  path: /categories/
+# tag archives using jekyll-archives, see: https://github.com/jekyll/jekyll-archives
 tag_archive:
-  type: jekyll-archives
+  type: liquid
   path: /tags/
+
 jekyll-archives:
   enabled:
-    - categories
     - tags
   layouts:
-    category: archive-taxonomy
     tag: archive-taxonomy
   permalinks:
-    category: /categories/:name/
     tag: /tags/:name/

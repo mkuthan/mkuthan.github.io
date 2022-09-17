@@ -1,7 +1,7 @@
 ---
 title: "How to learn DDD"
 date: 2014-09-22
-categories: [DDD, Craftsmanship]
+tags: [DDD]
 ---
 
 ## Books

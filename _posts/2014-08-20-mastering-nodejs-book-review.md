@@ -1,7 +1,7 @@
 ---
 title: Mastering Node.js - book review
 date: 2014-08-20
-categories: [Books, Node.js]
+tags: [Books, Node.js]
 ---
 
 ## Overview

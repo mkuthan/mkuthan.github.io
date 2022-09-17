@@ -1,7 +1,7 @@
 ---
 title: "Pure JEE or Spring Framework"
 date: 2012-05-31
-categories: [Architecture, Java, Spring]
+tags: [Architecture, Java, Spring]
 ---
 
 During my career as J2EE and JEE software developer I have been trying to use pure JEE two o three times. 

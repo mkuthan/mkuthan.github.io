@@ -1,7 +1,7 @@
 ---
 title: "How to convince your manager to adopt Git"
 date: 2012-11-13
-categories: [Craftsmanship, Git]
+tags: [Git]
 ---
 
 Distributed Concurrent Versions Systems (DCVSs) like Git or Mercurial has

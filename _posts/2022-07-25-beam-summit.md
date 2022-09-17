@@ -1,11 +1,11 @@
 ---
 title: "Apache Beam Summit 2022"
 date: 2022-07-07
-categories: [Conferences, Apache Beam]
+tags: [Conferences, Apache Beam]
 tagline: "Austin"
 header:
     overlay_image: /assets/images/2022-07-25-beam-summit/mj-tangonan-wKfTNWaDYgs-unsplash.webp
-    overlay_filter: 0.2
+    caption: "[Unsplash](https://unsplash.com/@mjtangonan)"
 ---
 
 Last week I virtually attended [Apache Beam Summit 2022](https://2022.beamsummit.org) held in Austin, Texas.

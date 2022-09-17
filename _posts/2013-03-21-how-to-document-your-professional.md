@@ -1,7 +1,7 @@
 ---
 title: "How to document your professional experiences"
 date: 2013-03-21
-categories: [Craftsmanship]
+tags: [Learning]
 ---
 
 Have you considered what is important for prospective employer? 

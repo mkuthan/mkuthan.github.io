@@ -1,11 +1,10 @@
 ---
 title: "Google Cloud Platform troubleshooting with API monitoring"
 date: 2022-07-07
-categories: [GCP, Performance, Dataproc, BigQuery, Terraform]
-tagline: ""
+tags: [GCP, Performance, Dataproc, BigQuery, Terraform]
 header:
     overlay_image: /assets/images/2022-07-07-gcp-api-usage/scott-webb-yekGLpc3vro-unsplash.webp
-    overlay_filter: 0.2
+    caption: "[Unsplash](https://unsplash.com/@scottwebb)"
 ---
 
 When you deploy any non-trivial data pipelines using complex infrastructure you should expect some troubles sooner or later.

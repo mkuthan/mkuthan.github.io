@@ -1,11 +1,11 @@
 ---
 title: "Stream processing - part 2"
 date: 2022-03-08
-categories: [Stream Processing, Apache Beam, Scala]
+tags: [Stream Processing, Apache Beam, Scala]
 tagline: Apache Beam - dynamic aggregation
 header:
-    overlay_image: /assets/images/forest-simon-yQ1IDlOe-6k-unsplash.webp
-    overlay_filter: 0.2
+    overlay_image: /assets/images/2022-03-08-stream-processing-part2/forest-simon-yQ1IDlOe-6k-unsplash.webp
+    caption: "[Unsplash](https://unsplash.com/@forestsimon)"
 ---
 
 This is the second part of the [stream processing](/categories/stream-processing/) blog post series.

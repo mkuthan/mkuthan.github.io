@@ -1,7 +1,7 @@
 ---
 title: "Spark and Kafka integration patterns - part 2"
 date: 2016-01-29
-categories: [Apache Spark, Apache Kafka, Scala]
+tags: [Apache Spark, Apache Kafka, Scala]
 ---
 
 In the [world beyond batch](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101), 

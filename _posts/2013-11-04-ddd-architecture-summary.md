@@ -1,7 +1,7 @@
 ---
 title: "DDD Architecture Summary"
 date: 2013-11-04
-categories: [Architecture, DDD, Spring]
+tags: [Architecture, DDD, Spring]
 ---
 
 In this blog post you can find my general rules for implementing system using _Domain Driven Design_. Do not use them 

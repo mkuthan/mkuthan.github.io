@@ -1,7 +1,7 @@
 ---
 title: "Spark and Kafka integration patterns - part 1"
 date: 2015-08-06
-categories: [Apache Spark, Apache Kafka, Scala]
+tags: [Apache Spark, Apache Kafka, Scala]
 ---
 
 I published post on the [allegro.tech](http://allegro.tech/) blog, how to integrate Spark Streaming and Kafka.

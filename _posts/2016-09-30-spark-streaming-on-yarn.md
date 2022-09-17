@@ -1,11 +1,10 @@
 ---
 title: "Long-running Spark Streaming jobs on YARN cluster"
 date: 2016-09-30
-categories: [Apache Spark, Apache Hadoop]
-tagline: ""
+tags: [Apache Spark, Apache Hadoop]
 header:
     overlay_image: /assets/images/2016-09-30-spark-streaming-on-yarn/oktay-yildiz-ZvxMNELAVDU-unsplash.webp
-    overlay_filter: 0.2
+    caption: "[Unsplash](https://unsplash.com/@oktayyildiz)"
 ---
 
 A long-running Spark Streaming job, once submitted to the YARN cluster should run forever until it is intentionally stopped.
