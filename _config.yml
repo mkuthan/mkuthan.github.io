@@ -22,6 +22,9 @@ author:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       url: "https://github.com/MarcinKuthan"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/marcinkuthan/"
 
 # keep compatibility with the old blog platform layout
 permalink: /blog/:year/:month/:day/:title/
