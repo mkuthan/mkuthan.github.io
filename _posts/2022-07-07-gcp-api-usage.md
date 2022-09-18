@@ -1,5 +1,5 @@
 ---
-title: "Google Cloud Platform troubleshooting with API monitoring"
+title: "GCP troubleshooting with API monitoring"
 date: 2022-07-07
 tags: [GCP, Performance, Dataproc, BigQuery, Terraform]
 header:
