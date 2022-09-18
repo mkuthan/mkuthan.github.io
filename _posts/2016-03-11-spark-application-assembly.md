@@ -36,7 +36,7 @@ The final assembly location depend on the Scala version, application name and ap
 The build result could be assembled into `target/scala-2.11/myapp-assembly-1.0.jar` file.
 
 You can configure many aspects of SBT Assembly Plugin like custom merge strategy
-but I found that it is much easier to keep the defaults and follow the plugin conventions.
+but I found that it's much easier to keep the defaults and follow the plugin conventions.
 And what is even more important you don't have to change defaults to get correct, deployable application binary assembled by the plugin.
 
 ## Provided dependencies scope
@@ -89,7 +89,7 @@ val sparkVersion = "1.6.0"
 ```
 
 Careful readers should notice that "spark-streaming-kafka" dependency has not been listed and marked as "provided".
-It was done by purpose because integration with Kafka is not part of Spark distribution assembly
+It was done by purpose because integration with Kafka isn't part of Spark distribution assembly
 and has to be assembled into application JAR.
 The exclusion rules for "spark-streaming-kafka" dependency will be discussed later.
 
@@ -156,7 +156,7 @@ The "slf4j-log4j12" is a binding library between SLF4J API and Log4j logger prov
 Three layers of indirection but who cares :-)
  
 There is also top-level dependency to Log4J defined with provided scope. 
-But this is not enough to get rid of Log4j classes from the application assembly.
+But this isn't enough to get rid of Log4j classes from the application assembly.
 Because Log4j is also a transitive dependency of "slf4j-log4j12" it must be explicitly excluded.
 If not, SBT Assembly Plugin adds Log4j classes to the assembly even if top level "log4j" dependency is marked as "provided".
 Not very intuitive but SBT Assembly Plugin works this way.
@@ -170,8 +170,8 @@ It could be especially useful for libraries with many transitive dependencies wh
 
 ## Spark Streaming Kafka dependency
 
-Now we are ready to define dependency to "spark-streaming-kafka".
-Because Spark integration with Kafka typically is not a part of Spark assembly,
+Now we're ready to define dependency to "spark-streaming-kafka".
+Because Spark integration with Kafka typically isn't a part of Spark assembly,
 it must be embedded into application assembly.
 The artifact should not be defined within "provided" scope.
 
@@ -200,11 +200,11 @@ Guava is on the classpath during compilation and tests but at runtime you will g
 First, Guava is shaded in Spark distribution assembly under `org/spark-project/guava` package and should not be used directly.
 Second, there is a huge chance for outdated Guava library on the cluster classpath. 
 In CDH 5.3 distribution, the installed Guava version is 11.0.2 released on Feb 22, 2012 - more than 4 years ago!
-Since the Guava is [binary compatible](http://i.stack.imgur.com/8K6N8.jpg) only between 2 or 3 latest major releases it is a real blocker.
+Since the Guava is [binary compatible](http://i.stack.imgur.com/8K6N8.jpg) only between 2 or 3 latest major releases it's a real blocker.
 
 There are experimental configuration flags for Spark `spark.driver.userClassPathFirst` and `spark.executor.userClassPathFirst`.
 In theory it gives user-added jars precedence over Spark's own jars when loading classes in the the driver.
-But in practice it does not work, at least for me :-(.
+But in practice it doesn't work, at least for me :-(.
 
 In general you should avoid external dependencies at all cost when you develop application deployed on the YARN cluster.
 Classloader hell is even bigger than in JEE containers like JBoss or WebLogic.

@@ -21,7 +21,7 @@ with pure git commands, when you understand the concept move to Git Flow, and th
 
 1. Assign JIRA task to you.
 2. Move JIRA tasks from "To Do" to "In Progress".
-3. Create feature branch for the JIRA user story (if it is a first task of the user story). 
+3. Create feature branch for the JIRA user story (if it's a first task of the user story). 
 Feature branch must reflect JIRA issue number and have meaningful name, e.g: _PROJ-01_user_registration_.
 
         mvn jgitflow:feature-start

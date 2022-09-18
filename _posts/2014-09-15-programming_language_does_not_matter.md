@@ -1,5 +1,5 @@
 ---
-title: Programming language does not matter
+title: Programming language doesn't matter
 date: 2014-09-15
 tags: [Architecture, PHP]
 ---
@@ -25,5 +25,5 @@ Very similar to Spring Framework, you will get dependency injection, layered arc
 
 *logstash* - Log manager with tons of plugins to almost everything. The monitoring is really crucial in distributed systems.
 
-The programming language does not really matter if you need scalable, distributed, easy to maintain and enhance system. 
+The programming language doesn't really matter if you need scalable, distributed, easy to maintain and enhance system. 
 You can apply excellent design using PHP or produce big ball of mud in Java.

@@ -12,7 +12,7 @@ Where you can define the runtime version on project level.
 The most convenient way to configure and manage runtimes is to use environment managers.
 Environment manager is nothing more than shell script, the script intercepts executed commands using shim executables injected into your `PATH`.
 There are two flavours of the environment managers: `rvm` and `rbenv` like.
-I prefer the second one, it is less obtrusive and follows general unix principle: "do one thing and do it well".
+I prefer the second one, it's less obtrusive and follows general unix principle: "do one thing and do it well".
 
 Let's start and install environment managers (for _Java_, _Ruby_, _node.js_ and _Python_) into your home directory:
 

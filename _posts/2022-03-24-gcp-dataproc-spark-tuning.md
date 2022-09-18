@@ -8,7 +8,7 @@ header:
 ---
 
 [Dataproc](https://cloud.google.com/dataproc) is a fully managed and highly scalable Google Cloud Platform service for running [Apache Spark](https://spark.apache.org).
-However, "managed" does not relieve you from the proper configuration to squeeze more processing power for less money.
+However, "managed" doesn't relieve you from the proper configuration to squeeze more processing power for less money.
 Today you will learn the easiest method to configure Dataproc and Spark together to get optimal performance and lower cost.
 
 The article is for Dataproc 1.5 and Spark 2.x only. It might also work for Dataproc 2.x and Spark 3.x, but I have not verified the latest versions.
@@ -45,7 +45,7 @@ Below you can see the YARN allocations for the cluster of 16 "n2-highmem-4" virt
 The Spark job scales up to the maximum in ~ 8-9 minutes, but it heavily depends on the job logic.
 My jobs read data from BigQuery using [Spark BigData Connector](https://github.com/GoogleCloudDataproc/spark-bigquery-connector).
 During the first minutes BigQuery jobs store query results into materialization dataset.
-Nothing to do for the Spark job itself, so the job does not scale up at the very beginning.
+Nothing to do for the Spark job itself, so the job doesn't scale up at the very beginning.
 
 
 ![Apache Spark dynamic allocation](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/spark-dynamic-allocation.webp)
@@ -80,10 +80,10 @@ spark.executor.memory: 5586m
 spark.executor.memoryOverhead: 5586m * 0.1 = 558.6m.
 ```
 
-From my experiences, 558MiB memory overhead is not enough for the Spark job running on two cores.
+From my experiences, 558MiB memory overhead isn't enough for the Spark job running on two cores.
 The [documentation](https://cloud.google.com/dataproc/docs/support/spark-job-tuning#out_of_memory) recommends using *highmem* virtual machines if Spark workers are killed by YARN due to memory errors.
 
-* It does not break the automagical memory calculation
+* It doesn't break the automagical memory calculation
 * The memory overhead for "n2-highmem-4" is `11171m * 0.1 = 1117m`
 * The memory overhead depends on the Spark parallelism, so when the "spark.executor.cores" stays unchanged it should solve the memory over-allocation issue
 
@@ -94,7 +94,7 @@ Without EFM the job execution could be very unpredictable (think about black wee
 There are two important rules to apply:
 
 * If your Spark job requires more than 2 virtual machines you could delegate ~ 75% of workload to the secondary, preemptible machines. 
-  Look for “Spot VM” pricing, the spot instances are 3x-10x [cheaper](https://cloud.google.com/compute/docs/instances/spot#pricing) than regular ones - it is a huge saving.
+  Look for “Spot VM” pricing, the spot instances are 3x-10x [cheaper](https://cloud.google.com/compute/docs/instances/spot#pricing) than regular ones - it's a huge saving.
 * Use local SSD disks for the primary workers. 
   Primary workers are responsible for data shuffling, so the best available IO is a must.
   According to the [documentation](https://cloud.google.com/dataproc/docs/concepts/configuring-clusters/flex#configuring_local_ssds_for_primary_worker_shuffle) one local disk should be assigned for every 4 CPUs.
@@ -131,7 +131,7 @@ I would thank [Michał Misiewicz](https://github.com/michalmisiewicz) for report
 ## CPU utilization
 
 Finally, the CPU utilization should be verified. 
-The north star is to utilize 100% of available CPU for the whole job running duration. As you can see below it is not always possible :)
+The north star is to utilize 100% of available CPU for the whole job running duration. As you can see below it isn't always possible :)
 
 ![Dataproc CPU](/assets/images/2022-03-24-gcp-dataproc-spark-tuning/cpu.webp)
 

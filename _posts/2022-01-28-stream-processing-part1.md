@@ -71,7 +71,7 @@ There is no trace of event time in the signature, WTF?
 The event time is passed implicitly which is a common pattern for streaming frameworks.
 Because every part of the system must be always event-time aware, the event-time is transported outside the payload. 
 Moreover, the event-time may advance during data journey through the pipeline 
-so keeping event-time as a part of the payload does not make sense.
+so keeping event-time as a part of the payload doesn't make sense.
 
 Let's see how this example behaves in different scenarios.
 
@@ -238,7 +238,7 @@ Late data is an inevitable part of every streaming application.
 Imagine that our stream comes from a mobile application and someone is on a train that has hit a long tunnel somewhere in the Alps ...
 
 Streaming pipeline needs to materialize results in a timely manner, how long should the pipeline wait for data?
-If the 99<sup>th</sup> percentile latency is 3 seconds, it does not make any sense to wait for outliers late by minutes or hours. 
+If the 99<sup>th</sup> percentile latency is 3 seconds, it doesn't make any sense to wait for outliers late by minutes or hours. 
 For unbounded data this is always a heuristic calculation.
 The streaming framework continuously estimates time "X" for which all input data with event-time less than "X" have been already observed.
 The time "X" is called a **watermark**. 
@@ -271,7 +271,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 * After "foo bar" and "baz baz" on-time events, the watermark is programmatically advanced to the end of the first one-minute window
 * As an effect of the updated watermark, the results for the first window are materialized.
-* Then the late event "foo" is observed, it should be included in the results of window *[00:00:00, 00:01:00)* but it is silently dropped!
+* Then the late event "foo" is observed, it should be included in the results of window *[00:00:00, 00:01:00)* but it's silently dropped!
 
 With high quality heuristic watermark it should be rare that watermark is advanced too early. 
 But as a developer you have to take into account this kind of situation.

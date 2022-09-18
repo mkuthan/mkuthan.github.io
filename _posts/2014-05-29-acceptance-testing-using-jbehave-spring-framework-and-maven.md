@@ -48,7 +48,7 @@ Focus only on the relevant assertions for the given scenario, do not verify ever
 
 ## Project build organization
 
-After bunch of theory it is time to show real code. Let's start with proper project organization. 
+After bunch of theory it's time to show real code. Let's start with proper project organization. 
 I found that acceptance testing is a cross cutting aspect of the application, and should be separated from the application code.
 Acceptance tests build configuration is very specific and I don't want to clutter application build configuration. 
 You can also utilize multi module project, to ensure that acceptance tests module is allowed to call application public API only.
@@ -315,7 +315,7 @@ JBehave plugin configuration in tests module
 ## Spring Framework configuration
 
 The application implements shopping basket simplified functionality.
-Do not use my shopping basket implementation on production, it is only for this post educational purposes :-)
+Do not use my shopping basket implementation on production, it's only for this post educational purposes :-)
  
 The application is composed from three main packages: `domain`, `infrastructure` and `web`. 
 This convention comes from Domain Driven Design, you can read more in my post [DDD Architecture Summary](http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/).
@@ -533,7 +533,7 @@ Test scenarios are rather straightforward, if you are familiar with BDD and Gher
 [BDD Concepts](http://jbehave.org/reference/stable/concepts.html) short definition.
 
 Look, in the scenarios there is nothing specific to the application user interface. 
-It is not important how product price editor looks like, and how the shopping basket is presented.
+It isn't important how product price editor looks like, and how the shopping basket is presented.
 
 ```
 Narrative:
@@ -603,7 +603,7 @@ public class SharedSteps {
 ```
 
 You could ask, how does _JBehave_ know about `StockKeepingUnit` and `Money` classes?
-You will have to implement custom converters but it is much more convenient to use well defined API, instead of dozen of `String` based values.
+You will have to implement custom converters but it's much more convenient to use well defined API, instead of dozen of `String` based values.
 
 ``` java 
 @Converter
@@ -681,7 +681,7 @@ There are two interesting elements:
 
 Typically user story is prepared before implementation. 
 In this situation you will have several pending steps, slowly implemented during the sprint.
-Pending step does not mean that acceptance tests have failed, it only means that functionality has not been implemented yet.
+Pending step doesn't mean that acceptance tests have failed, it only means that functionality has not been implemented yet.
 
 `ShoppingCartRow` is a simple bean prepared for tabular parameters definition in the story. Do you remember this step?
 
@@ -730,7 +730,7 @@ _JBehave_ uses this annotated class to convert table row from user story to Java
 The last part of this post is about running tests. 
 
 For every user story definition, one test class is defined. 
-The test class is only the marker and does not define any logic.
+The test class is only the marker and doesn't define any logic.
 
 ``` java
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -37,12 +37,12 @@ From the performance perspective, the operators are much more resource heavy tha
 
 *BigQuery* sensors are short-lived tasks if configured in the [rescheduling mode](https://airflow.apache.org/docs/apache-airflow/1.10.15/_api/airflow/sensors/base_sensor_operator/index.html#airflow.sensors.base_sensor_operator.BaseSensorOperator)
 The sensor checks for the data and if data exists the sensor quickly finishes.
-If data is not available yet, the sensor finishes as well, but it is also rescheduled for the next execution after 
+If data isn't available yet, the sensor finishes as well, but it's also rescheduled for the next execution after 
 [poke_interval](https://airflow.apache.org/docs/apache-airflow/1.10.15/_api/airflow/sensors/base_sensor_operator/index.html#airflow.sensors.base_sensor_operator.BaseSensorOperator).
 
 On the contrary *Spark* operator allocates resources for the whole *Spark* job's execution time.
 It could take several minutes or even hours. 
-For most of the time, the operator does not do much more than checking for the Spark job status, so it is a memory bound process.
+For most of the time, the operator doesn't do much more than checking for the Spark job status, so it's a memory bound process.
 Even if there is a CPU time slots shortage on the *Cloud Composer* worker, the negative impact on the Spark job itself is negligible.
 
 So for further capacity planning we should mainly count memory allocated by operators and add some safety margin for the sensors.
@@ -62,7 +62,7 @@ It is important that you should measure the task memory usage by yourself, all f
 The memory usage might be also varying for different *Apache Airflow* operators.
 
 Whaaaat -- 220MiB allocated just for the REST call to the *Dataproc* cluster API?
-Unfortunately it is not only the remote call. 
+Unfortunately it isn't only the remote call. 
 The architecture of the *Apache Airflow* is quite complex, every task is executed as a [Celery worker](https://docs.celeryproject.org/en/stable/userguide/workers.html) with its own overhead.
 Every task also needs a connection to the *Apache Airflow* database, it also consumes resources.
 Perhaps there are other factors I'm not even aware of ...
@@ -128,14 +128,14 @@ So for the standard customers the costs will be even higher.
 
 ### *Cloud Composer* overhead
 
-Kubernetes is not the only overhead you have to count into the calculations.
+Kubernetes isn't the only overhead you have to count into the calculations.
 There are also many built-in *Cloud Composer* processes run on every worker.
 Because the *Cloud Composer* is a managed service, you don't have control over these processes.
 Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting would be a bumpy walk.
 
 ![Cloud Composer pods](/assets/images/2022-03-15-gcp-cloud-composer-tuning/pods.webp)
 
-Do not rely on the reported requested memory, it is just garbage. 
+Do not rely on the reported requested memory, it's just garbage. 
 Just measure the maximum worker memory utilization on the clean *Cloud Composer* installation and add the result to the final estimate.
 
 ![Cloud Composer memory overhead](/assets/images/2022-03-15-gcp-cloud-composer-tuning/memory-overhead.webp)
@@ -145,7 +145,7 @@ The overhead: 1.6GiB of RAM for built-in *Cloud Composer* processes on every wor
 
 ### Maximum number of tasks
 
-Now we are ready to estimate available memory and the maximum number of concurrent tasks.
+Now we're ready to estimate available memory and the maximum number of concurrent tasks.
 I would also recommend making some reservations if you want a stable environment without unexpected incidents during your on-duty shift.
 For 20% reservation, the *Cloud Composer* cluster capacity will be defined as follows:
 
@@ -206,7 +206,7 @@ The `scheduler.parsing_processes` should be set to `max(1, number of CPUs - 1)`,
 Again it should lower the CPU utilization on the worker which is running the *airflow-scheduler* pod.
 
 {: .notice--info}
-Scheduler is a very important process of *Apache Airflow*. When it does not work properly you will observe many weird and hard to debug flaws.
+Scheduler is a very important process of *Apache Airflow*. When it doesn't work properly you will observe many weird and hard to debug flaws.
 
 ## Monitoring
 
@@ -242,11 +242,11 @@ you can either: lower `core.parallelism` and `celery.worker_concurrency` or scal
 ## Summary
 
 *Cloud Composer* is a managed service of *Apache Airflow* hosted on Google Cloud Platform.
-However, "managed" does not relieve you from the proper configuration to squeeze more processing power for less money.
-In the end, *Cloud Composer* is not the cheapest and *Apache Airflow* is not the most lightweight service on this planet.
+However, "managed" doesn't relieve you from the proper configuration to squeeze more processing power for less money.
+In the end, *Cloud Composer* isn't the cheapest and *Apache Airflow* isn't the most lightweight service on this planet.
 
-You should also remember that *Cloud Composer 1.x* and *Apache Airflow 1.x* are not actively developed anymore.
-I'm really keen to repeat the same tuning exercise for *Cloud Composer 2.x* and check how far better it is from the predecessor.
+You should also remember that *Cloud Composer 1.x* and *Apache Airflow 1.x* aren't actively developed anymore.
+I'm really keen to repeat the same tuning exercise for *Cloud Composer 2.x* and check how far better it's from the predecessor.
 The official documentation [Optimize environment performance and costs](https://cloud.google.com/composer/docs/composer-2/optimize-environments#gcloud_1) looks promising.
 
 Last but not least, I would like to thank Piotrek and Patryk for the fruitful discussions.

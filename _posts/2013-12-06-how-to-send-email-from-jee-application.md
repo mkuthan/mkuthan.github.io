@@ -51,7 +51,7 @@ When mail session is configured as JNDI resource, it can be easily utilized by S
 </bean>  
 ```
 
-Now it is time for more tough part, how to use mail sender correctly? 
+Now it's time for more tough part, how to use mail sender correctly? 
 There are at least four options, choose the best one for you:  
 
 * _Direct (Sync)_ Use mail session directly from the application service in the web request thread.
@@ -64,14 +64,14 @@ I collected a few non-functional and functional common requirements together wit
 |                                           |Direct (Sync)|Direct (Async)|Database Queue|JMS Queue
 |-------------------------------------------|:-----------:|:------------:|:------------:|:-------:
 |Application works even if the SMTP is down |no|no|yes|yes
-|Web request thread is not blocked          |no|yes|yes|yes
+|Web request thread isn't blocked          |no|yes|yes|yes
 |Mail aggregation, scheduled sending, etc.  |no|no|yes|limited
 |Control over SMTP requests throttle        |no|limited|limited|yes
 |Redelivery policy, do not lost messages if SMTP is down |no|no|limited|yes
 |Monitoring                                 |no|no|yes|yes
   
-I would start with "Database Queue" approach, at least if JMS is not already used in the project or you do not have to send thousands of emails. 
-"Direct" method is not an option at all IMHO.  
+I would start with "Database Queue" approach, at least if JMS isn't already used in the project or you do not have to send thousands of emails. 
+"Direct" method isn't an option at all IMHO.  
   
 Separate part of the subject is to how to create email body. In most situation
 I used some template engine, like _Freemarker_ or _Thymeleaf_. The

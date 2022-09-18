@@ -99,7 +99,7 @@ Related to Saga, how to avoid XA transactions.
 
 ### Composite Front End
 
-How to compose services into single web application? Author does not answer my doubts in this chapter.
+How to compose services into single web application? Author doesn't answer my doubts in this chapter.
 
 ### Client/Server/Service
 
@@ -130,7 +130,7 @@ Funny names for real problems when SOA is used:
 
 For sure it's worth reading but I expected more from Arnon Rotem-Gal-Oz. 
 Sometimes I felt that author covers only the top of the iceberg, when demons are under the hood.
-The sample code fragments are not very helpful, with high accidental complexity but do not clearly show the problem. 
+The sample code fragments aren't very helpful, with high accidental complexity but do not clearly show the problem. 
 
 
 In addition the book was published in 2012 but you will easily realized that author had started ten years before, some parts seems to be outdated.

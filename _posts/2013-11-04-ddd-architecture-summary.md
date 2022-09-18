@@ -5,7 +5,7 @@ tags: [Architecture, DDD, Spring]
 ---
 
 In this blog post you can find my general rules for implementing system using _Domain Driven Design_. Do not use them 
-blindly but it is good starting point for DDD practitioners.
+blindly but it's good starting point for DDD practitioners.
 
 ## <a name="bc"></a>Bounded Context
 
@@ -33,7 +33,7 @@ blindly but it is good starting point for DDD practitioners.
 `SecurityService`.
 * Domain services dependencies are injected by constructor.
 * Having more than 2~3 dependencies is suspicious.
-* Entities are not managed by containers.
+* Entities aren't managed by containers.
 * Aggregate root entities are domain events publishers (events collectors).
 * Aggregates in single bounded context might be strongly referenced (navigation across objects tree).
 * Aggregates from different bounded contexts are referenced by business keys (if feasible).
@@ -52,7 +52,7 @@ blindly but it is good starting point for DDD practitioners.
 * Acceptance tests executed against this layer.
 * Cglib proxied, proxy must be serialized by session scoped beans in [web](#web) layer.
 * Dependencies are injected on field level (private fields).
-* Ten or more dependencies for single application service is not a problem.
+* Ten or more dependencies for single application service isn't a problem.
 * Application services are also domain event listeners.
 * Always stateless.
 * No interfaces, just implementation.
