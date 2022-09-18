@@ -7,11 +7,11 @@ header:
     caption: "[Unsplash](https://unsplash.com/@oktayyildiz)"
 ---
 
-A long-running Spark Streaming job, once submitted to the YARN cluster should run forever until it is intentionally stopped.
+A long-running Spark Streaming job, once submitted to the YARN cluster should run forever until it's intentionally stopped.
 Any interruption introduces substantial processing delays and could lead to data loss or duplicates.
 Neither YARN nor Apache Spark have been designed for executing long-running services.
 But they have been successfully adapted to growing needs of near real-time processing implemented as long-running jobs.
-Successfully does not necessarily mean without technological challenges.
+Successfully doesn't necessarily mean without technological challenges.
 
 This blog post summarizes my experiences in running mission critical, long-running Spark Streaming jobs on a secured YARN cluster.
 You will learn how to submit Spark Streaming application to a YARN cluster to avoid sleepless nights during on-call hours.
@@ -31,7 +31,7 @@ spark-submit --master yarn --deploy-mode cluster
 ```
 
 Because Spark driver and Application Master share a single JVM, any error in Spark driver stops our long-running job.
-Fortunately it is possible to configure the maximum number of attempts that will be made to re-run the application.
+Fortunately it's possible to configure the maximum number of attempts that will be made to re-run the application.
 It is reasonable to set a higher value than default 2 (derived from YARN cluster property `yarn.resourcemanager.am.max-attempts`).
 For me 4 works quite well, higher values may cause unnecessary restarts even if the reason of the failure is permanent.
 
@@ -50,7 +50,7 @@ spark-submit --master yarn --deploy-mode cluster \
 ```
  
 Another important setting is a maximum number of executor failures before the application fails. 
-By default it is `max(2 * num executors, 3)`, well suited for batch jobs but not for long-running jobs.
+By default it's `max(2 * num executors, 3)`, well suited for batch jobs but not for long-running jobs.
 The property comes with the corresponding validity interval which also should be set.
 
 ```shell
@@ -110,7 +110,7 @@ spark-submit --master yarn --deploy-mode cluster \
 
 On a secured HDFS cluster, long-running Spark Streaming jobs fail due to Kerberos ticket expiration.
 Without additional settings, Kerberos ticket is issued when Spark Streaming job is submitted to the cluster.
-When the ticket expires Spark Streaming job is not able to write or read data from HDFS anymore.
+When the ticket expires Spark Streaming job isn't able to write or read data from HDFS anymore.
  
 In theory (based on documentation) it should be enough to pass Kerberos principal and keytab as spark-submit command:
 
@@ -152,7 +152,7 @@ Thanks, Mark.
 
 The easiest way to access Spark application logs is to configure Log4j console appender, 
 wait for application termination and use `yarn logs -applicationId [applicationId]` command.
-Unfortunately it is not feasible to terminate long-running Spark Streaming jobs to access the logs.
+Unfortunately it isn't feasible to terminate long-running Spark Streaming jobs to access the logs.
 
 I recommend installing and configuring Elastic, Logstash and Kibana ([ELK](https://www.elastic.co/) stack).
 ELK installation and configuration is out of this blog post scope,
@@ -188,7 +188,7 @@ Finally Kibana dashboard for Spark Job might look like:
 
 ## Monitoring
 
-Long running job runs 24/7 so it is important to have an insight into historical metrics. 
+Long running job runs 24/7 so it's important to have an insight into historical metrics. 
 Spark UI keeps statistics only for a limited number of batches, and after restart all metrics are gone.
 Again, external tools are needed. 
 I recommend installing [Graphite](https://graphiteapp.org/) for collecting metrics 
@@ -239,7 +239,7 @@ Other important metrics are listed below:
 driver.StreamingMetrics.streaming.lastCompletedBatch_totalDelay
 ```
 
-* When number of active tasks is lower than `number of executors * number of cores`, allocated YARN resources are not fully utilized.
+* When number of active tasks is lower than `number of executors * number of cores`, allocated YARN resources aren't fully utilized.
 
 ```
 executor.threadpool.activeTasks
@@ -251,7 +251,7 @@ executor.threadpool.activeTasks
 driver.BlockManager.memory.memUsed_MB
 ```
 
-* When there is not enough RAM for RDD cache, how much data has been spilled to disk? 
+* When there isn't enough RAM for RDD cache, how much data has been spilled to disk? 
 You should increase executor memory or change `spark.memory.fraction` Spark property to avoid performance degradation. 
 
 ```
@@ -326,7 +326,7 @@ Finally Grafana dashboard for Spark Job might look like:
 ![](/assets/images/2016-09-30-spark-streaming-on-yarn/monitoring.webp)
 
 If Spark application is restarted frequently, metrics for old, already finished runs should be deleted from Graphite.
-Because Graphite does not compact inactive metrics, old metrics slow down Graphite itself and Grafana queries.
+Because Graphite doesn't compact inactive metrics, old metrics slow down Graphite itself and Grafana queries.
 
 ## Graceful stop
 

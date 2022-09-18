@@ -9,7 +9,7 @@ streaming data processing is a future of dig data.
 Despite of the streaming framework using for data processing, tight integration with replayable data source like Apache Kafka is often required.
 The streaming applications often use Apache Kafka as a data source, or as a destination for processing results.
 
-Apache Spark distribution has built-in support for reading from Kafka, but surprisingly does not offer any
+Apache Spark distribution has built-in support for reading from Kafka, but surprisingly doesn't offer any
 integration for sending processing result back to Kafka.
 This blog post aims to fill this gap in the Spark ecosystem.
 
@@ -69,7 +69,7 @@ void close()
 ```
 
 The `send()` methods asynchronously send a key-value record to a topic and will return immediately once the record has been stored in the buffer of records waiting to be sent.
-This kind of API is not very convenient for developers, but is crucial to achieve high throughput and low latency.
+This kind of API isn't very convenient for developers, but is crucial to achieve high throughput and low latency.
 
 If you want to ensure that request has been completed, you can invoke blocking `get()` on the future returned by the `send()` methods.
 The main drawback of calling `get()` is a huge performance penalty because it disables batching effectively. 
@@ -79,7 +79,7 @@ Fully non-blocking usage requires use of the callback. The callback will be invo
 Note that callback is executed in Kafka producer I/O thread so should not block the caller, the callback must be as lightweight as possible.
 The callback must be also properly synchronized due to [Java memory model](https://en.wikipedia.org/wiki/Java_memory_model).
 
-If the Kafka producer caller does not check result of the `send()` method using future or callback, 
+If the Kafka producer caller doesn't check result of the `send()` method using future or callback, 
 it means that if Kafka producer crashed all messages from the internal Kafka producer buffer will be lost. 
 This is the first, very important element of any integration library with Kafka, 
 we should expect callback handling to avoid data lost and achieve good performance.
@@ -111,13 +111,13 @@ Only when the follower acknowledges the leader, the leader acknowledges the prod
 This guarantee you will get with `ack=all` property in Kafka producer configuration. 
 This guarantees that the record will not be lost as long as at least one in-sync replica remains alive.
 
-But this is not enough. The minimum number of replicas in-sync must be defined.
+But this isn't enough. The minimum number of replicas in-sync must be defined.
 You should configure `min.insync.replicas` property for every topic. 
 I recommend to configure at least 2 in-sync replicas (leader and one follower).
 If you have datacenter with two zones, I also recommend to keep leader in the first zone and 2 followers in the second zone.
 This configuration guarantees that every message will be stored in both zones.
 
-We are almost done with Kafka cluster configuration.
+We're almost done with Kafka cluster configuration.
 When you set `min.insync.replicas=2` property, the topic should be replicated with factor 2 + N. 
 Where N is the number of brokers which could fail, and Kafka producer will still be able to publish messages to the cluster.
 I recommend to configure replication factor 3 for the topic (or more).
@@ -128,11 +128,11 @@ With more brokers in the cluster than replication factor, you can reassign under
 I recommend to build the 4 nodes cluster at least for topics with replication factor 3.
 
 The last important Kafka cluster configuration property is `unclean.leader.election.enable`. 
-It should be disabled (by default it is enabled) to avoid unrecoverable exceptions from Kafka consumer. 
+It should be disabled (by default it's enabled) to avoid unrecoverable exceptions from Kafka consumer. 
 Consider the situation when the latest committed offset is N,
 but after leader failure, the latest offset on the new leader is M < N.
 M < N because the new leader was elected from the lagging follower (not in-sync replica).
-When the streaming engine ask for data from offset N using Kafka consumer, it will get an exception because the offset N does not exist yet.
+When the streaming engine ask for data from offset N using Kafka consumer, it will get an exception because the offset N doesn't exist yet.
 Someone will have to fix offsets manually.
 
 So the minimal recommended Kafka setup for reliable message processing is:
@@ -153,7 +153,7 @@ But this is out of this blog post scope.
 
 ## How to expand Spark API?
 
-After this not so short introduction, we are ready to disassembly 
+After thisn't so short introduction, we're ready to disassembly 
 [integration library](https://github.com/mkuthan/example-spark-kafka) for Spark Streaming and Apache Kafka.
 First `DStream` needs to be somehow expanded to support new method `sendToKafka()`. 
 
@@ -276,7 +276,7 @@ The client of the callback is able to rethrow registered exception using `throwE
 Because `onCompletion()` and `throwExceptionIfAny()` methods are called from different threads,
 last exception has to be kept in thread-safe data structure `AtomicReference`.
 
-Finally we are ready to send records to Kafka using created callback.
+Finally we're ready to send records to Kafka using created callback.
 
 ``` scala
 rdd.foreachPartition { records =>
@@ -325,8 +325,8 @@ rdd.foreachPartition { records =>
   metadata.foreach { metadata => metadata.get() }
 ```
 
-As long as records sending was started moment ago, it is likelihood that records have been already sent
-and `get()` method does not block. 
+As long as records sending was started moment ago, it's likelihood that records have been already sent
+and `get()` method doesn't block. 
 However if the `get()` call is blocked, it means that there are unsent messages in the internal Kafka producer buffer 
 and the processing should be blocked as well.
 
@@ -359,7 +359,7 @@ def sendToKafka(config: Map[String, String], topic: String): Unit = {
 }
 ```
 
-The method is not very complex but there are a few important elements
+The method isn't very complex but there are a few important elements
 if you don't want to lose processing results and if you need back pressure mechanism:
 
 * Method `sendToKafka()` should fail fast if record could not be sent to Kafka. Don't worry Spark will execute failed task again.

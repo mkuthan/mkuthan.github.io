@@ -15,7 +15,7 @@ The notes are presented as short checklists, if some aspect was particularly app
 
 ## Key takeaways
 
-* At [Allegro](http://allegro.tech/) we are on track with our clickstream ingestion platform.
+* At [Allegro](http://allegro.tech/) we're on track with our clickstream ingestion platform.
 [Apache Kafka](https://kafka.apache.org/), [Apache Avro](https://avro.apache.org/), [Apache Parquet](https://parquet.apache.org/), [Apache Spark](https://spark.apache.org/), [Apache Hive](https://hive.apache.org/) and last but not least [Apache Druid](http://druid.io/) are key players for us, all hosted under [Apache Foundation](https://www.apache.org/)!
 * [Apache Ignite](https://ignite.apache.org/) might solve many performance issues in Spark jobs (shared RDD) but also in MR jobs (in-memory MR, HDFS cache). 
 Has to be verified during the next Allegro internal hackathon, for sure.
@@ -81,7 +81,7 @@ See more:
 
 * It works, at least on Jesus' laptop with an unreleased Hive version.
 * Druid is used as a library (more or less).
-* Druid indexing service is not used for indexing (regular Hive MR is used instead).
+* Druid indexing service isn't used for indexing (regular Hive MR is used instead).
 * Druid broker is used for querying but there are plans to bypass the broker and access historical/real-time/indexing nodes directly. 
 Right now the broker might be a bottleneck.
 * [Apache Calcite](https://calcite.apache.org/docs/druid_adapter.html) is a key player in the integration.

@@ -7,7 +7,7 @@ header:
     caption: "[Unsplash](https://unsplash.com/@jakubskafiriak)"
 ---
 
-When you develop a distributed system, it is crucial to make it easy to test.
+When you develop a distributed system, it's crucial to make it easy to test.
 Execute tests in a controlled environment, ideally from your IDE.
 Long develop-test-develop cycle for complex systems could kill your productivity.
 Below you find my testing strategy for Spark and Spark Streaming applications.
@@ -28,9 +28,9 @@ Lots of moving parts, not so easy to configure and test.
 Even with automated provisioning implemented with Vagrant, Docker and Ansible.
 If you can't test everything, test at least the most important part of your application - transformations - implemented with Spark.
 
-Spark claims that it is friendly to unit testing with any popular unit test framework.
+Spark claims that it's friendly to unit testing with any popular unit test framework.
 To be strict, Spark supports rather lightweight integration testing, not unit testing, IMHO.
-But still it is much more convenient to test transformation logic locally, than deploying all parts on YARN.
+But still it's much more convenient to test transformation logic locally, than deploying all parts on YARN.
 
 There is a pull request [SPARK-1751](https://github.com/apache/spark/pull/1751) that adds "unit tests" support for Apache Kafka streams.
 Should we follow that way? Embedded ZooKeeper and embedded Apache Kafka are needed, the test fixture is complex and cumbersome.
@@ -166,7 +166,7 @@ object WordCount {
 
 ## Spark test
 
-Now it is time to implement our first test for WordCount transformation.
+Now it's time to implement our first test for WordCount transformation.
 The code of the test is very straightforward and easy to read.
 Single point of truth, the best documentation of your system, always up-to-date.
 
@@ -230,7 +230,7 @@ class ClockWrapper(ssc: StreamingContext) {
 ```
 
 Now the Spark Streaming test can be implemented in an efficient way.
-The test does not have to wait for the system clock and the test is implemented with millisecond precision.
+The test doesn't have to wait for the system clock and the test is implemented with millisecond precision.
 You can easily test your windowed scenario from the very beginning to very end.
 With the given\when\then structure you should be able to understand tested logic without further explanations.
 
@@ -295,9 +295,9 @@ With the given\when\then structure you should be able to understand tested logic
 ```
 
 One comment to `Eventually` trait usage.
-The trait is needed because Spark Streaming is a multithreaded application, and results are not computed immediately.
+The trait is needed because Spark Streaming is a multithreaded application, and results aren't computed immediately.
 I found that 1 second timeout is enough for Spark Streaming to calculate the results.
-The timeout is not related to batch, slide or window duration.
+The timeout isn't related to batch, slide or window duration.
 
 ## Summary
 

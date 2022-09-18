@@ -38,7 +38,7 @@ You can even consider to avoid Servlet container at all and run your application
 * Spring Framework enhancements are driven by real use cases not by vendor marketing team or mad scientist. 
 Did you try to use JPA2 Criteria? Or maybe do you prefer Query DSL instead?
 
-* One size does not fit all, that's the point. Pure JEE is very limited but Spring Framework ecosystem is extraordinary rich.
+* One size doesn't fit all, that's the point. Pure JEE is very limited but Spring Framework ecosystem is extraordinary rich.
 
 I attended JEE evangelists sessions on several conferences around the world. And I can confirm, they did great speaks. 
-It seams that pure JEE works for them, what is strange that it does not work for other specialists I know ;-)  
+It seams that pure JEE works for them, what is strange that it doesn't work for other specialists I know ;-)  

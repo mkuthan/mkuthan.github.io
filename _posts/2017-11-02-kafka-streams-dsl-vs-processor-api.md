@@ -38,7 +38,7 @@ It offers an easy way to express stream processing transformations as an alterna
 an application in a programming language such as Java.
 Moreover, processing transformations written in SQL-like language can be highly optimized
 by the execution engine without any developer effort. 
-KSQL was released recently, and it is still at a very early development stage.
+KSQL was released recently, and it's still at a very early development stage.
 
 In the first part of this blog post I'll define a simple but still realistic business problem to solve.
 Then you will learn how to implement this use case with Kafka Stream DSL 
@@ -152,7 +152,7 @@ ClientKey("bob"), EvPv("ev2", "add to cart", None, None)
 
 ## Kafka Stream DSL
 
-Now we are ready to implement the above use case with recommended the Kafka Streams DSL. 
+Now we're ready to implement the above use case with recommended the Kafka Streams DSL. 
 The code could be optimized, but I would like to present the canonical way of using DSL
 without exploring DSL internals.
 All examples are implemented using the latest Kafka Streams 1.0.0 version.
@@ -187,13 +187,13 @@ val pvByPvKeyStream = pvStream.selectKey(pvToPvKeyMapper)
 ```
 
 Join event with page-view streams by selected previously `PvKey`, 
-left join is used because we are interested also in events without matched page view.
+left join is used because we're interested also in events without matched page view.
 Every incoming event is enriched by matched page view into `EvPv` structure.
  
 The join window duration is set to a reasonable 10 minutes.
 It means that Kafka Streams will look for messages in "event" and "page view" sides of the join 
 10 minutes in the past and 10 minutes in the future (using event time, not wall-clock time).
-Because we are not interested in late events out of the defined window, 
+Because we aren't interested in late events out of the defined window, 
 the retention is 2 times longer than the window, to hold events from the past and the future.
 If you are interested why 1 milliseconds needs to be added to the retention, 
 please ask Kafka Streams authors, not me ;)
@@ -223,7 +223,7 @@ so duplicates in the enriched click-stream could cause inaccuracies.
 The most straightforward deduplication method is to compare incoming events with state of previously processed events.
 If the event has been already processed it should be skipped.
 
-Unfortunately DSL does not provide a "deduplicate" method out-of-the-box but similar logic might be implemented with 
+Unfortunately DSL doesn't provide a "deduplicate" method out-of-the-box but similar logic might be implemented with 
 "reduce" operation.
 
 First we need to define deduplication window.
@@ -328,7 +328,7 @@ Be aware that this is calculation for simple join of events and pages views gene
 local e-commerce platform in central Europe country (~20M clients). 
 I could also easily imagine much more complex stream topology, with tens of repartitions, joins and aggregations.
 
-If you are not careful, your Kafka Streams application could easily kill your Kafka cluster.
+If you aren't careful, your Kafka Streams application could easily kill your Kafka cluster.
 At least our application did it once. Application deployed on 10 [Mesos](http://mesos.apache.org/) 
 nodes (4CPU, 4GB RAM) almost killed Kafka cluster deployed also on 10 physical machines (32CPU, 64GB RAM, SSD).
 Application was started after some time of inactivity and processed 3 hours of retention in 5 minutes
@@ -390,7 +390,7 @@ val pvWindowStore = Stores.windowStoreBuilder(
 ```
 
 The first optimization you could observe is that in our scenario only one window store is created - for page views.
-The window store for events is not needed, if the page-view is collected by the system after the event it does not trigger a new join.
+The window store for events isn't needed, if the page-view is collected by the system after the event it doesn't trigger a new join.
 
 Add page view processor to the topology and connect with page view source upstream.
 
@@ -529,7 +529,7 @@ new Topology()
 
 If a processor requires access to the store this fact must be registered.
 It would be nice to have statically typed Topology API for registration, 
-but now if the store is not connected to the processor, 
+but now if the store isn't connected to the processor, 
 or is connected to the wrong store,
 a runtime exception is thrown during application startup.
 
@@ -574,7 +574,7 @@ e.g. Scala compiler could not infer KStream generic types.
 As always, working code is published on 
 [https://github.com/mkuthan/example-kafkastreams](https://github.com/mkuthan/example-kafkastreams).
 The project is configured with [Embedded Kafka](https://github.com/manub/scalatest-embedded-kafka)
-and does not require any additional setup. 
+and doesn't require any additional setup. 
 Just uncomment either DSL or Processor API version, run main class and observe enriched stream of events on the console.
 
 Enjoy!

@@ -31,11 +31,11 @@ For comparison, the same job on the same data before the incident:
 
 What could we do? Open a ticket to the Dataproc support that we observe degradation of managed service?
 
-Wrong! If the root cause of the issue is not in Dataproc itself, Dataproc support does not help.
+Wrong! If the root cause of the issue isn't in Dataproc itself, Dataproc support doesn't help.
 {: .notice--warning}
 
 When you fill the ticket for given Google Cloud Platform service (e.g. Dataproc), the support takes a look at internal metrics and logs of **this** service.
-The support does not know anything about your Spark jobs deployed on the Dataproc cluster.
+The support doesn't know anything about your Spark jobs deployed on the Dataproc cluster.
 So if the root cause of the issue is in another part of Google Cloud Platform ecosystem, Dataproc support is ... useless.
 
 ## Troubleshooting
@@ -43,7 +43,7 @@ So if the root cause of the issue is in another part of Google Cloud Platform ec
 We know that our Spark jobs read data from [BigQuery](https://cloud.google.com/bigquery) using [Storage Read API](https://cloud.google.com/bigquery/docs/reference/storage), 
 make some transformations and save the results to [Cloud Storage](https://cloud.google.com/storage).
 
-If the job is not able to read data at full speed, the CPU utilization will be low. 
+If the job isn't able to read data at full speed, the CPU utilization will be low. 
 It could be a Storage Read API issue or some network issue between Dataproc cluster and BigQuery.
 
 Fortunately, almost every Google Cloud Platform API provides the following [metrics](https://cloud.google.com/apis/docs/monitoring):
@@ -59,7 +59,7 @@ Let's look at Storage Read API latency metrics:
 
 ![Storage Read API by-method latency](/assets/images/2022-07-07-gcp-api-usage/storage-read-api-latency-2.png)
 
-The strong evidence that the root cause of the Spark job slowness is not in Dataproc but in BigQuery service!
+The strong evidence that the root cause of the Spark job slowness isn't in Dataproc but in BigQuery service!
 {: .notice--info}
 
 We filled a ticket to the BigQuery support, and quickly got confirmation that there is the global issue.

@@ -18,7 +18,7 @@ Context switching is cheap.
 
 > Everything should be written
 
-You can always use written document as a evidence, even if it is not valid anymore.
+You can always use written document as a evidence, even if it isn't valid anymore.
 
 > Don't allow to communicate development team with customers / end user
 
@@ -46,7 +46,7 @@ Less than 100% test code coverage is a failure.
 
 > Resources
 
-Resources can be easily replaced, it does not matter that valuable employees have left.
+Resources can be easily replaced, it doesn't matter that valuable employees have left.
  
 We easily find next resource.
 

@@ -27,7 +27,7 @@ The solution was a repository with compiled and versioned dependencies.
 Almost everything was compiled statically with minimal dependency to the core system libraries like stdc.
 
 Right now I build projects using Maven repositories and artifacts.
-But it is not enough for twelve-factor app, and I fully agree.
+But it isn't enough for twelve-factor app, and I fully agree.
 My next step should be using "Infrastructure as a code" principle in practice.
 
 ## 3. Config
@@ -44,7 +44,7 @@ Never again, I fully agree that binary should be environment independent. Keep c
 
 I do not fully understand this chapter. 
 What I understood is that I should separate my domain from attached resources (local and third party services).
-And it is what I have done many times:
+And it's what I have done many times:
 
 * Externalize connection configuration
 * Use Anti Corruption Layer between my domain and infrastructure (e.g: hexagonal architecture)
@@ -57,7 +57,7 @@ And it is what I have done many times:
 The difference between build and release stages is somehow new for me. 
 My JEE applications are released and deployed to the Maven repository.
 The deployed WAR files are deployable on any environment, the configuration is externalized and applied during Maven WAR overlay process.
-The outcome of the overlay is not stored as a reference but maybe it should. The question is where to put release?
+The outcome of the overlay isn't stored as a reference but maybe it should. The question is where to put release?
 Again in the Maven repository or as a Bamboo build artifact?
 
 What I apply during the _run stage_ is the database schema migration using _Liquibase_ or _Flyway_ and it really works.

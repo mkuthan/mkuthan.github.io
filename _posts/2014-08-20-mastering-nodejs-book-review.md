@@ -67,7 +67,7 @@ Keep in mind that SSE is unidirectional from server to clients and requires funn
 ## Scaling on single node
 
 Spawning, forking child processes is easy, communication between parent and children processes is easy as well.
-Cluster module simplifies web application implementation for multi-core processors and it is very easy to understand and control.
+Cluster module simplifies web application implementation for multi-core processors and it's very easy to understand and control.
 
 ## Horizontal scaling
 
@@ -75,7 +75,7 @@ Keep shared state in horizontally scalable store, e.g: session data in Redis or 
 
 ## Apache Bench
 
-Command line tool for load/stress testing. Using JMeter or Gatling is not always the only way to perform simple test.
+Command line tool for load/stress testing. Using JMeter or Gatling isn't always the only way to perform simple test.
 
 ## UDP / Multicast
 
@@ -91,7 +91,7 @@ OMG - I used to debug application using console 10 years ago or so ;-)
 
 ## Express, Socket.io, Path 
 
-Implementing web application using Node.js only is feasible but with Express it is much easier.
+Implementing web application using Node.js only is feasible but with Express it's much easier.
 
 Be aware that there are thousands of web frameworks for Node.js on the market. Much more that for Java 10 years ago ;-)
 It seems that frameworks built around WebSocket and Single Page App should be the leaders.

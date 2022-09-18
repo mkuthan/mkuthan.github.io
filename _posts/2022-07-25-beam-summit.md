@@ -220,7 +220,7 @@ Devon Peticolas (principal engineer at Oden Technologies).
 
 ![Oden data trigger](/assets/images/2022-07-25-beam-summit/oden-trigger2.png)
 
-* Smoothing, see the original session it is hard to summarize concept in the single sentence
+* Smoothing, see the original session it's hard to summarize concept in the single sentence
 
 ![Oden smoothing](/assets/images/2022-07-25-beam-summit/oden-smoothing.png)
 
@@ -300,7 +300,7 @@ Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer
 
 * How to store [Orange LiveBox](https://en.wikipedia.org/wiki/Orange_Livebox) data into BigQuery (33TB of billed bytes daily)?
 * Initial architecture: data on GCS, on-finalize trigger, Dataflow streaming job notified from Pubsub, read files from GCS and store to BQ
-* It is not cheap stuff ;)
+* It isn't cheap stuff ;)
 * The optimization plan
 
 ![Optimization plan](/assets/images/2022-07-25-beam-summit/orange.png)
@@ -309,7 +309,7 @@ Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer
 * BigQuery batch loads did not work as well
 * N2 workers instead of N1
 * Smaller workers (n2-standard-8 instead of n2-standard-16)
-* Disabled autoscaling (the pipeline latency is not so important, Dataflow autoscaler policy can not be configured)
+* Disabled autoscaling (the pipeline latency isn't so important, Dataflow autoscaler policy can not be configured)
 * **USE BATCH INSTEAD OF STREAMING** if feasible
 
 ### Relational Beam: Process columns, not rows!
@@ -317,7 +317,7 @@ Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer
 [The session](https://2022.beamsummit.org/sessions/relational-beam/) was presented by 
 Andrew Pilloud and Brian Hulette (software engineers at Google, Apache Beam committers)
 
-* Beam is not relational, is row oriented, data is represented as bytes
+* Beam isn't relational, is row oriented, data is represented as bytes
 * What is needed: data schema, metadata of computation
 
 ![Relational](/assets/images/2022-07-25-beam-summit/relational.png)
@@ -368,7 +368,7 @@ To run thousands of data pipelines without coding and excessive operations.
 * Streaming pipelines are sexy but much more expensive (and complex) than batch pipelines.
 * Use existing tools like [PerfKit](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) for performance/cost evaluation. 
 Check Apache Beam [performance metrics](https://metrics.beam.apache.org) to compare different runners (e.g. if you want to migrate from JDK 1.8 to JDK 11).
-* Understand the framework and the runner internals, unfortunately it is necessary for troubleshooting. 
+* Understand the framework and the runner internals, unfortunately it's necessary for troubleshooting. 
 Be aware that Dataflow batch and streaming engines are developed by different engineering teams.
-* Cloud resources are not infinite, be prepared and define disaster recovery scenarios (e.g. fallback to more common machine types).
+* Cloud resources aren't infinite, be prepared and define disaster recovery scenarios (e.g. fallback to more common machine types).
 * Future is bright: Beam SQL, integration with ML frameworks, column oriented vectorized execution, new runners

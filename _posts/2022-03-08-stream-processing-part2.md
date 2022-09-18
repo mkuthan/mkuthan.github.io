@@ -43,7 +43,7 @@ If the allowed gap between activities is shorter, e.g. for 5 minutes gap we will
 00:18:10 -> "checkout", "close app"
 ```
 
-This is an over-simplified aggregation example just for the blog academic purposes. Careful reader will notice that it does not scale at all. 
+This is an over-simplified aggregation example just for the blog academic purposes. Careful reader will notice that it doesn't scale at all. 
 All user activities during the session must fit into memory of the single machine.
 In real-world scenario the actions should be reduced into scalable [algebraic](https://en.wikipedia.org/wiki/Algebraic_structure) data structures, e.g: 
 
@@ -228,7 +228,7 @@ What if the gap between events is longer than ten minutes?
 ## Late activity without allowed lateness
 
 We have slowly moved into the more interesting scenarios.
-What happens if the late activity will be observed in the stream and the allowed lateness [is not explicitly defined](https://github.com/apache/beam/blob/v2.37.0/sdks/java/core/src/main/java/org/apache/beam/sdk/values/WindowingStrategy.java#L65)?
+What happens if the late activity will be observed in the stream and the allowed lateness [isn't explicitly defined](https://github.com/apache/beam/blob/v2.37.0/sdks/java/core/src/main/java/org/apache/beam/sdk/values/WindowingStrategy.java#L65)?
 
 ```scala
 "Late activity" should "be silently discarded" in runWithContext { sc =>
@@ -354,7 +354,7 @@ To accumulate activities from already fired panes the accumulation mode has to b
 * The `accumulationMode` parameter is set to `ACCUMULATING_FIRED_PANES`
 * The first session is produced as before
 * The session in the late pane contains all activities from already fired, on-time pane
-* Now, it is much easier to understand why late pane window starts at *00:00:00*
+* Now, it's much easier to understand why late pane window starts at *00:00:00*
 * There is also second on-time pane with all the events, the late event has closed the gap and the session with all observed activities is produced effectively
 
 The aggregation in `ACCUMULATING_FIRED_PANES` mode could effectively produce some duplicates.

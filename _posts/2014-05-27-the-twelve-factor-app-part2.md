@@ -8,7 +8,7 @@ This blog post is a continuation of [first part](http://mkuthan.github.io/blog/2
 
 ## 7. Port Binding
 
-> The twelve-factor app is completely self-contained and does not rely on runtime injection of a webserver into the execution environment to create a web-facing service.
+> The twelve-factor app is completely self-contained and doesn't rely on runtime injection of a webserver into the execution environment to create a web-facing service.
 
 I developed self-contained web application once, with embedded Jetty server. 
 There are many product with embedded web server on the market, e.g: Artifactory.
@@ -30,7 +30,7 @@ Just align to the system process management tools like upstart.
 
 I faced disposability issues, when I was developing applications hosted on GAE (Google App Engine).
 Forget about any heavy duty frameworks on GAE, the startup process must be really light. 
-In general it is problematic in JVM world. 
+In general it's problematic in JVM world. 
 Startup time of the JVM is significant itself, and JMV must spin up our application as well.
 If I could compare JVM startup performance to the node.js there is a huge difference. 
 
@@ -65,6 +65,6 @@ For almost all my web application, I embedded BSH web servlet (Bean Shell Consol
 It isn't full fledged REPL like this one from Scala but still usable.
 Oh, I forgot to mention about H2 web servlet, also embedded into most of my application.
 
-Sometimes it is much easier to expose some admin functionality as JMX beans.
+Sometimes it's much easier to expose some admin functionality as JMX beans.
 You can use Jolokia as REST JMX connector and easily prepare admin console using a few line of HTML and JavaScript. 
 

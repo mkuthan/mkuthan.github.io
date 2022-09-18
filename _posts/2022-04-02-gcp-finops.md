@@ -26,7 +26,7 @@ FinOps is a very broad term, but what is especially important from a data engine
 * Cost is introduced as a regular metric of every data pipeline.
   More data and more processing power cause higher costs.
 * To optimize the costs you have to know detailed billing of every cloud resource.
-  It does not make any sense to optimize the least expensive part of the system.
+  It doesn't make any sense to optimize the least expensive part of the system.
 * Cost analysis becomes a part of [definition of done](https://www.agilealliance.org/glossary/definition-of-done/).
   After major changes you should also check the billings for any regression.
 * Premature cost optimization is the root of all evil.
@@ -112,7 +112,7 @@ Imagine a project with a dozen different data pipelines using the same type of c
 As a data engineer I'm interested in the total costs of the selected data pipeline.
 Then I need to have an ability to drill down into the cost of every single resource used by this pipeline.
 
-Resource oriented costs reports are not sufficient, they do not provide necessary insight into the data pipelines.
+Resource oriented costs reports aren't sufficient, they do not provide necessary insight into the data pipelines.
 {: .notice--info}
 
 ## Data pipeline oriented costs tracking
@@ -148,15 +148,15 @@ Below you can find the labeling convention I have created in my company:
 * **allegro__sc_id** - Every Allegro library, application or data pipeline is registered in the internal service catalog. 
   This is a central repository of metadata like business/technical owners, responsible team, issue tracker etc.
   The perfect identifier for cloud resources labeling.
-* **allegro__job_name** - Every data pipeline could consist of many jobs, so the service identifier is not enough to identify every part of the pipeline.
+* **allegro__job_name** - Every data pipeline could consist of many jobs, so the service identifier isn't enough to identify every part of the pipeline.
   Job names are also more convenient to use than synthetic service identifiers. 
   As you will see later, many dashboards are organized around the jobs names.
-* **allegro__branch_name** - When you develop and test a new feature it is handy to assign the branch/feature name as a label.
+* **allegro__branch_name** - When you develop and test a new feature it's handy to assign the branch/feature name as a label.
   You will exactly know the cost of the experimentation phase for this feature/branch.
   It is also quite useful during major upgrades, to verify that after change the job is still as cost-effective as before.
   Deploy the copy of the job aside the current production, and compare the costs using this label.
 
-I also realized very quickly that billing export does not provide any built-in labels for the well-known resources like BigQuery datasets, Pubsub topics or Cloud Storage buckets.
+I also realized very quickly that billing export doesn't provide any built-in labels for the well-known resources like BigQuery datasets, Pubsub topics or Cloud Storage buckets.
 To mitigate this limitation the following additional labels are defined for the cloud resources used by the data pipelines:
 
 * **allegro__topic_name** - The name of the Pubsub topic, apply the label to every topic and subscription
@@ -175,7 +175,7 @@ In the end, applying the labels for all resources in the cloud is a huge effort,
 
 The overview dashboard provides a short manual for newcomers and the total costs of all projects.
 It also gives full transparency, you can easily compare the costs of every project in the company.
-I've found that it is also a quite effective method to motivate the teams for doing the optimizations.
+I've found that it's also a quite effective method to motivate the teams for doing the optimizations.
 Nobody wants to be at the top.
 
 The overview page is the landing page, at the very beginning data engineer should select the project he/she is interested in.
@@ -258,11 +258,11 @@ Right now you should have a much better understanding of the difference between 
 The final reports may look relatively simple but this is easier said than done.
 
 * How to automate labeling to avoid gaps in the reports?
-* What if the GCP product does not support labels at all?
-* What if the labels set on the resources for unknown reasons are not available in the billing export?
+* What if the GCP product doesn't support labels at all?
+* What if the labels set on the resources for unknown reasons aren't available in the billing export?
 * How to track costs of resources created automatically by managed GCP services? 
-  Even if we set labels on the service itself they are not propagated to the underlying resources.
-* What if you are using the libraries like Apache Beam or Apache Spark, and the API for setting labels is not publicly exposed?
+  Even if we set labels on the service itself they aren't propagated to the underlying resources.
+* What if you are using the libraries like Apache Beam or Apache Spark, and the API for setting labels isn't publicly exposed?
 * There is also a shared infrastructure like Cloud Composer or Cloud Logging, they also generate significant costs.
 
 Let's tackle all identified challenges one by one.
@@ -288,7 +288,7 @@ the costs of all queries are just aggregated under "BigQuery / Analysis" SKU.
 Fortunately all BigQuery jobs are reported in the BigQuery [information schema](https://cloud.google.com/bigquery/docs/information-schema-jobs).
 In the information schema you can find the query expression and "total_bytes_billed" column with billed bytes.
 As long as cost per TiB is well [known](https://cloud.google.com/bigquery/pricing#on_demand_pricing), the final cost of the query may be estimated. 
-Instead of labeling every single query it is easier to prepare the estimated costs report based on queries found in the information schema.
+Instead of labeling every single query it's easier to prepare the estimated costs report based on queries found in the information schema.
 
 ![BigQuery jobs dashboard](/assets/images/2022-04-02-gcp-finops/bigquery-jobs.webp)
 
@@ -312,7 +312,7 @@ All costs are aggregated under "BigQuery Storage API / [Write | Read]" SKUs,
 very similar situation to the BigQuery Jobs when all costs go to the "Analysis" SKU.
 There is an [open issue](https://issuetracker.google.com/185163366) in the bug tracker.
 
-Unfortunately, BigQuery Storage API does not expose any details in the BigQuery information schema to estimate the costs like for BigQuery jobs.
+Unfortunately, BigQuery Storage API doesn't expose any details in the BigQuery information schema to estimate the costs like for BigQuery jobs.
 I do not understand how the BigQuery Storage API has got GA status if such limitations still exist.
 
 I have not found any workaround to estimate the costs for BigQuery Storage API, yet. 
@@ -321,18 +321,18 @@ Be sure to let me know if you know any.
 
 ### BigQuery 3rd party APIs
 
-The most data pipelines are not implemented within the BigQuery API directly but with some 3rd party, higher level APIs.
+The most data pipelines aren't implemented within the BigQuery API directly but with some 3rd party, higher level APIs.
 The high level APIs should expose the underlying BigQuery API for setting the labels.
-But in reality it is not always true.
+But in reality it isn't always true.
 
-* Apache Beam still does not support job labels on BigQuery read/write transforms [BEAM-9967](https://issues.apache.org/jira/browse/BEAM-9967)
+* Apache Beam still doesn't support job labels on BigQuery read/write transforms [BEAM-9967](https://issues.apache.org/jira/browse/BEAM-9967)
 * BigQuery Spark Connector has recently got the support for setting job labels [PR-586](https://github.com/GoogleCloudDataproc/spark-bigquery-connector/pull/568)
 * Spotify Scio has support for the labels for the long time, but only if the Scio specific BigQuery connector is used [PR-3375](https://github.com/spotify/scio/pull/3375)
 
 ### BigQuery tables
 
 Do you know why BigQuery report for storage costs is organized around datasets, not tables?
-Because the labels on the BigQuery tables are not available in the billing export, only labels from datasets are exported.
+Because the labels on the BigQuery tables aren't available in the billing export, only labels from datasets are exported.
 Due to this limitation, I have many fine-grained datasets in the project, just to get proper accountability.
 
 Please vote for the following [issue](https://issuetracker.google.com/issues/227218385) if you need costs tracking on the table level.
@@ -367,14 +367,14 @@ Below you find the number of log entries from my production environment for the 
 As you can see, a lot of logs come from the Dataproc ephemeral clusters.
 The logging from the cluster [may be enabled or disabled](https://cloud.google.com/dataproc/docs/guides/logging), nothing in between.
 The best thing you can do is to apply [exclusion filters](https://cloud.google.com/logging/docs/routing/overview#exclusions) on the log router. 
-Filtered logs are not counted in the billings.
+Filtered logs aren't counted in the billings.
 
 If you have any other practices for shared infrastructure cost optimizations, let me know in the comments.
 {: .notice--info}
 
 ## Summary
 
-I fully realize that FinOps discipline is not easy to adopt for data engineers.
+I fully realize that FinOps discipline isn't easy to adopt for data engineers.
 Finally, we would like to develop data pipelines, not to think about billings, budgets and overspending.
 
 But in the public cloud era there is no choice, you have to monitor costs of the data pipelines in exactly the same way as you monitor overall health, latency or throughput.
