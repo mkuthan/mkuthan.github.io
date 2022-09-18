@@ -58,6 +58,9 @@ defaults:
 # additional folders to process
 include: ["_pages"]
 
+# exclude project readme from publication
+exclude: ["README.md"]
+
 # kramdown, see: https://kramdown.gettalong.org/documentation.html
 markdown: kramdown
 kramdown:
