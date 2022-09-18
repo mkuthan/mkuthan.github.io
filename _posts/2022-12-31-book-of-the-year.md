@@ -17,7 +17,12 @@ What were the evaluation criteria when I rated the book?
 * Must give me a motivation for further experimentation and growth
 * It should provide future-proof knowledge, even if the technology are passing away 
 
-However, I do not expect smooth reading, sophisticated style, brilliant anecdotes or funny pictures.
+Cons:
+
+* Language quirks: "after mobile feature was shoehorned into a hairball of code written primarily for server"
+* Many authors with different writing styles
+* A lot of duplication between chapters
+
 
 # TODO
 
