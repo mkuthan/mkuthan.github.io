@@ -1,7 +1,8 @@
 ---
 title: Release It! - book review
 date: 2014-06-21
-tags: [Books]
+tags: [Software Engineering, Architecture]
+categories: [Books]
 ---
 
 Recently I read excellent book _Release It!_ written by Michael Nygard. 

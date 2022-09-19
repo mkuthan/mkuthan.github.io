@@ -1,7 +1,8 @@
 ---
 title: "Apache BigData Europe"
 date: 2016-11-18
-tags: [Conferences]
+tags: [Apache Kafka, Apache Flink, Apache Spark]
+categories: [Conferences]
 tagline: Seville
 header:
     overlay_image: /assets/images/2016-11-18-apache-bigdata-europe/joan-oger-PWrNP4bQHB4-unsplash.webp

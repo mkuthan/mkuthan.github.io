@@ -1,7 +1,7 @@
 ---
 title: "Code coverage for managers and developers"
 date: 2012-12-03
-tags: [Code coverage]
+tags: [Software Engineering]
 ---
 
 From time to time, people ask me what code coverage by tests should be. Does 60% mean that project is healthy? Or maybe the goal should be 70% or 80%?

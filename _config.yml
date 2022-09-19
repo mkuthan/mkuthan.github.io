@@ -98,15 +98,21 @@ analytics:
   google:
     tracking_id: "UA-50832428-2"
 
-# tag archives using jekyll-archives, see: https://github.com/jekyll/jekyll-archives
+# tag and category archives using jekyll-archives, see: https://github.com/jekyll/jekyll-archives
 tag_archive:
   type: liquid
   path: /tags/
+category_archive:
+  type: liquid
+  path: /categories/
 
 jekyll-archives:
   enabled:
     - tags
+    - categories
   layouts:
     tag: archive-taxonomy
+    category: archive-taxonomy
   permalinks:
     tag: /tags/:name/
+    category: /categories/:name/

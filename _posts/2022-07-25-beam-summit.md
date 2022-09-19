@@ -1,7 +1,8 @@
 ---
 title: "Apache Beam Summit 2022"
 date: 2022-07-07
-tags: [Conferences, Apache Beam]
+tags: [Apache Beam, GCP]
+category: [Conferences]
 tagline: "Austin"
 header:
     overlay_image: /assets/images/2022-07-25-beam-summit/mj-tangonan-wKfTNWaDYgs-unsplash.webp

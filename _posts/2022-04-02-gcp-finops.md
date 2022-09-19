@@ -1,7 +1,7 @@
 ---
 title: "FinOps for data pipelines on Google Cloud Platform"
 date: 2022-04-02
-tags: [FinOps, GCP]
+tags: [Software Engineering, GCP]
 header:
     overlay_image: /assets/images/2022-04-02-gcp-finops/katie-harp-w45gZMWrJWc-unsplash.webp
     caption: "[Unsplash](https://unsplash.com/@katieharp)"

@@ -1,7 +1,7 @@
 ---
 title: "How to document your professional experiences"
 date: 2013-03-21
-tags: [Learning]
+tags: [Software Engineering]
 ---
 
 Have you considered what is important for prospective employer? 

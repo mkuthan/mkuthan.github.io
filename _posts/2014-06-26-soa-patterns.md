@@ -1,7 +1,8 @@
 ---
 title: SOA Patterns - book review
 date: 2014-06-26
-tags: [Books, Architecture]
+tags: [Architecture]
+categories: [Books]
 ---
 
 ## Overview

@@ -1,7 +1,7 @@
 ---
 title: "Long-running Spark Streaming jobs on YARN cluster"
 date: 2016-09-30
-tags: [Apache Spark, Apache Hadoop]
+tags: [Stream Processing, Apache Spark, Apache Hadoop]
 header:
     overlay_image: /assets/images/2016-09-30-spark-streaming-on-yarn/oktay-yildiz-ZvxMNELAVDU-unsplash.webp
     caption: "[Unsplash](https://unsplash.com/@oktayyildiz)"

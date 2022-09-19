@@ -1,7 +1,8 @@
 ---
 title: Mastering Node.js - book review
 date: 2014-08-20
-tags: [Books, Node.js]
+tags: [Node.js]
+categories: [Books]
 ---
 
 ## Overview
@@ -96,7 +97,7 @@ Implementing web application using Node.js only is feasible but with Express it'
 Be aware that there are thousands of web frameworks for Node.js on the market. Much more that for Java 10 years ago ;-)
 It seems that frameworks built around WebSocket and Single Page App should be the leaders.
 
-## Interesing resources
+## Interesting resources
 
 [Comparing the Performance of Web Server Architectures](https://cs.uwaterloo.ca/~brecht/papers/getpaper.php?file=eurosys-2007.pdf)
 
