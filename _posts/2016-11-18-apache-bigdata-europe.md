@@ -1,7 +1,7 @@
 ---
 title: "Apache BigData Europe"
 date: 2016-11-18
-tags: [Apache Kafka, Apache Flink, Apache Spark]
+tags: [Apache Kafka, Apache Flink, Apache Spark, Apache Hadoop]
 categories: [Conferences]
 tagline: Seville
 header:
