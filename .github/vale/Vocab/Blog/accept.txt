@@ -20,7 +20,7 @@ Jira
 JVM
 LGTM
 Macbook
-monorepo
+[Mm]onorepo
 PID
 PTransform
 Pubsub

@@ -1,5 +1,5 @@
 ---
-title: "Spark and Kafka integration patterns - part 1"
+title: "Spark and Kafka integration patterns -- part 1"
 date: 2015-08-06
 tags: [Stream Processing, Apache Spark, Apache Kafka, Scala]
 ---

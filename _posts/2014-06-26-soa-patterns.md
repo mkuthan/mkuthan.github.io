@@ -1,5 +1,5 @@
 ---
-title: SOA Patterns - book review
+title: SOA Patterns -- book review
 date: 2014-06-26
 tags: [Architecture]
 categories: [Books]
@@ -68,7 +68,7 @@ Encrypt what should be secured on the protocol level (privacy, integrity, impers
 
 ### Service Firewall 
 
-Security on the network level. Expose only what is really needed.
+Security on the network level. Expose only what's really needed.
 
 ### Identity Provider
 
@@ -131,7 +131,7 @@ Funny names for real problems when SOA is used:
 
 For sure it's worth reading but I expected more from Arnon Rotem-Gal-Oz. 
 Sometimes I felt that author covers only the top of the iceberg, when demons are under the hood.
-The sample code fragments aren't very helpful, with high accidental complexity but do not clearly show the problem. 
+The sample code fragments aren't very helpful, with high accidental complexity but don't clearly show the problem. 
 
 
 In addition the book was published in 2012 but you will easily realized that author had started ten years before, some parts seems to be outdated.

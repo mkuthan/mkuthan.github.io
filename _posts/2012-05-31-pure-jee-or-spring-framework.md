@@ -5,7 +5,7 @@ tags: [Architecture, Java, Spring]
 ---
 
 During my career as J2EE and JEE software developer I have been trying to use pure JEE two o three times. 
-And I decided to do not repeat this exercise any more, it would be waste of my precious time. 
+And I decided to don't repeat this exercise any more, it would be waste of my precious time. 
   
 Below you can find short but quite comprehensive summary (based on [Ilias Tsagklis](http://www.javacodegeeks.com/2012/05/why-i-will-continue-to-use-spring-and.html)):
 
@@ -41,4 +41,4 @@ Did you try to use JPA2 Criteria? Or maybe do you prefer Query DSL instead?
 * One size doesn't fit all, that's the point. Pure JEE is very limited but Spring Framework ecosystem is extraordinary rich.
 
 I attended JEE evangelists sessions on several conferences around the world. And I can confirm, they did great speaks. 
-It seams that pure JEE works for them, what is strange that it doesn't work for other specialists I know ;-)  
+It seams that pure JEE works for them, what's strange that it doesn't work for other specialists I know ;-)  

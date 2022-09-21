@@ -1,7 +1,7 @@
 ---
 title: "FinOps for data pipelines on Google Cloud Platform"
 date: 2022-04-02
-tags: [Software Engineering, GCP]
+tags: [Software Engineering, GCP, Dataflow, Dataproc]
 header:
     overlay_image: /assets/images/2022-04-02-gcp-finops/katie-harp-w45gZMWrJWc-unsplash.webp
     caption: "[Unsplash](https://unsplash.com/@katieharp)"
@@ -19,7 +19,7 @@ I will share how to keep costs of the streaming and batch pipelines on Google Cl
 
 ## FinOps overview
 
-FinOps is a very broad term, but what is especially important from a data engineer perspective?
+FinOps is a very broad term, but what's especially important from a data engineer perspective?
 
 * You take ownership of the cloud resources usage and costs.
   With the great power of the public cloud comes great responsibility.
@@ -112,7 +112,7 @@ Imagine a project with a dozen different data pipelines using the same type of c
 As a data engineer I'm interested in the total costs of the selected data pipeline.
 Then I need to have an ability to drill down into the cost of every single resource used by this pipeline.
 
-Resource oriented costs reports aren't sufficient, they do not provide necessary insight into the data pipelines.
+Resource oriented costs reports aren't sufficient, they don't provide necessary insight into the data pipelines.
 {: .notice--info}
 
 ## Data pipeline oriented costs tracking
@@ -127,19 +127,19 @@ The recipe:
 2. Apply the labels for ALL resources used by the data pipelines
 3. Configure the [cloud billing data export](https://cloud.google.com/billing/docs/how-to/export-data-bigquery) to BigQuery
 4. Craft Datastudio report aligned with the developed labeling convention, there is public [example](https://cloud.google.com/billing/docs/how-to/visualize-data) available
-5. Figure out the workarounds for GCP products which do not provide necessary details in the billing data export
+5. Figure out the workarounds for GCP products which don't provide necessary details in the billing data export
 
 I would say that 2) and 5) are the toughest parts of the journey.
 {: .notice--info}
 
 ### Labeling convention
 
-There is no silver bullet -- perfect cloud resources labeling conventions do not exist.
+There is no silver bullet -- perfect cloud resources labeling conventions don't exist.
 You have to develop your own labeling convention, but I would like to share a few best practices:
 
 * Introduce labeling naming convention at the very beginning
 * Prepare and share the documentation, it should be clear for any adopter how to apply and how to interpret the labels
-* Add a new labels only when they are really needed, too many labels do not help
+* Add a new labels only when they are really needed, too many labels don't help
 * Continuously check the billing report for the resources without labels and fill the gaps
 * Last but not least, use the prefix for all custom labels to easily recognize them from the built-in ones
 
@@ -153,7 +153,7 @@ Below you can find the labeling convention I have created in my company:
   As you will see later, many dashboards are organized around the jobs names.
 * **allegro__branch_name** - When you develop and test a new feature it's handy to assign the branch/feature name as a label.
   You will exactly know the cost of the experimentation phase for this feature/branch.
-  It is also quite useful during major upgrades, to verify that after change the job is still as cost-effective as before.
+  It's also quite useful during major upgrades, to verify that after change the job is still as cost-effective as before.
   Deploy the copy of the job aside the current production, and compare the costs using this label.
 
 I also realized very quickly that billing export doesn't provide any built-in labels for the well-known resources like BigQuery datasets, Pubsub topics or Cloud Storage buckets.
@@ -235,19 +235,19 @@ The next three dashboards are for the cost tracking of the most important "stora
 * Cloud storage used mainly by batch pipelines as a staging area
 
 On the BigQuery costs dashboard you can filter by the dataset name.
-It is very important when the data pipeline stores results into more than one dataset.
+It's very important when the data pipeline stores results into more than one dataset.
 The filtering is available only if the **allegro__dataset_name** label was set.
 
 ![BigQuery dashboard](/assets/images/2022-04-02-gcp-finops/bigquery.webp)
 
 On the Pubsub costs dashboard you can filter by the topic name.
-It is very important when the data pipeline publishes to or subscribes on many topics.
+It's very important when the data pipeline publishes to or subscribes on many topics.
 The filtering is available only if the **allegro__topic_name** label was set.
 
 ![Pubsub dashboard](/assets/images/2022-04-02-gcp-finops/pubsub.webp)
 
 On the Cloud Storage dashboard you can filter by the bucket name.
-It is very important when the data pipeline stores results into more than one bucket.
+It's very important when the data pipeline stores results into more than one bucket.
 The filtering is available only if the **allegro__bucket_name** label was set.
 
 ![Cloud Storage dashboard](/assets/images/2022-04-02-gcp-finops/gcs.webp)
@@ -279,8 +279,8 @@ The action will set all required labels every time when the job is deployed.
 * Develop thin wrappers for [Dataproc Apache Operators](https://airflow.apache.org/docs/apache-airflow-providers-google/stable/operators/cloud/dataproc.html) or even better the [decorators](https://airflow.apache.org/docs/apache-airflow/stable/howto/create-custom-decorator.html).
 They are responsible for setting all required labels when the batch job is deployed into Cloud Composer.
 
-Looks complex and very time-consuming? It is for sure, but for dynamic resources like BigQuery queries the situation is even worse.
-If you do not set any label on the [JobConfiguration](https://developers.google.com/resources/api-libraries/documentation/bigquery/v2/java/latest/com/google/api/services/bigquery/model/JobConfiguration.html#setLabels-java.util.Map-)
+Looks complex and very time-consuming? It's for sure, but for dynamic resources like BigQuery queries the situation is even worse.
+If you don't set any label on the [JobConfiguration](https://developers.google.com/resources/api-libraries/documentation/bigquery/v2/java/latest/com/google/api/services/bigquery/model/JobConfiguration.html#setLabels-java.util.Map-)
 the costs of all queries are just aggregated under "BigQuery / Analysis" SKU. 
 
 ### BigQuery jobs
@@ -296,7 +296,7 @@ Although, there are at least two disadvantages:
 
 * No direct connection with the data pipelines, you have to manually "assign" the query to the pipeline. 
   Not a big deal for the data engineer who is the author of the queries but annoying if the pipeline executes a dozen of them.
-* Daily or hourly jobs do not generate exactly the same query on every run. 
+* Daily or hourly jobs don't generate exactly the same query on every run. 
   The time related expressions are typically varying and need to be normalized
 
 You can use the following regular expression for query normalization, all datetime expressions are replaced by the static placeholder:
@@ -313,7 +313,7 @@ very similar situation to the BigQuery Jobs when all costs go to the "Analysis" 
 There is an [open issue](https://issuetracker.google.com/185163366) in the bug tracker.
 
 Unfortunately, BigQuery Storage API doesn't expose any details in the BigQuery information schema to estimate the costs like for BigQuery jobs.
-I do not understand how the BigQuery Storage API has got GA status if such limitations still exist.
+I don't understand how the BigQuery Storage API has got GA status if such limitations still exist.
 
 I have not found any workaround to estimate the costs for BigQuery Storage API, yet. 
 Be sure to let me know if you know any.
@@ -344,7 +344,7 @@ and configure [timestamp attribute](https://beam.apache.org/releases/javadoc/2.3
 additional tracking subscription is created.
 See the [official documentation](https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub#high_watermark_accuracy) 
 or [stack overflow question](https://stackoverflow.com/questions/42169004/what-is-the-watermark-heuristic-for-pubsubio-running-on-gcd) for more details.
-Unfortunately the tracking subscriptions do not get labels from Dataflow jobs nor original subscriptions.
+Unfortunately the tracking subscriptions don't get labels from Dataflow jobs nor original subscriptions.
 
 Please vote for the following [issue](https://issuetracker.google.com/issues/227218387) if you need 100% labels coverage on the Pubsub subscriptions.
 
@@ -378,7 +378,7 @@ I fully realize that FinOps discipline isn't easy to adopt for data engineers.
 Finally, we would like to develop data pipelines, not to think about billings, budgets and overspending.
 
 But in the public cloud era there is no choice, you have to monitor costs of the data pipelines in exactly the same way as you monitor overall health, latency or throughput.
-The built-in cloud billing tools organized around cloud services and SKUs do not help a lot.
+The built-in cloud billing tools organized around cloud services and SKUs don't help a lot.
 To get detailed costs reports you have put a lot of effort to create data pipeline oriented costs monitoring.
 
 I hope that this blog post gives you some ideas on how to develop your own toolset for applying FinOps discipline.

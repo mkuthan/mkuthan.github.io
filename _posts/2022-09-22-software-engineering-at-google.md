@@ -1,5 +1,5 @@
 ---
-title: "Software Engineering at Google - book review"
+title: "Software Engineering at Google -- book review"
 date: 2022-09-22
 tags: [Software Engineering]
 categories: [Books]
@@ -37,7 +37,7 @@ Even if you can set the higher value, it would break because many libraries assu
 
 > You may choose to not change things, but you need to be capable.
 
-* Think about product lifecycle, how do you maintain your code for as long as it needs to keep working.
+* Think about product lifecycle, how do you keep your code for as long as it needs to keep working.
 * Code must be easy to read, easy to understand and easy to maintain.
 * Manual tasks should be scalable (linear or better) in terms of human input.
 * When did you deploy a service last time?
@@ -45,7 +45,7 @@ Even if you can set the higher value, it would break because many libraries assu
 
 **[Monorepo](https://research.google/pubs/pub45424/)**
 
-* Monorepo is a key enabler for many other tools and practices, for example: large scale refactorings.
+* Monorepo is a key enabler for many other tools and practices, for example: large scale refactoring.
 * It's much easier to extract a repository from the monorepo than to combine separated repositories into the monorepo.  
 
 **Blaze**
@@ -103,7 +103,7 @@ See also: [google-java-format](https://github.com/google/google-java-format), [Y
 > and saves them time and effort in the long run.
 
 * Documentation as a code (avoid wiki).
-* Technical writers do not scale (but are useful if you don't know the readers).
+* Technical writers don't scale (but are useful if you don't know the readers).
 * Use link shortener to create links to the canonical sources.
 
 **Deprecation strategy**
@@ -114,7 +114,7 @@ See also: [google-java-format](https://github.com/google/google-java-format), [Y
 * Deprecation is hard, but a without deprecation strategy you will be stuck.
 * Code is a liability, not an asset.
 * Deprecation during design like for a [power plant](https://www.iaea.org/publications/5716/design-and-construction-of-nuclear-power-plants-to-facilitate-decommissioning).
-* Advisory deprecation (hope is not a strategy) vs compulsory deprecation
+* Advisory deprecation (hope isn't a strategy) vs compulsory deprecation
 * Prevent backsliding
  
 **[Code search](https://developers.google.com/code-search)**
@@ -128,7 +128,7 @@ Global code search with full understanding of the structure and references, grea
 
 See also a primary building block of the code search: [kythe.io](https://kythe.io)
 
-**Large scale changes (LSC)**
+**Large Scale Changes (LSC)**
 
 > No matter the size of your organization, it’s reasonable to think about how you would make these kinds of sweeping 
 > changes across your collection of source code. 
@@ -146,7 +146,7 @@ See [Sourcegraph](https://about.sourcegraph.com/batch-changes).
 * Make data driven decisions, but in reality decisions are made based on a mix of data and assumptions.
 * Start with goals and signals even if you can't measure them.
 * Before measuring, ask if results are actionable.
-  If you can't do anything with the results, do not measure at all.
+  If you can't do anything with the results, don't measure at all.
 
 **Engineering manager vs. Tech lead vs. Tech lead manager**
 
@@ -175,7 +175,7 @@ Tech lead manager:
 * Own *general problem* not a *particular tool*, well-chosen problem can be evergreen.
 * Limiting engineers’ power and flexibility can improve their productivity.
 * Losing the ego, trust the team.
-* Be a Zen Master, ask questions and lead smb to the answer.
+* Be a Zen Master, ask questions and lead somebody to the answer.
 * Don't ignore low performers.
 * Fight with haunted graveyards.
 

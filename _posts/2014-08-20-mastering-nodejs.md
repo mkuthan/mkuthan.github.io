@@ -1,5 +1,5 @@
 ---
-title: Mastering Node.js - book review
+title: Mastering Node.js -- book review
 date: 2014-08-20
 tags: [Node.js]
 categories: [Books]
@@ -18,7 +18,7 @@ I really like Node.js REPL, experimentation is as easy as with Scala.
 ## Event loop
 
 Elegant simulation of concurrency. Do you remember Swing event dispatch thread and `invokeLater()` method? Event loop is the same.
-It is crucial to understand events handling order:
+It's crucial to understand events handling order:
 
 * emitted event
 * timers
@@ -32,7 +32,7 @@ Process is a first class citizen. The easiest (and cheapest) way to achieve conc
 ## Real-time applications
 
 I enhanced drawing board presented in the book. It was great fun together with my 2 years old son :-)
-Scalable server side implementation is presented below, I could not even imagine Java version. 
+Scalable server side implementation is presented below, I couldn't even imagine Java version. 
 
 ``` javascript
 var express = require('express')

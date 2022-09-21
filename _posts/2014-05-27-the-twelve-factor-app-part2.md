@@ -1,5 +1,5 @@
 ---
-title: "The Twelve-Factor App - part 2"
+title: "The Twelve-Factor App -- part 2"
 date: 2014-05-27
 tags: [Architecture]
 ---
@@ -21,7 +21,7 @@ After hell of JBoss class loader issues it seems to be the correct way to run th
 
 Using processes instead of threads is controversial in JVM world.
 But I agree that you can not scale out using threads only. 
-What is also interesting, you should never daemonize process or write PID file. 
+What's also interesting, you should never daemonize process or write PID file. 
 Just align to the system process management tools like upstart.
 
 ## 9. Disposability
@@ -45,7 +45,7 @@ Clear for me, test your production like environment as often as possible to mini
 If the production database is Oracle, use Oracle XE for local development, not MySQL or H2.
 If the production applications server is JBoss, use JBoss locally or Apache Tomcat at last resort.
 Use the same JVM with similar memory settings if feasible.
-If you deploy your application on Linux, do not use Windows for local development.
+If you deploy your application on Linux, don't use Windows for local development.
 Virtualization or lightweight containers are your friends.
 And so on ...
 

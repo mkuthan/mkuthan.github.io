@@ -1,5 +1,5 @@
 ---
-title: Release It! - book review
+title: Release It! -- book review
 date: 2014-06-21
 tags: [Software Engineering, Architecture]
 categories: [Books]
@@ -25,9 +25,9 @@ There is no particular order of the notes, perhaps there are duplications too.
  
 * _3rd party vendors_ - their client library often sucks, you can not define timeouts, you can not configure threading correctly. 
 
-* _method wait_ - always provide the timeout, do not use method ``Object.wait()``.
+* _method wait_ - always provide the timeout, don't use method ``Object.wait()``.
 
-* _massive email with deep links_ - do not send massive emails with deep links, bunch of requests to single resource could kill your application.
+* _massive email with deep links_ - don't send massive emails with deep links, bunch of requests to single resource could kill your application.
  
 * _threads ratio_ - check front-end and back-end threads ratio, the system is as fast as its slowest part.
 
@@ -37,7 +37,7 @@ There is no particular order of the notes, perhaps there are duplications too.
 
 * _JVM crash_ - typical after OOM, when native code is trying to allocate memory - ``malloc()`` returns error but only few programmers handle this error.
 
-* _Collection size_ - do not use unbounded collections, huge data set kills your application eventually.
+* _Collection size_ - don't use unbounded collections, huge data set kills your application eventually.
 
 * _Outgoing communication_ - define timeouts.
 
@@ -63,7 +63,7 @@ There is no particular order of the notes, perhaps there are duplications too.
 
 * _JSP and GC_ - be aware of ``noclassgc`` JVM option, compiled JSP files use perm gen space.
 
-* _http sessions_ - users do not understand the concept, do not keep shopping card in the session :-)
+* _http sessions_ - users don't understand the concept, don't keep shopping card in the session :-)
 
 * _whitespaces_ - remove any unnecessary whitespace from the pages, in large scale it saves a lot of traffic.
 
@@ -89,7 +89,7 @@ There is no particular order of the notes, perhaps there are duplications too.
 
 * _virtual IP_ - always configure virtual IP, your configuration will be much more flexible.
 
-* _technical accounts_ - do not share accounts between services, it would be security flaws.
+* _technical accounts_ - don't share accounts between services, it would be security flaws.
 
 + _cluster configuration verification_ - periodically check configuration on the cluster nodes, even if the configuration is deployed automatically.
 
@@ -97,7 +97,7 @@ There is no particular order of the notes, perhaps there are duplications too.
 
 * _configuration property names_ - based on function not nature (e.g: hostname is too generic).
 
-* _graceful shutdown_ - do not terminate existing business transations.
+* _graceful shutdown_ - don't terminate existing business transations.
 
 * _thread dumps_ - prepare scripts for that, during accident time is really precious (SLAs).
  

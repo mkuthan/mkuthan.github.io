@@ -28,7 +28,7 @@ Developers are only for writing code based on given specifications.
 
 Devs should not be allowed into the production system, they can break something. 
 
-Ops do not have to know anything about systems they care.
+Ops don't have to know anything about systems they care.
 
 > Improvement
 

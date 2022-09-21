@@ -54,7 +54,7 @@ Pablo Estrada (software engineer at Google, PMC member).
 * Runner optimizations: fusion, flatten sinking, combiner lifting
 * Interesting papers, they help to understand Dataflow runner principles: [Photon](https://research.google/pubs/pub41318/), [MillWheel](https://research.google/pubs/pub41378/)
 * Batch vs streaming: same controller, but data path is different. Different engineering teams, no plans to unify.
-* Batch bundle: 100-1000 elements vs. streaming bundle: < 10 elements (when pipeline is up-to-date)
+* Batch bundle: 100--1000 elements vs. streaming bundle: < 10 elements (when pipeline is up-to-date)
 * Controlling batches: [GroupIntoBatches](https://beam.apache.org/releases/javadoc/current/org/apache/beam/sdk/transforms/GroupIntoBatches.html)
 * In streaming EACH element has a key (implicit or explicit)
 
@@ -195,7 +195,7 @@ Streaming log ingestion - [Sparrow](https://blog.twitter.com/engineering/en_us/t
 
 * E2E latency - up to 13 minutes instead of hours
 * One Beam Job and Pubsub Subscription per dataset per transformation (again seems to be very expensive)
-* Decreased job resource usage by 80-86%  via removing shuffle in BigQuery IO connector
+* Decreased job resource usage by 80--86%  via removing shuffle in BigQuery IO connector
 * Reduced worker usage by 20% via data (batches) compression on Pubsub
 * Optimized schema conversion logic (Thrift -> Avro -> TableRow)
 
@@ -253,7 +253,7 @@ Israel Herraiz and Paul Balm (strategic cloud engineers at Google).
 Zeeshan (cloud engineer).
 
 * Side input (for streaming engine stored in BigTable)
-* Util apache_beam.utils.shared.Shared (python only)
+* Util `apache_beam.utils.shared.Shared` (python only)
 * Stateful DoFn (per key and window), define elements TTL for the global window
 * External cache
 
@@ -294,7 +294,7 @@ Peter Coyle (Head of Risk Technology Engineering Excellence at HSBC) and Raj Sub
 
 ![Dataflow disaster recovery planning](/assets/images/2022-07-25-beam-summit/hsbc.png)
 
-### Optimizing a Dataflow pipeline for cost efficiency: lessons learned at Orange
+### Optimizing a Dataflow pipeline for cost efficiency: Lessons learned at Orange
 
 [The session](https://2022.beamsummit.org/sessions/optimizing-cost-efficiency/) was presented by 
 Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer at Orange).
@@ -307,7 +307,7 @@ Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer
 ![Optimization plan](/assets/images/2022-07-25-beam-summit/orange.png)
 
 * Storage Write API instead on Streaming Inserts
-* BigQuery batch loads did not work as well
+* BigQuery batch loads didn't work as well
 * N2 workers instead of N1
 * Smaller workers (n2-standard-8 instead of n2-standard-16)
 * Disabled autoscaling (the pipeline latency isn't so important, Dataflow autoscaler policy can not be configured)
@@ -319,14 +319,14 @@ Jérémie Gomez (cloud consultant at Google) and Thomas Sauvagnat (data engineer
 Andrew Pilloud and Brian Hulette (software engineers at Google, Apache Beam committers)
 
 * Beam isn't relational, is row oriented, data is represented as bytes
-* What is needed: data schema, metadata of computation
+* What's needed: data schema, metadata of computation
 
 ![Relational](/assets/images/2022-07-25-beam-summit/relational.png)
 
-* Batched DoFn (does not exist yet) https://s.apache.org/batched-dofns
+* Batched DoFn (doesn't exist yet) https://s.apache.org/batched-dofns
 * Projection pushdown (currently for BigQueryIO.TypedRead only; 2.38 batch, 2.41 streaming)
-* Do not use `@ProcessContext` - it deserializes everything, use `@FieldAccess` instead
-* Use relational transforms: beam.Select, beam.GroupBy
+* Don't use `@ProcessContext` - it deserializes everything, use `@FieldAccess` instead
+* Use relational transforms: `beam.Select`, `beam.GroupBy`
 
 ### Scaling up pandas with the Beam DataFrame API
 
@@ -368,8 +368,8 @@ Below you could find a few takeaways from the sessions:
 To run thousands of data pipelines without coding and excessive operations. 
 * Streaming pipelines are sexy but much more expensive (and complex) than batch pipelines.
 * Use existing tools like [PerfKit](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) for performance/cost evaluation. 
-Check Apache Beam [performance metrics](https://metrics.beam.apache.org) to compare different runners (e.g. if you want to migrate from JDK 1.8 to JDK 11).
+Check Apache Beam [performance metrics](https://metrics.beam.apache.org) to compare different runners (for example if you want to migrate from JDK 1.8 to JDK 11).
 * Understand the framework and the runner internals, unfortunately it's necessary for troubleshooting. 
 Be aware that Dataflow batch and streaming engines are developed by different engineering teams.
-* Cloud resources aren't infinite, be prepared and define disaster recovery scenarios (e.g. fallback to more common machine types).
+* Cloud resources aren't infinite, be prepared and define disaster recovery scenarios (fallback to more common machine types).
 * Future is bright: Beam SQL, integration with ML frameworks, column oriented vectorized execution, new runners
