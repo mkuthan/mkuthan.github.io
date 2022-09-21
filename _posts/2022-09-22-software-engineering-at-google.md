@@ -114,7 +114,9 @@ See also: [google-java-format](https://github.com/google/google-java-format), [Y
 * Deprecation is hard, but a without deprecation strategy you will be stuck.
 * Code is a liability, not an asset.
 * Deprecation during design like for a [power plant](https://www.iaea.org/publications/5716/design-and-construction-of-nuclear-power-plants-to-facilitate-decommissioning).
-
+* Advisory deprecation (hope is not a strategy) vs compulsory deprecation
+* Prevent backsliding
+ 
 **[Code search](https://developers.google.com/code-search)**
 
 Global code search with full understanding of the structure and references, greatly simplifies development.
@@ -169,11 +171,16 @@ Tech lead manager:
 **Tips and tricks**
 
 * Delegate but get your hands dirty.
-* Always seek to replace yourself, always be leaving.
+* Always seek to replace yourself, always be leaving, avoid bus factor.
 * Own *general problem* not a *particular tool*, well-chosen problem can be evergreen.
 * Limiting engineers’ power and flexibility can improve their productivity.
+* Losing the ego, trust the team.
+* Be a Zen Master, ask questions and lead smb to the answer.
+* Don't ignore low performers.
+* Fight with haunted graveyards.
 
-**Other tools and libraries**
+**Tools and libraries**
 
-* [Go](https://go.dev) - The next programming language I'm going to learn.
-* [Abseil](https://abseil.io) - C++ library drawn from the most fundamental pieces of Google’s internal codebase.
+* [Go](https://go.dev) -- The next programming language I'm going to learn
+* [Abseil](https://abseil.io) -- C++ library drawn from the most fundamental pieces of Google’s internal codebase
+* [xg2xg](https://github.com/jhuangtw/xg2xg) -- by ex-googlers for ex-googlers, a lookup table of similar tech & services
