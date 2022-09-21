@@ -1,5 +1,5 @@
 ---
-title: "Apache BigData Europe"
+title: "Apache BigData Europe 2016"
 date: 2016-11-18
 tags: [Apache Kafka, Apache Flink, Apache Spark, Apache Hadoop]
 categories: [Conferences]
