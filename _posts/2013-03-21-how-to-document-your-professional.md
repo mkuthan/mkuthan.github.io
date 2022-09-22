@@ -1,11 +1,11 @@
 ---
 title: "How to document your professional experiences"
 date: 2013-03-21
-tags: [Learning]
+tags: [Software Engineering]
 ---
 
-Have you considered what is important for prospective employer? 
-What is the most valuable information source about your professional experience?
+Have you considered what's important for prospective employer? 
+What's the most valuable information source about your professional experience?
 How to document that you are an expert in software engineering?  
   
 Below you can find some of my tricks:  

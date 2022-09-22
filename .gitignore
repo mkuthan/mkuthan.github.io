@@ -1,5 +1,6 @@
 .github/vale
-!.github/styles/Vocab/Blog
+!.github/styles/Local
+!.github/styles/Vocab
 _site
 .sass-cache
 .jekyll-cache

@@ -67,10 +67,10 @@ I collected a few non-functional and functional common requirements together wit
 |Web request thread isn't blocked          |no|yes|yes|yes
 |Mail aggregation, scheduled sending, etc.  |no|no|yes|limited
 |Control over SMTP requests throttle        |no|limited|limited|yes
-|Redelivery policy, do not lost messages if SMTP is down |no|no|limited|yes
+|Redelivery policy, don't lost messages if SMTP is down |no|no|limited|yes
 |Monitoring                                 |no|no|yes|yes
   
-I would start with "Database Queue" approach, at least if JMS isn't already used in the project or you do not have to send thousands of emails. 
+I would start with "Database Queue" approach, at least if JMS isn't already used in the project or you don't have to send thousands of emails. 
 "Direct" method isn't an option at all IMHO.  
   
 Separate part of the subject is to how to create email body. In most situation

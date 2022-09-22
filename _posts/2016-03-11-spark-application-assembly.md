@@ -37,7 +37,7 @@ The build result could be assembled into `target/scala-2.11/myapp-assembly-1.0.j
 
 You can configure many aspects of SBT Assembly Plugin like custom merge strategy
 but I found that it's much easier to keep the defaults and follow the plugin conventions.
-And what is even more important you don't have to change defaults to get correct, deployable application binary assembled by the plugin.
+And what's even more important you don't have to change defaults to get correct, deployable application binary assembled by the plugin.
 
 ## Provided dependencies scope
 
@@ -65,7 +65,7 @@ The list of the Spark dependencies is always project specific.
 SQL, Hive, MLib, GraphX and Streaming extensions are defined only for reference.
 All defined dependencies are required by local build to compile code and run
 [tests](http://mkuthan.github.io/blog/2015/03/01/spark-unit-testing/). 
-So they could not be removed from the build definition in the ordinary way because it will break the build at all.
+So they couldn't be removed from the build definition in the ordinary way because it will break the build at all.
 
 SBT Assembly Plugin comes with additional dependency scope "provided". 
 The scope is very similar to [Maven provided scope](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html).
@@ -96,7 +96,7 @@ The exclusion rules for "spark-streaming-kafka" dependency will be discussed lat
 Ok, but how to recognize which libraries are part of Spark distribution assembly?
 There is no simple answer to this question.
 Look for `spark-assembly-*-1.6.0.jar` file on the cluster classpath,
-list the assembly content and verify what is included and what is not.
+list the assembly content and verify what's included and what's not.
 In the assembly on my cluster I found core, sql, hive, mlib, graphx and streaming classes are embedded but not integration with Kafka.
 
 ```
@@ -187,7 +187,7 @@ val sparkVersion = "1.6.0"
 
 Again, "log4j" transitive dependency of Kafka needs to be explicitly excluded. 
 I also found that marker class from weird Spark "unused" artifact breaks default SBT Assembly Plugin merge strategy.
-It is much easier to exclude this dependency than customize merge strategy of the plugin.
+It's much easier to exclude this dependency than customize merge strategy of the plugin.
 
 ## Where is Guava?
 

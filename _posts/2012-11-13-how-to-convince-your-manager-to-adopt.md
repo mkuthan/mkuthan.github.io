@@ -1,7 +1,7 @@
 ---
 title: "How to convince your manager to adopt Git"
 date: 2012-11-13
-tags: [Git]
+tags: [Git, Software Engineering]
 ---
 
 Distributed Concurrent Versions Systems (DCVSs) like Git or Mercurial has
@@ -26,7 +26,7 @@ branch/merge overhead.
 commercial version control, Git has proved itself. Git embodies a well
 architected, high performance implementation of distributed version control.
 Git is powerful, so it should be used with respect, but that power enables
-agile engineering workflows that simply cannot exist with other tools. Git’s
+agile engineering workflows that simply can't exist with other tools. Git’s
 popularity is supported by the existence of GitHub. GitHub combines public and
 private Git repositories, social networking, and a host of other innovative
 tools and approaches.  

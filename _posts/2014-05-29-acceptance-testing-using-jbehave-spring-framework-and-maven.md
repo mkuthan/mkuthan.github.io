@@ -27,7 +27,7 @@ But I found many traps when I was trying to apply acceptance tests automation in
 You will get much better results if you will collaborate closely with product owner, end users and customer. 
 You could write test scenario only by yourself but perhaps you will fail. 
 When you are able to work on test scenarios together, you could think about tools and automation.
-Do not let that tools interfere in collaboration, all team members must be committed to acceptance tests contribution.
+Don't let that tools interfere in collaboration, all team members must be committed to acceptance tests contribution.
 
 > Acceptance Testing needs to be done using user interface.
 
@@ -37,13 +37,13 @@ User interface tends to be changed frequently, business logic not so often.
 I don't want to change my tests when business logic stays unchanged, even if user interface has been changed significantly.
 
 User interface tests are very fragile and slow. You will lost one of the automated tests advantages: fast and precise feedback loop.
-It is really hard to setup and maintain the infrastructure for user interface testing.
+It's really hard to setup and maintain the infrastructure for user interface testing.
 
 > Everything should be tested.
 
 Acceptance tests are mainly for happy path scenarios verification. 
-Acceptance tests are expensive to maintain, so do not test corner cases, validation and error handling, on that level.
-Focus only on the relevant assertions for the given scenario, do not verify everything only because you can.
+Acceptance tests are expensive to maintain, so don't test corner cases, validation and error handling, on that level.
+Focus only on the relevant assertions for the given scenario, don't verify everything only because you can.
 
 
 ## Project build organization
@@ -291,7 +291,7 @@ Surefire plugin configuration in tests module
 ```
 
 In my setup _JBehave_ plugin will be responsible only for unpacking resources used by tests report. 
-I do not use plugin to run stories at all, I found better way to do that. It will be described later in the post.
+I don't use plugin to run stories at all, I found better way to do that. It will be described later in the post.
 
 JBehave plugin configuration in tests module
 
@@ -315,14 +315,14 @@ JBehave plugin configuration in tests module
 ## Spring Framework configuration
 
 The application implements shopping basket simplified functionality.
-Do not use my shopping basket implementation on production, it's only for this post educational purposes :-)
+Don't use my shopping basket implementation on production, it's only for this post educational purposes :-)
  
 The application is composed from three main packages: `domain`, `infrastructure` and `web`. 
 This convention comes from Domain Driven Design, you can read more in my post [DDD Architecture Summary](http://mkuthan.github.io/blog/2013/11/04/ddd-architecture-summary/).
 
 Each package is configured using _Spring Framework_ annotation support. 
 In general you should keep the configuration as modular as possible. 
-It is very important for testing, with modular configuration you can load only needed context and speed up tests execution.
+It's very important for testing, with modular configuration you can load only needed context and speed up tests execution.
 
 DomainConfiguration.java
 
@@ -391,7 +391,7 @@ public class AcceptanceTestsConfiguration {
 ```
 
 Meta annotation support is also used to define very specific annotations, one for _JBehave_ test steps, second for _JBehave_ converters.
-Well crafted annotations are better than generic `@Component`, even if they do not provide additional features. 
+Well crafted annotations are better than generic `@Component`, even if they don't provide additional features. 
 
 Steps.java
 
@@ -423,11 +423,11 @@ _JBehave_ provides plenty of integration methods with _Spring Framework_ and I s
 I have following requirements:
 
 * The ability to run single story from my IDE.
-* Meet Open Close Principle. When I add new story I do not want to modify any existing file. I want to add new one(s).
+* Meet Open Close Principle. When I add new story I don't want to modify any existing file. I want to add new one(s).
 * Have a full control over _JBehave_ configuration.
 
 To meet my requirements some base class for all tests must be defined.
-I do not like the idea to use inheritance here but I did not find better way. 
+I don't like the idea to use inheritance here but I didn't find better way. 
 
 Let me describe `AbstractSpringJBehaveStory` step by step:
 
@@ -470,7 +470,7 @@ public InjectableStepsFactory stepsFactory() {
 ```
 
 Configure _JBehave_ to load steps and converters from _Spring Framework_ context. 
-What is also important, the steps and converters are managed by _Spring Framework_, you can inject whatever you want.
+What's also important, the steps and converters are managed by _Spring Framework_, you can inject whatever you want.
 
 ``` java
 @Override
@@ -627,7 +627,7 @@ public class MoneyConverter {
 
 The class `MoneyConverter` is annotated with `@Converter` annotation defined before. 
 `StringUtils` is a utility class from _Spring Framework_, look at the API documentation how many helpful utils classes are implemented in the framework.
-If the value cannot be converted, _JBehave_ `ParameterConvertionFailed` exception is thrown.
+If the value can't be converted, _JBehave_ `ParameterConvertionFailed` exception is thrown.
 
 The shopping cart related steps are implemented in `ShoppingCartSteps` class. 
 

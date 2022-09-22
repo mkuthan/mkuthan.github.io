@@ -1,5 +1,5 @@
 ---
-title: "Stream processing - part 1"
+title: "Stream processing -- part 1"
 date: 2022-01-28
 tags: [Stream Processing, Apache Beam, Scala]
 tagline: Apache Beam - fixed windows
@@ -225,7 +225,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 * If there are no input lines for a window *[00:01:00, 00:02:00)*, no results are produced
 * The example uses new assertion `inWindow` to check results only for the given pane 
 
-It is quite a problematic trait of the streaming pipelines for the frameworks.
+It's quite a problematic trait of the streaming pipelines for the frameworks.
 How to recognize if the pipeline is stale from the situation when everything works smoothly but there is no data for some period of time?
 It becomes especially important for joins, if there is no incoming data in one stream it can not block the pipeline forever.
 

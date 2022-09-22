@@ -11,7 +11,7 @@ I would love to only develop [streaming pipelines](/categories/stream-processing
 Today you will learn how to properly configure Google Cloud Platform scheduler -- [Cloud Composer](https://cloud.google.com/composer).
 
 The article is for *Cloud Composer* version `1.x` only.
-Why not use version `2.x`? It is a very good question, indeed.
+Why not use version `2.x`? It's a very good question, indeed.
 But the reality of real life has forced me to tune to the obsolete version.
 {: .notice--warning}
 
@@ -21,8 +21,8 @@ But the reality of real life has forced me to tune to the obsolete version.
 *Cloud Composer* is a magnitude easier to set up than vanilla *Apache Airflow*, but there are still some gotchas:
 
 * How many resources are allocated by the single *Apache Airflow* task?
-* How many concurrent tasks can be executed on the worker, what is a real worker capacity?
-* What is a total parallelism of the whole *Cloud Composer* cluster?
+* How many concurrent tasks can be executed on the worker, what's a real worker capacity?
+* What's a total parallelism of the whole *Cloud Composer* cluster?
 * How to choose the right virtual machine type and how to configure *Apache Airflow* to fully utilize the allocated resources?
 * What are the most important *Cloud Composer* performance metrics to monitor?
 
@@ -58,7 +58,7 @@ I would opt for the second, more practical option.
 
 For 12 concurrent running operators the workers' memory utilization increased from the steady state of 1.76GiB to 4.36GiB.
 We do have the first insight in our tuning journey: every operator allocates approximately `(4.36GiB - 1.76GiB) / 12 =~ 220MiB` of RAM.
-It is important that you should measure the task memory usage by yourself, all further calculations heavily depend on it.
+It's important that you should measure the task memory usage by yourself, all further calculations heavily depend on it.
 The memory usage might be also varying for different *Apache Airflow* operators.
 
 Whaaaat -- 220MiB allocated just for the REST call to the *Dataproc* cluster API?
@@ -93,7 +93,7 @@ So, for the standard virtual machines, allocatable memory should be as follows:
 | n2-standard-2  | (4GiB - 25%) + (4GiB - 20%) | 6.2GiB             |
 | n2-highmem-2   | 6.2GiB + (8GiB - 10%)       | 13.4GiB            |
 
-How does it look in practice? It is always worth checking because the real allocatable memory is a bit lower than in the calculations.
+How does it look in practice? It's always worth checking because the real allocatable memory is a bit lower than in the calculations.
 
 *n1-standard-1* virtual machines: 2.75GB (**2.56GiB**)
 ![Cloud Composer nodes for n1-standard-1](/assets/images/2022-03-15-gcp-cloud-composer-tuning/nodes-n1-standard-1.webp)
@@ -135,7 +135,7 @@ Or even if you know how to hack some of them, you should not - the future upgrad
 
 ![Cloud Composer pods](/assets/images/2022-03-15-gcp-cloud-composer-tuning/pods.webp)
 
-Do not rely on the reported requested memory, it's just garbage. 
+Don't rely on the reported requested memory, it's just garbage. 
 Just measure the maximum worker memory utilization on the clean *Cloud Composer* installation and add the result to the final estimate.
 
 ![Cloud Composer memory overhead](/assets/images/2022-03-15-gcp-cloud-composer-tuning/memory-overhead.webp)
@@ -186,7 +186,7 @@ In my 3-workers cluster scenario the following settings should be applied.
 | n2-standard-2 |               51 |                        17 |
 | n2-highmem-2  |              141 |                        47 |
 
-As you can see, *Cloud Composer* defaults do not match any of the presented worker types.
+As you can see, *Cloud Composer* defaults don't match any of the presented worker types.
 Defaults for the cluster of the smallest virtual machines are too optimistic, and I observed many pod evictions.
 For the virtual machines with 4GiB of RAM or more, the cluster with default settings is underutilized, you pay for nothing.
 {: .notice--info}

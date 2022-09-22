@@ -1,7 +1,8 @@
 ---
 title: "Apache BigData Europe 2016"
 date: 2016-11-18
-tags: [Conferences]
+tags: [Apache Kafka, Apache Flink, Apache Spark, Apache Hadoop]
+categories: [Conferences]
 tagline: Seville
 header:
     overlay_image: /assets/images/2016-11-18-apache-bigdata-europe/joan-oger-PWrNP4bQHB4-unsplash.webp
@@ -31,7 +32,7 @@ It would be also great to see [Spark Catalyst](http://people.csail.mit.edu/matei
 The concept of executing analytical queries (fast SQL on Impala) against a whole set of raw data (kept in Kudu) is unrealistic. 
 Cloudera gains mastery in keeping their own technologies alive (e.g: [Apache Flume](https://flume.apache.org/)).
 * [Apache Gearpump](https://gearpump.apache.org/) from Intel has lost its momentum. I really liked the idea of a distributed streaming framework built on Akka.
-* I was really surprised that the CSV format is heavily used and what is even worse, conference speakers still talk about it.
+* I was really surprised that the CSV format is heavily used and what's even worse, conference speakers still talk about it.
 * Unfortunately there was no session about [Apache Kylin](http://kylin.apache.org/), so sad. 
 
 ## “Stream processing as a foundational paradigm and Apache Flink's approach to it” by Stephan Ewen (Data Artisans)
@@ -172,7 +173,7 @@ See more:
 
 ## “Java memory leaks in modular environment” by Mark Thomas (Pivotal)
 
-* Did you remember “OutOfMemoryError: PermGen space” in Tomcat? It is mostly not Tomcat's fault.
+* Did you remember “OutOfMemoryError: PermGen space” in Tomcat? It's mostly not Tomcat's fault.
 * You should always set `-XX:MaxMetaspaceSize` in production systems.
 * Excellent memory leaks analysis live demo using YourKit profiler (leaks in awt, java2d, rmi, xml).
 [https://github.com/markt-asf/memory-leaks](https://github.com/markt-asf/memory-leaks)

@@ -1,7 +1,7 @@
 ---
 title: "Long-running Spark Streaming jobs on YARN cluster"
 date: 2016-09-30
-tags: [Apache Spark, Apache Hadoop]
+tags: [Stream Processing, Apache Spark, Apache Hadoop]
 header:
     overlay_image: /assets/images/2016-09-30-spark-streaming-on-yarn/oktay-yildiz-ZvxMNELAVDU-unsplash.webp
     caption: "[Unsplash](https://unsplash.com/@oktayyildiz)"
@@ -21,7 +21,7 @@ You will learn how to submit Spark Streaming application to a YARN cluster to av
 In the YARN cluster mode Spark driver runs in the same container as the Application Master, 
 the first YARN container allocated by the application.
 This process is responsible for driving the application and requesting resources (Spark executors) from YARN.
-What is important, Application Master eliminates the need for other process that runs during the application lifecycle.
+What's important, Application Master eliminates the need for other process that runs during the application lifecycle.
 Even if an edge Hadoop cluster node where the Spark Streaming job was submitted fails, the application stays unaffected. 
 
 To run Spark Streaming application in the cluster mode, ensure that the following parameters are given to spark-submit command:
@@ -32,7 +32,7 @@ spark-submit --master yarn --deploy-mode cluster
 
 Because Spark driver and Application Master share a single JVM, any error in Spark driver stops our long-running job.
 Fortunately it's possible to configure the maximum number of attempts that will be made to re-run the application.
-It is reasonable to set a higher value than default 2 (derived from YARN cluster property `yarn.resourcemanager.am.max-attempts`).
+It's reasonable to set a higher value than default 2 (derived from YARN cluster property `yarn.resourcemanager.am.max-attempts`).
 For me 4 works quite well, higher values may cause unnecessary restarts even if the reason of the failure is permanent.
 
 ```shell
@@ -163,7 +163,7 @@ but remember to log the following context fields:
 * Executor id (Spark driver is always 000001, Spark executors start from 000002)
 * YARN attempt (to check how many times Spark driver has been restarted)
 
-Log4j configuration with Logstash specific appender and layout definition should be passed to spark-submit command:
+Log4j's configuration with Logstash specific appender and layout definition should be passed to spark-submit command:
  
 ```shell
 spark-submit --master yarn --deploy-mode cluster \
@@ -258,7 +258,7 @@ You should increase executor memory or change `spark.memory.fraction` Spark prop
 driver.BlockManager.disk.diskSpaceUsed_MB
 ```
 
-* What is JVM memory utilization on Spark driver?
+* What's JVM memory utilization on Spark driver?
 
 ```
 driver.jvm.heap.used
@@ -275,7 +275,7 @@ driver.jvm.G1-Old-Generation.time
 driver.jvm.G1-Young-Generation.time
 ```
 
-* What is JVM memory utilization on Spark executors?
+* What's JVM memory utilization on Spark executors?
 
 ```
 [0-9]*.jvm.heap.used
@@ -349,7 +349,7 @@ Moreover there is no guarantee that a shutdown hook will be called by JVM at all
 
 At the time of writing this blog post the only confirmed way to gracefully shutdown Spark Streaming application on YARN
 is to notify somehow the application about planned shutdown, and then stop streaming context programmatically (but not from shutdown hook).
-Command `yarn application -kill` should be used only as a last resort if notified application did not stop after defined timeout.
+Command `yarn application -kill` should be used only as a last resort if notified application didn't stop after defined timeout.
 
 The application can be notified about planned shutdown using a marker file on HDFS (the easiest way), 
 or using a simple Socket/HTTP endpoint exposed on the driver (sophisticated way).

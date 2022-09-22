@@ -1,5 +1,5 @@
 ---
-title: "Stream processing - part 2"
+title: "Stream processing -- part 2"
 date: 2022-03-08
 tags: [Stream Processing, Apache Beam, Scala]
 tagline: Apache Beam - dynamic aggregation
@@ -163,7 +163,7 @@ The function `activitiesInSessionWindow()` should order the activities within th
 
 * The activities in the session are ordered by activity event time
 * The result element gets end-of-window time, ten minutes after the oldest event time 
-* The oldest event do not have to be necessarily the latest one
+* The oldest event don't have to be necessarily the latest one
 
 ## Continues long-lasting session
 

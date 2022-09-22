@@ -1,5 +1,5 @@
 ---
-title: "The Twelve-Factor App - part 1"
+title: "The Twelve-Factor App -- part 1"
 date: 2014-05-26
 tags: [Architecture]
 ---
@@ -42,13 +42,13 @@ Never again, I fully agree that binary should be environment independent. Keep c
 
 > The code for a twelve-factor app makes no distinction between local and third party services
 
-I do not fully understand this chapter. 
+I don't fully understand this chapter. 
 What I understood is that I should separate my domain from attached resources (local and third party services).
 And it's what I have done many times:
 
 * Externalize connection configuration
 * Use Anti Corruption Layer between my domain and infrastructure (e.g: hexagonal architecture)
-* Do not mix domain logic with infrastructure code.
+* Don't mix domain logic with infrastructure code.
 
 ## 5. Build, release, run
 

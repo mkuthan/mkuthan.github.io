@@ -9,8 +9,8 @@ tags: [DDD]
 [Domain Driven Design](https:///show/179133.Domain_Driven_Designwww.goodreads.com/book) by Eric Evans. 
 
 You have to read this book, period. From the very beginning to very end. 
-Do not stop reading after first part of the book, the part about strategic design is much more important.
-Study this book again and again. I did not read this book at once, it would be impossible mission. 
+Don't stop reading after first part of the book, the part about strategic design is much more important.
+Study this book again and again. I didn't read this book at once, it would be impossible mission. 
 Every time I back to this book I found something new, every single word in this book is important and brings some meaning.
 
 [Implementing Domain Driven Design](https://www.goodreads.com/book/show/15756865-implementing-domain-driven-design) by Vaughn Vernon.
@@ -25,7 +25,7 @@ Awesome!
 
 [Enterprise Patterns and MDA](https://www.goodreads.com/book/show/434826.Enterprise_Patterns_and_MDA) by Jim Arlow and Ila Neusandt
 
-Do not reinvent the wheel when you discover your domain model. At least for e-commerce :-) 
+Don't reinvent the wheel when you discover your domain model. At least for e-commerce :-) 
 Apply presented archetype patterns wisely and save your ass. 
 
 ## My examples
