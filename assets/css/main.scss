@@ -1,0 +1,29 @@
+---
+---
+@charset "utf-8";
+
+// same background color for the page and footer
+$footer-background-color: #f3f3f3 !default;
+
+@import "minimal-mistakes/skins/dirt";
+@import "minimal-mistakes";
+
+// more compact masthead, default padding is 1em
+.masthead__inner-wrap {
+    padding: 0.5em;
+}
+
+// larger avatar, default is 110px
+.author__avatar img {
+    max-width: 180px;
+}
+
+// less bulky previous/next, default padding is 1em 2em
+.pagination--pager {
+    padding: 0.5em 2em;
+}
+
+// more compact footer, default top margin is 2em
+.page__footer footer {
+    margin-top: 0;
+}

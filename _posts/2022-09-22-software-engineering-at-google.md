@@ -3,6 +3,7 @@ title: "Software Engineering at Google -- book review"
 date: 2022-09-22
 tags: [Software Engineering]
 categories: [Books]
+toc: false
 ---
 
 Recently I've read ["Software Engineering at Google"](https://www.oreilly.com/library/view/software-engineering-at/9781492082781/) 
