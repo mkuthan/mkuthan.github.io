@@ -25,6 +25,9 @@ author:
     - label: "LinkedIn"
       icon: "fab fa-fw fa-linkedin"
       url: "https://www.linkedin.com/in/marcinkuthan/"
+    - label: "Goodreads"
+      icon: "fab fa-fw fa-goodreads"
+      url: "https://www.goodreads.com/user/show/6902906-marcin-kuthan"
 
 # keep compatibility with the old blog platform layout
 permalink: /blog/:year/:month/:day/:title/
