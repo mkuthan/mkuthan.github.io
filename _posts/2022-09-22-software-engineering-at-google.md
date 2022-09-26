@@ -96,7 +96,8 @@ See also: [google-java-format](https://github.com/google/google-java-format), [Y
 * [DAMP over DRY](https://enterprisecraftsmanship.com/posts/dry-damp-unit-tests/)  
 * Test state not interactions.  
 * Don't mock, use stubs, fakes or real implementation.
-* Learn how to live with flaky tests 😂, they're inevitable at some scale.
+* Learn how to live with [flaky tests](https://testing.googleblog.com/2017/04/where-do-our-flaky-tests-come-from.html) 😂, 
+  they're inevitable at some scale.
 
 **Documentation**
 
