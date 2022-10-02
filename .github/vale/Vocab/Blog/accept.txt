@@ -12,6 +12,7 @@ gcloud
 GCs
 GCS
 getters
+Go
 Gofmt
 Hazelcast
 HPjmeter
