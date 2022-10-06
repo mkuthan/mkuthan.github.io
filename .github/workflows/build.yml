@@ -22,3 +22,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target_branch: 'gh-pages'
+
+      - uses: dieghernan/algolia-jekyll-action@v1
+        with:
+          APIKEY: '${{ secrets.ALGOLIA_API_KEY }}'

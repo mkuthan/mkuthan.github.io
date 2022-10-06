@@ -105,6 +105,15 @@ analytics:
   google:
     tracking_id: "UA-50832428-2"
 
+# search
+search: true
+search_provider: algolia
+algolia:
+  application_id: LAX5GUZX94
+  index_name: blog
+  search_only_api_key: 396f5e94cb52f3f9ede4a501ee307397
+  powered_by: false
+
 # tag and category archives using jekyll-archives, see: https://github.com/jekyll/jekyll-archives
 tag_archive:
   type: liquid
