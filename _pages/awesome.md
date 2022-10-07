@@ -1,9 +1,6 @@
 ---
 title: "My awesome notes"
 permalink: /awesome/
-layout: single
-author_profile: true
-classes: wide
 ---
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.

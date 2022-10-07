@@ -1,3 +1,9 @@
 main:
+  - title: "Archive"
+    url: /years/
+  - title: "Tags"
+    url: /tags/
+  - title: "Categories"
+    url: /categories/
   - title: "My awesome notes"
     url: /awesome/

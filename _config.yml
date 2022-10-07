@@ -57,12 +57,20 @@ defaults:
         overlay_image: /assets/images/overlay.webp
         caption: "[Unsplash](https://unsplash.com/@lucabravo)"
         overlay_filter: 0.2
+  # pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+      classes: wide
 
 # additional folders to process
-include: ["_pages"]
+include: [ "_pages" ]
 
 # exclude project readme from publication
-exclude: ["README.md"]
+exclude: [ "README.md" ]
 
 # kramdown, see: https://kramdown.gettalong.org/documentation.html
 markdown: kramdown
@@ -113,22 +121,3 @@ algolia:
   index_name: blog
   search_only_api_key: 396f5e94cb52f3f9ede4a501ee307397
   powered_by: false
-
-# tag and category archives using jekyll-archives, see: https://github.com/jekyll/jekyll-archives
-tag_archive:
-  type: liquid
-  path: /tags/
-category_archive:
-  type: liquid
-  path: /categories/
-
-jekyll-archives:
-  enabled:
-    - tags
-    - categories
-  layouts:
-    tag: archive-taxonomy
-    category: archive-taxonomy
-  permalinks:
-    tag: /tags/:name/
-    category: /categories/:name/
