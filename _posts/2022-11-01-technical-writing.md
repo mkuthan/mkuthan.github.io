@@ -43,7 +43,7 @@ Writer should focus on content and semantic not on look and feel.
 * Should be widely supported by developers tools.
 
 I used to write documentation using Latex and DocBook.
-For the last 10 years I've been using Markdown.
+Although, for the last 10 years I've been using Markdown.
 {: .notice--info}
 
 ## Markdown into static website conversion
@@ -88,29 +88,93 @@ LiveReload address: http://127.0.0.1:35729
 Every edit re-generates pages for modified files and reloads web browser.
 Very convenient way of writing documentation, you continuously observe the results of editing.
 
+### "Minimal Mistakes" theme
+
 For my personal blog I use [minimal-mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/) theme.
 Advertised as "perfect for hosting your personal site, blog, or portfolio."
 Look at <https://github.com/mkuthan/mkuthan.github.io> repository if you want to know,
-how to get minimal but still fully functional blog posts website like mine 😀
+how to get minimal but fully functional blog posts website like mine 😀
+
+### "Just the Docs" theme
 
 For technical documentation I prefer [just-the-docs](https://just-the-docs.github.io/just-the-docs/) theme.
+Below you can see documentation site of my team (please note that we're during migration from Wiki):
 
-TODO: screenshot example
+![Just The Docs Theme](/assets/images/2022-11-01-technical-writing/just-the-docs.png)
 
+I couldn't open source code of the repository but I will be glad to share with you essential configuration and customizations.
 
+`Gemfile` with Ruby dependencies for local run:
 
+```
+source 'https://artifactory.allegrogroup.com/artifactory/rubygems.org'
+
+gem 'github-pages', '~> 227', group: :jekyll_plugins
+```
+
+Jekyll configuration file `_config.yml`:
+
+```yaml
+title: "Foobar team documentation"
+url: https://foobar-documentation.gh.allegrogroup.com
+logo: /assets/images/foobar-logo.png
+remote_theme: just-the-docs/just-the-docs
+
+# color configuration for {: .note } and {: .important }
+callouts:
+  note:
+    color: blue
+  important:
+    color: red
+
+# enable mermaid graphs
+mermaid:
+  version: "9.1.7"
+
+# enable footer link for easy navigation to the top of the page
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# enable footer link to the GitHub editor for the page
+gh_edit_link: true
+gh_edit_repository: https://github.com/allegro-internal/foobar-documentation
+gh_edit_link_text: "Edit this page on GitHub"
+gh_edit_branch: "master"
+gh_edit_view_mode: "edit"
+
+# header links
+aux_links:
+  "Quick link":
+    - "https://c.qxlint/foobar"
+  "GitHub repository":
+    - "https://github.com/allegro-internal/foobar-documentation"
+aux_links_new_tab: true
+```
+
+Customized `_layout/page.html` to automatically generate table of contents on every page.
+See [jekyll-toc](https://github.com/allejo/jekyll-toc) repository for `_includes/toc.html` file.
+
+```
+---
+layout: default
+---
+<!-- generate TOC on every page, see _includes/toc.html -->
+{{ '{%' }} include toc.html html=content %}
+{{ '{{' }} content }}
+```
+
+That's all folks, Jekyll and "Just the Docs" theme do all the hard work and you could focus on writing the documentation. 
 
 ## Publication automation
 
-TODO: github pages (repo configuration, gh action)
-TODO: dependant bot (bundler, actions)
+* TODO: github pages (repo configuration, gh action)
+* TODO: dependant bot (bundler, actions)
 
 ## Bring editorial style guide to life
 
-TODO: vale (installation + configuration), PR comments
+* TODO: vale (installation + configuration)
+* TODO: PR comments
 
-## Documentation search
+## Markdown editor
 
-## Markdown editors
-
-TODO: intellij, vs code (extensions: jekyll run, code spell checker, vale)
+* TODO: Visual Studio Code (extensions: jekyll run, code spell checker, vale)
