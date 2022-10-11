@@ -1,11 +1,13 @@
-# Building
+# Personal blog
 
-1. Install `bundle install` or update `bundle update` dependencies 
+## Building
+
+1. Install `bundle install` or update `bundle update` dependencies
 2. Run `bundle exec jekyll serve --future`
 
-# Writing like a pro
+## Writing like a pro
 
 1. Install or update `vale sync` dictionaries
-2. Check the spelling `vale --minAlertLevel=error _posts/a_file.md`
+2. Check the spelling `vale --minAlertLevel=error _posts/file_to_check.md`
 
 See: [Microsoft Style Guide](https://docs.microsoft.com/en-us/style-guide) for rules explanation and examples.
