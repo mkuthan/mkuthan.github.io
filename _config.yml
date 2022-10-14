@@ -97,9 +97,10 @@ atom_feed:
 # open graph image for pages that don't have header.image in front matter
 og_image: /assets/images/overlay.webp
 
-# mermaid diagrams
+# mermaid diagrams, see: _includes/[header|footer]/custom.html
 mermaid:
-  src: 'https://unpkg.com/mermaid@9.1.3/dist/mermaid.min.js'
+  version: "9.1.3"
+  theme: "neutral"
 
 # post comments
 comments:
