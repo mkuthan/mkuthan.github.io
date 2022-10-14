@@ -167,10 +167,77 @@ That's all folks, Jekyll and "Just the Docs" theme do all the hard work and you 
 
 ## Publication automation
 
-* TODO: github pages (repo configuration, gh action)
-* TODO: dependant bot (bundler, actions)
+The ultimate goal of the automation is to deploy documentation on every commit or merge to the main branch of the repository.
+GitHub provides [GitHub pages](https://docs.github.com/en/pages), hosting service that takes HTML, CSS and JavaScript files
+from a repository, runs the files through a build process, and publishes a website.
+
+If you use only allowed Jekyll [plugins](https://pages.github.com/versions/) and 
+[remote theme](https://github.com/benbalter/jekyll-remote-theme), 
+GitHub publishes the site automatically.
+You only have to configure "Pages" section in the repository settings.
+
+![GitHub Pages Configuration](/assets/images/2022-11-01-technical-writing/github-pages.png)
+
+### GitHub actions
+
+If you are using plugins not supported by GitHub Pages, you have to build the website using GitHub actions.
+Below you can see the action I configured for my blog:
+
+```yaml
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: vendor/bundle
+          key: {{ '${{' }} runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
+          restore-keys: |
+            {{ '${{' }} runner.os }}-gems-
+
+      - uses: helaili/jekyll-action@v2
+        with:
+          token: {{ '${{' }} secrets.GITHUB_TOKEN }}
+          target_branch: 'gh-pages'
+```
+
+* To speed up the build configure cache for Ruby gems (line 14). Without the cache build takes 6 minutes, with cache 40--50 seconds.
+* Push generated website to `gh-pages` branch (line 24) and configure repository to watch for the documentation in that branch instead of master or main.
+
+According to [KISS](https://en.wikipedia.org/wiki/KISS_principle) principle, 
+I would prefer automated publication from GitHub Pages than custom action.
+{: .notice--info}
+
+### Dependant bot
+
+To keep Ruby gems and GitHub actions up-to-date configure [Dependant Bot](https://github.com/dependabot/dependabot-core) in `.github/dependantbot.yml` file:
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+```
 
 ## Bring editorial style guide to life
+
+You are a developer not a technical writer, so any automated writing assistance is more than welcome.
+ 
 
 * TODO: vale (installation + configuration)
 * TODO: PR comments
