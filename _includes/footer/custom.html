@@ -1,0 +1,7 @@
+{% if site.mermaid %}
+<script>
+  var config = { theme: '{{ site.mermaid.theme | "default" }}' };
+  mermaid.initialize(config);
+  window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+</script>
+{% endif %}
