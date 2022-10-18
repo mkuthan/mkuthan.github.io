@@ -9,9 +9,9 @@ I'm also a primary contributor to the documentation managed by my team.
 For example: on-boarding guide for new colleagues or a [tourist](https://blog.allegro.tech/2019/10/team-tourism-case-studies-1.html),
 technical guides, definition of done, [architecture decision records](https://adr.github.io) and more.
 As you perhaps already know, software engineers don't like writing technical documentation.
-And as you also know, high quality documentation has tremendous benefits for engineering team or organization.
+And as you also know, high quality documentation has tremendous benefits for the engineering team or organization.
 
-Today, I would like to share my experiences how to choose appropriate tools for writing better documentation.
+Today, I would like to share my experiences on how to choose appropriate tools for writing better documentation.
 
 ## Documentation as a code
 
@@ -33,12 +33,12 @@ I used to write documentation using [Atlassian Confluence](https://www.atlassian
 Use whatever plain text markup you like: Markdown, reStructuredText, AsciiDoc, DocBook or LaTeX.
 Check only, if the format meets the following criteria:
 
-* Must be readable using plain text editor.
+* Must be readable using a plain text editor.
 How to make a code review for non-readable formats?
 * Must be portable without worrying about compatibility.
 It's likely that you will change the publication platform several times during documentation life.
 * Must separate the content and its formatting.
-Writer should focus on content and semantic not on look and feel.
+Writers should focus on content and semantics not on look and feel.
 * Should be easy to learn, and forgive syntax mistakes.
 * Should be widely supported by developers tools.
 
@@ -49,12 +49,12 @@ Although, for the last 10 years I've been using Markdown.
 ## Markdown into static website conversion
 
 Markdown is perfect for a single README, but how to build documentation consists of many pages?
-Some parser must convert bunch of Markdown files into a beautiful website.
+Some parser must convert a bunch of Markdown files into a beautiful website.
 
 Again, use whatever converter you like but check if the following capabilities exist for generated website:
 
 * Website navigation, you must be able to see website structure and navigate between pages.
-* Many themes, you expect different layout for documentation website and different for personal blog.
+* Many themes, you expect different layout for documentation websites and different for personal blogs.
 * Table of contents, it simplifies navigation for complex pages.
 * Search capabilities, documentation without search isn't so useful.
 
@@ -85,7 +85,7 @@ LiveReload address: http://127.0.0.1:35729
   Server running... press ctrl-c to stop.
 ```
 
-Every edit re-generates pages for modified files and reloads web browser.
+Every edit re-generates pages for modified files and reloads the web browser.
 Convenient way of writing documentation, you continuously observe the results of editing.
 
 ### "Minimal Mistakes" theme
@@ -151,7 +151,7 @@ aux_links:
 aux_links_new_tab: true
 ```
 
-Customized `_layout/page.html` to automatically generate table of contents on every page.
+Customized `_layout/page.html` to automatically generate a table of contents on every page.
 See [jekyll-toc](https://github.com/allejo/jekyll-toc) repository for `_includes/toc.html` file.
 
 ```
@@ -175,7 +175,7 @@ from a repository, runs the files through a build process, and publishes a websi
 If you use only allowed Jekyll [plugins](https://pages.github.com/versions/) and
 [remote theme](https://github.com/benbalter/jekyll-remote-theme),
 GitHub publishes the site automatically.
-You only have to configure "Pages" section in the repository settings.
+You only have to configure the "Pages" section in the repository settings.
 
 ![GitHub Pages Configuration](/assets/images/2022-11-01-technical-writing/github-pages.png)
 
@@ -238,7 +238,7 @@ updates:
 ## Bring editorial style guide to life
 
 You are a developer not a technical writer, so any automated writing help is more than welcome.
-Recently I found excellent framework [vale.sh](https://vale.sh/) for creating and enforcing custom rules.
+Recently I found an excellent framework [vale.sh](https://vale.sh/) for creating and enforcing custom rules.
 Fortunately you don't have to develop the rules from scratch, *vale.sh* provides ready to use styles, for example:
 
 * [Microsoft writing style guide](https://docs.microsoft.com/en-us/style-guide/welcome/)
@@ -288,7 +288,7 @@ BasedOnStyles = Vale, Local, Microsoft, proselint
 * Apply built-in *vale.sh* rules, local rules and rules from installed packages, line 6
 
 Define custom vocabulary in `.github/vale/Vocab/Blog/accept.txt` and `.github/vale/Vocab/Blog/reject.txt` files.
-See [reference documentation](https://vale.sh/docs/topics/vocab/) for more details about syntax.
+See [reference documentation](https://vale.sh/docs/topics/vocab/) for more details about the syntax.
 
 Define custom rules in `.github/vale/Local` directory, for example Flesh Kincaid grade level rule looks as follow:
 
@@ -348,13 +348,13 @@ $ vale _posts/2022-11-01-technical-writing.md
 ```
 
 As you see, custom vocabulary definition is a must.
-`Vale.Spelling` rule kindly reminds you with "Did you really mean" question every time you use unknown word.
+`Vale.Spelling` rule kindly reminds you with the "Did you really mean" question every time you use an unknown word.
 {: .notice--info}
 
 ### GitHub action
 
 If you want to get pull request comments from *vale.sh* define GitHub action using [vale-action](https://github.com/errata-ai/vale-action).
-The action installs *vale.sh* packages, checks documents under `_post` directory and add comments to the pull request.
+The action installs *vale.sh* packages, checks documents under `_post` directory and adds comments to the pull request.
 
 ```yaml
 name: Lint
@@ -382,7 +382,7 @@ Action `vale-action` put comments only for the modified files, thanks to [review
 ## Markdown editor
 
 With plain text markup like Markdown you can edit documents in any text editor.
-Why not to make your life easier with a more sophisticated tool?
+Why not make your life easier with a more sophisticated tool?
 If you have never used [Visual Studio Code](https://code.visualstudio.com) give it a try.
 
 ![Visual Studio Code](/assets/images/2022-11-01-technical-writing/vs-code.png)
@@ -390,15 +390,15 @@ If you have never used [Visual Studio Code](https://code.visualstudio.com) give 
 I fell in love with Visual Studio Code because:
 
 * Excellent Markdown editor: fast and exact preview, outline view, path completions, link validation, smart selection and [more](https://code.visualstudio.com/docs/languages/markdown).
-* [Vale](https://marketplace.visualstudio.com/items?itemName=errata-ai.vale-server) extension, makes your *vale.sh" styles visible during editing.
+* [Vale](https://marketplace.visualstudio.com/items?itemName=errata-ai.vale-server) extension, makes your *vale.sh* styles visible during editing.
 * [Jekyll run](https://marketplace.visualstudio.com/items?itemName=Dedsec727.jekyll-run) extension, you can run Jekyll server from Visual Studio Code.
 * [Markdown lint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint) extension, over 50 useful linting rules. See also GitHub project [markdownlint](https://github.com/DavidAnson/markdownlint).
 * [Code spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) extension, useful until *vale* extension doesn't support quick fixes for spelling.
 
 ## Summary
 
-* Keep a documentation as a code, and apply all development best practices and processes to give high final product quality.
+* Keep documentation as code, and apply all development best practices and processes to give high final product quality.
 * Choose plain text markup wisely, you must have a good reason to not use Markdown.
-* Shorten feedback loop, you should get all suggestions and corrections when writing. Re-generate website locally on every save.
+* Shorten feedback loop, you should get all suggestions and corrections when writing. Re-generate the website locally on every save.
 * Apply one of the existing documentation styles from Microsoft, Google or Red Hat. Use *vale.sh* to get automated pull request comments to your documents.
-* If you already host the code and documentation on GitHub, use Jekyll for generating website and GitHub Pages for publishing.
+* If you already host the code and documentation on GitHub, use Jekyll for generating websites and GitHub Pages for publishing.
