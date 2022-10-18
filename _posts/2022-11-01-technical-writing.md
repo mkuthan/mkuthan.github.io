@@ -86,7 +86,7 @@ LiveReload address: http://127.0.0.1:35729
 ```
 
 Every edit re-generates pages for modified files and reloads web browser.
-Very convenient way of writing documentation, you continuously observe the results of editing.
+Convenient way of writing documentation, you continuously observe the results of editing.
 
 ### "Minimal Mistakes" theme
 
@@ -381,4 +381,24 @@ Action `vale-action` put comments only for the modified files, thanks to [review
 
 ## Markdown editor
 
-* TODO: Visual Studio Code (extensions: jekyll run, code spell checker, vale)
+With plain text markup like Markdown you can edit documents in any text editor.
+Why not to make your life easier with a more sophisticated tool?
+If you have never used [Visual Studio Code](https://code.visualstudio.com) give it a try.
+
+![Visual Studio Code](/assets/images/2022-11-01-technical-writing/vs-code.png)
+
+I fell in love with Visual Studio Code because:
+
+* Excellent Markdown editor: fast and exact preview, outline view, path completions, link validation, smart selection and [more](https://code.visualstudio.com/docs/languages/markdown).
+* [Vale](https://marketplace.visualstudio.com/items?itemName=errata-ai.vale-server) extension, makes your *vale.sh" styles visible during editing.
+* [Jekyll run](https://marketplace.visualstudio.com/items?itemName=Dedsec727.jekyll-run) extension, you can run Jekyll server from Visual Studio Code.
+* [Markdown lint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint) extension, over 50 useful linting rules. See also GitHub project [markdownlint](https://github.com/DavidAnson/markdownlint).
+* [Code spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) extension, useful until *vale* extension doesn't support quick fixes for spelling.
+
+## Summary
+
+* Keep a documentation as a code, and apply all development best practices and processes to give high final product quality.
+* Choose plain text markup wisely, you must have a good reason to not use Markdown.
+* Shorten feedback loop, you should get all suggestions and corrections when writing. Re-generate website locally on every save.
+* Apply one of the existing documentation styles from Microsoft, Google or Red Hat. Use *vale.sh* to get automated pull request comments to your documents.
+* If you already host the code and documentation on GitHub, use Jekyll for generating website and GitHub Pages for publishing.
