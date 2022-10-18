@@ -1,0 +1,139 @@
+---
+title: "Migration to Google Cloud Platform"
+date: 2022-12-01
+---
+
+TODO
+
+> Elasticity also takes away the predictability
+
+TODO
+
+> You shouldn't run software that you didn't build
+
+TODO
+
+> If something breaks, you're guilty until proven innocent
+
+TODO
+
+> I attempted a couple of small migrations with highly motivated teams but without a program manager. They achieved their objectives, but with participant burnout and huge cost and time overruns.
+
+TODO
+
+> Automation and federation to achieve even faster migration velocity.
+
+TODO
+
+> Your metrics will evolve over time along with your migration, transitioning from technical metrics to business relevant value-oriented metrics.
+
+TODO
+
+> For most enterprises, a hybrid-cloud scenario is inevitable (...) have a good plan for how to make the best use of it.
+> Five multi-cloud scenarios: arbitrary, segmented, choice, parallel, portable.
+
+TODO
+
+> If you want to achieve true hybrid-cloud setup (...) uniform management and deployment across the environments.
+
+TODO
+
+> Most failure scenarios break the abstraction.
+
+TODO
+
+> Excessive complexity is nature's punishment for organizations that are unable to make decisions.
+
+TODO
+
+> The most subtle and most dangerous type of lock-in is the one that affects your thinking.
+
+TODO
+
+> Technology Radar designated "Generic Cloud Usage" as Hold already in late 2018.
+
+TODO
+
+> Cloud and automation add a new "ility": disposability.
+
+TODO
+
+> Docker was designed and built for developers, not operations staff.
+
+TODO
+
+> Five characteristic of Cloud-Ready applications: Frugal, Relocatable, Observable, Seamlessly updatable, internally Secured, failure Tolerant (FROSST).
+
+TODO
+
+> A cloud journey isn't a one-time shot, but an ongoing series of learning and optimization.
+
+TODO
+
+> In the cloud, your biggest levers are sizing and resource lifetime.
+
+`Costs [$] = size[units] * time[hours] * unit costs[$/unit/hour]`
+
+What about DEV/TEST?
+
+TODO
+
+> Exchange rate
+
+TODO
+
+> The most expensive server is the one that’s not doing anything. Even at a 30% discount.
+
+TODO
+
+> Shifting from robustness and redundancy to resilience and automation is one of several ways how the cloud can defy existing contradictions, such as providing better uptime at lower cost.
+
+TODO
+
+> You might be surprised that changing providers wasn't on the list of major savings vehicles.
+
+TODO
+
+> If your data is largely static, you can save a lot in pay-per-query model by creating interim results tables.
+
+TODO
+
+> Knowing your needs and usage patterns is the most important ingredient into reducing costs.
+
+TODO
+
+> When comparing prices, don't expect huge difference in pricing between providers -- open market competition is doing its job just fine.
+
+TODO
+
+> Discount negotiations
+
+TODO
+
+> Lowering costs but making them visible in the process can be perceived as "costing more" by your internal customers.
+
+TODO
+
+> Deprecation allocates capital expenses spread over a period of time.
+
+TODO
+
+> Monitoring cost should be a standard element of any cloud operation, just like monitoring for traffic and memory usage.
+
+TODO
+
+> Unfortunately, many enterprise cloud deployments detach developers from billing and payments.
+
+TODO
+
+> You want to encourage developers to build dynamic solutions that auto-scale, so the chances that you’re going to see some surprises on your bill are high enough that it’s wise to just allocate that money up front.
+
+Tuition - special money for learning from mistakes.
+
+TODO
+
+> Overreacting isn't a good idea (...) the cloud is there to give developers more freedom and more control.
+
+TODO
+
+> Use free trials to try things instead of overcommitting.
