@@ -34,7 +34,7 @@ Use whatever plain text markup you like: Markdown, reStructuredText, AsciiDoc, D
 Check only, if the format meets the following criteria:
 
 * Must be readable using plain text editor.
-How to make a code review for binary formats?
+How to make a code review for non-readable formats?
 * Must be portable without worrying about compatibility.
 It's likely that you will change the publication platform several times during documentation life.
 * Must separate the content and its formatting.
@@ -54,16 +54,16 @@ Some parser must convert bunch of Markdown files into a beautiful website.
 Again, use whatever converter you like but check if the following capabilities exist for generated website:
 
 * Website navigation, you must be able to see website structure and navigate between pages.
-* Many themes, you expect different layout for documentation website and blog post.
+* Many themes, you expect different layout for documentation website and different for personal blog.
 * Table of contents, it simplifies navigation for complex pages.
 * Search capabilities, documentation without search isn't so useful.
 
 Because you are writing technical documentation look also for:
 
-* Code syntax highlighting for many popular programming languages like [Rouge](https://github.com/rouge-ruby/rouge) or
-[Chroma](https://github.com/alecthomas/chroma).
-* Diagrams and visualizations like [Mermaid](https://mermaid-js.github.io/) or [yuml](https://yuml.me)
-* Math expressions like [MathJax](https://www.mathjax.org)
+* Code syntax highlighting for many popular programming languages ([Rouge](https://github.com/rouge-ruby/rouge) or
+[Chroma](https://github.com/alecthomas/chroma)).
+* Diagrams and visualizations ([Mermaid](https://mermaid-js.github.io/) or [yuml](https://yuml.me))
+* Math expressions ([MathJax](https://www.mathjax.org))
 
 At the time of writing my favorite Markdown converter is [Jekyll](https://jekyllrb.com) but I would also like to check [Hugo](https://gohugo.io).
 {: .notice--info}
