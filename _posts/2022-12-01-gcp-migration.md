@@ -3,11 +3,39 @@ title: "Migration to Google Cloud Platform"
 date: 2022-12-01
 ---
 
-TODO
+Google Cloud Platform (GCP)
 
-> Elasticity also takes away the predictability
+## IT procurement
 
-TODO
+> Cloud platforms contain hundreds of individual products, making a comparison rather meaningless.
+> Better approach is to compare your company's vision with the provider's product strategy.
+
+Why Allegro migrated on-premise big data pipelines to GCP?
+
+* Machine learning (ML) for everyone
+* Scalability
+* No scoring or cloud matrix comparison
+* TODO
+
+> In the case of cloud, you're not looking to replace an existing component that serves a specific organizational need.
+> Rather the opposite, you're looking for a product that enables your organization to work in fundamentally different way.
+
+Allegro adjusted it's operating model to Google Cloud Platform.
+On-premise Hadoop cluster hasn't been replaced by something similar in cloud.
+
+* BigQuery isn't a Hive / HDFS / Parquet replacement, it enables TODO
+* Dataproc / ephemeral clusters / Spark on K8S / etc.
+* Dataflow - unified batch and streaming
+* Vertex AI - TODO: ask Maciek how it has change the way they're working
+* TODO
+
+> Traditional IT budgets are set up at least a year in advance, making the predictability a key consideration.
+> IT procurement tends to negotiate multiyear license terms for the software they buy.
+
+* Cloud elastic pricing turns Allegro procurement upside down.
+* TODO
+
+## TODO
 
 > You shouldn't run software that you didn't build
 
