@@ -35,6 +35,18 @@ On-premise Hadoop cluster hasn't been replaced by something similar in cloud.
 * Cloud elastic pricing turns Allegro procurement upside down.
 * TODO
 
+## Operations
+
+> In traditional IT, security, hardware provisioning and cost control are the operations teams' responsibility, whereas features delivery and usability are in the application teams' court.
+
+* In Allegro development teams have operated their software for years.
+* Operations teams develops only internal PaaS like K8S od Hadoop clusters.
+
+> Te cloud increases transparency, allowing you to monitor usage and policy violations rather than restricting processes upfront.
+
+* TODO: processes in Allegro
+
+
 ## TODO
 
 > You shouldn't run software that you didn't build
