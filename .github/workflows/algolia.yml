@@ -16,6 +16,6 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true
 
-      - uses: dieghernan/algolia-jekyll-action@v1
+      - uses: dieghernan/algolia-jekyll-action@v2
         with:
           APIKEY: '${{ secrets.ALGOLIA_API_KEY }}'
