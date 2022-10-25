@@ -371,8 +371,7 @@ jobs:
         with:
           files: _posts/
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
+          GITHUB_TOKEN: {{ '${{' }} secrets.GITHUB_TOKEN }}
 ```
 
 Pull request comments are useful only if they're context aware.
