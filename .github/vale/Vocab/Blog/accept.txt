@@ -1,4 +1,5 @@
 Artifactory
+Atlassian
 autoscaler
 autoscaling
 Avro
@@ -33,6 +34,7 @@ Nearline
 PID
 PTransform
 Pubsub
+Ruby
 Samza
 Scio
 SDKs
