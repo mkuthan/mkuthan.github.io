@@ -1,6 +1,8 @@
 ---
 title: "Migration to Google Cloud Platform"
 date: 2022-12-01
+categories: [Books]
+tags: [Architecture]
 ---
 
 Google Cloud Platform (GCP)
@@ -46,8 +48,25 @@ On-premise Hadoop cluster hasn't been replaced by something similar in cloud.
 
 * TODO: processes in Allegro
 
+## Cloud thinks in the first derivative
+
+> Digital companies aren't looking to optimize existing processes -- they chart new territory by looking for new models.
+
+* Allegro has always be a digital e-commerce company.
+* Migration is a chance for Allegro to widely adopt data mesh and machine learning.
+Every development team in Allegro should be able to play with data.
+
+> Instead of being a good guesser (economy of scale), companies need to be fast learners (economy of speed)
+
+In Allegro it depends on the team or area.
+Some of them plan everything upfront for the next quarters, build detailed roadmaps, and don't like unplanned changes.
+Others don't plan a lot, but self organize for experimentation and to quickly adopt changes.
 
 ## TODO
+
+> Increasing your run budget may be a good thing
+
+TODO: it might be a sign of business success, for example paying double for twice as many users and twice as many benefit
 
 > You shouldn't run software that you didn't build
 
