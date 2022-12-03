@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Local-first applications with automerge](https://youtu.be/I4aVMYhL8Pk) -
+  Conflict-Free Replicated Data Type (CRDT), binary protocol, lossless snapshots, JavaScript and Rust (webassembly) implementations.
+
 * [Re-architecting Apache Kafka for the Cloud](https://youtu.be/ZSuoLgNWBRU) - 
   Tiered storage, Kraft cluster management (instead of ZK), multi-tenancy (consumer/producer quota, threads, connections, replicatin quota).
 
