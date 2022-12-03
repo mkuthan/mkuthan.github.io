@@ -13,10 +13,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
 
-      - uses: helaili/jekyll-action@v2
+      - run: bundle exec jekyll build
+
+      - uses: peaceiris/actions-gh-pages@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target_branch: "gh-pages"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./_site
 
   algolia:
     runs-on: ubuntu-latest

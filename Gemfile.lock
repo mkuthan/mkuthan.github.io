@@ -122,7 +122,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  jekyll (~> 4.3.1)
+  jekyll (~> 4.3.0)
   jekyll-algolia (~> 1.7.1)
   minimal-mistakes-jekyll (~> 4.24.0)
 
