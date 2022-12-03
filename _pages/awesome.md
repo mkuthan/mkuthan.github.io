@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Re-architecting Apache Kafka for the Cloud](https://youtu.be/ZSuoLgNWBRU) - 
+  Tiered storage, Kraft cluster management (instead of ZK), multi-tenancy (consumer/producer quota, threads, connections, replicatin quota).
+
 * [Understanding the Python GIL](https://youtu.be/Obt-vMVdM8s) -
   Global interpreter lock, the reason why Python doesn't scale on multicore architectures.
 
