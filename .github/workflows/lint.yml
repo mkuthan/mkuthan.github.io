@@ -11,5 +11,6 @@ jobs:
       - uses: errata-ai/vale-action@v2
         with:
           files: _posts/
+          fail_on_error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
