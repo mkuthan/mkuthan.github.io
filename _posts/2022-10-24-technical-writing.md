@@ -185,7 +185,7 @@ If you are using plugins not supported by GitHub Pages, you have to build the we
 Below you can see the action I configured for my blog:
 
 ```yaml
-name: Build
+name: Publish
 
 on:
   push:
@@ -193,26 +193,27 @@ on:
       - master
 
 jobs:
-  build:
+  jekyll:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
-
-      - uses: actions/cache@v3
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: {{ '${{' }} runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
-          restore-keys: |
-            {{ '${{' }} runner.os }}-gems-
+          ruby-version: "2.7"
+          bundler-cache: true
 
-      - uses: helaili/jekyll-action@v2
+      - run: bundle exec jekyll build
+
+      - uses: peaceiris/actions-gh-pages@v3
         with:
-          token: {{ '${{' }} secrets.GITHUB_TOKEN }}
-          target_branch: 'gh-pages'
+          github_token: {{ '${{' }} secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./_site
 ```
 
-* To speed up the build configure cache for Ruby gems (line 14). Without the cache build takes 6 minutes, with cache 40--50 seconds.
-* Push generated website to `gh-pages` branch (line 24) and configure repository to watch for the documentation in that branch instead of master or main.
+* To speed up the build configure cache for Ruby gems (line 17). Without the cache build takes 6 minutes, with cache 40--50 seconds.
+* Push generated website from `_site` directory (line 25) to `gh-pages` branch (line 24) and configure repository to watch for the documentation in that branch instead of master or main.
 
 According to [KISS](https://en.wikipedia.org/wiki/KISS_principle) principle,
 I would prefer automated publication from GitHub Pages than custom action.
