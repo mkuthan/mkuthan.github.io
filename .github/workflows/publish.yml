@@ -1,4 +1,4 @@
-name: Build
+name: Publish
 
 on:
   push:
@@ -6,8 +6,9 @@ on:
       - master
 
 jobs:
-  build:
+  jekyll:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -21,4 +22,16 @@ jobs:
       - uses: helaili/jekyll-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          target_branch: 'gh-pages'
+          target_branch: "gh-pages"
+
+  algolia:
+    runs-on: ubuntu-latest
+    needs: jekyll
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dieghernan/algolia-jekyll-action@v2
+        with:
+          ruby-version: "2.7"
+          APIKEY: "${{ secrets.ALGOLIA_API_KEY }}"
