@@ -1,0 +1,34 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  jekyll:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+
+      - run: bundle exec jekyll build
+
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./_site
+
+  algolia:
+    runs-on: ubuntu-latest
+    needs: jekyll
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+
+      - run: bundle exec jekyll algolia
+        env:
+          ALGOLIA_API_KEY: "${{ secrets.ALGOLIA_API_KEY }}"
