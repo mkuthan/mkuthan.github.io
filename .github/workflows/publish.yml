@@ -14,6 +14,8 @@ jobs:
       - uses: ./.github/actions/setup
 
       - run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
 
       - uses: peaceiris/actions-gh-pages@v3
         with:
