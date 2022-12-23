@@ -8,14 +8,14 @@ header:
   caption: "[Unsplash](https://unsplash.com/@jeffdewitt)"
 ---
 
-This is the very first part of the [stream processing](/categories/stream-processing/) blog post series.
+This is the first part of the [stream processing](/tags/#stream-processing) blog post series.
 From the series you will learn how to develop and test stateful streaming data pipelines.
 
 ## Overview
 
 I'm going to start with examples implemented with [Apache Beam](https://beam.apache.org/) and [Scio](https://spotify.github.io/scio/),
-then check and compare capabilities of other frameworks like [Apache Flink](https://flink.apache.org), 
-[Structured Spark Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) or 
+then check and compare capabilities of other frameworks like [Apache Flink](https://flink.apache.org),
+[Structured Spark Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) or
 [Kafka Streams](https://kafka.apache.org/documentation/streams/).
 
 Expect well-crafted code samples verified by integration tests and stream processing fundamental theory if it's absolutely necessary:
@@ -31,6 +31,7 @@ The pipeline produces the cardinality of each observed word.
 Because this is a streaming pipeline, the results are materialized periodically - in this case every minute.
 
 For example, the following stream of lines:
+
 ```
 (...)
 00:00:00 -> "foo bar"
@@ -41,6 +42,7 @@ For example, the following stream of lines:
 ```
 
 Should be aggregated and partitioned by event time into same-length, non-overlapping chunks of data:
+
 ```
 (...)
 00:01:00 -> (foo, 1) (bar, 1) (baz, 2)
@@ -48,7 +50,7 @@ Should be aggregated and partitioned by event time into same-length, non-overlap
 (...)
 ```
 
-I'm a fan of TDD as a learning technique, so the implementation of the aggregation method will not be disclosed until the very end of this blog post.
+I'm a fan of TDD as a learning technique, so the implementation of the aggregation method will not be disclosed until end of this blog post.
 As for now, the following method signature should be enough to understand all presented test scenarios:
 
 ```scala
@@ -58,10 +60,10 @@ def wordCountInFixedWindow(
 ): SCollection[(String, Long)]
 ```
 
-* Method takes payload - unbounded stream of lines (Scio [SCollection](https://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html), 
+* Method takes payload - unbounded stream of lines (Scio [SCollection](https://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html),
   Beam [PCollection](https://beam.apache.org/documentation/programming-guide/#pcollections),
   Flink [Dataset](https://javadoc.io/static/org.apache.flink/flink-java/1.14.3/org/apache/flink/api/java/DataSet.html),
-  Spark [Dataset](https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/Dataset.html) or 
+  Spark [Dataset](https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/Dataset.html) or
   Kafka [KStream](https://kafka.apache.org/31/javadoc/org/apache/kafka/streams/kstream/KStream.html))
 * Parameter `windowDuration` defines length of the fixed non-overlapping window
 * Result is defined as tuple: (word, cardinality)
@@ -69,24 +71,24 @@ def wordCountInFixedWindow(
 There is no trace of event time in the signature, WTF?
 
 The event time is passed implicitly which is a common pattern for streaming frameworks.
-Because every part of the system must be always event-time aware, the event-time is transported outside the payload. 
-Moreover, the event-time may advance during data journey through the pipeline 
+Because every part of the system must be always event-time aware, the event-time is transported outside the payload.
+Moreover, the event-time may advance during data journey through the pipeline
 so keeping event-time as a part of the payload doesn't make sense.
 
 Let's see how this example behaves in different scenarios.
 
 ## No Input
 
-If the input stream is empty the aggregation should not emit any results.
+If the input stream is empty the aggregation shouldn't emit any results.
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
 
 "Words aggregate" should "be empty for empty stream" in runWithContext { sc =>
   val words = testStreamOf[String].advanceWatermarkToInfinity()
-  
+
   val results = wordCountInFixedWindow(sc.testStream(words), DefaultWindowDuration)
-  
+
   results should beEmpty
 }
 ```
@@ -223,29 +225,28 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 ```
 
 * If there are no input lines for a window *[00:01:00, 00:02:00)*, no results are produced
-* The example uses new assertion `inWindow` to check results only for the given pane 
+* The example uses new assertion `inWindow` to check results only for the given pane
 
 It's quite a problematic trait of the streaming pipelines for the frameworks.
 How to recognize if the pipeline is stale from the situation when everything works smoothly but there is no data for some period of time?
 It becomes especially important for joins, if there is no incoming data in one stream it can not block the pipeline forever.
 
-
 ## Late Data
 
 I'm glad that you are still there, the most interesting part of this blog post starts here.
 
-Late data is an inevitable part of every streaming application. 
-Imagine that our stream comes from a mobile application and someone is on a train that has hit a long tunnel somewhere in the Alps ...
+Late data is an inevitable part of every streaming application.
+Imagine that our stream comes from a mobile application and someone is on a train that has hit a long tunnel somewhere in the Alps …
 
 Streaming pipeline needs to materialize results in a timely manner, how long should the pipeline wait for data?
-If the 99<sup>th</sup> percentile latency is 3 seconds, it doesn't make any sense to wait for outliers late by minutes or hours. 
+If the 99<sup>th</sup> percentile latency is 3 seconds, it doesn't make any sense to wait for outliers late by minutes or hours.
 For unbounded data this is always a heuristic calculation.
 The streaming framework continuously estimates time "X" for which all input data with event-time less than "X" have been already observed.
-The time "X" is called a **watermark**. 
-The watermark calculation algorithm determines the quality of the streaming framework. 
-With better heuristics you will get lower overall latency and more precise late data handling. 
+The time "X" is called a **watermark**.
+The watermark calculation algorithm determines the quality of the streaming framework.
+With better heuristics you will get lower overall latency and more precise late data handling.
 
-Fortunately it's quite easy to write a fully deterministic test scenario for late data. 
+Fortunately it's quite easy to write a fully deterministic test scenario for late data.
 Good streaming frameworks (like Apache Beam) provide watermark programmatic control for testing purposes.
 
 ```scala
@@ -273,7 +274,7 @@ val DefaultWindowDuration = Duration.standardMinutes(1L)
 * As an effect of the updated watermark, the results for the first window are materialized.
 * Then the late event "foo" is observed, it should be included in the results of window *[00:00:00, 00:01:00)* but it's silently dropped!
 
-With high quality heuristic watermark it should be rare that watermark is advanced too early. 
+With high quality heuristic watermark it should be rare that watermark is advanced too early.
 But as a developer you have to take into account this kind of situation.
 
 ## Late Data Within Allowed Lateness (Fired Panes Discarded)
@@ -325,7 +326,7 @@ Configure allowed lateness consistently for all pipeline steps.
 ## Late Data Within Allowed Lateness (Fired Panes Accumulated)
 
 In the previous example the results from *on-time* pane are discarded and not used for the *late* pane.
-If the pipeline writes result into idempotent sink we could accumulate *on-time* into *late* pane, and update incomplete result when late data arrives. 
+If the pipeline writes result into idempotent sink we could accumulate *on-time* into *late* pane, and update incomplete result when late data arrives.
 
 ```scala
 val DefaultWindowDuration = Duration.standardMinutes(1L)
@@ -382,7 +383,7 @@ def wordCountInFixedWindow(
     accumulationMode = accumulationMode,
     timestampCombiner = timestampCombiner
   )
-  
+
   lines
     .flatMap(line => line.split("\\s+"))
     .withFixedWindows(duration = windowDuration, options = windowOptions)
@@ -398,8 +399,8 @@ Key takeaways:
 * Late data is inevitable for streaming pipelines.
 * Watermark handling is the most important feature of any streaming framework.
 
-I hope that you enjoy the first blog post in the [stream processing](/categories/stream-processing/) series.
+I hope that you enjoy the first blog post in the [stream processing](/tags/#stream-processing) series.
 Let me know what you think as a comment below.
 
-Last but not least, I would like to thank [Piotr](https://www.linkedin.com/in/piotr-szczepanik-a4a2b92/) 
+Last but not least, I would like to thank [Piotr](https://www.linkedin.com/in/piotr-szczepanik-a4a2b92/)
 for the blog post review and hours of fruitful discussions.

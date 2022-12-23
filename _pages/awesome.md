@@ -6,17 +6,17 @@ permalink: /awesome/
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
 * [Local-first applications with automerge](https://youtu.be/I4aVMYhL8Pk) -
-  Conflict-Free Replicated Data Type (CRDT), binary protocol, lossless snapshots, JavaScript and Rust (webassembly) implementations.
+  Conflict-Free Replicated Data Type (CRDT), binary protocol, lossless snapshots, JavaScript and Rust (WebAssembly) implementations.
 
-* [Re-architecting Apache Kafka for the Cloud](https://youtu.be/ZSuoLgNWBRU) - 
-  Tiered storage, Kraft cluster management (instead of ZK), multi-tenancy (consumer/producer quota, threads, connections, replicatin quota).
+* [Re-architecting Apache Kafka for the Cloud](https://youtu.be/ZSuoLgNWBRU) -
+  Tiered storage, Kraft cluster management (instead of ZK), multi-tenancy (consumer/producer quota, threads, connections, replication quota).
 
 * [Understanding the Python GIL](https://youtu.be/Obt-vMVdM8s) -
-  Global interpreter lock, the reason why Python doesn't scale on multicore architectures.
+  Global interpreter lock, the reason why Python doesn't scale on multi-core architectures.
 
 * [Roblox Return to Service 10/28-10/31 2021](https://blog.roblox.com/2022/01/roblox-return-to-service-10-28-10-31-2021/) -
-  Postmortem from non-trivial 73h outage due to Consul failure, why it took so long? 
-  Consul monitoring did not work without Consul 😜
+  Postmortem from non-trivial 73h outage due to Consul failure, why it took so long?
+  Consul monitoring didn't work without Consul 😜
 
 * [Exception Handling Considered Harmful](https://www.lighterra.com/papers/exceptionsharmful/) -
   If you have always perceived that exception handling doesn't really work.
@@ -25,7 +25,7 @@ When I found an interesting article or resource, if something opened my eyes I d
   Implement Goroutines from scratch: global run-queue, distributed run-queue, work stealing, handoff, cooperative preemption, FIFO vs LIFO.
 
 * [A Guide to the Go Garbage Collector](https://go.dev/doc/gc-guide) -
-  Interesting how it differs from JMV, one or two knobs for configuration.
+  Interesting how it differs from JVM, one or two knobs for configuration.
 
 * [Minimal version selection (MVS)](https://research.swtch.com/vgo-mvs) -
   Dependency management algorithm to produce high fidelity builds.
@@ -43,7 +43,7 @@ When I found an interesting article or resource, if something opened my eyes I d
   Google way for tests classification: small, medium, large (in addition to test scopes: unit, integration, e2e).
 
 * [Pre-commit: Don’t Git hooked!](https://www.thoughtworks.com/insights/blog/pre-commit-don-t-git-hooked) -
-  Do not use Git pre-commit hook for checking code quality, valuable checks take too much time to run.
+  Don't use Git pre-commit hook for checking code quality, valuable checks take too much time to run.
 
 * [Don’t deploy applications with Terraform](https://medium.com/google-cloud/dont-deploy-applications-with-terraform-2f4508a45987) -
   Terraform is for static resources management, not for application deployment.

@@ -8,9 +8,9 @@ header:
     caption: "[Unsplash](https://unsplash.com/@forestsimon)"
 ---
 
-This is the second part of the [stream processing](/categories/stream-processing/) blog post series.
+This is the second part of the [stream processing](/tags/#stream-processing) blog post series.
 In the first [part](/blog/2022/01/28/stream-processing-part1/) I presented aggregations in a fixed, non-overlapping windows.
-Now you will learn dynamic aggregations in data-driven windows, 
+Now you will learn dynamic aggregations in data-driven windows,
 for which the size of each window depends on the input data instead of a predefined time based pattern.
 At the end, I also show the complex triggering policy to get speculative results for the latency sensitive pipelines.
 
@@ -36,23 +36,23 @@ The activities should be aggregated into a single session if the maximum allowed
 00:23:10 -> "open app", "show product", "add to cart", "checkout", "close app"
 ```
 
-If the allowed gap between activities is shorter, e.g. for 5 minutes gap we will get two independent sessions:
+If the allowed gap between activities is shorter, for example: for 5 minutes gap we will get two independent sessions:
 
 ```
 00:08:00 -> "open app", "show product", "add to cart"
 00:18:10 -> "checkout", "close app"
 ```
 
-This is an over-simplified aggregation example just for the blog academic purposes. Careful reader will notice that it doesn't scale at all. 
+This is an over-simplified aggregation example just for the blog academic purposes. Careful reader will notice that it doesn't scale at all.
 All user activities during the session must fit into memory of the single machine.
-In real-world scenario the actions should be reduced into scalable [algebraic](https://en.wikipedia.org/wiki/Algebraic_structure) data structures, e.g: 
+In real-world scenario the actions should be reduced into scalable [algebraic](https://en.wikipedia.org/wiki/Algebraic_structure) data structures, e.g:
 
 * Various counters of the session like the number of unique visited products
 * Number of the deals
-* Click-through rate  
+* Click-through rate
 * Conversion rate
 
-I'm going to follow the TDD technique again, so the implementation of the aggregation method will not be disclosed until the very end of the blog post.
+I'm going to follow the TDD technique again, so the implementation of the aggregation method won't be disclosed until end of the blog post.
 As for now, the following method signature should be enough to understand all scenarios:
 
 ```scala
@@ -67,7 +67,7 @@ def activitiesInSessionWindow(
 
 ## No activities, no sessions
 
-If the input stream of activities is empty the aggregation should not emit any session.
+If the input stream of activities is empty the aggregation shouldn't emit any session.
 
 ```scala
 "No activities" should "create empty session" in runWithContext { sc =>
@@ -97,7 +97,7 @@ The scenario in which all activities are aggregated into a single session.
   val results = activitiesInSessionWindow(sc.testStream(activities), TenMinutesGap)
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:11:00") {
-    containSingleValueAtTime("00:10:59.999", 
+    containSingleValueAtTime("00:10:59.999",
       ("joe", Iterable("open app", "close app")))
   }
 }
@@ -125,12 +125,12 @@ The scenario in which activities from two clients are aggregated into two simult
   val results = activitiesInSessionWindow(sc.testStream(activities), TenMinutesGap)
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:11:00") {
-    containSingleValueAtTime("00:10:59.999", 
+    containSingleValueAtTime("00:10:59.999",
       ("joe", Iterable("open app", "close app")))
   }
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:11:30") {
-    containSingleValueAtTime("00:11:29.999", 
+    containSingleValueAtTime("00:11:29.999",
       ("ben", Iterable("open app", "close app")))
   }
 }
@@ -155,14 +155,14 @@ The function `activitiesInSessionWindow()` should order the activities within th
   val results = activitiesInSessionWindow(sc.testStream(activities), TenMinutesGap)
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:11:00") {
-    containSingleValueAtTime("00:10:59.999", ("joe", 
+    containSingleValueAtTime("00:10:59.999", ("joe",
       Iterable("open app", "close app")))
   }
 }
 ```
 
 * The activities in the session are ordered by activity event time
-* The result element gets end-of-window time, ten minutes after the oldest event time 
+* The result element gets end-of-window time, ten minutes after the oldest event time
 * The oldest event don't have to be necessarily the latest one
 
 ## Continues long-lasting session
@@ -215,7 +215,7 @@ What if the gap between events is longer than ten minutes?
   }
 
   results.withTimestamp should inOnTimePane("00:13:00", "00:23:10") {
-    containSingleValueAtTime("00:23:09.999", 
+    containSingleValueAtTime("00:23:09.999",
       ("joe", Iterable("checkout", "close app")))
   }
 }
@@ -227,7 +227,7 @@ What if the gap between events is longer than ten minutes?
 
 ## Late activity without allowed lateness
 
-We have slowly moved into the more interesting scenarios.
+We've slowly moved into the more interesting scenarios.
 What happens if the late activity will be observed in the stream and the allowed lateness [isn't explicitly defined](https://github.com/apache/beam/blob/v2.37.0/sdks/java/core/src/main/java/org/apache/beam/sdk/values/WindowingStrategy.java#L65)?
 
 ```scala
@@ -244,7 +244,7 @@ What happens if the late activity will be observed in the stream and the allowed
   val results = activitiesInSessionWindow(sc.testStream(activities), TenMinutesGap)
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:11:30") {
-    containSingleValueAtTime("00:11:29.999", 
+    containSingleValueAtTime("00:11:29.999",
       ("joe", Iterable("open app", "show product")))
   }
 
@@ -253,7 +253,7 @@ What happens if the late activity will be observed in the stream and the allowed
   }
 
   results.withTimestamp should inOnTimePane("00:09:30", "00:23:10") {
-    containSingleValueAtTime("00:23:09.999", 
+    containSingleValueAtTime("00:23:09.999",
       ("joe", Iterable("checkout", "close app")))
   }
 }
@@ -263,7 +263,7 @@ What happens if the late activity will be observed in the stream and the allowed
 * The activity "add to cart" at *00:03:00* is late event, watermark has been already advanced to *00:13:00*
 * The first session is produces as expected, when watermark has passed allowed gap after the last observed event
 
-Did you guess that the second session should have only the "close app" event? 
+Did you guess that the second session should have only the "close app" event?
 As you can see, you were wrong. The "checkout" activity at *00:09:30* has been counted as well.
 As long as watermark was hold on *00:13:00* all events after *00:03:00* would be aggregated into a new session window (watermark minus the allowed gap).
 Finally, the "checkout" activity creates a new session window, starting at "00:09:30".
@@ -289,17 +289,17 @@ How late events will be handled if the late activity is observed within the allo
     allowedLateness = Duration.standardMinutes(5))
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:11:30") {
-    containSingleValueAtTime("00:11:29.999", 
+    containSingleValueAtTime("00:11:29.999",
       ("joe", Iterable("open app", "show product")))
   }
 
   results.withTimestamp should inLatePane("00:00:00", "00:13:00") {
-    containSingleValueAtTime("00:12:59.999", 
+    containSingleValueAtTime("00:12:59.999",
       ("joe", Iterable("add to cart")))
   }
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:23:10") {
-    containSingleValueAtTime("00:23:09.999", 
+    containSingleValueAtTime("00:23:09.999",
       ("joe", Iterable("checkout", "close app")))
   }
 }
@@ -308,7 +308,7 @@ How late events will be handled if the late activity is observed within the allo
 * The "add to cart" activity at *00:03:00* is late but within allowed lateness
 * Nothing special to the first session window
 * There is an additional session produced in the late pane, it contains only the late event
-* The session window for late pane starts at *00:00:00* 
+* The session window for late pane starts at *00:00:00*
 * Because the late event has closed the gap between the sessions, the second on-time session also starts at *00:00:00*
 
 Why are the activities from the first session not been preserved and counted into the second and third sessions?
@@ -335,17 +335,17 @@ To accumulate activities from already fired panes the accumulation mode has to b
     accumulationMode = AccumulationMode.ACCUMULATING_FIRED_PANES)
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:11:30") {
-    containSingleValueAtTime("00:11:29.999", 
+    containSingleValueAtTime("00:11:29.999",
       ("joe", Iterable("open app", "show product")))
   }
 
   results.withTimestamp should inLatePane("00:00:00", "00:13:00") {
-    containSingleValueAtTime("00:12:59.999", 
+    containSingleValueAtTime("00:12:59.999",
       ("joe", Iterable("open app", "show product", "add to cart")))
   }
 
   results.withTimestamp should inOnTimePane("00:00:00", "00:23:10") {
-    containSingleValueAtTime("00:23:09.999", 
+    containSingleValueAtTime("00:23:09.999",
       ("joe", Iterable("open app", "show product", "add to cart", "checkout", "close app")))
   }
 }
@@ -358,16 +358,16 @@ To accumulate activities from already fired panes the accumulation mode has to b
 * There is also second on-time pane with all the events, the late event has closed the gap and the session with all observed activities is produced effectively
 
 The aggregation in `ACCUMULATING_FIRED_PANES` mode could effectively produce some duplicates.
-All downstream processing steps must be aware of that fact. 
-In the above scenario they could use the latest observed session as the most complete one. 
+All downstream processing steps must be aware of that fact.
+In the above scenario they could use the latest observed session as the most complete one.
 The previously emitted, partially overlapped session for user "joe" might be discarded.
 
 ## Speculative results
 
 It's time for the last, the most comprehensive example in the blog post.
 
-If the user plays with our e-commerce site for a very long time, the session would be produced at the very end of his/her journey.
-It could take hours, what if we need more up-to-date results, even if the user session has not been finished yet?
+If the user plays with our e-commerce site for a long time, the session would be produced at the end of his/her journey.
+It could take hours, what if we need more up-to-date results, even if the user session hasn't been finished yet?
 
 We should define the more comprehensive trigger for the session window.
 The following trigger defines that the aggregation will produce early, speculative results every minute after the first element has been seen.
@@ -383,7 +383,7 @@ AfterWatermark
     AfterPane.elementCountAtLeast(1))
 ```
 
-Instead of e-commerce action names I decided to introduce simple indices: 0, 1, 2 ...
+Instead of e-commerce action names I decided to introduce simple indices: 0, 1, 2 …
 It should make the reasoning about processing time a little easier for the readers :)
 
 ```scala
@@ -425,15 +425,15 @@ Early, speculative results:
 
 ```scala
 results.withTimestamp should inEarlyPane("00:00:00", "00:11:00") {
-  containSingleValueAtTime("00:10:59.999", 
+  containSingleValueAtTime("00:10:59.999",
     ("joe", Iterable("0", "1")))
 }
 results.withTimestamp should inEarlyPane("00:00:00", "00:13:00") {
-  containSingleValueAtTime("00:12:59.999", 
+  containSingleValueAtTime("00:12:59.999",
     ("joe", Iterable("0", "1", "2", "3")))
 }
 results.withTimestamp should inEarlyPane("00:00:00", "00:15:00") {
-  containSingleValueAtTime("00:14:59.999", 
+  containSingleValueAtTime("00:14:59.999",
     ("joe", Iterable("0", "1", "2", "3", "4", "5")))
 }
 ```
@@ -442,19 +442,19 @@ results.withTimestamp should inEarlyPane("00:00:00", "00:15:00") {
 * The first pane emission resets the trigger, so the second speculative result is again produced 1 minute after "2" activity and contains activities from "0" to "3"
 * There is also a third early pane, with all already observed activities
 * The event time of the results is always the oldest observed event time plus the configured gap of ten minutes
-* The downstream steps in the pipeline get the speculative results even if the session has not been completed yet
+* The downstream steps in the pipeline get the speculative results even if the session hasn't been completed yet
 
 On-time result:
 
 ```scala
 results.withTimestamp should inOnTimePane("00:00:00", "00:15:00") {
-  containSingleValueAtTime("00:14:59.999", 
+  containSingleValueAtTime("00:14:59.999",
     ("joe", Iterable("0", "1", "2", "3", "4", "5")))
 }
 ```
 
 * The on-time pane is produced when watermark has passed
-* Window and elements times are exactly like for the latest early-pane, because there has not been any new activity observed since the last early-pane was emitted
+* Window and elements times are exactly like for the latest early-pane, because there hasn't been any new activity observed since the last early-pane was emitted
 * When on-time pane is emitted, the downstream steps in the pipeline could decide to invalidate the speculative results and use the complete session instead
 
 Late results:
@@ -493,7 +493,7 @@ def activitiesInSessionWindow(
     accumulationMode = accumulationMode,
     trigger = trigger,
   )
-  
+
   activities
     .withTimestamp
     .map { case ((user, action), timestamp) => (user, (action, timestamp)) }

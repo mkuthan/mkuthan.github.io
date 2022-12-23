@@ -13,6 +13,7 @@ Dataflow
 Dataproc
 Datastudio
 DRY
+FIFO
 Firestore
 Flink
 gcloud
@@ -28,6 +29,7 @@ IOs
 Jira
 JVM
 LGTM
+LIFO
 Macbook
 [Mm]onorepo
 Nearline
@@ -43,4 +45,5 @@ Sourcegraph
 Spark
 SQL
 TDD
+WebAssembly
 Yapf

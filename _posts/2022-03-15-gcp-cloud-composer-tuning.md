@@ -4,14 +4,14 @@ date: 2022-03-15
 tags: [GCP, Cloud Composer, Apache Airflow, Performance]
 header:
     overlay_image: /assets/images/2022-03-15-gcp-cloud-composer-tuning/aron-visuals-BXOXnQ26B7o-unsplash.webp
-    caption: "[Unsplash](https://unsplash.com/@aron-visuals)"   
+    caption: "[Unsplash](https://unsplash.com/@aron-visuals)"
 ---
 
-I would love to only develop [streaming pipelines](/categories/stream-processing/) but in reality some of them are still batch oriented.
+I would love to only develop [streaming pipelines](/tags/#stream-processing) but in reality some of them are still batch oriented.
 Today you will learn how to properly configure Google Cloud Platform scheduler -- [Cloud Composer](https://cloud.google.com/composer).
 
 The article is for *Cloud Composer* version `1.x` only.
-Why not use version `2.x`? It's a very good question, indeed.
+Why not use version `2.x`? It's a good question, indeed.
 But the reality of real life has forced me to tune to the obsolete version.
 {: .notice--warning}
 
@@ -29,7 +29,7 @@ But the reality of real life has forced me to tune to the obsolete version.
 ## Tasks
 
 Let's begin with the *Apache Airflow* basic unit of work - [task](https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html).
-There are two main kind of tasks: [operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html) 
+There are two main kind of tasks: [operators](https://airflow.apache.org/docs/apache-airflow/stable/concepts/operators.html)
 and [sensors](https://airflow.apache.org/docs/apache-airflow/stable/concepts/sensors.html).
 In my *Cloud Composer* installation operators are mainly responsible for creating the ephemeral [Dataproc](https://cloud.google.com/dataproc) clusters and submit [Apache Spark](https://spark.apache.org) batch jobs to this clusters.
 In contrast, the sensors wait for [BigQuery](https://cloud.google.com/bigquery) data, the payload for the Spark jobs.
@@ -37,11 +37,11 @@ From the performance perspective, the operators are much more resource heavy tha
 
 *BigQuery* sensors are short-lived tasks if configured in the [rescheduling mode](https://airflow.apache.org/docs/apache-airflow/1.10.15/_api/airflow/sensors/base_sensor_operator/index.html#airflow.sensors.base_sensor_operator.BaseSensorOperator)
 The sensor checks for the data and if data exists the sensor quickly finishes.
-If data isn't available yet, the sensor finishes as well, but it's also rescheduled for the next execution after 
+If data isn't available yet, the sensor finishes as well, but it's also rescheduled for the next execution after
 [poke_interval](https://airflow.apache.org/docs/apache-airflow/1.10.15/_api/airflow/sensors/base_sensor_operator/index.html#airflow.sensors.base_sensor_operator.BaseSensorOperator).
 
 On the contrary *Spark* operator allocates resources for the whole *Spark* job's execution time.
-It could take several minutes or even hours. 
+It could take several minutes or even hours.
 For most of the time, the operator doesn't do much more than checking for the Spark job status, so it's a memory bound process.
 Even if there is a CPU time slots shortage on the *Cloud Composer* worker, the negative impact on the Spark job itself is negligible.
 
@@ -50,7 +50,7 @@ So for further capacity planning we should mainly count memory allocated by oper
 
 How to check how much memory is allocated by the operators?
 It's not an easy task, *Cloud Composer* workers form a [Kubernetes](https://kubernetes.io/) cluster.
-You could try to connect to the Kubernetes *airflow-worker* [pod](https://kubernetes.io/docs/concepts/workloads/pods/) or ...
+You could try to connect to the Kubernetes *airflow-worker* [pod](https://kubernetes.io/docs/concepts/workloads/pods/) or …
 run a dozen of tasks and measure the real resource utilization.
 I would opt for the second, more practical option.
 
@@ -62,16 +62,17 @@ It's important that you should measure the task memory usage by yourself, all fu
 The memory usage might be also varying for different *Apache Airflow* operators.
 
 Whaaaat -- 220MiB allocated just for the REST call to the *Dataproc* cluster API?
-Unfortunately it isn't only the remote call. 
+Unfortunately it isn't only the remote call.
 The architecture of the *Apache Airflow* is quite complex, every task is executed as a [Celery worker](https://docs.celeryproject.org/en/stable/userguide/workers.html) with its own overhead.
 Every task also needs a connection to the *Apache Airflow* database, it also consumes resources.
-Perhaps there are other factors I'm not even aware of ...
+Perhaps there are other factors I'm not even aware of …
 {: .notice--info}
 
 ## Worker Size
 
 We already know the memory utilization of the single task. Let's find out how many tasks can be executed concurrently on the worker.
 It depends on:
+
 * The type of *Apache Airflow* task
 * Allocatable memory on *Kubernetes* cluster
 * *Cloud Composer* built-in processes overhead
@@ -88,7 +89,7 @@ The allocatable memory on Kubernetes cluster is calculated in the [following way
 So, for the standard virtual machines, allocatable memory should be as follows:
 
 | Worker         | Formula                     | Allocatable Memory |
-| ---------------| --------------------------- | -----------------: | 
+| ---------------| --------------------------- | -----------------: |
 | n1-standard-1  | 3.75GiB - 25%               | 2.8GiB             |
 | n2-standard-2  | (4GiB - 25%) + (4GiB - 20%) | 6.2GiB             |
 | n2-highmem-2   | 6.2GiB + (8GiB - 10%)       | 13.4GiB            |
@@ -101,7 +102,7 @@ How does it look in practice? It's always worth checking because the real alloca
 *n2-standard-2* virtual machines: 6.34GB (**5.9GiB**)
 ![Cloud Composer nodes for n2-standard-2](/assets/images/2022-03-15-gcp-cloud-composer-tuning/nodes-n2-standard-2.webp)
 
-Thank you, Google, for using different units across the console. 
+Thank you, Google, for using different units across the console.
 An intellectual challenge every time when I have to convert GB to GiB and vice-versa.
 {: .notice--info}
 
@@ -131,11 +132,11 @@ So for the standard customers the costs will be even higher.
 Kubernetes isn't the only overhead you have to count into the calculations.
 There are also many built-in *Cloud Composer* processes run on every worker.
 Because the *Cloud Composer* is a managed service, you don't have control over these processes.
-Or even if you know how to hack some of them, you should not - the future upgrades or the troubleshooting would be a bumpy walk.
+Or even if you know how to hack some of them, you shouldn't - the future upgrades or the troubleshooting would be a bumpy walk.
 
 ![Cloud Composer pods](/assets/images/2022-03-15-gcp-cloud-composer-tuning/pods.webp)
 
-Don't rely on the reported requested memory, it's just garbage. 
+Don't rely on the reported requested memory, it's just garbage.
 Just measure the maximum worker memory utilization on the clean *Cloud Composer* installation and add the result to the final estimate.
 
 ![Cloud Composer memory overhead](/assets/images/2022-03-15-gcp-cloud-composer-tuning/memory-overhead.webp)
@@ -149,9 +150,8 @@ Now we're ready to estimate available memory and the maximum number of concurren
 I would also recommend making some reservations if you want a stable environment without unexpected incidents during your on-duty shift.
 For 20% reservation, the *Cloud Composer* cluster capacity will be defined as follows:
 
-
-| Worker        | Formula                       | Available Cluster Memory |     
-| ------------- | ----------------------------- | -----------------------: |     
+| Worker        | Formula                       | Available Cluster Memory |
+| ------------- | ----------------------------- | -----------------------: |
 | n1-standard-1 | 3 * (2.56GiB - 1.6GiB) - 20%  | 2.47GiB                  |
 | n2-standard-2 | 3 * (5.9GiB - 1.6GiB) - 20%   | 11.08GiB                 |
 | n2-highmem-2  | 3 * (~13.4GiB - 1.6GiB) - 20% | 30.41GiB                 |
@@ -164,7 +164,6 @@ Not so many, at least not on the cluster of the cheapest virtual machines.
 | n1-standard-1  | 2.47GiB / 220MiB  | 11            |
 | n2-standard-2  | 11.08GiB / 220MiB | 51            |
 | n2-highmem-2   | 30.41GiB/ 220MiB  | 141           |
-
 
 ## *Apache Airflow* tuning
 
@@ -193,7 +192,7 @@ For the virtual machines with 4GiB of RAM or more, the cluster with default sett
 
 ### Scheduler
 
-I have also found two other *Apache Airflow* properties worth modifying: 
+I have also found two other *Apache Airflow* properties worth modifying:
 
 * **scheduler.min_file_process_interval** -- The minimum interval after which a DAG file is parsed and tasks are scheduled, 0 [if not specified](https://airflow.apache.org/docs/apache-airflow/1.10.15/configurations-ref.html#min-file-process-interval).
 * **scheduler.parsing_processes** -- Defines how many DAGs parsing processes will run in parallel, 2 [if not specified](https://airflow.apache.org/docs/apache-airflow/1.10.15/configurations-ref.html#parsing-processes).
@@ -206,15 +205,15 @@ The `scheduler.parsing_processes` should be set to `max(1, number of CPUs - 1)`,
 Again it should lower the CPU utilization on the worker which is running the *airflow-scheduler* pod.
 
 {: .notice--info}
-Scheduler is a very important process of *Apache Airflow*. When it doesn't work properly you will observe many weird and hard to debug flaws.
+Scheduler is an important process of *Apache Airflow*. When it doesn't work properly you will observe many weird and hard to debug flaws.
 
 ## Monitoring
 
-*Cloud Composer* has been already configured in the optimal way, but the batch job scheduling might be a very dynamic environment.
+*Cloud Composer* has been already configured in the optimal way, but the batch job scheduling might be a dynamic environment.
 DAGs come and go, from time to time the history needs to be re-calculated which causes high pressure on the tasks scheduling as well.
 Fortunately *Cloud Composer* provides many performance related metrics to monitor.
 
-**composer.googleapis.com/environment/worker/pod_eviction_count** -- The number of worker pods evictions. 
+**composer.googleapis.com/environment/worker/pod_eviction_count** -- The number of worker pods evictions.
 If the evictions are observed, all task instances running on that pod are interrupted, and later marked as failed.
 The pod's eviction is a clear indicator that too many heavy tasks were running on the worker.
 You can either: lower `core.parallelism` and `celery.worker_concurrency` or scale up the cluster.
@@ -225,18 +224,19 @@ I would prefer vertical scaling than horizontal, *Kubernetes* and *Cloud Compose
 Based on the CPU and memory metrics you should decide about the target virtual machine family (normal or highmem).
 
 **composer.googleapis.com/environment/dag_processing/total_parse_time** -- The number of seconds taken to scan and import all DAG files.
-The processing time should be 30 seconds or less, if not the tasks scheduling seems to be very unreliable. 
+The processing time should be 30 seconds or less, if not the tasks scheduling seems to be very unreliable.
 If the parsing time is too high:
+
 * Optimize DAGs, see the official recommendation for the [top level Python code](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html#top-level-python-code)
 * Increase `scheduler.min_file_process_interval`, but longer interval also causes higher latency for the task scheduling.
 * Use workers with 3 CPUs or more, and increase `scheduler.parsing_processes` accordingly to allow parallel DAGs parsing.
 
 **kubernetes.io/container/cpu/core_usage_time** -- CPU usage on the workers.
 Pay special attention to the worker with the *airflow-scheduler* pod.
-High CPU usage on that worker would have had a negative impact on the regular tasks. 
+High CPU usage on that worker would have had a negative impact on the regular tasks.
 
-**kubernetes.io/container/memory/used_bytes** -- Memory usage on the workers. 
-If the metric is close to *Kubernetes* allocatable memory for the worker, 
+**kubernetes.io/container/memory/used_bytes** -- Memory usage on the workers.
+If the metric is close to *Kubernetes* allocatable memory for the worker,
 you can either: lower `core.parallelism` and `celery.worker_concurrency` or scale up the workers.
 
 ## Summary
