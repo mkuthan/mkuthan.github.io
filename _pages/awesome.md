@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [The Principles of the Flix Programming Language](https://flix.dev/principles/) -
+  Design principles of Flix programming language and Flix compiler. Awesome checklist.
+
 * [Local-first applications with automerge](https://youtu.be/I4aVMYhL8Pk) -
   Conflict-Free Replicated Data Type (CRDT), binary protocol, lossless snapshots, JavaScript and Rust (WebAssembly) implementations.
 
