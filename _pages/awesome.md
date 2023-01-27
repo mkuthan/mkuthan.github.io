@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Abstract Type Members versus Generic Type Parameters in Scala](https://www.artima.com/weblogs/viewpost.jsp?thread=270195) - 
+  `trait Collection[T] {}` vs. `trait Collection { type T }`
+
 * [The Principles of the Flix Programming Language](https://flix.dev/principles/) -
   Design principles of Flix programming language and Flix compiler. Awesome checklist.
 
