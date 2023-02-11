@@ -1,5 +1,6 @@
 Artifactory
 Atlassian
+Applicative
 autoscaler
 autoscaling
 Avro
@@ -7,6 +8,7 @@ Bazel
 BigQuery
 Bigtable
 Coldline
+Contravariant
 CPUs
 DAMP
 Dataflow
@@ -28,9 +30,11 @@ HPjmeter
 IOs
 Jira
 JVM
+Kleisli
 LGTM
 LIFO
 Macbook
+Monoid
 [Mm]onorepo
 Nearline
 PID
@@ -38,6 +42,7 @@ PTransform
 Pubsub
 Ruby
 Samza
+Semigroup
 Scio
 SDKs
 setters

@@ -7,3 +7,5 @@ main:
     url: /categories/
   - title: "My awesome notes"
     url: /awesome/
+  - title: "FP cheat sheet"
+    url: /fp-cheat-sheet/
