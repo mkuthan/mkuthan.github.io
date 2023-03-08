@@ -155,3 +155,12 @@ trait Traverse[F[_]] {
     traverse(inputs)(identity)
 }
 ```
+
+For example, if `F` is `List` and `G` is `Option[Int]`:
+
+```scala
+def parseInt(s: String): Option[Int] = ???
+
+List("1","2","3").traverse(parseInt) == Some(List(1,2,3))
+List("1","a","3").traverse(parseInt) == None
+```
