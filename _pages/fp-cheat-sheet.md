@@ -12,10 +12,11 @@ Credits:
 
 * [Cats](https://typelevel.org/cats/index.html)
 * [Scala with Cats](https://github.com/scalawithcats/scala-with-cats)
+* [Scala exercises](https://www.scala-exercises.org/cats/)
 
 ## Semigroup
 
-Associative binary operation
+Associative binary operation: `combine(x, combine(y, z)) = combine(combine(x, y), z)`
 
 ```scala
 trait Semigroup[A] {
@@ -23,17 +24,28 @@ trait Semigroup[A] {
 }
 ```
 
-`combine(x, combine(y, z)) = combine(combine(x, y), z)`
+Example
+
+```scala
+import cats.kernel.Semigroup
+import cats.syntax.all._
+
+val map1 = Map("k1" -> 1, "k2" -> 1)
+val map2 = Map("k1" -> 2, "k3" -> 3)
+
+Semigroup.combine(map1, map2)
+// Map(k1 -> 3, k2 -> 1, k3 -> 3)
+```
 
 ## Monoid
+
+Sensible default to combine empty collection: `combine(x, empty) = combine(empty, x) = x`
 
 ```scala
 trait Monoid[A] extends Semigroup[A] {
   def empty: A
 }
 ```
-
-`combine(x, empty) = combine(empty, x) = x`
 
 ## Functor
 
