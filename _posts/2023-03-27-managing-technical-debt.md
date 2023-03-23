@@ -51,7 +51,8 @@ and found interesting thesis:
 > You may choose to not change things, but you need to be capable
 
 Am I capable of making the ingestion platform change in finite time, expected quality and without a risk?
-Quick analysis proved that components on the critical path are outdated and deployment intervals were longer than a quarter. For example:
+Quick analysis proved that components on the critical path are outdated and deployment intervals were longer than a quarter. 
+For example, one of the services use the following versions of software:
 
 * Java 8
 * Scala 2.12
