@@ -42,7 +42,7 @@ Highly scalable and fault-tolerant piece of services and data pipelines that pro
 The platform is an important part of Allegro ecosystem, it delivers data for modeling recommendations, tuning search index, calculating ads metrics, building client profiles and more.
 
 The oldest parts of the platform are 7--8 years old, stability is outstanding, everything just works.
-Because a data model is like a generic map change requests are rare, data producers are able to change the payload without any change in the data pipelines.
+Because a data model is like a generic map, change requests are rare, data producers are able to change the payload without any change in the data pipelines.
 Do you see a scratch on the glass?
 
 Last year I read [Software Engineering at Google](/blog/2022/09/22/software-engineering-at-google/) book
