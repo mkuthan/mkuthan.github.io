@@ -17,6 +17,7 @@ Dataflow
 Dataproc
 Datastudio
 Dependabot
+DEV
 DRY
 FIFO
 Firestore
@@ -37,10 +38,12 @@ Kleisli
 LGTM
 LIFO
 Macbook
+Mesos
 Monoid
 [Mm]onorepo
 Nearline
 PID
+PROD
 PTransform
 Pubsub
 Ruby
@@ -53,5 +56,7 @@ Sourcegraph
 Spark
 SQL
 TDD
+TEST
+Testcontainers
 WebAssembly
 Yapf
