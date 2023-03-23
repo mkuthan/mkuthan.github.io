@@ -1,3 +1,4 @@
+Akka
 Artifactory
 Atlassian
 Applicative
@@ -7,6 +8,7 @@ Avro
 Bazel
 BigQuery
 Bigtable
+clickstream
 Coldline
 Contravariant
 CPUs
@@ -14,6 +16,7 @@ DAMP
 Dataflow
 Dataproc
 Datastudio
+Dependabot
 DRY
 FIFO
 Firestore
