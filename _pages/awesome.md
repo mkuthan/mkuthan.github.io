@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864) -
+How to reduce size of the change to increase velocity? Revert the change always if tests fail!
+
 * [Learning different technologies based in the Scala Programming Language](https://www.scala-exercises.org) - Coding exercises for Standard library, FP in Scala, Cats and other libraries.
 
 * [Abstract Type Members versus Generic Type Parameters in Scala](https://www.artima.com/weblogs/viewpost.jsp?thread=270195) - `trait Collection[T] {}` vs. `trait Collection { type T }`.
