@@ -16,7 +16,11 @@ Credits:
 
 ## Semigroup
 
-Associative binary operation: `combine(x, combine(y, z)) = combine(combine(x, y), z)`
+Associative binary operation:
+
+`combine(x, combine(y, z)) = combine(combine(x, y), z)`
+
+Definition:
 
 ```scala
 trait Semigroup[A] {
@@ -24,12 +28,9 @@ trait Semigroup[A] {
 }
 ```
 
-Example
+For example:
 
 ```scala
-import cats.kernel.Semigroup
-import cats.syntax.all._
-
 val map1 = Map("k1" -> 1, "k2" -> 1)
 val map2 = Map("k1" -> 2, "k3" -> 3)
 
@@ -39,7 +40,11 @@ Semigroup.combine(map1, map2)
 
 ## Monoid
 
-Sensible default to combine empty collection: `combine(x, empty) = combine(empty, x) = x`
+Sensible default to combine empty collection:
+
+`combine(x, empty) = combine(empty, x) = x`
+
+Definition:
 
 ```scala
 trait Monoid[A] extends Semigroup[A] {
@@ -49,20 +54,36 @@ trait Monoid[A] extends Semigroup[A] {
 
 ## Functor
 
-Type constructor
-
-```scala
-trait Functor[F[_]] {
-  def map[A, B](fa: F[A])(f: A => B): F[B]
-  def lift[A, B](f: A => B): F[A] => F[B] = fa => map(fa)(f)
-}
-```
-
-![map](/assets/images/fp-cheat-sheet/functor-map.svg)
+Generalizable map:
 
 `fa.map(f).map(g) = fa.map(f.andThen(g))`
 
 `fa.map(x => x) = fa`
+
+![map](/assets/images/fp-cheat-sheet/functor-map.svg)
+
+Definition:
+
+```scala
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+```
+
+For example:
+
+```scala
+def increment[F[_]](container: F[Int])(using functor: Functor[F]): F[Int] =
+  functor.map(container)(_ + 1)
+```
+
+Or using extension method:
+
+```scala
+import cats.syntax.functor._
+def increment[F[_]](container: F[Int])(using functor: Functor[F]): F[Int] =
+  functor.map(container)(_ + 1)
+```
 
 ### Contravariant Functor
 
@@ -82,7 +103,15 @@ def imap[B](dec: A => B, enc: B => A): Codec[B]
 
 ## Monad
 
-Mechanism for sequencing computations
+Mechanism for sequencing computations:
+
+`pure(a).flatMap(func) == func(a)`
+
+`m.flatMap(pure) == m`
+
+`m.flatMap(f).flatMap(g) == m.flatMap(x => f(x).flatMap(g))`
+
+Definition:
 
 ```scala
 trait Monad[F[_]] {
@@ -93,15 +122,13 @@ trait Monad[F[_]] {
 
 ![option flatmap](/assets/images/fp-cheat-sheet/monad-option-flatmap.svg)
 
-`pure(a).flatMap(func) == func(a)`
+Monad class hierarchy:
 
-`m.flatMap(pure) == m`
-
-`m.flatMap(f).flatMap(g) == m.flatMap(x => f(x).flatMap(g))`
+![Monad class hierarchy](/assets/images/fp-cheat-sheet/monad-class-hierarchy.png)
 
 ### Identity Monad
 
-Effect of having no effect
+Effect of having no effect:
 
 ```scala
 type Id[A] = A
@@ -109,7 +136,7 @@ type Id[A] = A
 
 ### Kleisli
 
-Composition of functions that return a monadic value
+Composition of functions that return a monadic value:
 
 ```scala
 final case class Kleisli[F[_], A, B](run: A => F[B]) {
@@ -120,7 +147,11 @@ final case class Kleisli[F[_], A, B](run: A => F[B]) {
 
 ## Semigroupal
 
-Combine contexts
+Combine contexts:
+
+`product(a, product(b, c)) == product(product(a, b), c)`
+
+Definition:
 
 ```scala
 trait Semigroupal[F[_]] {
@@ -128,9 +159,9 @@ trait Semigroupal[F[_]] {
 }
 ```
 
-`product(a, product(b, c)) == product(product(a, b), c)`
-
 ## Applicative Functor
+
+Definition:
 
 ```scala
 trait Applicative[F[_]] extends Semigroupal[F] with Functor[F] {
@@ -142,7 +173,18 @@ trait Applicative[F[_]] extends Semigroupal[F] with Functor[F] {
 }
 ```
 
-![Monad class hierarchy](/assets/images/fp-cheat-sheet/monad-class-hierarchy.png)
+For example:
+
+```scala
+val applicativeList = Applicative[List].pure(42)
+```
+
+Or using extension method:
+
+```scala
+import cats.syntax.applicative._
+val applicativeList = 42.pure[List]
+```
 
 ## Foldable
 
