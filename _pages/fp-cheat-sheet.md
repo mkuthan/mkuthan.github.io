@@ -95,11 +95,23 @@ def contramap[A, B](fa: F[A])(f: B => A): F[B]
 
 ### Invariant Functor
 
+Definition:
+
 ```scala
 def imap[B](dec: A => B, enc: B => A): Codec[B]
 ```
 
 ![imap](/assets/images/fp-cheat-sheet/functor-imap.svg)
+
+For example:
+
+```scala
+def longToDate: Long => Date = new Date(_)
+def dateToLong: Date => Long = _.getTime
+
+val semigroupDate: Semigroup[Date] =
+  Semigroup[Long].imap(longToDate)(dateToLong)
+```
 
 ## Monad
 
@@ -121,10 +133,6 @@ trait Monad[F[_]] {
 ```
 
 ![option flatmap](/assets/images/fp-cheat-sheet/monad-option-flatmap.svg)
-
-Monad class hierarchy:
-
-![Monad class hierarchy](/assets/images/fp-cheat-sheet/monad-class-hierarchy.png)
 
 ### Identity Monad
 
