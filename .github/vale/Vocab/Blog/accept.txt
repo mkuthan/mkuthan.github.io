@@ -48,6 +48,7 @@ PTransform
 Pubsub
 Ruby
 Samza
+sbt
 Semigroup
 Scio
 SDKs
