@@ -1,3 +1,4 @@
+Akka
 Artifactory
 Atlassian
 Applicative
@@ -7,6 +8,7 @@ Avro
 Bazel
 BigQuery
 Bigtable
+clickstream
 Coldline
 Contravariant
 CPUs
@@ -14,6 +16,8 @@ DAMP
 Dataflow
 Dataproc
 Datastudio
+Dependabot
+DEV
 DRY
 FIFO
 Firestore
@@ -34,14 +38,17 @@ Kleisli
 LGTM
 LIFO
 Macbook
+Mesos
 Monoid
 [Mm]onorepo
 Nearline
 PID
+PROD
 PTransform
 Pubsub
 Ruby
 Samza
+sbt
 Semigroup
 Scio
 SDKs
@@ -50,5 +57,7 @@ Sourcegraph
 Spark
 SQL
 TDD
+TEST
+Testcontainers
 WebAssembly
 Yapf
