@@ -5,6 +5,10 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [JavaScript event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)
+and [Node.js event loop](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop) -
+Runtime models for JavaScript in the browser and server side.
+
 * [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864) -
 How to reduce size of the change to increase velocity? Revert the change always if tests fail!
 
