@@ -50,6 +50,7 @@ Ruby
 Samza
 sbt
 Semigroup
+Scalacheck
 Scio
 SDKs
 setters
@@ -57,7 +58,7 @@ Sourcegraph
 Spark
 SQL
 TDD
-TEST
+[Tt][Ee][Ss][Tt]
 Testcontainers
 WebAssembly
 Yapf
