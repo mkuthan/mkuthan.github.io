@@ -16,7 +16,8 @@ Credits:
 
 ## Semigroup
 
-Associative binary operation:
+Associative binary operation.
+The binary operation takes two elements of the set as input and produces a single output element of the set.
 
 `combine(x, combine(y, z)) = combine(combine(x, y), z)`
 
@@ -28,28 +29,80 @@ trait Semigroup[A] {
 }
 ```
 
-For example:
+Concatenate of two strings:
 
 ```scala
-val map1 = Map("k1" -> 1, "k2" -> 1)
-val map2 = Map("k1" -> 2, "k3" -> 3)
+import cats.kernel.Semigroup
 
-Semigroup.combine(map1, map2)
-// Map(k1 -> 3, k2 -> 1, k3 -> 3)
+Semigroup[String].combine("A", "B") // "AB"
+```
+
+Add values of each key in the maps:
+
+```scala
+import cats.kernel.Semigroup
+
+val map1 = Map("a" -> 1, "b" -> 2, "c" -> 3)
+val map2 = Map("b" -> 3, "c" -> 4, "d" -> 5)
+
+Semigroup[Map[String, Int]].combine(map1, map2) // Map(a -> 1, b -> 5, c -> 7, d -> 5)
+```
+
+Add values of each option if both are defined, or by returning the defined option, or else `None`:
+
+```scala
+import cats.kernel.Semigroup
+
+val combine: (Option[Int], Option[Int]) => Option[Int] = Semigroup[Option[Int]].combine(_, _)
+
+combine(Some(1), Some(2)) // Some(3)
+combine(Some(1), None) // Some(1)
+combine(None, Some(1)) // Some(1)
+combine(None, None) // None
+```
+
+Add values of each try if both are successful, or by returning the first failed try, or else the second failed try:
+
+```scala
+import scala.util.{Try, Success, Failure}
+import cats.kernel.Semigroup
+
+val combine: (Try[Int], Try[Int]) => Try[Int] = Semigroup[Try[Int]].combine(_, _)
+
+val f = Failure(new Exception())
+
+combine(Success(1), Success(2)) // Success(3)
+combine(Success(1), f) // Failure(java.lang.Exception)
+combine(f, Success(1)) // Failure(java.lang.Exception)
+combine(f, f) // Failure(java.lang.Exception)
 ```
 
 ## Monoid
 
-Sensible default to combine empty collection:
+A Monoid is a Semigroup that has an identity element.
+An identity element is a value that when combined with any other value of the same type using Semigroup,
+produces that other value as the result.
 
 `combine(x, empty) = combine(empty, x) = x`
 
 Definition:
 
 ```scala
-trait Monoid[A] extends Semigroup[A] {
+trait Monoid[A] {
+  def combine(x: A, y: A): A
   def empty: A
 }
+```
+
+Sum of integers but use the Monoid's identity element to represent the missing value:
+
+```scala
+import cats.kernel.Monoid
+import cats.syntax.semigroup._
+
+val numbers = List(Some(1), None, Some(3), Some(4))
+
+numbers.fold(Monoid[Option[Int]].empty)(_ |+| _) // Some(8)
 ```
 
 ## Functor
