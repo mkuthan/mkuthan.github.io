@@ -47,9 +47,9 @@ All these changes made me think about my career path.
 This time I decided to go back to a senior engineering role.
 {: .notice--info}
 
-I'm in a transition period and I'm still a team leader but I spend more and more time on coding and less on management duties.
-I'm still responsible for the team but I'm not the only one who makes final decisions.
-Everything is going well so far and I'm happy with my decision.
+I'm in a transition period, but I spend more and more time on coding and less on management duties.
+I'm still responsible for the team, although I'm not the only one who makes final decisions.
+Everything is going well so far, and I'm happy with my decision.
 
 ## How to manage a transition
 
@@ -61,6 +61,18 @@ Everything is going well so far and I'm happy with my decision.
 * Be fair and transparent for all your subordinates, you will be one of them soon.
 * Talk with your manager and focus on the good parts of such a transition.
 * Together with your manager, find a new leader for your team.
+
+## What about staff/principal engineer
+
+Staff/principal engineer role seems to be a next step in a technical career path.
+I was in a similar role for a while, but it looked more like a manager role than a software engineering role.
+In short, I was responsible for a new on-the-shelf product adoption.
+I managed a task force of a few engineers from various teams, and we evaluated the product and its integration with our systems.
+From the technical perspective, it wasn't a technically challenging task. 
+I spent most of my time on Excel sheets and on setting up the meetings.
+
+Staff/principal engineer role doesn't have to mean what you initially think.
+{: .notice--info}
 
 ## What's next
 
@@ -74,5 +86,5 @@ The team consists of 5 software engineers, we're not afraid to make mistakes and
 * One just promoted senior engineer
 * One promising junior engineer
 
-If you're interested in team manager role, please contact me.
+If you're interested in the team manager role, please contact me.
 {: .notice--info}
