@@ -33,7 +33,7 @@ Nowadays Allegro is a large company listed on a stock exchange.
 Organizational structure is more complex and processes are more formalized.
 As a leader you have a lot of interactions with other leaders, managers and stakeholders.
 You're expected to work from the office, remote work is better suited for individual contributors.
-In my opinion, technical leader role is evolving into a regular team leader/manager role. 
+In my opinion, the technical leader role is evolving into a regular team leader/manager role. 
 Some leaders I know are still coding and participate in on-call shifts, others are not.
 
 All these changes made me think about my career path.
@@ -71,7 +71,7 @@ Everything is going well so far, and I'm happy with my decision.
 ## What about staff/principal engineer
 
 Staff/principal engineer role seems to be a next step in a technical career path.
-In previous company I was in a similar role for a while, but it looked more like a manager role than a software engineering role.
+In my previous company I was in a similar role for a while, but it looked more like a manager role than a software engineering role.
 In short, I was responsible for a new on-the-shelf product adoption.
 I managed a task force of a few engineers from various teams, and we evaluated the product and its integration with our systems.
 From the technical perspective, it wasn't a technically challenging task. 
