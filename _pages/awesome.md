@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [The Engineer/Manager Pendulum](https://www.infoq.com/presentations/hands-on-coding-managers/) -
+you don’t have to choose to be one or the other, but that you must choose one at a time.
+
 * [JavaScript event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)
 and [Node.js event loop](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop) -
 Runtime models for JavaScript in the browser and server side.
