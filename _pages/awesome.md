@@ -1,5 +1,5 @@
 ---
-title: "My awesome notes"
+title: "Awesome notes"
 permalink: /awesome/
 ---
 
