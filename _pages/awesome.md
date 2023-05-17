@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [2023-03-08 Incident](https://www.datadoghq.com/blog/2023-03-08-multiregion-infrastructure-connectivity-issue/) -
+Why multi-region and multi-cloud architecture didn't help to avoid the outage.
+
 * [The Engineer/Manager Pendulum](https://www.infoq.com/presentations/hands-on-coding-managers/) -
 you don’t have to choose to be one or the other, but that you must choose one at a time.
 
