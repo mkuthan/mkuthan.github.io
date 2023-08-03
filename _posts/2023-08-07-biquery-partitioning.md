@@ -170,16 +170,16 @@ Below you can find the matrix with cons and pros of different partitioning metho
 
 | | time-unit column daily | time-unit column hourly | ingestion time daily | ingestion time hourly |
 | --- | --- | --- | --- | --- |
-| Best for time-series | yes | yes | no | no |
-| Best for aggregates | no | no | yes | yes |
-| 6+ months of retention | yes | no | yes | no |
-| 10+ years of retention | no | no | no | no |
-| UTC only timezone | yes | yes | yes | yes |
-| Non-UTC timezone | yes | yes | limited | limited |
-| Many timezones | yes | yes | no | limited |
-| Storage Write API | yes | yes | no | no |
-| Streaming Inserts | yes | yes | limited | limited |
-| Batch Loads | yes | yes | yes | yes |
-| Partition pruning | yes | yes | less convenient | less convenient |
+| Best for time-series | ✅ | ✅ | 🚫 | 🚫 |
+| Best for aggregates | 🚫 | 🚫 | ✅ | ✅ |
+| 6+ months of retention | ✅ | 🚫 | ✅ | 🚫 |
+| 10+ years of retention | 🚫 | 🚫 | 🚫 | 🚫 |
+| UTC only timezone | ✅ | ✅ | ✅ | ✅ |
+| Non-UTC timezone | ✅ | ✅ | limited | limited |
+| Many timezones | ✅ | ✅ | 🚫 | limited |
+| Storage Write API | ✅ | ✅ | 🚫 | 🚫 |
+| Streaming Inserts | ✅ | ✅ | limited | limited |
+| Batch Loads | ✅ | ✅ | ✅ | ✅ |
+| Partition pruning | natural | natural | less convenient | less convenient |
 
 I would always prefer time-unit column partitioning with daily granularity as the least problematic.
