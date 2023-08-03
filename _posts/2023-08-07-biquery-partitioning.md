@@ -70,7 +70,7 @@ WHERE
 ```
 
 For ingestion time partitioning you could load data using table decorator and use whatever timezone you want instead of UTC.
-If you load one day of data for "CET" (Central European Time) timezone using `ecommerce_sessions$20081215` table decorator, the following query returns correct results:
+If you load one day of data for Central European Time (CET) timezone using `ecommerce_sessions$20081215` table decorator, the following query returns correct results:
 
 ```sql
 SELECT DATE(_PARTITIONTIME) AS dt, page_views, unique_visitors
