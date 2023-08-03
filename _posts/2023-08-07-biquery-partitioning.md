@@ -53,7 +53,7 @@ Tables with 3 years of retention use `3 * 365 = 1095` daily partitions, below li
 Tables with hourly partitions keep up to only `4000 / 24 = 166 days and 8 hours` of data.
 For tables with more than 10 years of history I would consider monthly partitioning.
 
-GCP support could raise the limit, for example to 10000 partitions but don't expect any guarantees in case of incidents
+Google Cloud Platform support could raise the limit, for example to 10000 partitions but don't expect any guarantees in case of incidents
 {: .notice--info}
 
 ## Timezones
@@ -70,7 +70,7 @@ WHERE
 ```
 
 For ingestion time partitioning you could load data using table decorator and use whatever timezone you want instead of UTC.
-If you load one day of data for "CET" timezone using `ecommerce_sessions$20081215` table decorator, the following query returns correct results:
+If you load one day of data for "CET" (Central European Time) timezone using `ecommerce_sessions$20081215` table decorator, the following query returns correct results:
 
 ```sql
 SELECT DATE(_PARTITIONTIME) AS dt, page_views, unique_visitors
