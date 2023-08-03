@@ -1,6 +1,6 @@
 ---
 title: "BigQuery partitioning - by time-unit column or by ingestion time"
-date: 2023-08-07
+date: 2023-08-04
 tags: [GCP, BigQuery]
 header:
     overlay_image: /assets/images/2022-03-24-gcp-dataproc-spark-tuning/nana-smirnova-IEiAmhXehwE-unsplash.webp
@@ -13,7 +13,7 @@ It depends, keep reading to learn trade-offs, pitfalls, and other traps.
 
 ## Time-series or aggregates
 
-For time-series with data points with minute, second or millisecond precision use time-unit column partitioning.
+For time-series with data points with minute, second or millisecond precision, use time-unit column partitioning.
 You will get convenient querying like:
 
 ```sql
@@ -48,8 +48,8 @@ WHERE
 ## Retention
 
 In my projects, the majority of tables require at least 1--3 years of history.
-With a limit of 4000 partitions per BigQuery table, it requires at least daily partitioning.
-Tables with 3 years of retention use `3 * 365 = 1095` daily partitions, below limit.
+With a limit of 4000 partitions per BigQuery table, it requires daily partitioning.
+Tables with 3 years of retention use `3 * 365 = 1095` daily partitions, which is below limit.
 Tables with hourly partitions keep up to only `4000 / 24 = 166 days and 8 hours` of data.
 
 For tables with more than 10 years of history I would consider another storage than BigQuery.
@@ -67,12 +67,12 @@ Google Cloud Platform support could raise the limit, for example to 10000 partit
 If you process data on a daily basis use daily partitioning for efficient partition pruning.
 If you process data on an hourly basis and don't need 6+ months of history in the table, use hourly partitioning.
 
-If you need to keep longer history use daily partitioning and one of the following tricks for efficient querying:
+If you need to keep longer history, use daily partitioning and one of the following tricks for efficient querying:
 
 1. For timestamp-column partitioning define also a clustering on the partitioning column.
 2. For ingestion time partitioning add an "hour" or "minute of the day" column and define clustering on this column.
 
-For the trick with clustering on timestamp partitioning column the following query reads only 1 minute of data in daily partitioned table:
+For the trick with clustering on timestamp partitioning column, the following query reads only 1 minute of data in daily partitioned table:
 
 ```sql
 SELECT ts, temperate, pressure
