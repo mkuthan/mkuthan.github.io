@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Prompt engineering](https://www.promptopedia.pl)
+How to talk to GenAI (in polish).
+
 * [Datadog incident](https://www.datadoghq.com/blog/2023-03-08-multiregion-infrastructure-connectivity-issue/) -
 Multi-region and multi-cloud architecture didn't necessarily help to avoid the outage.
 
