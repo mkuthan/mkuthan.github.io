@@ -62,6 +62,43 @@ using Hive partitioning scheme for querying.
 Google Cloud Platform support could raise the limit, for example to 10000 partitions but don't expect any guarantees in case of incidents
 {: .notice--info}
 
+## Partition pruning
+
+If you process data on a daily basis use daily partitioning for efficient partition pruning.
+If you process data on an hourly basis and don't need 6+ months of history in the table, use hourly partitioning.
+
+If you need to keep longer history use daily partitioning and one of the following tricks for efficient querying:
+
+1. For timestamp-column partitioning define also a clustering on the partitioning column.
+2. For ingestion time partitioning add an "hour" or "minute of the day" column and define clustering on this column.
+
+For the trick with clustering on timestamp partitioning column the following query reads only 1 minute of data in daily partitioned table:
+
+```sql
+SELECT ts, temperate, pressure
+FROM weather_stations
+WHERE
+    ts BETWEEN TIMESTAMP("2008-12-25 15:30:00")
+        AND TIMESTAMP("2008-12-25 15:31:00")
+```
+
+However, the timestamp clustering column has a huge entropy, so if you need more clustering columns you can't use this trick.
+{: .notice--info}
+
+For the trick with extra "hour" clustering column the following query reads one hour of data in daily partitioned table:
+
+```sql
+SELECT ts, temperate, pressure
+FROM weather_stations
+WHERE
+    ts BETWEEN TIMESTAMP("2008-12-25 15:30:00")
+        AND TIMESTAMP("2008-12-25 15:31:00")
+    AND _PARTITIONTIME = DATE("2008-12-15")
+    AND hour = 15
+```
+
+As you see, such a table isn't convenient to query, the client must be aware of two extra predicates.
+
 ## Timezones
 
 If you need querying data using different timezones, use timestamp column partitioning.
@@ -126,43 +163,6 @@ Querying such tables is error prone.
 
 I'm not aware of any [Batch Loads](https://cloud.google.com/bigquery/docs/load-data-partitioned-tables)
 limitations for partitioned tables.
-
-## Partition pruning
-
-If you process data on a daily basis use daily partitioning for efficient partition pruning.
-If you process data on an hourly basis and don't need 6+ months of history in the table, use hourly partitioning.
-
-If you need to keep longer history use daily partitioning and one of the following tricks for efficient querying:
-
-1. For timestamp-column partitioning define also a clustering on the partitioning column.
-2. For ingestion time partitioning add an "hour" or "minute of the day" column and define clustering on this column.
-
-For the trick with clustering on timestamp partitioning column the following query reads only 1 minute of data in daily partitioned table:
-
-```sql
-SELECT ts, temperate, pressure
-FROM weather_stations
-WHERE
-    ts BETWEEN TIMESTAMP("2008-12-25 15:30:00")
-        AND TIMESTAMP("2008-12-25 15:31:00")
-```
-
-However, the timestamp clustering column has a huge entropy, so if you need more clustering columns you can't use this trick.
-{: .notice--info}
-
-For the trick with extra "hour" clustering column the following query reads one hour of data in daily partitioned table:
-
-```sql
-SELECT ts, temperate, pressure
-FROM weather_stations
-WHERE
-    ts BETWEEN TIMESTAMP("2008-12-25 15:30:00")
-        AND TIMESTAMP("2008-12-25 15:31:00")
-    AND _PARTITIONTIME = DATE("2008-12-15")
-    AND hour = 15
-```
-
-As you see, such a table isn't convenient to query, the client must be aware of two extra predicates.
 
 ## Summary matrix
 
