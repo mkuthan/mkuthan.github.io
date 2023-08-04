@@ -19,6 +19,7 @@ jobs:
         if: always()
         with:
           files: _posts/
+          vale_flags: --minAlertLevel=error
           fail_on_error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
