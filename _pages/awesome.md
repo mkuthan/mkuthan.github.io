@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [BigQuery metadata](http://vldb.org/pvldb/vol14/p3083-edara.pdf) -
+When Metadata is Big Data.
+
 * [Prompt engineering](https://www.promptopedia.pl) -
 How to talk to GenAI (in polish).
 
