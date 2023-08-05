@@ -168,7 +168,7 @@ Querying such tables is error prone.
 I'm not aware of any [Batch Loads](https://cloud.google.com/bigquery/docs/load-data-partitioned-tables)
 limitations for partitioned tables.
 
-If you writ with `WRITE_TRUNCATE` disposition to column partitioned table always define partition decorator.
+If you write with `WRITE_TRUNCATE` disposition to column partitioned table always define partition decorator.
 If not, you truncate the whole table without any notice.
 Thanks [Michał](https://www.linkedin.com/in/michalsosn/) for pointing this out.
 {: .notice--warning}
