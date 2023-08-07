@@ -12,12 +12,16 @@ theme: minimal-mistakes-jekyll
 author:
   name: "Marcin Kuthan"
   avatar: "https://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5?s=400"
-  bio: Big data engineer leading @allegro real-time, highly scalable and fault-tolerant data ingestion platform.
+  bio:
+    Big data engineer leading @allegro real-time, highly scalable and fault-tolerant data ingestion platform.
     It processes a few billion events every day with e2e latency below one minute.
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github-square"
       url: "https://github.com/mkuthan"
+    - label: "Mastodon"
+      icon: "fab fa-fw fa-mastodon"
+      url: "https://fosstodon.org/@mkuthan"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       url: "https://twitter.com/MarcinKuthan"
@@ -66,10 +70,10 @@ defaults:
       classes: wide
 
 # additional folders to process
-include: [ "_pages" ]
+include: ["_pages"]
 
 # exclude project readme from publication
-exclude: [ "README.md" ]
+exclude: ["README.md"]
 
 # kramdown, see: https://kramdown.gettalong.org/documentation.html
 markdown: kramdown
