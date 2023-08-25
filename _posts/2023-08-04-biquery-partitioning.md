@@ -138,7 +138,7 @@ The following query reads 24 hourly partitions and returns correct results:
 SELECT TIMESTAMP(_PARTITIONTIME, "CET") AS ts, page_views, unique_visitors
 FROM ecommerce_sessions
 WHERE
-    _PARTITIONTIME = BETWEEN TIMESTAMP("2008-12-25 00:00:00", "CET")
+    _PARTITIONTIME BETWEEN TIMESTAMP("2008-12-25 00:00:00", "CET")
         AND TIMESTAMP("2008-12-26 00:00:00", "CET")
 ```
 
