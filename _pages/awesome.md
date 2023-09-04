@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Lessons from Building Static Analysis Tools at Google](https://cacm.acm.org/magazines/2018/4/226371-lessons-from-building-static-analysis-tools-at-google/fulltext) -
+Finding bugs is easy, but how make them actionable at scale?
+
 * [BigQuery metadata](http://vldb.org/pvldb/vol14/p3083-edara.pdf) -
 When Metadata is Big Data.
 
