@@ -42,16 +42,16 @@ To reduce duplication I extracted part of domain logic into a shared library. Ka
 
 In practice, such system had the following design flaws:
 
-* Kafka Streams and Apache Spark use different API for stateful operations like windowing and joining. 
+* Kafka Streams and Apache Spark use different API for stateful operations like windowing and joining.
 I couldn't reuse the code between speed and batch layers beyond the stateless map/filter operations.
 
-* Runtime environments for speed and batch layer were different. Kafka Streams run on Mesos cluster, Apache Spark on YARN. I couldn't reuse deployment automation, monitoring and alerting. 
+* Runtime environments for speed and batch layer were different. Kafka Streams run on Mesos cluster, Apache Spark on YARN. I couldn't reuse deployment automation, monitoring and alerting.
 
-* While Apache Spark was a mature data processing framework, Kafka Streams didn't meet my expectations. See my blog post [Kafka Streams DSL vs processor API](/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/) from 2017 for details. 
+* While Apache Spark was a mature data processing framework, Kafka Streams didn't meet my expectations. See my blog post [Kafka Streams DSL vs processor API](/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/) from 2017 for details.
 
 ## Unified architecture
 
-In 2019 I moved from on-prem to Google Cloud Platform and have been developing data processing pipelines using Apache Beam. 
+In 2019 I moved from on-prem to Google Cloud Platform and have been developing data processing pipelines using Apache Beam.
 It's still a lambda architecture but realization is much better than in 2017.
 
 ```mermaid
@@ -73,13 +73,13 @@ If I compare the architecture to the architecture from 2017:
 * Apache Beam allows to unify domain logic between batch and speed layers.
 Stateful operations like regular, window and temporal joins are the same for streaming and batch.
 
-* Runtime environments for real-time and batch are almost the same. 
+* Runtime environments for real-time and batch are almost the same.
 I deploy all pipelines on Dataflow, managed service on Google Cloud Platform.
 
 * Maturity of batch and streaming parts is similar.
 For example, Dataflow provides external services for data shuffling in batch and streaming. Moving shuffling out of workers is critical for jobs scalability.
 
-However, the unification doesn't mean that you can deploy exactly the same job in a streaming or in a batch manner. 
+However, the unification doesn't mean that you can deploy exactly the same job in a streaming or in a batch manner.
 There are no magic parameters like `--batch` or `--streaming`, you have to build such capability yourself by proper design.
 {: .notice--info}
 
@@ -87,7 +87,7 @@ There are no magic parameters like `--batch` or `--streaming`, you have to build
 
 Let's start with a simple use-case with unified batch and streaming business logic.
 Data pipeline for calculating statistics from toll booths you encounter on highways, bridges, or tunnels.
-I took inspiration from Azure documentation [Build an IoT solution by using Stream Analytics](https://learn.microsoft.com/en-us/azure/stream-analytics/stream-analytics-build-an-iot-solution-using-stream-analytics). 
+I took inspiration from Azure documentation [Build an IoT solution by using Stream Analytics](https://learn.microsoft.com/en-us/azure/stream-analytics/stream-analytics-build-an-iot-solution-using-stream-analytics).
 
 ```mermaid
 graph LR
@@ -145,7 +145,7 @@ TollBoothStreamingJob \
 ```
 
 The batch job aggregates statistics in much larger windows to achieve better accuracy.
-It writes results into a data warehouse for downstream batch data pipelines and reporting. 
+It writes results into a data warehouse for downstream batch data pipelines and reporting.
 
 ```
 TollBoothBacthJob \
@@ -153,7 +153,7 @@ TollBoothBacthJob \
     --totalVehicleTimeTable=...
 ```
 
-The streaming pipeline detects vehicles with expired registrations, it's more valuable than fraud detection in a daily batch. 
+The streaming pipeline detects vehicles with expired registrations, it's more valuable than fraud detection in a daily batch.
 
 ```
 TollBoothStreamingJob \
@@ -162,21 +162,21 @@ TollBoothStreamingJob \
 
 ### Diagnostics
 
-Because the streaming pipeline is much harder to debug, it's crucial to put aside some diagnostic information about the current state of the job. 
-For example if the job receives a toll booth entry message for a given vehicle, but it doesn't have information about this vehicle registration yet. 
-This is a temporary situation if one stream of data is late and the job produces incomplete results. 
+Because the streaming pipeline is much harder to debug, it's crucial to put aside some diagnostic information about the current state of the job.
+For example if the job receives a toll booth entry message for a given vehicle, but it doesn't have information about this vehicle registration yet.
+This is a temporary situation if one stream of data is late and the job produces incomplete results.
 
 ### Dead letters
 
-If there is an error in the input data, the batch pipeline just fails. 
-You could fix invalid data and execute a batch job again. 
+If there is an error in the input data, the batch pipeline just fails.
+You could fix invalid data and execute a batch job again.
 
 On streaming pipelines single invalid record could block the whole pipeline forever.
-When the streaming pipeline isn't able to process a message, put this message into Dead Letter Queue (DLQ). The invalid records could be fixed and processed again. 
+When the streaming pipeline isn't able to process a message, put this message into Dead Letter Queue (DLQ). The invalid records could be fixed and processed again.
 
 ## Domain, infrastructure and application layers
 
-As you could see, the streaming and batch pipelines aren't the same. 
+As you could see, the streaming and batch pipelines aren't the same.
 They have different inputs and outputs, use different parameters to achieve either lower latency or better accuracy.
 
 How to organize the code to get unified architecture?
@@ -197,7 +197,7 @@ graph TB
 ### Domain
 
 Below you can find a function for calculating total time between vehicle entry and exit.
-The function uses a session window to join vehicle entries and vehicle exits within a gap duration. 
+The function uses a session window to join vehicle entries and vehicle exits within a gap duration.
 When there is no exit for a given entry, the function can't calculate total time but emits diagnostic information.
 
 The code uses [Spotify Scio](https://github.com/spotify/scio), excellent Scala API for [Apache Beam](https://github.com/apache/beam).
@@ -243,13 +243,12 @@ private def toTotalVehicleTime(boothEntry: TollBoothEntry, boothExit: TollBoothE
 }
 ```
 
-The logic is exactly the same for the streaming and for the batch, there is no IO related code here. 
-Streaming pipeline defines shorter window gap to get lower latency, 
+The logic is exactly the same for the streaming and for the batch, there is no IO related code here.
+Streaming pipeline defines shorter window gap to get lower latency,
 batch pipeline longer gap for better accuracy.
 
 Because this is a data processing code, don't expect a pure domain without external dependencies. Domain logic must depend on Apache Beam / Spotify Scio to make something useful.
 {: .notice--info}
-
 
 ### Application
 
@@ -306,7 +305,7 @@ def main(mainArgs: Array[String]): Unit = {
     // run the pipeline
     sc.run()
 }
-``` 
+```
 
 The corresponding batch pipeline looks like this:
 
@@ -381,7 +380,7 @@ Extract infrastructure module as a shared library and use in all data pipelines.
 
 ## Summary
 
-Unified batch and streaming doesn't mean that you can execute exactly the same code in a batch or streaming fashion. 
+Unified batch and streaming doesn't mean that you can execute exactly the same code in a batch or streaming fashion.
 It doesn't work this way, streaming pipelines favor lower latency, batch is for better accuracy.
 
 * Organize your codebase into domain, application and infrastructure layers.
