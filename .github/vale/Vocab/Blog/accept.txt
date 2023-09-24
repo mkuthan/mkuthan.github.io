@@ -30,6 +30,7 @@ getters
 Gofmt
 Gradle
 Hazelcast
+HDFS
 HPjmeter
 IOs
 Jira
@@ -56,6 +57,7 @@ SDKs
 setters
 Sourcegraph
 Spark
+Spotify
 SQL
 TDD
 [Tt][Ee][Ss][Tt]
@@ -63,3 +65,4 @@ Testcontainers
 UTC
 WebAssembly
 Yapf
+YARN
