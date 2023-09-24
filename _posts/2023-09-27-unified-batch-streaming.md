@@ -7,7 +7,7 @@ header:
     caption: "[Unsplash](https://unsplash.com/@lks_bt)"
 ---
 
-Unified batch and streaming processing is a data architecture that seamlessly combines both batch and real-time data processing. 
+Unified batch and streaming processing is a data architecture that seamlessly combines both batch and real-time data processing.
 It enables organizations to gain real-time insights from their data while maintaining the ability to process large volumes of historical data. In the past organizations often dealt with batch and streaming as separate data pipelines,
 leading to increased complexity in data infrastructure and codebase management.
 
