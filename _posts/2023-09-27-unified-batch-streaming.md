@@ -392,7 +392,8 @@ It doesn't work this way, streaming pipelines favor lower latency, batch is for 
 * Keep business logic in domain layer and make it fully reusable between batch and streaming
 * Invest into reusable infrastructure layer with high quality IO connectors
 * Keep application layer descriptive and delegate complex tasks to domain and infrastructure layers
-* Don't try to replace batch by streaming alone, streaming is complex and not as cost effective as batch.
+* Don't try to replace batch by streaming alone, streaming is complex and not as cost effective as batch
+* Start with the batch pipeline, and then move gradually to the streaming one
 
 I take all code samples from [https://github.com/mkuthan/stream-processing/](https://github.com/mkuthan/stream-processing/), my playground repository for stream processing.
 If you find something interesting but foggy in this repository, just let me know.
