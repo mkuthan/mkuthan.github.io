@@ -35,14 +35,13 @@ graph LR
 ```
 
 Real-time data pipeline (a.k.a speed layer) consumed an infinite stream of events from Kafka cluster, performed stateless or stateful transformations, and published results again to Kafka.
-Batch data pipeline read complete partition of data from HDFS, performed transformations and wrote results again to HDFS.
+Batch data pipeline read complete partition of data from HDFS, performed transformations and wrote results to HDFS.
 Analytical databases like Apache Druid loaded real-time and batch results and acted as a serving layer for downstream consumers.
-
 To reduce duplication I extracted part of domain logic into a shared library. Kafka Streams and Apache Spark used the library to apply common processing logic.
 
 In practice, such system had the following design flaws:
 
-* Kafka Streams and Apache Spark use different API for stateful operations like windowing and joining.
+* Kafka Streams and Apache Spark used different API for stateful operations like windowing and joining.
 I couldn't reuse the code between speed and batch layers beyond the stateless map/filter operations.
 
 * Runtime environments for speed and batch layer were different. Kafka Streams run on Mesos cluster, Apache Spark on YARN. I couldn't reuse deployment automation, monitoring and alerting.
@@ -51,7 +50,7 @@ I couldn't reuse the code between speed and batch layers beyond the stateless ma
 
 ## Unified architecture
 
-In 2019 I moved from on-prem to Google Cloud Platform and have been developing data processing pipelines using Apache Beam.
+In 2019 I moved from on-prem to Google Cloud Platform and changed technology stack for developing data pipelines to [Apache Beam](https://github.com/apache/beam) / [Spotify Scio](https://github.com/spotify/scio).
 It's still a lambda architecture but realization is much better than in 2017.
 
 ```mermaid
@@ -71,13 +70,13 @@ graph LR
 If I compare the architecture to the architecture from 2017:
 
 * Apache Beam allows to unify domain logic between batch and speed layers.
-Stateful operations like regular, window and temporal joins are the same for streaming and batch.
+Stateful operations like window joins or temporal joins are the same for streaming and batch.
 
 * Runtime environments for real-time and batch are almost the same.
 I deploy all pipelines on Dataflow, managed service on Google Cloud Platform.
 
 * Maturity of batch and streaming parts is similar.
-For example, Dataflow provides external services for data shuffling in batch and streaming. Moving shuffling out of workers is critical for jobs scalability.
+For example, Dataflow provides external services for data shuffling in batch and streaming.
 
 However, the unification doesn't mean that you can deploy exactly the same job in a streaming or in a batch manner.
 There are no magic parameters like `--batch` or `--streaming`, you have to build such capability yourself by proper design.
@@ -85,14 +84,14 @@ There are no magic parameters like `--batch` or `--streaming`, you have to build
 
 ## Data pipeline
 
-Let's start with a simple use-case with unified batch and streaming business logic.
+Let's start with a simple use-case where unified batch and streaming delivers real business value.
 Data pipeline for calculating statistics from toll booths you encounter on highways, bridges, or tunnels.
 I took inspiration from Azure documentation [Build an IoT solution by using Stream Analytics](https://learn.microsoft.com/en-us/azure/stream-analytics/stream-analytics-build-an-iot-solution-using-stream-analytics).
 
 ```mermaid
 graph LR
     toll-booth-entry[Toll booth entries]-->pipeline[[Unified Data Pipeline]]
-    toll-booth-exit[Toll booth exists]-->pipeline
+    toll-booth-exit[Toll booth exits]-->pipeline
     vehicle-registration-history[Vehicle registrations]-->pipeline
 
     pipeline-->toll-booth-stat[Toll booth statistics]
@@ -139,16 +138,15 @@ It publishes statistics as streams of events for downstream real-time data pipel
 
 ```
 TollBoothStreamingJob \
-    --aggregationDuration=60 // seconds
     --boothEntryStatsTopic=...
     --totalVehicleTimeTopic=...
 ```
 
 The batch job aggregates statistics in much larger windows to achieve better accuracy.
-It writes results into a data warehouse for downstream batch data pipelines and reporting.
+It writes results into a data warehouse for downstream batch data pipelines and reporting purposes.
 
 ```
-TollBoothBacthJob \
+TollBoothBatchJob \
     --boothEntryStatsTable=...
     --totalVehicleTimeTable=...
 ```
@@ -162,17 +160,20 @@ TollBoothStreamingJob \
 
 ### Diagnostics
 
-Because the streaming pipeline is much harder to debug, it's crucial to put aside some diagnostic information about the current state of the job.
+Because the streaming pipeline is hard to debug, it's crucial to put aside some diagnostic information about the current state of the job.
 For example if the job receives a toll booth entry message for a given vehicle, but it doesn't have information about this vehicle registration yet.
-This is a temporary situation if one stream of data is late and the job produces incomplete results.
+This is a temporary situation if one stream of data is late (vehicle registrations) and the job produces incomplete results.
+With proper diagnostic you could decide to change streaming configuration and increase allowed lateness for the windowing calculation.
 
 ### Dead letters
 
 If there is an error in the input data, the batch pipeline just fails.
 You could fix invalid data and execute a batch job again.
+In the streaming pipelines, a single invalid record could block the whole pipeline forever. How to handle such situations?
 
-On streaming pipelines single invalid record could block the whole pipeline forever.
-When the streaming pipeline isn't able to process a message, put this message into Dead Letter Queue (DLQ). The invalid records could be fixed and processed again.
+* Ignore such errors but you will lost the pipeline observability
+* Log such errors but you can easily exceed logging quotas
+* **Put invalid messages with errors into Dead Letter Queue (DLQ) for inspection and reprocessing**
 
 ## Domain, infrastructure and application layers
 
@@ -199,8 +200,6 @@ graph TB
 Below you can find a function for calculating total time between vehicle entry and exit.
 The function uses a session window to join vehicle entries and vehicle exits within a gap duration.
 When there is no exit for a given entry, the function can't calculate total time but emits diagnostic information.
-
-The code uses [Spotify Scio](https://github.com/spotify/scio), excellent Scala API for [Apache Beam](https://github.com/apache/beam).
 
 ```scala
 import org.joda.time.Duration
@@ -287,6 +286,11 @@ def main(mainArgs: Array[String]): Unit = {
       .sumByKeyInFixedWindow(windowDuration = TenMinutes)
       .writeUnboundedToBigQuery(config.totalVehicleTimeDiagnosticTable)
     
+    // encode total vehicle times as a message and publish on Pubsub
+    TotalVehicleTime
+      .encodeMessage(totalVehicleTimes)
+      .publishJsonToBigQuery(config.totalVehicleTimeTable)
+
     // encode total vehicle times and writes into BigQuery, put invalid writes into DLQ
     val totalVehicleTimesDlq = TotalVehicleTime
       .encodeRecord(totalVehicleTimes)
@@ -307,7 +311,7 @@ def main(mainArgs: Array[String]): Unit = {
 }
 ```
 
-The corresponding batch pipeline looks like this:
+The corresponding batch pipeline is less complex and looks like this:
 
 ```scala
 def main(mainArgs: Array[String]): Unit = {
@@ -354,20 +358,21 @@ def main(mainArgs: Array[String]): Unit = {
 
 Upon initial glance streaming and batch pipelines look like a duplicated code which violates DRY principle (Don't Repeat Yourself). Where's batch and streaming unification?
 
-Don't worry, there is nothing wrong with such design:
+Don't worry, nothing is wrong with such design:
 
 * Application layer should use Descriptive and Meaningful Phrases (DAMP principle) over DRY
 * Configuration is different, see properties of `TollBatchJobConfig` and `TollStreamingJobConfig`
 * Inputs are different, Pubsub subscriptions for streaming and BigQuery tables for batch
 * Outputs with total vehicle times aggregated within different session gaps, don't mix datasets of different accuracy in a single table
-* Error handling for streaming is much more complex than for batch
+* Streaming performs dual writes to Pubsub and BigQuery
+* Error handling for streaming is much more complex
 
 ### Infrastructure
 
 Where's the infrastructure in the presented code samples?
 Because of Scala syntax powered by some implicit conversions it's hard to spot.
 
-Infrastructure layer provides all the functions below in a fully generic way.
+Infrastructure layer provides all the functions specified below in a fully generic way.
 Extract infrastructure module as a shared library and use in all data pipelines.
 
 * `subscribeJsonFromPubsub` - for subscribing to JSON messages on Pubsub
@@ -376,18 +381,19 @@ Extract infrastructure module as a shared library and use in all data pipelines.
 * `writeUnboundedToBigQuery` - for writing to BigQuery using Storage Write API
 * `writeBoundedToBigQuery` - for writing to BigQuery using File Loads
 * `publishJsonToPubsub` - for publishing JSON messages on Pubsub
-* `writeUnboundedToStorageAsJson` - for writing JSON files on Cloud Storage
+* `writeUnboundedToStorageAsJson` - for writing JSON files with dead letters on Cloud Storage
 
 ## Summary
 
 Unified batch and streaming doesn't mean that you can execute exactly the same code in a batch or streaming fashion.
-It doesn't work this way, streaming pipelines favor lower latency, batch is for better accuracy.
+It doesn't work this way, streaming pipelines favor lower latency, batch is for higher accuracy.
 
-* Organize your codebase into domain, application and infrastructure layers.
+* Organize your codebase into domain, application and infrastructure layers
 * Keep business logic in domain layer and make it fully reusable between batch and streaming
 * Invest into reusable infrastructure layer with high quality IO connectors
 * Keep application layer descriptive and delegate complex tasks to domain and infrastructure layers
+* Don't try to replace batch by streaming alone, streaming is complex and not as cost effective as batch.
 
-I take all code samples from [https://github.com/mkuthan/stream-processing/](https://github.com/mkuthan/stream-processing/) repository, my playground for stream processing.
-If you find something interesting but foggy, just let me know.
+I take all code samples from [https://github.com/mkuthan/stream-processing/](https://github.com/mkuthan/stream-processing/), my playground repository for stream processing.
+If you find something interesting but foggy in this repository, just let me know.
 I will be glad to blog something more about stream processing.
