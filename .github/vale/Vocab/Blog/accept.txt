@@ -8,6 +8,7 @@ Avro
 Bazel
 BigQuery
 Bigtable
+CAP
 clickstream
 Coldline
 Contravariant
@@ -19,6 +20,7 @@ Datastudio
 Dependabot
 DEV
 DRY
+DSL
 FIFO
 Firestore
 Flink

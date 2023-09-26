@@ -37,7 +37,8 @@ graph LR
 Real-time data pipeline (a.k.a speed layer) consumed an infinite stream of events from Kafka cluster, performed stateless or stateful transformations, and published results again to Kafka.
 Batch data pipeline read complete partition of data from HDFS, performed transformations and wrote results to HDFS.
 Analytical databases like Apache Druid loaded real-time and batch results and acted as a serving layer for downstream consumers.
-To reduce duplication I extracted part of domain logic into a shared library. Kafka Streams and Apache Spark used the library to apply common processing logic.
+To reduce duplication I extracted part of domain logic into a shared library.
+Speed and batch layers used the library to apply common processing logic.
 
 In practice, such system had the following design flaws:
 
@@ -50,7 +51,7 @@ I couldn't reuse the code between speed and batch layers beyond the stateless ma
 
 ## Unified architecture
 
-In 2019 I moved from on-prem to Google Cloud Platform and changed technology stack for developing data pipelines to [Apache Beam](https://github.com/apache/beam) / [Spotify Scio](https://github.com/spotify/scio).
+In 2019 I moved from on-prem Hadoop to Google Cloud Platform and changed technology stack for developing data pipelines to [Apache Beam](https://github.com/apache/beam) / [Spotify Scio](https://github.com/spotify/scio).
 It's still a lambda architecture but realization is much better than in 2017.
 
 ```mermaid
@@ -67,7 +68,7 @@ graph LR
     Apache-Beam-->bq-out[BigQuery]
 ```
 
-If I compare the architecture to the architecture from 2017:
+If I compare new architecture to the architecture from 2017:
 
 * Apache Beam allows to unify domain logic between batch and speed layers.
 Stateful operations like window joins or temporal joins are the same for streaming and batch.
@@ -102,15 +103,15 @@ graph LR
     pipeline-.->dlq[Dead letters]
 ```
 
-### Inputs
+### Sources
 
 Streaming pipeline subscribes for events emitted when vehicles cross toll booths.
-On startup it reads the history of vehicle registrations and after start gets real-time updates. The command line could looks like this:
+On startup it also reads the history of vehicle registrations and after start gets real-time updates. The command line could looks like this:
 
 ```
 TollBoothStreamingJob \
-    --boothEntrySubscription=... 
-    --boothExitSubscription=...
+    --entrySubscription=...
+    --exitSubscription=...
     --vehicleRegistrationTable=...
     --vehicleRegistrationSubscription=...
 ```
@@ -121,25 +122,31 @@ calculates results for a given date specified as `effeciveDate` parameter.
 ```
 TollBoothBatchJob \
     --effectiveDate=2014-09-04
-    --boothEntryTable=... 
+    --boothEntryTable=...
     --boothExitTabel=...
     --vehicleRegistrationTable=...
 ```
 
-### Outputs
+The sources of the pipelines are remarkably different.
+Streaming expects streams of near real-time data to deliver low latency results.
+Batch requires efficient and cheap access to historical data to process large volumes of data at once.
 
-Regardless of the source of data the pipeline calculates similar statistics, for example:
+### Sinks
+
+Regardless of the source of data, batch and streaming pipelines calculate similar statistics, for example:
 
 * Count the number of vehicles that enter a toll booth.
 * Report total time for each vehicle
 
 The streaming job aggregates results in short windows to achieve low latency.
 It publishes statistics as streams of events for downstream real-time data pipelines.
+The streaming pipeline also detects vehicles with expired registrations, it's more valuable than fraud detection in a daily batch.
 
 ```
 TollBoothStreamingJob \
-    --boothEntryStatsTopic=...
+    --entryStatsTopic=...
     --totalVehicleTimeTopic=...
+    --vehiclesWithExpiredRegistrationTopic=...
 ```
 
 The batch job aggregates statistics in much larger windows to achieve better accuracy.
@@ -147,16 +154,14 @@ It writes results into a data warehouse for downstream batch data pipelines and 
 
 ```
 TollBoothBatchJob \
-    --boothEntryStatsTable=...
+    --effectiveDate=2014-09-04
+    --entryStatsTable=...
     --totalVehicleTimeTable=...
 ```
 
-The streaming pipeline detects vehicles with expired registrations, it's more valuable than fraud detection in a daily batch.
-
-```
-TollBoothStreamingJob \
-    --vehiclesWithExpiredRegistrationTopic=...
-```
+As you could see, the sinks of the pipelines are also different.
+The streaming publishes low latency, append-only results as a stream of events,
+batch overwrites the whole partitions in data warehouse tables for specified `effectiveDate`.
 
 ### Diagnostics
 
@@ -169,16 +174,17 @@ With proper diagnostic you could decide to change streaming configuration and in
 
 If there is an error in the input data, the batch pipeline just fails.
 You could fix invalid data and execute a batch job again.
+
 In the streaming pipelines, a single invalid record could block the whole pipeline forever. How to handle such situations?
 
 * Ignore such errors but you will lost the pipeline observability
 * Log such errors but you can easily exceed logging quotas
 * **Put invalid messages with errors into Dead Letter Queue (DLQ) for inspection and reprocessing**
 
-## Domain, infrastructure and application layers
+## Data pipeline layers
 
 As you could see, the streaming and batch pipelines aren't the same.
-They have different inputs and outputs, use different parameters to achieve either lower latency or better accuracy.
+They have different sources and sinks, use different parameters to achieve either lower latency or better accuracy.
 
 How to organize the code to get unified architecture?
 {: .notice--info}
@@ -186,7 +192,7 @@ How to organize the code to get unified architecture?
 Split the codebase into three layers:
 
 * Domain with business logic, shared between streaming and batch
-* Infrastructure with Input/Output
+* Infrastructure with sources and sinks (I/0)
 * Application to parse command line parameters and glue Domain and Infrastructure together
 
 ```mermaid
@@ -194,6 +200,8 @@ graph TB
     application-. depends on .->domain
     application-. uses .->infrastructure
 ```
+
+Direct dependency between Domain and Infrastructure is forbidden, it would kill code testability.
 
 ### Domain
 
@@ -242,9 +250,9 @@ private def toTotalVehicleTime(boothEntry: TollBoothEntry, boothExit: TollBoothE
 }
 ```
 
-The logic is exactly the same for the streaming and for the batch, there is no IO related code here.
+The logic is exactly the same for the streaming and for the batch, there is no I/O related code here.
 Streaming pipeline defines shorter window gap to get lower latency,
-batch pipeline longer gap for better accuracy.
+batch pipeline longer gap for better accuracy, this is the only difference.
 
 Because this is a data processing code, don't expect a pure domain without external dependencies. Domain logic must depend on Apache Beam / Spotify Scio to make something useful.
 {: .notice--info}
@@ -260,32 +268,33 @@ def main(mainArgs: Array[String]): Unit = {
     val (sc, args) = ContextAndArgs(mainArgs)
     val config = TollStreamingJobConfig.parse(args)
 
-    // subscribe toll booth entries and exits as JSON, put invalid messsages into DLQ
-    val (boothEntryMessages, boothEntryMessagesDlq) =
+    // subscribe to toll booth entries and exits as JSON, put invalid messages into DLQ
+    val (entryMessages, entryMessagesDlq) =
       sc.subscribeJsonFromPubsub(config.entrySubscription)
-
-    val (boothExitMessages, boothExitMessagesDlq) =
+    val (exitMessages, exitMessagesDlq) =
       sc.subscribeJsonFromPubsub(config.exitSubscription)
 
-    // decode JSONs into domain objects, write invalid inputs to Cloud Storage
-    val (boothEntries, boothEntriesDlq) = TollBoothEntry.decodeMessage(boothEntryMessages)  
-    boothEntriesDlq
+    // decode JSONs into domain objects
+    val (entries, entriesDlq) = TollBoothEntry.decodeMessage(entryMessages)
+    val (exits, existsDlq) = TollBoothExit.decodeMessage(exitMessages)
+
+    // write invalid inputs to Cloud Storage
+    entriesDlq
       .withFixedWindows(duration = TenMinutes)
       .writeUnboundedToStorageAsJson(config.entryDlq)
-
-    val (boothExits, boothExistsDlq) = TollBoothExit.decodeMessage(boothExitMessages)
-    boothExistsDlq
+    existsDlq
       .withFixedWindows(duration = TenMinutes)
-      .writeUnboundedToStorageAsJson(config.exitDlq)   
+      .writeUnboundedToStorageAsJson(config.exitDlq)
 
-    // calculate total vehicle times, write aggregated diagnostic to BigQuery
+    // calculate total vehicle times
     val (totalVehicleTimes, totalVehicleTimesDiagnostic) =
-      TotalVehicleTime.calculateInSessionWindow(boothEntries, boothExits, gapDuration = TenMinutes)
+      TotalVehicleTime.calculateInSessionWindow(entries, exits, gapDuration = TenMinutes)
 
+    // write aggregated diagnostic to BigQuery
     totalVehicleTimesDiagnostic
       .sumByKeyInFixedWindow(windowDuration = TenMinutes)
       .writeUnboundedToBigQuery(config.totalVehicleTimeDiagnosticTable)
-    
+
     // encode total vehicle times as a message and publish on Pubsub
     TotalVehicleTime
       .encodeMessage(totalVehicleTimes)
@@ -296,7 +305,7 @@ def main(mainArgs: Array[String]): Unit = {
       .encodeRecord(totalVehicleTimes)
       .writeUnboundedToBigQuery(config.totalVehicleTimeTable)
 
-    // union all DLQ, aggregate and write to BigQuery
+    // union all DLQs as I/O diagnostics, aggregate and write to BigQuery
     val ioDiagnostics = IoDiagnostic.union(
       boothEntryMessagesDlq,
       boothExitMessagesDlq,
@@ -320,14 +329,13 @@ def main(mainArgs: Array[String]): Unit = {
     val config = TollBatchJobConfig.parse(args)
 
     // read toll booth entries and toll booth exists from BigQuery partition
-    val boothEntryRecords = sc.readFromBigQuery(
+    val entryRecords = sc.readFromBigQuery(
         config.entryTable,
         StorageReadConfiguration().withRowRestriction(
             RowRestriction.TimestampColumnRestriction("entry_time", config.effectiveDate)
         )
     )
-
-    val boothExitRecords = sc.readFromBigQuery(
+    val exitRecords = sc.readFromBigQuery(
       config.exitTable,
       StorageReadConfiguration().withRowRestriction(
         RowRestriction.TimestampColumnRestriction("exit_time", config.effectiveDate)
@@ -335,13 +343,14 @@ def main(mainArgs: Array[String]): Unit = {
     )
 
     // decode BigQuery like objects into domain objects
-    val boothEntries = TollBoothEntry.decodeRecord(boothEntryRecords)
-    val boothExits = TollBoothExit.decodeRecord(boothExitRecords)
+    val entries = TollBoothEntry.decodeRecord(entryRecords)
+    val exits = TollBoothExit.decodeRecord(exitRecords)
 
-    // calculate total vehicle times, write aggregated diagnostic to BigQuery
+    // calculate total vehicle times
     val (totalVehicleTimes, totalVehicleTimesDiagnostic) =
-      TotalVehicleTime.calculateInSessionWindow(boothEntries, boothExits, gapDuration = OneHour)
+      TotalVehicleTime.calculateInSessionWindow(entries, exits, gapDuration = OneHour)
 
+    // write aggregated diagnostic to BigQuery
     totalVehicleTimesDiagnostic
       .sumByKeyInFixedWindow(windowDuration = OneDay)
       .writeBoundedToBigQuery(config.totalVehicleTimeDiagnosticOneHourGapTable)
@@ -361,11 +370,15 @@ Upon initial glance streaming and batch pipelines look like a duplicated code wh
 Don't worry, nothing is wrong with such design:
 
 * Application layer should use Descriptive and Meaningful Phrases (DAMP principle) over DRY
-* Configuration is different, see properties of `TollBatchJobConfig` and `TollStreamingJobConfig`
-* Inputs are different, Pubsub subscriptions for streaming and BigQuery tables for batch
-* Outputs with total vehicle times aggregated within different session gaps, don't mix datasets of different accuracy in a single table
+* Configuration is different, inspect properties of `TollStreamingJobConfig` and `TollBatchJobConfig`
+* Sources are different, Pubsub subscriptions for streaming and BigQuery tables for batch
+* Results with total vehicle times aggregated within different session gaps, don't mix datasets of different accuracy in a single table
 * Streaming performs dual writes to Pubsub and BigQuery
 * Error handling for streaming is much more complex
+
+The example application doesn't use dependency injection framework.
+Trust me, you don't need any to write manageable code.
+{: .notice--info}
 
 ### Infrastructure
 
@@ -373,7 +386,6 @@ Where's the infrastructure in the presented code samples?
 Because of Scala syntax powered by some implicit conversions it's hard to spot.
 
 Infrastructure layer provides all the functions specified below in a fully generic way.
-Extract infrastructure module as a shared library and use in all data pipelines.
 
 * `subscribeJsonFromPubsub` - for subscribing to JSON messages on Pubsub
 * `readFromBigQuery` - for reading from BigQuery using Storage Read API
@@ -382,6 +394,9 @@ Extract infrastructure module as a shared library and use in all data pipelines.
 * `writeBoundedToBigQuery` - for writing to BigQuery using File Loads
 * `publishJsonToPubsub` - for publishing JSON messages on Pubsub
 * `writeUnboundedToStorageAsJson` - for writing JSON files with dead letters on Cloud Storage
+
+Extract the infrastructure module as a shared library and reuse it in all data pipelines.
+Writing and testing I/O is complex so do it once, and do it well.
 
 ## Summary
 
