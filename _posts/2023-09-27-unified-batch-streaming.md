@@ -291,8 +291,8 @@ def main(mainArgs: Array[String]): Unit = {
       TotalVehicleTime.calculateInSessionWindow(entries, exits, gapDuration = TenMinutes)
 
     // write aggregated diagnostic to BigQuery
-    totalVehicleTimesDiagnostic
-      .sumByKeyInFixedWindow(windowDuration = TenMinutes)
+    TotalVehicleTimeDiagnostic
+      .aggregateAndEncode(totalVehicleTimesDiagnostic, windowDuration = TenMinutes)
       .writeUnboundedToBigQuery(config.totalVehicleTimeDiagnosticTable)
 
     // encode total vehicle times as a message and publish on Pubsub
@@ -351,8 +351,8 @@ def main(mainArgs: Array[String]): Unit = {
       TotalVehicleTime.calculateInSessionWindow(entries, exits, gapDuration = OneHour)
 
     // write aggregated diagnostic to BigQuery
-    totalVehicleTimesDiagnostic
-      .sumByKeyInFixedWindow(windowDuration = OneDay)
+    TotalVehicleTimeDiagnostic
+      .aggregateAndEncode(totalVehicleTimesDiagnostic, windowDuration = OneDay)
       .writeBoundedToBigQuery(config.totalVehicleTimeDiagnosticOneHourGapTable)
 
     // encode total vehicle times and writes into BigQuery
