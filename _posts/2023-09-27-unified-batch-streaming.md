@@ -160,7 +160,7 @@ TollBoothBatchJob \
 ```
 
 As you could see, the sinks of the pipelines are also different.
-The streaming publishes low latency, append-only results as a stream of events,
+The streaming publishes low latency, append-only results as streams of events,
 batch overwrites the whole partitions in data warehouse tables for specified `effectiveDate`.
 
 ### Diagnostics
