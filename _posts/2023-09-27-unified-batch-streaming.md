@@ -388,11 +388,11 @@ Because of Scala syntax powered by some implicit conversions it's hard to spot.
 Infrastructure layer provides all the functions specified below in a fully generic way.
 
 * `subscribeJsonFromPubsub` - for subscribing to JSON messages on Pubsub
+* `publishJsonToPubsub` - for publishing JSON messages on Pubsub
 * `readFromBigQuery` - for reading from BigQuery using Storage Read API
 * `queryFromBigQuery` - for querying BigQuery using SQL
-* `writeUnboundedToBigQuery` - for writing to BigQuery using Storage Write API
-* `writeBoundedToBigQuery` - for writing to BigQuery using File Loads
-* `publishJsonToPubsub` - for publishing JSON messages on Pubsub
+* `writeUnboundedToBigQuery` - for writing to BigQuery using Storage Write API with append mode
+* `writeBoundedToBigQuery` - for writing to BigQuery using File Loads with truncate mode
 * `writeUnboundedToStorageAsJson` - for writing JSON files with dead letters on Cloud Storage
 
 Extract the infrastructure module as a shared library and reuse it in all data pipelines.
