@@ -202,6 +202,7 @@ graph TB
 ```
 
 Direct dependency between Domain and Infrastructure is forbidden, it would kill code testability.
+{: .notice--info}
 
 ### Domain
 
@@ -367,7 +368,7 @@ def main(mainArgs: Array[String]): Unit = {
 
 Upon initial glance streaming and batch pipelines look like a duplicated code which violates DRY principle (Don't Repeat Yourself). Where's batch and streaming unification?
 
-Don't worry, nothing is wrong with such design:
+Don't worry, nothing is wrong with such design, it promotes clarity and ease of maintenance.
 
 * Application layer should use Descriptive and Meaningful Phrases (DAMP principle) over DRY
 * Configuration is different, inspect properties of `TollStreamingJobConfig` and `TollBatchJobConfig`
@@ -396,6 +397,7 @@ Infrastructure layer provides all the functions specified below in a fully gener
 * `writeUnboundedToStorageAsJson` - for writing JSON files with dead letters on Cloud Storage
 
 Extract the infrastructure module as a shared library and reuse it in all data pipelines.
+This is a significant investment in a high-quality and robust input/output connectors.
 Writing and testing I/O is complex so do it once, and do it well.
 
 ## Summary
