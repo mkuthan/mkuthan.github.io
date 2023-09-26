@@ -49,7 +49,7 @@ I couldn't reuse the code between speed and batch layers beyond the stateless ma
 
 * While Apache Spark was a mature data processing framework, Kafka Streams didn't meet my expectations. See my blog post [Kafka Streams DSL vs processor API](/blog/2017/11/02/kafka-streams-dsl-vs-processor-api/) from 2017 for details.
 
-## Unified architecture
+## Unified programming model
 
 In 2019 I moved from on-prem Hadoop to Google Cloud Platform and changed technology stack for developing data pipelines to [Apache Beam](https://github.com/apache/beam) / [Spotify Scio](https://github.com/spotify/scio).
 It's still a lambda architecture but realization is much better than in 2017.
