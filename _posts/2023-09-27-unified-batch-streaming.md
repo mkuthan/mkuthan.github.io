@@ -377,7 +377,7 @@ Don't worry, nothing is wrong with such design:
 * Error handling for streaming is much more complex
 
 The example application doesn't use dependency injection framework.
-Trust me, you don't need any to write manageable code.
+Trust me, you don't need any to write manageable data pipelines.
 {: .notice--info}
 
 ### Infrastructure
