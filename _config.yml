@@ -102,7 +102,7 @@ og_image: /assets/images/overlay.webp
 
 # mermaid diagrams, see: _includes/[header|footer]/custom.html
 mermaid:
-  version: "9.1.3"
+  version: "10.4.0"
   theme: "neutral"
 
 # post comments
