@@ -299,7 +299,7 @@ def main(mainArgs: Array[String]): Unit = {
     // encode total vehicle times as a message and publish on Pubsub
     TotalVehicleTime
       .encodeMessage(totalVehicleTimes)
-      .publishJsonToBigQuery(config.totalVehicleTimeTable)
+      .publishJsonToPubsub(config.totalVehicleTimeTable)
 
     // encode total vehicle times and writes into BigQuery, put invalid writes into DLQ
     val totalVehicleTimesDlq = TotalVehicleTime
@@ -312,8 +312,8 @@ def main(mainArgs: Array[String]): Unit = {
       boothExitMessagesDlq,
       totalVehicleTimesDlq
     )
-    ioDiagnostics
-      .sumByKeyInFixedWindow(windowDuration = TenMinutes)
+    IoDiagnostic
+      .aggregateAndEncode(ioDiagnostics, windowDuration = TenMinutes)
       .writeUnboundedToBigQuery(config.diagnosticTable)
 
     // run the pipeline
