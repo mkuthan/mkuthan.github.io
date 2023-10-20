@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Tracking health over debt](https://www.rea-group.com/about-us/news-and-insights/blog/what-good-software-looks-like-at-rea/) -
+How to evaluate projects quality using lenses for: development, operations and architecture.
+
 * [How to write efficient Flink SQL](https://www.alibabacloud.com/blog/how-to-write-simple-and-efficient-flink-sql_600148) -
 What is a difference between: dual-stream, lookup, interval, temporal and window joins.
 
