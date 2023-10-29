@@ -402,16 +402,21 @@ Writing and testing I/O is complex so do it once, and do it well.
 
 ## Summary
 
-Unified batch and streaming doesn't mean that you can execute exactly the same code in a batch or streaming fashion.
-It doesn't work this way, streaming pipelines favor lower latency, batch is for higher accuracy.
+Unified batch and streaming processing is a powerful data architecture that seamlessly combines both batch and real-time data processing, enabling organizations to harness real-time insights while efficiently managing large historical data volumes.
+In the past, these two approaches were treated as separate data pipelines, leading to increased complexity in data infrastructure and codebase management.
 
-* Organize your codebase into domain, application and infrastructure layers
-* Keep business logic in domain layer and make it fully reusable between batch and streaming
-* Invest into reusable infrastructure layer with high quality IO connectors
-* Keep application layer descriptive and delegate complex tasks to domain and infrastructure layers
-* Don't try to replace batch by streaming alone, streaming is complex and not as cost effective as batch
-* Start with the batch pipeline, and then move gradually to the streaming one
+However, it's important to note that unified batch and streaming doesn't entail running the exact same code for both approaches.
+Streaming pipelines prioritize lower latency, while batch processing focuses on higher accuracy.
 
-I take all code samples from [https://github.com/mkuthan/stream-processing/](https://github.com/mkuthan/stream-processing/), my playground repository for stream processing.
-If you find something interesting but foggy in this repository, just let me know.
-I will be glad to blog something more about stream processing.
+To effectively implement this architecture, consider the following key strategies:
+
+1. Organize your codebase into domain, application and infrastructure layers.
+1. Place business logic in the domain layer, ensuring full reusability between batch and streaming.
+1. Invest in a reusable infrastructure layer with high-quality I/O connectors.
+1. Keep the application layer descriptive and delegate complex tasks to the domain and infrastructure layers.
+1. Recognize that streaming should complement batch processing rather than replace it, as streaming can be more complex and less cost-effective.
+1. Begin with a batch pipeline and gradually transition to the streaming pipeline as needed.
+
+I've sourced all the code samples used in this blog post from my dedicated batch and stream processing playground repository, which you can find at [https://github.com/mkuthan/stream-processing/](https://github.com/mkuthan/stream-processing/).
+If you come across something intriguing yet unclear in this repository, please don't hesitate to reach out.
+I'd be delighted to explore it further and create additional blog content on unified batch and stream processing.
