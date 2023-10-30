@@ -135,7 +135,7 @@ Batch requires efficient and cheap access to historical data to process large vo
 
 Regardless of the source of data, batch and streaming pipelines calculate similar statistics, for example:
 
-* Count the number of vehicles that enter a toll booth.
+* Count the number of vehicles that enter a toll booth
 * Report total time for each vehicle
 
 The streaming job aggregates results in short windows to achieve low latency.
@@ -222,12 +222,12 @@ def calculateInSessionWindow(
     val boothEntriesById = boothEntries
         .keyBy(entry => (entry.id, entry.licensePlate))
         .withSessionWindows(gapDuration)
-    val boothExistsById = boothExits
+    val boothExitsById = boothExits
         .keyBy(exit => (exit.id, exit.licensePlate))
         .withSessionWindows(gapDuration)
 
     val results = boothEntriesById
-        .leftOuterJoin(boothExistsById)
+        .leftOuterJoin(boothExitsById)
         .values
         .map {
         case (boothEntry, Some(boothExit)) =>
@@ -277,13 +277,13 @@ def main(mainArgs: Array[String]): Unit = {
 
     // decode JSONs into domain objects
     val (entries, entriesDlq) = TollBoothEntry.decodeMessage(entryMessages)
-    val (exits, existsDlq) = TollBoothExit.decodeMessage(exitMessages)
+    val (exits, exitsDlq) = TollBoothExit.decodeMessage(exitMessages)
 
     // write invalid inputs to Cloud Storage
     entriesDlq
       .withFixedWindows(duration = TenMinutes)
       .writeUnboundedToStorageAsJson(config.entryDlq)
-    existsDlq
+    exitsDlq
       .withFixedWindows(duration = TenMinutes)
       .writeUnboundedToStorageAsJson(config.exitDlq)
 
@@ -329,7 +329,7 @@ def main(mainArgs: Array[String]): Unit = {
 
     val config = TollBatchJobConfig.parse(args)
 
-    // read toll booth entries and toll booth exists from BigQuery partition
+    // read toll booth entries and toll booth exits from BigQuery partition
     val entryRecords = sc.readFromBigQuery(
         config.entryTable,
         StorageReadConfiguration().withRowRestriction(
