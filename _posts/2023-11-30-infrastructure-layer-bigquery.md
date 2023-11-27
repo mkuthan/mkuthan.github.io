@@ -7,12 +7,12 @@ tags: [Apache Beam, Scala, BigQuery, GCP]
 In Domain-Driven Design (DDD), the infrastructure layer is responsible for managing the interactions between the domain layer and the external systems like databases, message queues, and other systems.
 Here are the key characteristics of the infrastructure layer in DDD architecture in the context of unified batch and streaming data pipelines:
 
-* **Technical Concerns**: The infrastructure layer is primarily focused on addressing technical concerns like data access, communication with external systems.
-* **High Quality API**: API for the infrastructure layer is strongly typed, intuitively named to give developers with a seamless and error-resistant way to interact with external resources while minimizing ambiguities.
+* **Technical Concerns**: The infrastructure layer is primarily focused on addressing technical concerns like data access and communication with external systems.
+* **High Quality API**: Should give seamless and error-resistant way to interact with external resources while minimizing ambiguities.
 * **Performance and Scalability**: Infrastructure components often include mechanisms for optimizing throughput for batch, or minimize latency for streaming.
 * **Data Integrity**: Infrastructure components use integration tests with real external services to verify that the layer correctly handles data storage and retrieval.
 * **Error Handling**: The infrastructure layer handles errors gracefully and provides appropriate feedback or recovery mechanisms.
-* **Testing and Stubing**: Infrastructure components must include facilities for  testing, stubbing, and simulating external dependencies to isolate and test the domain logic without needing a full infrastructure setup.
+* **Testing and Stubbing**: Infrastructure components must include facilities for  testing, stubbing, and simulating external dependencies to isolate and test the domain logic without needing a full infrastructure setup.
 
 How to deliver infrastructure layer for unified batch and streaming data pipelines?
 
@@ -86,12 +86,12 @@ Below is the list of methods in `BigQueryIO.Write` builder class and the list on
 1. `withAvroWriter(SerializableFunction<Schema,DatumWriter<T>> writerFactory)`
 1. `withClustering(Clustering clustering)`
 1. `withCreateDisposition(BigQueryIO.Write.CreateDisposition createDisposition)`
-1. `withCustomGcsTempLocation(ValueProvider<java.lang.String> customGcsTempLocation)`
+1. `withCustomGcsTempLocation(ValueProvider<j.l.String> customGcsTempLocation)`
 1. `withExtendedErrorInfo()`
 1. `withFailedInsertRetryPolicy(InsertRetryPolicy retryPolicy)`
-1. `withJsonSchema(java.lang.String jsonSchema)`
-1. `withKmsKey(java.lang.String kmsKey)`
-1. `withLoadJobProjectId(java.lang.String loadJobProjectId)`
+1. `withJsonSchema(j.l.String jsonSchema)`
+1. `withKmsKey(j.l.String kmsKey)`
+1. `withLoadJobProjectId(j.l.String loadJobProjectId)`
 1. `withMaxBytesPerPartition(long maxBytesPerPartition)`
 1. `withMaxFilesPerBundle(int maxFilesPerBundle)`
 1. `withMaxRetryJobs(int maxRetryJobs)`
@@ -100,13 +100,13 @@ Below is the list of methods in `BigQueryIO.Write` builder class and the list on
 1. `withNumStorageWriteApiStreams(int numStorageWriteApiStreams)`
 1. `withoutValidation()`
 1. `withSchema(TableSchema schema)`
-1. `withSchemaUpdateOptions(java.util.Set<BigQueryIO.Write.SchemaUpdateOption> schemaUpdateOptions)`
+1. `withSchemaUpdateOptions(j.u.Set<BigQueryIO.Write.SchemaUpdateOption> schemaUpdateOptions)`
 1. `withSuccessfulInsertsPropagation(boolean propagateSuccessful)`
-1. `withTableDescription(java.lang.String tableDescription)`
+1. `withTableDescription(j.l.String tableDescription)`
 1. `withTimePartitioning(TimePartitioning partitioning)`
 1. `withTriggeringFrequency(Duration triggeringFrequency)`
 1. `withWriteDisposition(BigQueryIO.Write.WriteDisposition writeDisposition)`
-1. `withWriteTempDataset(java.lang.String writeTempDataset)`
+1. `withWriteTempDataset(j.l.String writeTempDataset)`
 
 Why there are so many knobs?
 
@@ -119,42 +119,53 @@ for writing, and
 [BigQuery Query API](https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query)
 for reading.
 
-* **Some configuration options are relevant for a single API**: This means that certain configuration settings are specific to a particular part of the API. For example, options like `withAutoSchemaUpdate`` or`withNumStorageWriteApiStreams`` are only applicable when working with the "BigQuery Storage API."
+* **Some configuration options are relevant for a single API**: This means that certain configuration settings are specific to a particular part of the API. For example, options like `withAutoSchemaUpdate` or `withNumStorageWriteApiStreams` are only applicable when working with the BigQuery Storage API.
 * **Some configurations are heavily dependent**: This indicates that some settings rely on each other. For instance, when you are using the `FILE_LOADS` method to write an unbounded `PCollection`, you must provide both `withTriggeringFrequency` and `withNumFileShards` configurations for the process to work correctly.
 * **Some combinations don't make any sense**: In some cases, certain combinations of configuration options are incompatible or illogical. For example, using `withCreateDisposition(CREATE_NEVER)` along with `withClustering` or `withTimePartitioning` may not be meaningful or may cause issues.
 * **You can easily make a mistake and configure the connector incorrectly**: This suggests that because of the complexity of configuration options and their inter-dependencies, it's easy to make mistakes when setting up the API, which can lead to errors or unexpected behavior.
 * **The only way to find out is to run the pipeline and wait for the error**: In this context, it means that the only practical way to discover if you've configured the API correctly or not is to execute the data processing pipeline and monitor it for any errors or issues that may arise during runtime.
 
-### Lack of type safety
+### Lack of type safety, limited testability
 
 Another limitation of the connector API is a requirement that you have to explicitly implement converters between domain types and BigQuery [TableRow](https://www.javadoc.io/static/com.google.apis/google-api-services-bigquery/v2-rev20230520-2.0.0/com/google/api/services/bigquery/model/TableRow.html) or [SchemaAndRecord](https://beam.apache.org/releases/javadoc/current/org/apache/beam/sdk/io/gcp/bigquery/SchemaAndRecord.html).
 Everything without any help from the compiler.
 
-Reading examples with manual conversion from `SchemaAndRecord` into domain type `WeatherRecord`:
+Reading example with manual conversion from `org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord` into domain type `WeatherRecord`:
 
 ```java
 PCollection<WeatherRecord> weatherData = pipeline.apply(
     BigQueryIO
       .read(new SerializableFunction<SchemaAndRecord, WeatherRecord>() {
         public WeatherRecord apply(SchemaAndRecord schemaAndRecord) {
-          return new WeatherRecord(...);
+          GenericRecord record =schemaAndRecord.getRecord();
+          return new WeatherRecord(
+            record.get("field1"), 
+            record.get("field2")
+          )
         }
       })
       .from("samples.weather_stations"))
 ```
 
-Writing example with manual conversion from domain type `Quote` to `TableRow`:
+Writing example with manual conversion from domain type `Quote` to `com.google.api.services.bigquery.model.TableRow`:
 
 ```java
 PCollection<Quote> quotes = ...;
 
 quotes.apply(BigQueryIO.write()
-    .withFormatFunction(quote -> new TableRow()...)
+    .withFormatFunction(
+      quote -> new TableRow()
+        .set("field1", quote.getField1())
+        .set("field2", quote.getField2())
+    )
     .to("samples.quotes"))
 ```
 
+It also makes your code less convenient to test, since you have to deal with low-level types instead of your own domain types. To stub BigQuery during testing, you need to create `org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord` or `com.google.api.services.bigquery.model.TableRow`.
+
 ## Spotify Scio
 
+Scio is a Scala API for Apache Beam and Google Cloud Dataflow inspired by Apache Spark and Scalding.
 One of the most important feature of Spotify Scio is a type-safe BigQuery API.
 Scio generates converters between Scala case classes and `TableRow` at compile time without runtime penalty of reflection.
 If you try to use unsupported type, for example `BigInt` the code doesn't compile.
@@ -193,6 +204,8 @@ val tollBoothEntries: SCollection[TollBoothEntry.Record] = ...
 tollBoothEntries.saveAsTypedBigQueryTable(Table("samples.toll_booth_entries"))
 ```
 
+### Too many knobs
+
 Unfortunately Scio design follows generic Apache Beam approach for connector API design.
 Look at the `saveAsTypedBigQueryTable` method signature, again you get matrix of all available knobs plus `configOverride` to override even more parameters using Apache Beam API:
 
@@ -211,9 +224,46 @@ def saveAsTypedBigQueryTable(
 )
 ```
 
-## Algebraic Data Types
+### Limited testability
 
-Before I present my design of the infrastructure layer API, I would like to show you Algebraic Data Types (ADT) first.
+Another disadvantage is a limited support for testing.
+To develop entire pipeline test (a.k.a job test) you have to provide stubs for input data, expectations for output data using IO identifiers.
+
+* Methods like `typedBigQueryStorage` and `saveAsTypedBigQueryTable` don't expose IO identifier explicitly. The identifier is calculated internally based on table name and it makes tests harder to setup.
+* Even though that Scio generates `TableRow` converters automatically, in tests you have to play with low level type `TableRow` instead of your domain types. See the example test below:
+
+```scala
+class BigQueryTornadoesTest extends PipelineSpec {
+  val inData: Seq[TableRow] = Seq(
+    (1, true),
+    (1, false),
+    (2, false),
+    (3, true),
+    (4, true),
+    (4, true)
+  ).map(t => TableRow("month" -> t._1, "tornado" -> t._2))
+
+  val expected: Seq[TableRow] = Seq((1, 1), (3, 1), (4, 2))
+    .map(t => TableRow("month" -> t._1, "tornado_count" -> t._2))
+
+  "BigQueryTornadoes" should "work" in {
+    JobTest[com.spotify.scio.examples.cookbook.BigQueryTornadoes.type]
+      .args("--input=bigquery-public-data:samples.gsod", "--output=dataset.table")
+      .input(BigQueryIO("bigquery-public-data:samples.gsod"), inData)
+      .output(BigQueryIO[TableRow]("dataset.table")) { coll =>
+        coll should containInAnyOrder(expected)
+      }
+      .run()
+  }
+}
+```
+
+## Design patters for implementing infrastructure layer
+
+Before I present my design of the infrastructure layer API, I would like to show you Algebraic Data Types (ADT) and Phantom Types design patterns first.
+
+### Algebraic Data Types
+
 ADT is a concept in computer science and programming languages that describe data types by combining other data types in various ways.
 There are two main types of ADTs:
 
@@ -252,7 +302,7 @@ case class StorageReadConfiguration(
 )
 ```
 
-## Phantom types
+### Phantom types
 
 Yet another useful design pattern for implementing infrastructure layer API are phantom types.
 They help to catch type-related errors at compile-time, providing strong guarantees about the correctness of the code.
@@ -272,33 +322,40 @@ With such design the compiler complains if you try to read `TollBoothExit` recor
 ## Opinionated infrastructure layer API
 
 Armed with [#algebraic-data-types](Algebraic Data Types), [#phantom-types](Phantom Types) and knowing Apache Beam ans Spotify Scio disadvantages, let's design better API for infrastructure layer.
-Deliver the following BigQuery connector features:
+Deliver the following BigQuery connector features keeping the non-functional requirements in mind:
 
-* Query using BigQuery jobs to fetch data with complex SQL queries
-* Read the table using Storage Read API if simple filtering and projection capabilities are enough
-* Write-truncate bounded collections of data into given partition using Batch Loads API
+* Query using BigQuery jobs to fetch data with complex SQL queries.
+The query jobs are extremely powerful with complex joins, aggregations but limited in testing.
+* Read the table using Storage Read API if simple filtering and projection capabilities are enough.
+I always prefer this API over SQL queries as it's easier to test.
+* Write-truncate bounded collections of data into given partition using Batch Loads API.
+This writing method optimizes for throughput required by batch pipelines.
 * Write-append unbounded collections of data into given table using Storage Write API
+This writing method optimizes for latency required by streaming pipelines.
+
+Look at [Test Driven Development for Data Engineers](/blog/2023/11/02/tdd-for-de/) blog post to see how to test data pipelines with such infrastructure layer API.
+{: .notice--info}
 
 ### SQL Query
 
-The method takes parametrized `id`, `query` and returns collection of BigQuery records de-serialized as domain objects of type `T`:
+The method takes parametrized `id`, `query` and returns collection of BigQuery records de-serialized as domain objects of type `T`.
 
-* `IoIdenfitier` enables automated testing, you can stub the input using the identifier, see [Test Driven Development for Data Engineers](/blog/2023/11/02/tdd-for-de/) blog post for details.
-* `BigQueryQuery` is a parametrized value class for SQL query.
-* `ExportConfiguration` is a configuration crafted for Apache Beam [BigQueryIO.TypedRead.Method.html#EXPORT](https://beam.apache.org/releases/javadoc/current/org/apache/beam/sdk/io/gcp/bigquery/BigQueryIO.TypedRead.Method.html#EXPORT). It exposes configuration properties applicable only for `EXPORT` reading method.
+* `IoIdenfitier` enables automated testing, you can stub the input using the identifier
+* `BigQueryQuery` is a parametrized value class for SQL query
+* `ExportConfiguration` is a configuration crafted only for Beam [BigQueryIO.TypedRead.Method.html#EXPORT](https://beam.apache.org/releases/javadoc/current/org/apache/beam/sdk/io/gcp/bigquery/BigQueryIO.TypedRead.Method.html#EXPORT).
 
 ```scala
 def queryFromBigQuery[T](
   id: IoIdentifier[T],
   query: BigQueryQuery[T],
-  configuration: ExportConfiguration = ExportConfiguration()
+  configuration: ExportConfiguration = ExportConfiguration() // recommended defaults
 ): SCollection[T]
 ```
 
-Example usage:
+Example usage, look that `ioIdentifier`, `query` and `results` types match together.
 
 ```scala
- val effectiveDate = LocalDate.parse(args.required("effectiveDate"))
+val effectiveDate = LocalDate.parse(args.required("effectiveDate"))
 
 val ioIdentifier = IoIdentifier[TollBoothEntry.Record]("toll.booth_entry")
 val query = BigQueryQuery[TollBoothEntry.Record](
@@ -310,30 +367,86 @@ val results = sc.queryFromBigQuery(ioIdentifier, query)
 
 ### Read
 
+API:
+
 ```scala
 def readFromBigQuery[T](
   id: IoIdentifier[T],
   table: BigQueryTable[T],
-  configuration: StorageReadConfiguration = StorageReadConfiguration()
+  configuration: StorageReadConfiguration = StorageReadConfiguration() // recommended defaults
 ): SCollection[T]
 ```
 
-## Write-truncate bounded collections
+Example:
+
+```scala
+val effectiveDate = LocalDate.parse(args.required("effectiveDate"))
+
+val ioIdentifier = IoIdentifier[TollBoothEntry.Record]("toll.booth_entry")
+val table = BigQueryTable[TollBoothEntry.Record](args.required("entryTable")),
+val rowRestriction = RowRestriction.SqlRestriction(s"_PARTITION_TIME = $effectiveDate")
+
+val results = sc.readFromBigQuery(
+  ioIdentifier,
+  table,
+  StorageReadConfiguration().withRowRestriction(rowRestriction)
+)
+```
+
+### Write-truncate bounded collections
+
+API:
 
 ```scala
 def writeBoundedToBigQuery(
   id: IoIdentifier[T],
   partition: BigQueryPartition[T],
-  configuration: FileLoadsConfiguration = FileLoadsConfiguration()
+  configuration: FileLoadsConfiguration = FileLoadsConfiguration() // recommended defaults
 ): Unit
 ```
 
+Example:
+
+```scala
+val effectiveDate = LocalDate.parse(args.required("effectiveDate"))
+
+val ioIdentifier = IoIdentifier[TollBoothStats.Record]("toll.booth_stats_daily")
+val partition = BigQueryPartition
+  .daily[TollBoothStats.Record]("toll.booth_stats_daily", localDate)
+
+val tollBoothStats: SCollection[TollBoothStats.Record] = ...
+
+tollBoothEntries.writeBoundedToBigQuery(
+  ioIdentifier,
+  partition
+)
+```
+
 ### Write-append unbounded collections
+
+API:
 
 ```scala
 def writeUnboundedToBigQuery(
     id: IoIdentifier[T],
     table: BigQueryTable[T],
-    configuration: StorageWriteConfiguration = StorageWriteConfiguration()
+    configuration: StorageWriteConfiguration = StorageWriteConfiguration() // recommended defaults
 ): SCollection[BigQueryDeadLetter[T]]
 ```
+
+Example:
+
+```scala
+val ioIdentifier = IoIdentifier[TollBoothStats.Record]("toll.booth_stats_realtime")
+val table = BigQueryTable[TollBoothStats.Record]("toll.booth_stats_realtime")
+
+val tollBoothStats: SCollection[TollBoothStats.Record] = ...
+tollBoothEntries.writeUnboundedToBigQuery(
+  ioIdentifier,
+  table
+)
+```
+
+## Summary
+
+The most generic and reusable API isn't always the best choice.
