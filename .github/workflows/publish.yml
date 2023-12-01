@@ -9,6 +9,15 @@ jobs:
   jekyll:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -17,11 +26,15 @@ jobs:
         env:
           JEKYLL_ENV: production
 
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: actions/configure-pages@v3
+
+      - uses: actions/upload-pages-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./_site
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v2
 
   algolia:
     runs-on: ubuntu-latest
