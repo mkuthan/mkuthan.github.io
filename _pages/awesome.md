@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [How NAT traversal works](https://tailscale.com/blog/how-nat-traversal-works) -
+How to traverse firewalls, SNAT, CGNAT in mesh networks.
+
 * [Tracking health over debt](https://www.rea-group.com/about-us/news-and-insights/blog/what-good-software-looks-like-at-rea/) -
 How to evaluate projects quality using lenses for: development, operations and architecture.
 
