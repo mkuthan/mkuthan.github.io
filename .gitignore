@@ -1,6 +1,5 @@
-.github/vale
-!.github/styles/Local
-!.github/styles/Vocab
+.github/vale/Microsoft
+.github/vale/proselint
 _site
 .sass-cache
 .jekyll-cache
