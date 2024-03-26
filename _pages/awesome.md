@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Dataflow Streaming Execution Model](https://medium.com/google-cloud/streaming-engine-execution-model-1eb2eef69a8e) -
+Processing within exactly-once guarantees and with latencies consistently in the low single-digit seconds.
+
 * [How NAT traversal works](https://tailscale.com/blog/how-nat-traversal-works) -
 How to traverse firewalls, SNAT, CGNAT in mesh networks.
 
