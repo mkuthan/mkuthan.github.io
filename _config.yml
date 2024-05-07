@@ -86,6 +86,9 @@ kramdown:
     block:
       line_numbers: true
 
+# enable, by default disabled
+enable_copy_code_button: true
+
 # compress CSS, see: https://sass-lang.com/documentation/cli/dart-sass#style
 sass:
   style: compressed
