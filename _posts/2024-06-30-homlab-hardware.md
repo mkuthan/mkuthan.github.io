@@ -4,7 +4,7 @@ date: 2024-06-30
 tags: [DIY, Homelab]
 ---
 
-Welcome, fellow tech enthusiast! 🚀 If you’re anything like me, you’ve probably dreamed of having your own little corner of the digital universe — a place where wires hum, servers whir, and blinking LEDs create a symphony of possibilities. Well, my friend, you’re about to embark on an exciting adventure as we dive headfirst into the world of homelabs.
+Welcome, fellow tech enthusiast! 🚀 If you’re anything like me, you’ve probably dreamed of having your own little corner of the digital universe—a place where wires hum, servers whir, and blinking LEDs create a symphony of possibilities. Well, my friend, you’re about to embark on an exciting adventure as we dive headfirst into the world of homelabs.
 
 ## Why a Homelab?
 
@@ -12,7 +12,7 @@ Before we delve into the nitty-gritty details of hardware, software, and network
 
 ### The Hardware Chronicles
 
-Our journey begins with the tangible, the hardware that forms the backbone of your homelab. Picture this: a sleek gateway guarding the entrance, a managed switch orchestrating data flows, access points spreading Wi-Fi magic, a sturdy rack shelf cradling your servers, and a trusty UPS ensuring uptime even during power outages. Oh, and let’s not forget the ZigBee — because who doesn’t love a touch of automation?
+Our journey begins with the tangible, the hardware that forms your homelab. Picture this: a sleek gateway guarding the entrance, a managed switch orchestrating data flows, access points spreading Wi-Fi magic, a sturdy rack shelf cradling your servers, and a trusty UPS ensuring uptime even during power outages. Oh, and let’s not forget the ZigBee—because who doesn’t love a touch of automation?
 
 In this first installment, we’ll explore each piece of hardware, demystifying their roles and unraveling the magic behind their blinking lights. From choosing the right server to optimizing cable management, we’ve got you covered.
 
@@ -20,7 +20,7 @@ In this first installment, we’ll explore each piece of hardware, demystifying 
 
 So, grab your favorite mug of coffee (or tea, if that’s your jam), find a cozy spot, and join me as we venture into the heart of homelab creation. In the next post, we’ll fire up our Proxmox hypervisor, spin up some virtual machines, and explore the software side of things. Spoiler alert: Home Assistant is waiting in the wings!
 
-Remember, this isn’t just about hardware — it’s about building a playground where curiosity reigns supreme. Buckle up, my friend; the homelab adventure awaits! 🌟
+Remember, this isn’t just about hardware—it’s about building a playground where curiosity reigns supreme. Buckle up, my friend; the homelab adventure awaits! 🌟
 
 ## Vision and Initial Requirements
 
@@ -29,7 +29,7 @@ When I started building my first homelab, I needed some vision and initial requi
 ### Network
 
 * Centrally managed network devices to avoid manual and repetitive tasks.
-* Dedicated network devices, "backbone" networks must work if the server is down.
+* Dedicated network devices, networks must work if the server is down.
 * [Category 6 ethernet cables](https://en.wikipedia.org/wiki/Category_6_cable), to allow easily upgrades up to [10GBASE-T](https://en.wikipedia.org/wiki/10_Gigabit_Ethernet#10GBASE-T).
 * [Gigabit ethernet](https://en.wikipedia.org/wiki/Gigabit_Ethernet#1000BASE-T) network devices to strike a balance between performance and affordability.
 * [Wi-Fi 802.11ax](https://en.wikipedia.org/wiki/Wi-Fi_6) to utilize Gigabit network. [Mesh technology](https://en.wikipedia.org/wiki/Wireless_mesh_network) to extend coverage by creating a seamless network across my home and surroundings.
