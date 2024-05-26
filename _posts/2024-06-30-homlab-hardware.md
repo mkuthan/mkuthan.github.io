@@ -29,7 +29,7 @@ When I started building my first homelab, I needed some vision and initial requi
 ### Network
 
 * Centrally managed network devices to avoid manual and repetitive tasks.
-* Dedicated network devices, "backbone" network must work if server is down.
+* Dedicated network devices, "backbone" networks must work if the server is down.
 * [Category 6 ethernet cables](https://en.wikipedia.org/wiki/Category_6_cable), to allow easily upgrades up to [10GBASE-T](https://en.wikipedia.org/wiki/10_Gigabit_Ethernet#10GBASE-T).
 * [Gigabit ethernet](https://en.wikipedia.org/wiki/Gigabit_Ethernet#1000BASE-T) network devices to strike a balance between performance and affordability.
 * [Wi-Fi 802.11ax](https://en.wikipedia.org/wiki/Wi-Fi_6) to utilize Gigabit network. [Mesh technology](https://en.wikipedia.org/wiki/Wireless_mesh_network) to extend coverage by creating a seamless network across my home and surroundings.
@@ -38,7 +38,7 @@ When I started building my first homelab, I needed some vision and initial requi
 ### Server
 
 * Power efficient to keep electricity costs under control.
-* Multi-core CPU with high clock speeds and memory enough to handle all my virtual machines.
+* Multi-core CPU with high clock speeds and enough memory to handle all my virtual machines.
 * GPU for hardware accelerated vision inference.
 * NVMe SSD disk for OS hosting to get lightning-fast read and write speeds.
 * Enterprise grade SATA disk for virtual machines to achieve reliability, durability, consistent performance, and avoid quick disk wear.
@@ -55,14 +55,14 @@ When I started building my first homelab, I needed some vision and initial requi
 
 ### IoT
 
-* [ZigBee](https://en.wikipedia.org/wiki/Zigbee), to avoid vendor specific solutions
-* Wi-Fi devices only if there are no ZigBee alternatives, they have to work in local network without cloud access and integrate with Home Assistant.
+* [ZigBee](https://en.wikipedia.org/wiki/Zigbee), to avoid vendor specific Wi-Fi solutions
+* Wi-Fi devices only if there are no ZigBee alternatives, they have to work in a local network without cloud access and integrate with Home Assistant.
 
 ### Other parts
 
-* 19'' 9U rack as organized space for mounting your network equipment, servers, and other devices.
+* 19'', 9U rack as organized space for mounting your network equipment, servers, and other devices.
 * Patch panel for neatly organized Ethernet cables. It allows me to connect devices to the network without messy cable runs.
-* Small UPS (Uninterruptible Power Supply) to ensure uninterrupted power supply during short electricity outages or fluctuations. Compatible with with open-source software for monitoring and control.
+* Small UPS (Uninterruptible Power Supply) to ensure uninterrupted power supply during short electricity outages or fluctuations. Compatible with open-source software for monitoring and control.
 
 ## Big picture
 
@@ -74,7 +74,7 @@ Given that all the cables are well organized, understanding the entire topology 
 
 ```mermaid
 flowchart LR
-    modem[Modem 5G] == eth PoE === poe[PoE injector]
+    modem[Radio Modem] == eth PoE === poe[PoE injector]
     poe -- eth --- router[Router]
     router -- eth --- switch[Managed Switch]
 
