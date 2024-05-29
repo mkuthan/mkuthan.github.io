@@ -2,6 +2,9 @@
 title: DIY hi-fi stereo system
 date: 2024-05-30
 tags: [hardware, DIY]
+header:
+    overlay_image: /assets/images/2024-05-30-amplifier/overlay.jpg
+    caption: ""
 ---
 
 This blog post is different from all other posts I've already published.
@@ -133,7 +136,7 @@ After just 14 hours of printing, I could make the first adjustments:
 
 ## Final result
 
-TODO: Images
+![Amplifier - final](/assets/images/2024-05-30-amplifier/amplifier-final.jpg)
 
 If I had to sum up why it's worth playing DIY:
 
