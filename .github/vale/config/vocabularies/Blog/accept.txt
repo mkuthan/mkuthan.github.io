@@ -1,4 +1,5 @@
 Akka
+Aliexpress
 Artifactory
 Atlassian
 Applicative
@@ -13,12 +14,14 @@ clickstream
 Coldline
 Contravariant
 CPUs
+DAC
 DAMP
 Dataflow
 Dataproc
 Datastudio
 Dependabot
 DEV
+DIY
 DRY
 DSL
 FIFO
