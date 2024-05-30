@@ -1,5 +1,5 @@
 ---
-title: "Building Your Ultimate Homelab -- part 1"
+title: "Building Your Ultimate Homelab -- hardware"
 date: 2024-06-30
 tags: [DIY, Homelab]
 ---
@@ -55,30 +55,35 @@ When I started building my first homelab, I needed some vision and initial requi
 
 ### IoT
 
-* [ZigBee](https://en.wikipedia.org/wiki/Zigbee), to avoid vendor specific Wi-Fi solutions
-* Wi-Fi devices only if there are no ZigBee alternatives, they have to work in a local network without cloud access and integrate with Home Assistant.
+* Don't overengineer smart home, everything should enhance the user experience, not complicate it. Essential functionalities must work if the server is down.
+* Base on [ZigBee](https://en.wikipedia.org/wiki/Zigbee) mesh network, to avoid vendor specific Wi-Fi solutions.
+* Wi-Fi devices only if there are no ZigBee viable alternatives. They have to work in a local network without cloud access and integrate well with Home Assistant.
 
 ### Other parts
 
-* 19'', 9U rack as organized space for mounting your network equipment, servers, and other devices.
+* 19'' rack as organized space for mounting your network equipment, servers, and other devices.
 * Patch panel for neatly organized Ethernet cables. It allows me to connect devices to the network without messy cable runs.
 * Small UPS (Uninterruptible Power Supply) to ensure uninterrupted power supply during short electricity outages or fluctuations. Compatible with open-source software for monitoring and control.
 
 ## Big picture
 
-Below, you can observe the current state of the network equipment, servers, and other devices neatly mounted in the utility room, positioned just above the door leading to the garage.
+I initiated the setup of my Homelab by meticulously planning the computer network, but the end result resembled a tangle of cables emerging from the walls in the utility room.
+
+![Cables](/assets/images/2024-06-30-homlab-hardware/cables.jpg)
+
+Below, you can observe the current state of the network equipment, servers, and other devices neatly mounted, positioned just above the door leading to the garage.
 
 ![Rack](/assets/images/2024-06-30-homlab-hardware/rack.jpg)
 
-Given that all the cables are well organized, understanding the entire topology can still be challenging. Below, you’ll find the logical connection diagram for all the devices:
+Given that all the cables are well organized, understanding the entire topology can still be challenging. Below, you’ll find the physical Homelab connection diagram, devices mounted in the rack cabinet are marked orange:
 
 ```mermaid
 flowchart LR
-    modem[Radio Modem] == eth PoE === poe[PoE injector]
-    poe -- eth --- router[Router]
-    router -- eth --- switch[Managed Switch]
+    modem[Radio Modem] == eth PoE === poe[PoE injector]:::rack
+    poe -- eth --- router[Router]:::rack
+    router -- eth --- switch[Managed Switch]:::rack
 
-    switch -- eth --- server[Server]
+    switch -- eth --- server[Server]:::rack
     switch == eth PoE === aps[Access Points]
     switch == eth PoE === cameras[Cameras]
     switch -- eth --- heatpump[Heat Pump]
@@ -86,12 +91,71 @@ flowchart LR
     switch -- eth --- computers_eth[Computers]
 
     server -- usb --- zigbee[ZigBee Gate]
-    server -- usb --- hdds[External HDDs]
-    server -- usb --- ups[UPS]
+    server -- usb --- hdds[External HDDs]:::rack
+    server -- usb --- ups[UPS]:::rack
 
     aps -. wifi .- phones[Phones]
     aps -. wifi .- computers_wifi[Computers]
     aps -. wifi .- iot_wifi[IoT Devices]
 
     zigbee -. zigbee .- iot_zigbee[IoT Devices]
+
+    classDef rack fill:Orange
 ```
+
+## TP-Link Omada network devices
+
+I made the deliberate choice to deploy TP-Link network devices from their business line, expertly managed by the Omada controller.
+Notably more budget-friendly than the alternatives offered by Ubiquiti Unifi, these TP-Link devices seamlessly meet all my networking requirements.
+
+### Router
+
+Gigabit router [ER605](https://www.tp-link.com/en/business-networking/vpn-router/er605/) is a straightforward and functional model that provides essential features without unnecessary frills.
+
+![TP-Link ER605](/assets/images/2024-06-30-homlab-hardware/er605.jpg)
+
+### Managed Switch
+
+28-Port Gigabit switch [TL-SG2428P](https://www.tp-link.com/en/business-networking/omada-switch-poe/tl-sg2428p/v1/) is a robust managed switch equipped with PoE and VLAN support.
+
+![TP-Link SG2428P](/assets/images/2024-06-30-homlab-hardware/sg2428P.jpg)
+
+### Access Point
+
+WiFi 6 access point [EAP610](https://www.tp-link.com/en/business-networking/omada-wifi-ceiling-mount/eap610/v3/) with simultaneous 574 Mbps on 2.4 GHz and 1201 Mbps on 5 GHz speeds.
+
+![TP-Link EAP610](/assets/images/2024-06-30-homlab-hardware/eap610.jpg)
+
+## Radio Modem
+
+Given the absence of optical fiber at my homelab installation site, I rely on radio access for internet connectivity. My service provider has installed the [Ubiquiti airMAX LiteBeam 5AC](https://eu.store.ui.com/eu/en/pro/products/litebeam-5ac), an ultra-lightweight outdoor wireless station specifically designed for point-to-point (PtP) communication. The base station is situated a little over 2 kilometers away, and the reported latency on my WAN link is approximately 20 milliseconds.
+
+![Modem](/assets/images/2024-06-30-homlab-hardware/modem.jpg)
+
+## Dell Optiplex server
+
+A few years ago, I embarked on a project to create a 24/7 home server using a Raspberry Pi. While the Pi served its purpose, my evolving Homelab demanded more horsepower without compromising energy efficiency. After careful consideration, I opted for a used [Dell Optiplex](https://en.wikipedia.org/wiki/Dell_OptiPlex) system equipped with an Intel i5 7th generation CPU. The compact small form factor housing allowed me to maximize space while still achieving the desired performance.
+
+![Dell Optiplex 3050](/assets/images/2024-06-30-homlab-hardware/optiplex3050.webp)
+
+* CPU Intel i5-7500T 2.7GHz, 4 cores
+* GPU Intel® HD Graphics 630
+* 32GB RAM DDR4 2666MHz
+* PCI Express 3.0
+* Gigabit Ethernet
+* USB 3.0 x 4, 2.0 x 2
+* Samsung PM981 256 GB (NVMe, TLC)
+* Intel DC S3610 800 GB (SATA, MLC)
+
+Thanks to my patience, I managed to assemble the final server setup at a remarkably affordable cost of approximately $250.
+
+## Dahua IP cameras
+
+Given my concerns about the quality of no-name Chinese products, I deliberately opted for the reputable brand Dahua.
+While I also evaluated Hikvision, the affordability factor tipped the scales in favor of Dahua. Specifically, Dahua’s 8MPx cameras ([IPC-HFW2841S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/8MP/IPC-HFW2841S-S)) come in at approximately $100, while their 4MPx counterparts ([IPC-HFW2441S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/4MP/IPC-HFW2441S-S)) are priced around $70.
+
+![Dahua](/assets/images/2024-06-30-homlab-hardware/dahua.jpg)
+
+Recordings from my surveillance system are securely stored on a dedicated [WD Purple Pro 12TB](https://www.westerndigital.com/products/internal-drives/wd-purple-pro-sata-hdd?sku=WD121PURP)hard drive.
+
+![WD Purple](/assets/images/2024-06-30-homlab-hardware/wd-purple.jpg)
