@@ -154,10 +154,10 @@ The compact small form factor housing allowed me to maximize space while still a
 * CPU Intel i5-7500T 2.7GHz, 4 cores
 * GPU Intel® HD Graphics 630
 * 32GB RAM DDR4 2666MHz
+* 256 GB SSD, Samsung PM981 (NVMe, TLC)
 * PCI Express 3.0
 * Built-in Gigabit Ethernet card
 * USB 3.0 × 4, USB 2.0 × 2
-* Samsung PM981 256 GB (NVMe, TLC)
 
 ### Intel DC S3610 SSD
 
