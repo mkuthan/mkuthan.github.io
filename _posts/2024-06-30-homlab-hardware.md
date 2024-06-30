@@ -240,6 +240,13 @@ I didn't observe any connectivity problems, the worst reported Link Quality Indi
 
 ![Sonoff ZBDongle-E](/assets/images/2024-06-30-homelab-hardware/efr32mg21.jpg)
 
+## Final Thoughts
+
+I intentionally prioritized lower power consumption over high availability.
+The setup includes a single server with enterprise-grade SSDs for hosting VMs and external HDDs—one for camera recordings and another for backups.
+The most important data is replicated in the public cloud, and the infrastructure is defined as code.
+I can install spare hardware and rebuild the homelab in a few hours, which is an acceptable downtime for me.
+
 ## Stay Tuned
 
 In the next post, we’ll fire up our Proxmox hypervisor, spin up some virtual machines, and explore the software side of things.
