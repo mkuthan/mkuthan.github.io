@@ -23,13 +23,10 @@ Our journey begins with the tangible, the hardware that forms your homelab.
 Picture this: a sleek gateway guarding the entrance, a managed switch orchestrating data flows, access points spreading Wi-Fi magic, a sturdy rack shelf cradling your servers, and a trusty UPS ensuring uptime even during power outages.
 Oh, and let’s not forget the Zigbee—because who doesn’t love a touch of automation?
 
-In this first installment, we’ll explore each piece of hardware, demystifying their roles and unraveling the magic behind their blinking lights.
-From choosing the right server to optimizing cable management, we’ve got you covered.
-
 ## Vision and Initial Requirements
 
 When I started building my first homelab, I needed some vision and initial requirements to avoid costly mistakes.
-I meticulously researched hardware options, software configurations, and scalability considerations.
+I meticulously researched on [Reddit](https://www.reddit.com/r/homelab/) hardware options, software configurations, scalability considerations, and power efficiency factors.
 As I laid the foundation for my homelab, I envisioned a versatile environment that would serve both my personal projects and professional development.
 This foresight allowed me to make informed decisions, optimize my setup, and create a robust infrastructure that continues to evolve.
 
@@ -48,9 +45,9 @@ This foresight allowed me to make informed decisions, optimize my setup, and cre
 * Power efficient to keep electricity costs under control.
 * Multi-core CPU with high clock speeds and enough memory to handle all my virtual machines.
 * GPU for hardware accelerated vision inference.
-* NVMe SSD disk for OS to get lightning-fast read and write speeds.
-* Enterprise grade SATA disk for virtual machines to achieve reliability, durability, consistent performance, and avoid quick disk wear.
-* USB3 ports to connect external HDD storage for camera recordings and backups.
+* [NVMe](https://en.wikipedia.org/wiki/NVM_Express) SSD disk for OS to get lightning-fast read and write speeds.
+* Enterprise grade [SATA](https://en.wikipedia.org/wiki/SATA) disk for virtual machines to achieve reliability, durability, consistent performance, and avoid quick disk wear.
+* [USB 3.0](https://en.wikipedia.org/wiki/USB_3.0) ports to connect external HDD storage for camera recordings and backups.
 
 ### Cameras
 
@@ -81,7 +78,7 @@ I initiated the setup of my Homelab by meticulously planning the computer networ
 
 It took considerable effort and time to build everything from scratch. Now, below, you can observe the current state of the network equipment, servers, and other devices—neatly mounted and strategically positioned just above the door leading to the garage.
 
-![Rack](/assets/images/2024-06-30-homelab-hardware/rack.jpg)
+![Network Rack Cabinet](/assets/images/2024-06-30-homelab-hardware/rack.jpg)
 
 Given that all the cables are well organized, understanding the entire topology can still be challenging. Below, you’ll find the physical Homelab connection diagram, devices mounted in the rack cabinet are marked orange:
 
@@ -119,24 +116,29 @@ Given the absence of optical fiber at my homelab installation site, I rely on ra
 
 ## TP-Link Omada Network Devices
 
-I made the deliberate choice to deploy TP-Link network devices from their business line, expertly managed by the Omada controller.
-Notably more budget-friendly than the alternatives offered by Ubiquiti Unifi, these TP-Link devices seamlessly meet all my networking requirements.
+I made the deliberate choice to deploy TP-Link network devices from their business line, expertly managed by the Omada Software Controller.
+Notably more budget-friendly than the options offered by Ubiquiti Unifi, these TP-Link devices seamlessly meet all my networking requirements.
 
 ### ER605 Router
 
 Gigabit router [ER605](https://www.tp-link.com/en/business-networking/vpn-router/er605/) is a straightforward and functional model that provides essential features without unnecessary frills.
+Apart from the annoyingly long startup time, the most significant limitation is the lack of support for IP and port based Access Control Lists (ACLs).
+To work around this, I had to create an additional VLAN.
 
 ![TP-Link ER605 Router](/assets/images/2024-06-30-homelab-hardware/er605.jpg)
 
 ### SG2428P Managed Switch
 
 28-Port Gigabit switch [TL-SG2428P](https://www.tp-link.com/en/business-networking/omada-switch-poe/tl-sg2428p/v1/) is a robust managed switch equipped with PoE and VLAN support.
+So far I haven't found any serious shortcomings, but don't try to run this switch in your bedroom, it's as loud as a jet.
 
 ![TP-Link SG2428P Switch](/assets/images/2024-06-30-homelab-hardware/sg2428P.jpg)
 
 ### EAP610 Access Points
 
 WiFi 6 access points [EAP610](https://www.tp-link.com/en/business-networking/omada-wifi-ceiling-mount/eap610/v3/) with simultaneous 574 Mbps on 2.4 GHz and 1201 Mbps on 5 GHz speeds.
+It provides coverage for most of my house using the 5 GHz network.
+However, I plan to install an extra access point to improve coverage further.
 
 ![TP-Link EAP610 Access Point](/assets/images/2024-06-30-homelab-hardware/eap610.jpg)
 
@@ -154,26 +156,26 @@ The compact small form factor housing allowed me to maximize space while still a
 * 32GB RAM DDR4 2666MHz
 * PCI Express 3.0
 * Built-in Gigabit Ethernet card
-* USB 3.0 × 4, 2.0 × 2
+* USB 3.0 × 4, USB 2.0 × 2
 * Samsung PM981 256 GB (NVMe, TLC)
 
 ### Intel DC S3610 SSD
 
 When it comes to hosting virtual machines (VMs), using enterprise-grade SSDs over consumer grade SSDs offers several advantages: endurance, reliability, consistent performance and power loss protection.
-I installed a used Intel DC S3610 800 GB (SATA, MLC) SSD with over 50,000 power-on hours, and remarkably, it still reports only 2% wearout.
+I installed a used Intel DC S3610 800 GB (SATA, MLC) SSD with over 50,000 power-on hours, and remarkably, it still reports only 2% wear out.
 
 ![Intel DC S3610 SSD](/assets/images/2024-06-30-homelab-hardware/s3610.jpg)
 
 ### RTL8125B Network Card
 
 For desktop computers, a single Gigabit Ethernet card suffices.
-However, when setting up a server, having at least two network devices becomes crucial. Fortunately, since I didn’t require WiFi or Bluetooth functionality, I replaced the stock Intel Dual-Band Wireless-AC 8265 card with a PCIe M.2 A+E 2.5GB RTL8125B card.
+However, when setting up a server, having at least two network devices becomes crucial. Fortunately, since I didn’t require WiFi or Bluetooth functionality, I replaced the stock Intel Dual-Band Wireless-AC 8265 card with a PCIe M.2 A+E 2.5GB RTL8125B network card.
 
 ![RTL8125B Network Card](/assets/images/2024-06-30-homelab-hardware/rtl8125b.jpg)
 
 ## Eaton 5S UPS
 
-Here’s why I chose the Eaton 5S 1000VA UPS for my homelab?
+Here’s why I chose the Eaton 5S 1000VA UPS for my homelab:
 
 * My homelab has an average power consumption of 75---80 Watts.
 * Its line-interactive technology adjusts input voltage fluctuations without switching to battery power unless necessary.
@@ -185,7 +187,7 @@ Here’s why I chose the Eaton 5S 1000VA UPS for my homelab?
 
 ## Dahua IP Cameras
 
-Given my concerns about the quality of no-name Chinese products, I deliberately opted for the reputable brand Dahua.
+Given my concerns about the quality of no-name products, I deliberately opted for the reputable brand Dahua.
 While I also evaluated Hikvision, the affordability factor tipped the scales in favor of Dahua. Specifically, Dahua’s 8 Mpx cameras ([IPC-HFW2841S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/8MP/IPC-HFW2841S-S)) come in at approximately $100, while their 4 Mpx counterparts ([IPC-HFW2441S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/4MP/IPC-HFW2441S-S)) are priced around $70.
 
 ![Dahua IP Camera](/assets/images/2024-06-30-homelab-hardware/dahua.jpg)
@@ -193,7 +195,7 @@ While I also evaluated Hikvision, the affordability factor tipped the scales in 
 ### Storage Requirements
 
 To get decent H.265 video quality at 5 FPS I set up: 6Mb/s for 8Mpx cameras and 3Mb/s for 4Mpx cameras.
-How much storage do I need to store 1 month of recording from `2 x 8 Mpx` and `6 x 4 Mpx` cameras?
+How much storage do I need to store 1 month of recording from two 8 Mpx and six 4 Mpx cameras?
 
 Hourly rate per camera:
 
@@ -221,19 +223,20 @@ Recordings from my surveillance system are securely stored on a dedicated [WD Pu
 
 ![WD Purple HDD](/assets/images/2024-06-30-homelab-hardware/wd-purple.jpg)
 
-The hard drive is connected to the server using a USB3 to SATA adapter with [UASP](https://en.wikipedia.org/wiki/USB_Attached_SCSI) support.
+The hard drive is connected to the server using a USB 3.0 to SATA adapter with [UASP](https://en.wikipedia.org/wiki/USB_Attached_SCSI) support.
 Additionally, for 3.5-inch disks, a 12V/2A power adapter is required.
 
 ![USB3 to SATA adapter](/assets/images/2024-06-30-homelab-hardware/usb3sata.jpg)
 
 ## Sonoff ZBDongle-E
 
-Here’s why I chose the Sonoff ZBDongle-E for my homelab?
+Here’s why I chose the Sonoff ZBDongle-E for my homelab:
 
-* Sonoff ZBDongle-E seamlessly integrates with Home Assistant’s integration, making it an excellent choice for Zigbee networks within my smart home.
-* It's based on the Silicon Labs EFR32MG21 SoC (System-on-Chip).
-This powerful chip ensures reliable communication and efficient performance.
+* Sonoff ZBDongle-E seamlessly integrates with Home Assistant, making it an excellent choice for Zigbee networks within my smart home.
+* It’s based on the Silicon Labs EFR32MG21 SoC (System-on-Chip).
+This powerful chip ensures reliable communication and efficient performance in networks with at least several dozen devices.
 * To extend the signal range, I connected the Sonoff ZBDongle-E using a 1.5m USB extension cable and mounted it outside the 19’’ rack.
+I didn't observe any connectivity problems, the worst reported Link Quality Indicator (LQI) is 90 for the farthest device.
 
 ![Sonoff ZBDongle-E](/assets/images/2024-06-30-homelab-hardware/efr32mg21.jpg)
 
