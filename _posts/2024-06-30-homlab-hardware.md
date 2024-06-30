@@ -67,13 +67,13 @@ This foresight allowed me to make informed decisions, optimize my setup, and cre
 * Base on [Zigbee](https://en.wikipedia.org/wiki/Zigbee) mesh network, to avoid vendor specific Wi-Fi solutions.
 * Wi-Fi devices only if there are no Zigbee viable options. They have to work in a local network without cloud access and integrate well with Home Assistant.
 
-### Other parts
+### Other Parts
 
 * 19'' rack for mounting your network equipment, servers, and other devices.
 * Patch panel for neatly organized Ethernet cables.
 * Small UPS to ensure uninterrupted power supply during short electricity outages or fluctuations. Compatible with open-source software for monitoring and control.
 
-## Big picture
+## Big Picture
 
 I initiated the setup of my Homelab by meticulously planning the computer network in the house, but the end result resembled a tangle of cables emerging from the walls in the utility room.
 
@@ -115,39 +115,39 @@ flowchart LR
 
 Given the absence of optical fiber at my homelab installation site, I rely on radio access for internet connectivity. My service provider has installed the [Ubiquiti airMAX LiteBeam 5AC](https://eu.store.ui.com/eu/en/pro/products/litebeam-5ac), an ultra-lightweight outdoor wireless station specifically designed for point-to-point communication. The base station is situated a little over 2 kilometers away, and the reported latency on my WAN link is approximately 22 milliseconds.
 
-![Modem](/assets/images/2024-06-30-homelab-hardware/modem.jpg)
+![Ubiquiti airMAX LiteBeam 5AC](/assets/images/2024-06-30-homelab-hardware/modem.jpg)
 
-## TP-Link Omada network devices
+## TP-Link Omada Network Devices
 
 I made the deliberate choice to deploy TP-Link network devices from their business line, expertly managed by the Omada controller.
 Notably more budget-friendly than the alternatives offered by Ubiquiti Unifi, these TP-Link devices seamlessly meet all my networking requirements.
 
-### Router
+### ER605 Router
 
 Gigabit router [ER605](https://www.tp-link.com/en/business-networking/vpn-router/er605/) is a straightforward and functional model that provides essential features without unnecessary frills.
 
-![TP-Link ER605](/assets/images/2024-06-30-homelab-hardware/er605.jpg)
+![TP-Link ER605 Router](/assets/images/2024-06-30-homelab-hardware/er605.jpg)
 
-### Managed Switch
+### SG2428P Managed Switch
 
 28-Port Gigabit switch [TL-SG2428P](https://www.tp-link.com/en/business-networking/omada-switch-poe/tl-sg2428p/v1/) is a robust managed switch equipped with PoE and VLAN support.
 
-![TP-Link SG2428P](/assets/images/2024-06-30-homelab-hardware/sg2428P.jpg)
+![TP-Link SG2428P Switch](/assets/images/2024-06-30-homelab-hardware/sg2428P.jpg)
 
-### Access Point
+### EAP610 Access Points
 
-WiFi 6 access point [EAP610](https://www.tp-link.com/en/business-networking/omada-wifi-ceiling-mount/eap610/v3/) with simultaneous 574 Mbps on 2.4 GHz and 1201 Mbps on 5 GHz speeds.
+WiFi 6 access points [EAP610](https://www.tp-link.com/en/business-networking/omada-wifi-ceiling-mount/eap610/v3/) with simultaneous 574 Mbps on 2.4 GHz and 1201 Mbps on 5 GHz speeds.
 
-![TP-Link EAP610](/assets/images/2024-06-30-homelab-hardware/eap610.jpg)
+![TP-Link EAP610 Access Point](/assets/images/2024-06-30-homelab-hardware/eap610.jpg)
 
-## Dell Optiplex server
+## Dell Optiplex 3050 Server
 
 A few years ago, I embarked on a project to create a 24/7 home server using a [Raspberry Pi 4](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/).
 While the Pi served its purpose, my evolving Homelab demanded more horsepower without compromising energy efficiency.
 After careful consideration, I opted for a used [Dell Optiplex](https://en.wikipedia.org/wiki/Dell_OptiPlex) system equipped with an Intel i5 7th generation CPU.
 The compact small form factor housing allowed me to maximize space while still achieving the desired performance.
 
-![Dell Optiplex 3050](/assets/images/2024-06-30-homelab-hardware/optiplex3050.webp)
+![Dell Optiplex 3050 Server](/assets/images/2024-06-30-homelab-hardware/optiplex3050.webp)
 
 * CPU Intel i5-7500T 2.7GHz, 4 cores
 * GPU Intel® HD Graphics 630
@@ -157,37 +157,40 @@ The compact small form factor housing allowed me to maximize space while still a
 * USB 3.0 × 4, 2.0 × 2
 * Samsung PM981 256 GB (NVMe, TLC)
 
-### Intel DC S3610
+### Intel DC S3610 SSD
 
 When it comes to hosting virtual machines (VMs), using enterprise-grade SSDs over consumer grade SSDs offers several advantages: endurance, reliability, consistent performance and power loss protection.
-I installed a used Intel DC S3610 800 GB (SATA, MLC) SSD with over 50,000 power-on hours, and remarkably, it still has only 2% wearout.
+I installed a used Intel DC S3610 800 GB (SATA, MLC) SSD with over 50,000 power-on hours, and remarkably, it still reports only 2% wearout.
 
-![Intel DC S3610](/assets/images/2024-06-30-homelab-hardware/s3610.jpg)
+![Intel DC S3610 SSD](/assets/images/2024-06-30-homelab-hardware/s3610.jpg)
 
-### RTL8125B
+### RTL8125B Network Card
 
 For desktop computers, a single Gigabit Ethernet card suffices.
 However, when setting up a server, having at least two network devices becomes crucial. Fortunately, since I didn’t require WiFi or Bluetooth functionality, I replaced the stock Intel Dual-Band Wireless-AC 8265 card with a PCIe M.2 A+E 2.5GB RTL8125B card.
 
-![RTL8125B](/assets/images/2024-06-30-homelab-hardware/rtl8125b.jpg)
+![RTL8125B Network Card](/assets/images/2024-06-30-homelab-hardware/rtl8125b.jpg)
 
 ## Eaton 5S UPS
 
 Here’s why I chose the Eaton 5S 1000VA UPS for my homelab?
 
-* With a capacity of 1000 VA and 600 W output, the Eaton 5S 1000VA not only provides ample power for my critical devices but also fits neatly into a 19’’ rack.
-* During outages, it ensures uninterrupted operation for approximately 30 minutes.
+* My homelab has an average power consumption of 75---80 Watts.
 * Its line-interactive technology adjusts input voltage fluctuations without switching to battery power unless necessary.
-* The seamless integration with Network UPS Tools (NUT) on Linux systems simplifies monitoring and management.
+* During outages, it ensures uninterrupted operation for approximately 30 minutes.
+* It fits neatly into a 19’’ network rack.
+* Network UPS Tools (NUT) on Linux systems simplifies monitoring and management.
 
-![Eaton 5S](/assets/images/2024-06-30-homelab-hardware/5s1000.jpg)
+![Eaton 5S UPS](/assets/images/2024-06-30-homelab-hardware/5s1000.jpg)
 
-## Dahua IP cameras
+## Dahua IP Cameras
 
 Given my concerns about the quality of no-name Chinese products, I deliberately opted for the reputable brand Dahua.
 While I also evaluated Hikvision, the affordability factor tipped the scales in favor of Dahua. Specifically, Dahua’s 8 Mpx cameras ([IPC-HFW2841S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/8MP/IPC-HFW2841S-S)) come in at approximately $100, while their 4 Mpx counterparts ([IPC-HFW2441S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/4MP/IPC-HFW2441S-S)) are priced around $70.
 
-![Dahua camera](/assets/images/2024-06-30-homelab-hardware/dahua.jpg)
+![Dahua IP Camera](/assets/images/2024-06-30-homelab-hardware/dahua.jpg)
+
+### Storage Requirements
 
 To get decent H.265 video quality at 5 FPS I set up: 6Mb/s for 8Mpx cameras and 3Mb/s for 4Mpx cameras.
 How much storage do I need to store 1 month of recording from `2 x 8 Mpx` and `6 x 4 Mpx` cameras?
@@ -212,22 +215,31 @@ Total required capacity:
 3802 [GiB] + 5702 [GiB] = 9.5 TiB
 ```
 
-Recordings from my surveillance system are securely stored on a dedicated [WD Purple Pro 12TB](https://www.westerndigital.com/products/internal-drives/wd-purple-pro-sata-hdd?sku=WD121PURP) hard drive connected to the main server using USB3 and external 12V power supply.
+### WD Purple HDD
 
-![WD Purple](/assets/images/2024-06-30-homelab-hardware/wd-purple.jpg)
+Recordings from my surveillance system are securely stored on a dedicated [WD Purple Pro 12TB](https://www.westerndigital.com/products/internal-drives/wd-purple-pro-sata-hdd?sku=WD121PURP) hard drive. This robust drive supports an impressive workload rate of up to 550TB per year, achieving speeds of up to 245MB/s. During write operations, the average power consumption remains at a modest 6.6 Watts.
 
-## Sonoff Plus–ZBDongle-E
+![WD Purple HDD](/assets/images/2024-06-30-homelab-hardware/wd-purple.jpg)
 
-* The ZBDongle-E is based on the Silicon Labs EFR32MG21 SoC (System-on-Chip).
+The hard drive is connected to the server using a USB3 to SATA adapter with [UASP](https://en.wikipedia.org/wiki/USB_Attached_SCSI) support.
+Additionally, for 3.5-inch disks, a 12V/2A power adapter is required.
+
+![USB3 to SATA adapter](/assets/images/2024-06-30-homelab-hardware/usb3sata.jpg)
+
+## Sonoff ZBDongle-E
+
+Here’s why I chose the Sonoff ZBDongle-E for my homelab?
+
+* Sonoff ZBDongle-E seamlessly integrates with Home Assistant’s integration, making it an excellent choice for Zigbee networks within my smart home.
+* It's based on the Silicon Labs EFR32MG21 SoC (System-on-Chip).
 This powerful chip ensures reliable communication and efficient performance.
-* It seamlessly integrates with Home Assistant’s integration, making it an excellent choice for Zigbee networks within my smart home.
 * To extend the signal range, I connected the Sonoff ZBDongle-E using a 1.5m USB extension cable and mounted it outside the 19’’ rack.
 
-![EFR32MG21](/assets/images/2024-06-30-homelab-hardware/efr32mg21.jpg)
+![Sonoff ZBDongle-E](/assets/images/2024-06-30-homelab-hardware/efr32mg21.jpg)
 
 ## Stay Tuned
 
 In the next post, we’ll fire up our Proxmox hypervisor, spin up some virtual machines, and explore the software side of things.
 Spoiler alert: Home Assistant is waiting in the wings!
 
-![Proxmox](/assets/images/2024-06-30-homelab-hardware/proxmox.png)
+![Proxmox hypervisor](/assets/images/2024-06-30-homelab-hardware/proxmox.png)
