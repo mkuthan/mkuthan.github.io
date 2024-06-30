@@ -131,6 +131,7 @@ To work around this, I had to create an additional VLAN.
 
 28-Port Gigabit switch [TL-SG2428P](https://www.tp-link.com/en/business-networking/omada-switch-poe/tl-sg2428p/v1/) is a robust managed switch equipped with PoE and VLAN support.
 So far I haven't found any serious shortcomings, but don't try to run this switch in your bedroom, it's as loud as a jet.
+Today I would rather choose new fanless model [SG2428LP](https://www.tp-link.com/en/business-networking/omada-switch-poe/sg2428lp/) which has 16 PoE ports out of a total of 28 ports.
 
 ![TP-Link SG2428P Switch](/assets/images/2024-06-30-homelab-hardware/sg2428P.jpg)
 
