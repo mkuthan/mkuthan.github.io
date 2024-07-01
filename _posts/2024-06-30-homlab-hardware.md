@@ -17,13 +17,13 @@ Before we delve into the nitty-gritty details of hardware, software, and network
 Imagine having a playground where you can experiment, learn, and tinker without any constraints.
 Whether you’re a seasoned sysadmin, a budding developer, or just someone who loves gadgets, a homelab provides the canvas for your digital masterpiece.
 
-## The Hardware Chronicles
+## The hardware chronicles
 
 Our journey begins with the tangible, the hardware that forms your homelab.
 Picture this: a sleek gateway guarding the entrance, a managed switch orchestrating data flows, access points spreading Wi-Fi magic, a sturdy rack shelf cradling your servers, and a trusty UPS ensuring uptime even during power outages.
 Oh, and let’s not forget the Zigbee—because who doesn’t love a touch of automation?
 
-## Vision and Initial Requirements
+## Vision and initial requirements
 
 When I started building my first homelab, I needed some vision and initial requirements to avoid costly mistakes.
 I meticulously researched on [Reddit](https://www.reddit.com/r/homelab/) hardware options, software configurations, scalability considerations, and power efficiency factors.
@@ -64,13 +64,13 @@ This foresight allowed me to make informed decisions, optimize my setup, and cre
 * Base on [Zigbee](https://en.wikipedia.org/wiki/Zigbee) mesh network, to avoid vendor specific Wi-Fi solutions.
 * Wi-Fi devices only if there are no Zigbee viable options. They have to work in a local network without cloud access and integrate well with Home Assistant.
 
-### Other Parts
+### Other parts
 
 * 19'' rack for mounting your network equipment, servers, and other devices.
 * Patch panel for neatly organized Ethernet cables.
 * Small UPS to ensure uninterrupted power supply during short electricity outages or fluctuations. Compatible with open-source software for monitoring and control.
 
-## Big Picture
+## Big picture
 
 I initiated the setup of my Homelab by meticulously planning the computer network in the house, but the end result resembled a tangle of cables emerging from the walls in the utility room.
 
@@ -108,18 +108,18 @@ flowchart LR
     classDef rack fill:Orange
 ```
 
-## Radio Modem
+## Radio modem
 
 Given the absence of optical fiber at my homelab installation site, I rely on radio access for internet connectivity. My service provider has installed the [Ubiquiti airMAX LiteBeam 5AC](https://eu.store.ui.com/eu/en/pro/products/litebeam-5ac), an ultra-lightweight outdoor wireless station specifically designed for point-to-point communication. The base station is situated a little over 2 kilometers away, and the reported latency on my WAN link is approximately 22 milliseconds.
 
 ![Ubiquiti airMAX LiteBeam 5AC](/assets/images/2024-06-30-homelab-hardware/modem.jpg)
 
-## TP-Link Omada Network Devices
+## TP-Link Omada network devices
 
 I made the deliberate choice to deploy TP-Link network devices from their business line, expertly managed by the Omada Software Controller.
 Notably more budget-friendly than the options offered by Ubiquiti Unifi, these TP-Link devices seamlessly meet all my networking requirements.
 
-### ER605 Router
+### ER605 router
 
 Gigabit router [ER605](https://www.tp-link.com/en/business-networking/vpn-router/er605/) is a straightforward and functional model that provides essential features without unnecessary frills.
 Apart from the annoyingly long startup time, the most significant limitation is the lack of support for IP and port based Access Control Lists (ACLs).
@@ -127,7 +127,7 @@ To work around this, I had to create an additional VLAN.
 
 ![TP-Link ER605 Router](/assets/images/2024-06-30-homelab-hardware/er605.jpg)
 
-### SG2428P Managed Switch
+### SG2428P managed switch
 
 28-Port Gigabit switch [TL-SG2428P](https://www.tp-link.com/en/business-networking/omada-switch-poe/tl-sg2428p/v1/) is a robust managed switch equipped with PoE and VLAN support.
 So far I haven't found any serious shortcomings, but don't try to run this switch in your bedroom, it's as loud as a jet.
@@ -135,7 +135,7 @@ Today I would rather choose new fanless model [SG2428LP](https://www.tp-link.com
 
 ![TP-Link SG2428P Switch](/assets/images/2024-06-30-homelab-hardware/sg2428P.jpg)
 
-### EAP610 Access Points
+### EAP610 access points
 
 WiFi 6 access points [EAP610](https://www.tp-link.com/en/business-networking/omada-wifi-ceiling-mount/eap610/v3/) with simultaneous 574 Mbps on 2.4 GHz and 1201 Mbps on 5 GHz speeds.
 It provides coverage for most of my house using the 5 GHz network.
@@ -143,7 +143,7 @@ However, I plan to install an extra access point to improve coverage further.
 
 ![TP-Link EAP610 Access Point](/assets/images/2024-06-30-homelab-hardware/eap610.jpg)
 
-## Dell Optiplex 3050 Server
+## Dell Optiplex 3050 server
 
 A few years ago, I embarked on a project to create a 24/7 home server using a [Raspberry Pi 4](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/).
 While the Pi served its purpose, my evolving Homelab demanded more horsepower without compromising energy efficiency.
@@ -167,7 +167,7 @@ I installed a used Intel DC S3610 800 GB (SATA, MLC) SSD with over 50,000 power-
 
 ![Intel DC S3610 SSD](/assets/images/2024-06-30-homelab-hardware/s3610.jpg)
 
-### RTL8125B Network Card
+### RTL8125B network card
 
 For desktop computers, a single Gigabit Ethernet card suffices.
 However, when setting up a server, having at least two network devices becomes crucial. Fortunately, since I didn’t require WiFi or Bluetooth functionality, I replaced the stock Intel Dual-Band Wireless-AC 8265 card with a PCIe M.2 A+E 2.5GB RTL8125B network card.
@@ -186,14 +186,14 @@ Here’s why I chose the Eaton 5S 1000VA UPS for my homelab:
 
 ![Eaton 5S UPS](/assets/images/2024-06-30-homelab-hardware/5s1000.jpg)
 
-## Dahua IP Cameras
+## Dahua IP cameras
 
 Given my concerns about the quality of no-name products, I deliberately opted for the reputable brand Dahua.
 While I also evaluated Hikvision, the affordability factor tipped the scales in favor of Dahua. Specifically, Dahua’s 8 Mpx cameras ([IPC-HFW2841S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/8MP/IPC-HFW2841S-S)) come in at approximately $100, while their 4 Mpx counterparts ([IPC-HFW2441S](https://www.dahuasecurity.com/products/All-Products/Network-Cameras/WizSense-Series/2-Series/4MP/IPC-HFW2441S-S)) are priced around $70.
 
 ![Dahua IP Camera](/assets/images/2024-06-30-homelab-hardware/dahua.jpg)
 
-### Storage Requirements
+### Storage requirements
 
 To get decent H.265 video quality at 5 FPS I set up: 6Mb/s for 8Mpx cameras and 3Mb/s for 4Mpx cameras.
 How much storage do I need to store 1 month of recording from two 8 Mpx and six 4 Mpx cameras?
@@ -241,14 +241,14 @@ I didn't observe any connectivity problems, the worst reported Link Quality Indi
 
 ![Sonoff ZBDongle-E](/assets/images/2024-06-30-homelab-hardware/efr32mg21.jpg)
 
-## Final Thoughts
+## Final thoughts
 
 I intentionally prioritized lower power consumption over high availability.
 The setup includes a single server with enterprise-grade SSDs for hosting VMs and external HDDs—one for camera recordings and another for backups.
 The most important data is replicated in the public cloud, and the infrastructure is defined as code.
 I can install spare hardware and rebuild the homelab in a few hours, which is an acceptable downtime for me.
 
-## Stay Tuned
+## Stay tuned
 
 In the next post, we’ll fire up our Proxmox hypervisor, spin up some virtual machines, and explore the software side of things.
 Spoiler alert: Home Assistant is waiting in the wings!
