@@ -1,7 +1,7 @@
 ---
-title: DIY hi-fi stereo system
+title: Crafting your ultimate Hi-Fi stereo system -- a DIY journey
 date: 2024-05-30
-tags: [hardware, DIY]
+tags: [Hardware, DIY]
 header:
     overlay_image: /assets/images/2024-05-30-amplifier/overlay.jpg
     caption: ""
