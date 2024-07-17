@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Apache Beam Design Documents](https://s.apache.org/beam-design-docs) - These documents, managed by Googlers, provide an explanation of the Beam programming model and more.
+
 * [Dataflow Streaming Execution Model](https://medium.com/google-cloud/streaming-engine-execution-model-1eb2eef69a8e) -
 Processing within exactly-once guarantees and with latencies consistently in the low single-digit seconds.
 
