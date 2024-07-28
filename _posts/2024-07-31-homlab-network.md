@@ -8,11 +8,11 @@ header:
     caption: ""
 ---
 
-Welcome to the second part of our [homelab blog series](https://mkuthan.github.io/tags/#homelab).
+Welcome to the second part of my [homelab blog series](https://mkuthan.github.io/tags/#homelab).
 In this installment, we'll delve into the intricacies of network configuration for homelab setup.
 We'll cover topics such as securely accessing your homelab from the internet using VPN mesh, organizing your local network with VLANs, and implementing ACLs for enhanced security in the IoT era.
 
-Let's get started!
+Let's get started 🚀
 
 ## VPN Mesh
 
@@ -222,7 +222,7 @@ To expose all services from the *IoT* network to the *Management*, *Services*, a
 
 ![Omada mDNS](/assets/images/2024-07-29-homelab-network/mDNS.png)
 
-Ensure that you enable `IGMP snooping` for the *Management*, *Services*, and *Home* networks. This setup allows devices in the *Home* network to discover all services in the *IoT* network. For example, I can control music from my phone when it's playing on an Android TV connected to my [hi-fi stereo system](https://mkuthan.github.io/blog/2024/05/30/amplifier/).
+Ensure that you enable `IGMP Snooping` option for the *Management*, *Services*, and *Home* networks. This setup allows devices in the *Home* network to discover all services in the *IoT* network. For example, I can control music from my phone when it's playing on an Android TV connected to my [hi-fi stereo system](https://mkuthan.github.io/blog/2024/05/30/amplifier/).
 
 ![Omada Home LAN](/assets/images/2024-07-29-homelab-network/LAN-home.png)
 
