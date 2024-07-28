@@ -1,10 +1,10 @@
 ---
 title: "Building your ultimate Homelab -- network"
-date: 2024-07-31
+date: 2024-07-29
 categories: [DIY]
 tags: [Homelab]
 header:
-    overlay_image: /assets/images/2024-07-31-homelab-network/overlay.jpg
+    overlay_image: /assets/images/2024-07-29-homelab-network/overlay.jpg
     caption: ""
 ---
 
@@ -96,7 +96,7 @@ ssh -L LOCAL_PORT:192.168.10.x:DESTINATION_PORT proxmox
 
 I have also set up a virtual machine specifically for [VS Code remote development](https://code.visualstudio.com/docs/remote/remote-overview). This allows me to have a consistent development experience with full access to all devices connected to my homelab. Below you can see VS Code screen with a Terraform and Ansible IaaC (Infrastructure as a Code) project for my homelab.
 
-![VS Code remote development](/assets/images/2024-07-31-homelab-network/vs-code-remote.png)
+![VS Code remote development](/assets/images/2024-07-29-homelab-network/vs-code-remote.png)
 
 ## LAN
 
@@ -166,15 +166,15 @@ I defined 6 separate virtual local networks, known as VLANs, to achieve a balanc
 
 The screen from Omada controller with wired networks setup:
 
-![Omada LAN Networks](/assets/images/2024-07-31-homelab-network/LAN.png)
+![Omada LAN Networks](/assets/images/2024-07-29-homelab-network/LAN.png)
 
 All networks have similar configurations, below you can see setup for *Home* VLAN:
 
-![Omada Home LAN](/assets/images/2024-07-31-homelab-network/LAN-home.png)
+![Omada Home LAN](/assets/images/2024-07-29-homelab-network/LAN-home.png)
 
 The screen from Omada controller with wireless networks setup:
 
-![Omada Wireless Networks](/assets/images/2024-07-31-homelab-network/WiFi.png)
+![Omada Wireless Networks](/assets/images/2024-07-29-homelab-network/WiFi.png)
 
 ### ACL
 
@@ -201,15 +201,15 @@ Below is a matrix outlining the ACL definitions in my Homelab:
 
 Thanks to a well-designed VLAN setup, I only need 7 rules at the gateway level to define everything I need!
 
-![Omada Gateway ACLs](/assets/images/2024-07-31-homelab-network/gateway-ACL.png)
+![Omada Gateway ACLs](/assets/images/2024-07-29-homelab-network/gateway-ACL.png)
 
 All networks have similar configurations, below you can see setup for *Home* VLAN:
 
-![Omada Gateway Home ACL](/assets/images/2024-07-31-homelab-network/gateway-ACL-home.png)
+![Omada Gateway Home ACL](/assets/images/2024-07-29-homelab-network/gateway-ACL-home.png)
 
 I have also implemented Switch ACLs to control access between peers in the *Cameras*, *IoT*, and *Guests* networks. However, there is an exception for access to the network gateway. To achieve this, I have defined a pair of rules, one for incoming traffic and another for outgoing traffic. It's important to note that Switch ACLs are stateless, unlike Gateway ACLs which are stateful.
 
-![Omada Switch ACLs](/assets/images/2024-07-31-homelab-network/switch-ACL.png)
+![Omada Switch ACLs](/assets/images/2024-07-29-homelab-network/switch-ACL.png)
 
 ### mDNS
 
@@ -220,11 +220,11 @@ Configuring mDNS across VLANs is a bit more complex because VLANs separate netwo
 This involves setting up multicast routing or enabling protocols like IGMP snooping.
 To expose all services from the *IoT* network to the *Management*, *Services*, and *Home* networks, you need to define a rule under the mDNS service in the Omada controller.
 
-![Omada mDNS](/assets/images/2024-07-31-homelab-network/mDNS.png)
+![Omada mDNS](/assets/images/2024-07-29-homelab-network/mDNS.png)
 
 Ensure that you enable `IGMP snooping` for the *Management*, *Services*, and *Home* networks. This setup allows devices in the *Home* network to discover all services in the *IoT* network. For example, I can control music from my phone when it's playing on an Android TV connected to my [hi-fi stereo system](https://mkuthan.github.io/blog/2024/05/30/amplifier/).
 
-![Omada Home LAN](/assets/images/2024-07-31-homelab-network/LAN-home.png)
+![Omada Home LAN](/assets/images/2024-07-29-homelab-network/LAN-home.png)
 
 ## Stay tuned
 
