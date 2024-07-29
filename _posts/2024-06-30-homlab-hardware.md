@@ -2,6 +2,7 @@
 title: "Building your ultimate Homelab -- hardware"
 date: 2024-06-30
 categories: [DIY]
+tags: [Homelab]
 header:
     overlay_image: /assets/images/2024-06-30-homelab-hardware/overlay.jpg
     caption: ""
