@@ -14,6 +14,7 @@ Cannondale
 CAP
 clickstream
 Coldline
+connascence
 Contravariant
 CPUs
 DAC
