@@ -66,3 +66,41 @@ Describe the degree to which different parts of a system are interdependent
 
 * Static connascence occurs at the source code level and can be identified by examining the code itself
 * Dynamic connascence is related to the runtime behavior of the system and can only be identified during execution, for example order of calls
+
+## What's the strongest form of connascence
+
+Connascence of Identity, this occurs when many components must reference the same entity, meaning any change to the identity of that entity requires changes across all components that reference it.
+
+## What's the weakest form of connascence
+
+Connascence of Name, this occurs when many components must agree on the name of an entity. For example, if the name of a method changes, all references to that method must also be updated.
+
+## Which is preferred within a code base—static or dynamic connascence
+
+Static connascence refers to dependencies that can be checked at compile time, such as type checking and method signatures.
+
+Dynamic connascence, on the other hand, involves dependencies that are only checked at runtime, such as dynamic method calls or reflection.
+
+Static connascence is preferred over dynamic connascence within a code base.
+
+## Provide an example of an operational characteristic
+
+Availability, Continuity (disaster recovery capability), Performance, Recoverability,
+Reliability/safety, Robustness, Scalability
+
+## Provide an example of a structural characteristic
+
+Configurability, Extensibility, Installability, Leverageability/reuse (ability to reuse common components),
+Localization, Maintainability, Portability, Upgradeability
+
+## Provide an example of a cross-cutting characteristic
+
+Accessibility, Archivability (Will the data need to be archived or deleted after a period of time),
+Authentication, Authorization, Legal, Privacy, Security, Supportability,
+Usability/achievability (Level of training required for users to achieve their goals with the application)
+
+## Why it's a good practice to limit the number of characteristics an architecture should support
+
+* Avoiding complexity - keep the architecture simpler and more understandable
+* Resource allocation - ensures that these resources are effectively allocated to the most critical aspects of the system
+* Trade-off management - ensure that the system meets its most important goals without being overburdened by conflicting requirements
