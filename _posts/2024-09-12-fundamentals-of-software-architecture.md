@@ -13,7 +13,7 @@ At Allegro, the most experienced senior software engineers take on the responsib
 
 ![Fundamentals of Software Architecture ](/assets/images/2024-09-12-fundamentals-of-software-architecture/bookcover.jpg)
 
-At the end of the book, there is a self-assessment section, which I summarized by writing my answers in this blog post.
+At the end of the book, there is a self-assessment section, which I partially summarized by writing my answers in this blog post.
 
 ## What are the four dimensions that define software architecture
 
@@ -83,24 +83,83 @@ Dynamic connascence, on the other hand, involves dependencies that are only chec
 
 Static connascence is preferred over dynamic connascence within a code base.
 
-## Provide an example of an operational characteristic
+## Give an example of an operational characteristic
 
-Availability, Continuity (disaster recovery capability), Performance, Recoverability,
-Reliability/safety, Robustness, Scalability
+* Availability
+* Continuity (disaster recovery capability)
+* Performance
+* Recoverability
+* Reliability/safety
+* Robustness
+* Scalability
 
-## Provide an example of a structural characteristic
+## Give an example of a structural characteristic
 
-Configurability, Extensibility, Installability, Leverageability/reuse (ability to reuse common components),
-Localization, Maintainability, Portability, Upgradeability
+* Configurability
+* Extensibility
+* Installability
+* Leverageability (ability to reuse common components)
+* Localization
+* Maintainability
+* Portability
+* Upgradeability
 
-## Provide an example of a cross-cutting characteristic
+## Give an example of a cross-cutting characteristic
 
-Accessibility, Archivability (Will the data need to be archived or deleted after a period of time),
-Authentication, Authorization, Legal, Privacy, Security, Supportability,
-Usability/achievability (Level of training required for users to achieve their goals with the application)
+* Accessibility
+* Archivability (will the data need to be archived or deleted after a period of time)
+* Authentication
+* Authorization
+* Legal
+* Privacy
+* Security
+* Supportability
+* Usability/achievability (level of training required for users to achieve their goals with the application)
 
 ## Why it's a good practice to limit the number of characteristics an architecture should support
 
 * Avoiding complexity - keep the architecture simpler and more understandable
 * Resource allocation - ensures that these resources are effectively allocated to the most critical aspects of the system
 * Trade-off management - ensure that the system meets its most important goals without being overburdened by conflicting requirements
+
+## What's an architectural quantum
+
+It refers to the smallest unit of an architecture that can be independently deployed and tested, encompassing all the necessary components to fulfill a specific business function.
+
+## What's the difference between technical partitioning and domain partitioning
+
+Technical partitioning focuses on technical roles, while domain partitioning focuses on business functionality. Domain partitioning often makes it easier to manage changes in business requirements, whereas technical partitioning can complicate changes due to inter-layer dependencies.
+
+## Under what circumstances would technical partitioning be a better choice over domain partitioning
+
+* Small or simple applications
+* Homogeneous teams, for example: front-end developers, back-end developers
+* Legacy systems with technical partitioning
+* Standardized processes, for example: compliance with certain regulations or industry standards
+* Performance optimization
+
+## List the eight fallacies of distributed computing
+
+1. The network is reliable
+2. Latency is zero
+3. Bandwidth is infinite
+4. The network is secure
+5. Topology doesn’t change
+6. There is one administrator
+7. Transport cost is zero
+8. The network is homogeneous
+
+## What's stamp coupling
+
+Stamp coupling, also known as data-structured coupling, occurs when modules share a composite data structure and use only parts of it.
+This can lead to issues where changes in the unused parts of the data structure might affect the module that doesn’t need those parts.
+
+## What's the difference between an open layer and a closed layer
+
+An open layer allows requests to bypass it and directly access any layer below it.
+A closed layer requires that all requests pass through it before reaching any lower layer.
+
+## What's the architecture sinkhole anti-pattern
+
+The architecture sinkhole anti-pattern occurs when requests pass through multiple layers of an architecture without any significant processing or logic being applied at each layer.
+Essentially, the layers act as mere pass-throughs, adding unnecessary complexity and overhead without providing any real value.
