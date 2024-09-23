@@ -17,10 +17,10 @@ At the end of the book, there is a self-assessment section, which I partially su
 
 ## What are the four dimensions that define software architecture
 
-1. **Architecture Characteristics**: These define the success criteria of a system, such as performance, scalability, and security. They're generally orthogonal to the system's functionality.
-2. **Architecture Decisions**: These are the rules and guidelines that dictate how a system should be constructed. They include choices about technologies, frameworks, and design patterns.
-3. **Structure**: This refers to the type of architecture style or styles used in the system, such as microservices, layered, or microkernel architectures.
-4. **Design Principles**: These are guidelines that help development teams make decisions about how to implement the system. They're not hard-and-fast rules but rather best practices to follow.
+1. Architecture Characteristics: These define the success criteria of a system, such as performance, scalability, and security. They're orthogonal to the system's functionality.
+2. Structure: This refers to the type of architecture style or styles used in the system, such as microservices, layered, or microkernel architectures.
+3. Architecture Decisions: These are the rules and guidelines that dictate how a system should be constructed. They include choices about technologies, frameworks, and design patterns.
+4. Design Principles: These are guidelines that help development teams make decisions about how to implement the system. They're not hard-and-fast rules but rather best practices to follow.
 
 ## What's the difference between an architecture decision and a design principle
 
@@ -49,12 +49,12 @@ Everything is a tradeoff
 
 ## What are the ways of remaining hands-on as an architect
 
-* Coding Regularly
-* Side Projects
-* Pair Programming
-* Technical Reading
-* Training and Courses
-* Code Reviews
+* Coding regularly
+* Side projects
+* Pair programming
+* Technical reading
+* Training and courses
+* Code reviews
 * Prototyping and experimentation
 * Mentoring
 
@@ -64,24 +64,25 @@ Describe the degree to which different parts of a system are interdependent
 
 ## What's the difference between static and dynamic connascence
 
-* Static connascence occurs at the source code level and can be identified by examining the code itself
-* Dynamic connascence is related to the runtime behavior of the system and can only be identified during execution, for example order of calls
+* Static connascence occurs at the source code level, and developers can identify it by examining the code itself.
+* Dynamic connascence is related to the runtime behavior of the system and developers can only identify it during execution, such as the order of calls.
 
 ## What's the strongest form of connascence
 
-Connascence of Identity, this occurs when many components must reference the same entity, meaning any change to the identity of that entity requires changes across all components that reference it.
+Connascence of Identity: This occurs when many components must reference the same entity, meaning any change to the identity of that entity requires changes across all components that reference it.
+For example, if the format or structure of the entity identifier is changed from a numeric to an alphanumeric code, you need to update every module that references this entity.
 
 ## What's the weakest form of connascence
 
 Connascence of Name, this occurs when many components must agree on the name of an entity. For example, if the name of a method changes, all references to that method must also be updated.
+Usually straightforward to manage and refactor with IDE.
 
-## Which is preferred within a code base—static or dynamic connascence
+## Which is preferred static or dynamic connascence
 
-Static connascence refers to dependencies that can be checked at compile time, such as type checking and method signatures.
-
+Static connascence refers to dependencies that the compiler can check at compile time, such as type checking and method signatures.
 Dynamic connascence, on the other hand, involves dependencies that are only checked at runtime, such as dynamic method calls or reflection.
 
-Static connascence is preferred over dynamic connascence within a code base.
+In a code base, it's preferable to use static connascence over dynamic connascence.
 
 ## Give an example of an operational characteristic
 
@@ -118,9 +119,9 @@ Static connascence is preferred over dynamic connascence within a code base.
 
 ## Why it's a good practice to limit the number of characteristics an architecture should support
 
-* Avoiding complexity - keep the architecture simpler and more understandable
-* Resource allocation - ensures that these resources are effectively allocated to the most critical aspects of the system
-* Trade-off management - ensure that the system meets its most important goals without being overburdened by conflicting requirements
+* Avoiding complexity: Keep the architecture simpler and more understandable.
+* Resource allocation: Ensure that resources are effectively allocated to the most critical aspects of the system.
+* Trade-off management: Ensure that the system meets its most important goals without being overburdened by conflicting requirements.
 
 ## What's an architectural quantum
 
@@ -156,10 +157,64 @@ This can lead to issues where changes in the unused parts of the data structure 
 
 ## What's the difference between an open layer and a closed layer
 
-An open layer allows requests to bypass it and directly access any layer below it.
+An open layer permits requests to bypass it and directly access any layer below it.
 A closed layer requires that all requests pass through it before reaching any lower layer.
 
 ## What's the architecture sinkhole anti-pattern
 
 The architecture sinkhole anti-pattern occurs when requests pass through multiple layers of an architecture without any significant processing or logic being applied at each layer.
 Essentially, the layers act as mere pass-throughs, adding unnecessary complexity and overhead without providing any real value.
+
+## Name the four types of filters and their purpose in pipeline architecture
+
+* Input filters: Transform raw data into a form that's suitable for later processing stages.
+* Transform filters: Enrich the data or apply business logic.
+* Output filter: Convert the data into the final format and write it to the destination.
+* Error filters: Handle exceptions and errors that may occur during processing.
+
+## In what way does the pipeline architecture support modularity
+
+* Separation of Concerns: Each step in the pipeline has a specific task, such as handling input, performing transformations, managing output, or handling errors.
+* Reusability: Steps can be designed as reusable modules that can be plugged into different pipelines.
+* Scalability: Individual steps can optimize, replace, or replicate without affecting other parts of the pipeline.
+* Testing and debugging: Each step allows independent testing and debugging, making it easier to identify and fix issues.
+
+## What's domain/architecture isomorphism
+
+Principle where the structure of the software architecture closely mirrors the structure of the problem domain it's designed to address.
+For example, in an operating system, the micro-kernel architecture's minimal core will handle only the most fundamental aspects of the system (like process communication and basic I/O), while other services (like file systems and device drivers) will be handled by external modules.
+
+## What's a primary difference between broker and mediator topologies
+
+* In a broker topology, individual components or services communicate with each other through a message broker.
+  Services are loosely coupled because they don't need to know each other’s location or protocol.
+* In a mediator topology, a mediator orchestrates and manages the communication between services.
+  This approach is suitable for complex interactions that require coordination, transformation, and aggregation of many services.
+
+## What's a primary aspect fo space-based architecture that differentiates in from other architecture styles
+
+It splits both the processing and the storage across many servers.
+The Space Based Architecture pattern is designed to offer high scalability, fault-tolerance, and low-latency data access by storing data in memory across many nodes.
+
+## Name the four components that make up the virtualized middleware within a space-based architecture
+
+* Message grid: Manages input request and session information
+* Data grid: Manage the data replication between processing units when data updates occur
+* Processing grid: Manages distributed request processing when there are many processing units, each handling a part of the application
+* Deployment manager: Manages the dynamic startup and shutdown of processing units based on load conditions
+
+## What's a difference between replicated cache and distributed cache
+
+Replicated cache:
+
+* Same data replicated to all nodes
+* High fault tolerance, all nodes have the same data
+* Low latency for read operations because each node has a full copy of the data
+* Useful when read operations significantly outweigh write operations
+
+Distributed cache:
+
+* Stores different pieces of data on different cache nodes
+* Lower compared to replicated cache
+* Can be higher for read operations, since data might not be present on the local node
+* Suitable for large datasets and when read and write operations are balanced
