@@ -4,6 +4,7 @@ Aliexpress
 Artifactory
 Atlassian
 Applicative
+[Ar]rchivability
 autoscaler
 autoscaling
 Avro
@@ -14,6 +15,8 @@ Cannondale
 CAP
 clickstream
 Coldline
+[Cc]onfigurability
+[Cc]onnascence
 Contravariant
 CPUs
 DAC
@@ -49,11 +52,13 @@ Hikvision
 homelabs?
 HPjmeter
 IGMP
+[Ii]nstallability
 IOs
 Jira
 JVM
 Kleisli
 LAN
+[Ll]everageability
 LGTM
 LIFO
 Macbook
@@ -71,6 +76,7 @@ PROD
 Proxmox
 PTransform
 Pubsub
+[Rr]ecoverability
 Ruby
 RTSP
 Samza
@@ -95,6 +101,7 @@ Tailscale
 Testcontainers
 Traefik
 Ubiquiti
+[Uu]pgradeability
 UTC
 WAN
 WebAssembly
