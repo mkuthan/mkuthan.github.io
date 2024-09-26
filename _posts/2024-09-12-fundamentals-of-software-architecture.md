@@ -1,5 +1,5 @@
 ---
-title: "Fundamentals of Software Architecture -- book review"
+title: "Fundamentals of software architecture -- book review"
 date: 2024-09-12
 tags: [Software Engineering, Architecture]
 categories: [Books]
@@ -11,7 +11,7 @@ and [Neal Ford](https://nealford.com).
 I found this book valuable, even though my company doesn't have a formal architect role.
 At Allegro, the most experienced senior software engineers take on the responsibilities of a software architect in addition to their regular development duties.
 
-![Fundamentals of Software Architecture ](/assets/images/2024-09-12-fundamentals-of-software-architecture/bookcover.jpg)
+![Fundamentals of Software Architecture](/assets/images/2024-09-12-fundamentals-of-software-architecture/bookcover.jpg)
 
 At the end of the book, there is a self-assessment section, which I partially summarized by writing my answers in this blog post.
 
