@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Big Data is dead](https://motherduck.com/blog/big-data-is-dead/) - by Jordan Tigani, ex googler, DuckDB advocate.
+
 * [Apache Druid tuning guide](https://imply.io/developer/articles/learn-how-to-achieve-sub-second-responses-with-apache-druid/) - how to achieve sub-second responses.
 
 * [Apache Beam Design Documents](https://s.apache.org/beam-design-docs) - These documents, managed by Googlers, provide an explanation of the Beam programming model and more.
@@ -21,8 +23,8 @@ How to evaluate projects quality using lenses for: development, operations and a
 * [How to write efficient Flink SQL](https://www.alibabacloud.com/blog/how-to-write-simple-and-efficient-flink-sql_600148) -
 What is a difference between: dual-stream, lookup, interval, temporal and window joins.
 
-* [Part 1](https://engineering.atspotify.com/2023/04/spotifys-shift-to-a-fleet-first-mindset-part-1/), 
-[part 2](https://engineering.atspotify.com/2023/05/fleet-management-at-spotify-part-2-the-path-to-declarative-infrastructure/) and 
+* [Part 1](https://engineering.atspotify.com/2023/04/spotifys-shift-to-a-fleet-first-mindset-part-1/),
+[part 2](https://engineering.atspotify.com/2023/05/fleet-management-at-spotify-part-2-the-path-to-declarative-infrastructure/) and
 [part 3](https://engineering.atspotify.com/2023/05/fleet-management-at-spotify-part-3-fleet-wide-refactoring/) -
 Fleet-wide refactoring at Spotify, how to get 70% adoption of shared library in 7 days?
 
@@ -54,10 +56,10 @@ Mechanical sympathy for Java.
 * [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864) -
 How to reduce size of the change to increase velocity? Revert the change always if tests fail!
 
-* [Learning different technologies based in the Scala Programming Language](https://www.scala-exercises.org) - 
+* [Learning different technologies based in the Scala Programming Language](https://www.scala-exercises.org) -
 Coding exercises for Standard library, FP in Scala, Cats and other libraries.
 
-* [Abstract Type Members versus Generic Type Parameters in Scala](https://www.artima.com/weblogs/viewpost.jsp?thread=270195) - 
+* [Abstract Type Members versus Generic Type Parameters in Scala](https://www.artima.com/weblogs/viewpost.jsp?thread=270195) -
 `trait Collection[T] {}` vs. `trait Collection { type T }`.
 
 * [The Principles of the Flix Programming Language](https://flix.dev/principles/) -
