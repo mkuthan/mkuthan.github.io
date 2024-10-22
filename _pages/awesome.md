@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Consistency Models](https://jepsen.io/consistency) - consistency models for concurrent systems.
+
 * [Big Data is dead](https://motherduck.com/blog/big-data-is-dead/) - by Jordan Tigani, ex googler, DuckDB advocate.
 
 * [Apache Druid tuning guide](https://imply.io/developer/articles/learn-how-to-achieve-sub-second-responses-with-apache-druid/) - how to achieve sub-second responses.
