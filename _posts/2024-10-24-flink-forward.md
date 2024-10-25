@@ -76,7 +76,7 @@ Flink autoscaling should help, see: [FLIP-271](https://cwiki.apache.org/confluen
 
 ![Stripe](/assets/images/2024-10-24-flink-forward/stripe_intro.jpg)
 
-* With tight SLOs, there isn't time for manual operations. 
+* With tight SLOs, there isn't time for manual operations.
 If a job fails, roll back using the previously saved job graph.
 How do you decide if a job fails in a generic way? You should listen to the session.
 
