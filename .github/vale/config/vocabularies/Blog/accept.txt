@@ -6,7 +6,7 @@ Atlassian
 Applicative
 [Ar]rchivability
 autoscaler
-autoscaling
+[Aa]utoscaling
 Avro
 Bazel
 BigQuery
