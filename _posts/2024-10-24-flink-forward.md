@@ -20,13 +20,13 @@ I don't use Flink on a daily basis, but I hoped to gain some inspiration that I 
 
 ## Keynotes
 
-* Flink 2.0 [announced](https://www.ververica.com/blog/embracing-the-future-apache-flink-2.0) during the first day of the conference, perfect timing.
-* Stephan Ewen with Feng Wang presented 15 years of the project history.
-Apache Flink, which emerged around 2014, originally started as the Stratosphere project at German universities in 2009.
+* Flink 2.0 [announced](https://www.ververica.com/blog/embracing-the-future-apache-flink-2.0) during the first day of the conference, perfect timing
+* Stephan Ewen with Feng Wang presented 15 years of the project history
+Apache Flink, which emerged around 2014, originally started as the Stratosphere project at German universities in 2009
 
 ![Keynotes](/assets/images/2024-10-24-flink-forward/keynotes1.jpg)
 
-* Kafka fails short in real-time streaming analytics, the statement I fully agree.
+* Kafka fails short in real-time streaming analytics
 
 ![Keynotes](/assets/images/2024-10-24-flink-forward/keynotes2.jpg)
 
@@ -38,12 +38,12 @@ Apologies for the low quality picture.
 
 ## Revealing the secrets of Apache Flink 2.0
 
-* Disaggregated state storage, goodbye [RocksDB](http://rocksdb.org/), introduce [Apache Celeborn](https://celeborn.apache.org).
+* Disaggregated state storage: Goodbye [RocksDB](http://rocksdb.org/)
+* External shuffle service: Welcome [Apache Celeborn](https://celeborn.apache.org)
 
 ![Disaggregated state storage](/assets/images/2024-10-24-flink-forward/disaggregated_state_storage.jpg)
 
-* Streaming Lakehouse: An enabler for unified batch and streaming in an innovative way.
-The engine decides whether to run in batch or streaming mode.
+* Streaming Lakehouse: An enabler for unified batch and streaming in an innovative way
 
 ![Streaming lakehouse](/assets/images/2024-10-24-flink-forward/streaming_lakehouse.jpg)
 
@@ -71,18 +71,18 @@ Flink autoscaling should help, see: [FLIP-271](https://cwiki.apache.org/confluen
 
 ## Scaling Flink in the real world: Insights from running Flink for five years at Stripe
 
-* The best session of the first day IMHO!
-* I'm sure that Ben Augarten from Strip knows how to manage Flink clusters and jobs at scale.
+* The best session of the first day, in my opinion!
+* I'm sure that Ben Augarten from Stripe knows how to manage Flink clusters and jobs at scale.
 
 ![Stripe](/assets/images/2024-10-24-flink-forward/stripe_intro.jpg)
 
-* With tight SLOs, there isn't time for manual operations.
+* With tight SLOs, there isn't time for manual operations. 
 If a job fails, roll back using the previously saved job graph.
 How do you decide if a job fails in a generic way? You should listen to the session.
 
 ![Stripe](/assets/images/2024-10-24-flink-forward/stripe_rollbacks.jpg)
 
-* Place a proxy in front of the Kafka cluster to ensure that jobs don't get stuck if a Kafka partition leader is unavailable.
+* Use a proxy in front of the Kafka cluster to prevent jobs from getting stuck if a Kafka partition leader becomes unavailable.
 See: [How Stripe keeps Kafka highly available across the globe](https://www.confluent.io/events/kafka-summit-london-2022/6-nines-how-stripe-keeps-kafka-highly-available-across-the-globe/)
 
 ![Stripe](/assets/images/2024-10-24-flink-forward/stripe_kafka.jpg)
@@ -101,11 +101,11 @@ See: [How Stripe keeps Kafka highly available across the globe](https://www.conf
 
 ## Zero interference and resource congestion in Flink clusters with Kafka data sources
 
-* One more session about current Kafka limitations.
-* Noisy neighbours mitigation strategies in Kafka: quotas and cluster mirroring.
-* Introduce WarpStream [Confluent has acquired WarpStream](https://www.confluent.io/blog/confluent-acquires-warpstream/).
-* Stateless, leader-less brokers.
-* Object storage for keeping state: expect higher latency, but it should be acceptable for most use cases.
+* Another session focused on current Kafka limitations
+* Mitigation strategies for noisy neighbors in Kafka: quotas and cluster mirroring
+* Introducing WarpStream: [Confluent has acquired WarpStream](https://www.confluent.io/blog/confluent-acquires-warpstream/)
+* Stateless, leaderless brokers
+* Using object storage for state management: expect higher latency, but it should be acceptable for most use cases
 
 ![WarpStream](/assets/images/2024-10-24-flink-forward/warpstream.jpg)
 
@@ -132,27 +132,27 @@ See: [How Stripe keeps Kafka highly available across the globe](https://www.conf
 
 ![ForSt DB architecture](/assets/images/2024-10-24-flink-forward/forst2.jpg)
 
-* Performance dropped 100x when RocksDB replaced with object store as is.
-* New async API, it requires changes in **all** Flink operators!
+* Performance dropped 100x when RocksDB was replaced with object store as is.
+* The new async API requires changes in **all** Flink operators!
 
 ![State async API](/assets/images/2024-10-24-flink-forward/forst3.jpg)
 
-* Asynchronous improves performance but introduces new challenge: ordering.
+* Asynchronous improves performance but introduces new challenge: ordering
 
 ![Ordering](/assets/images/2024-10-24-flink-forward/forst4.jpg)
 
-* Slower than local RocksDB but performance looks promising
+* Slower than local RocksDB, but performance looks promising
 
 ![Benchmark](/assets/images/2024-10-24-flink-forward/forst5.jpg)
 
 ## Building Copilots with Flink SQL, LLMs and vector databases
 
-* The most entertaining session of the conference, in my opinion.
+* The most entertaining session of the conference, in my opinion
 * How to adopt real-time analysis for non-technical users?
 
 ![Real-time analysis adoption](/assets/images/2024-10-24-flink-forward/genai1.jpg)
 
-* Steffen Hoellinger invited us to conduct a POC together with [Airy](https://airy.co/).
+* Steffen Hoellinger invited us to conduct a POC together with [Airy](https://airy.co/)
 
 ![Copilot architecture](/assets/images/2024-10-24-flink-forward/genai3.jpg)
 
@@ -160,12 +160,12 @@ See: [How Stripe keeps Kafka highly available across the globe](https://www.conf
 
 ![Sample session](/assets/images/2024-10-24-flink-forward/genai2.jpg)
 
-* Key lesson: context is much more important than model.
-* Keep small workspaces to avoid hallucinations.
+* Key lesson: context is much more important than model
+* Keep small workspaces to avoid hallucinations
 
 ![Context vs Model](/assets/images/2024-10-24-flink-forward/genai4.jpg)
 
-* Flink SQL ML models, see: [FLIP-437](https://cwiki.apache.org/confluence/display/FLINK/FLIP-437%3A+Support+ML+Models+in+Flink+SQL).
+* Flink SQL ML models, see: [FLIP-437](https://cwiki.apache.org/confluence/display/FLINK/FLIP-437%3A+Support+ML+Models+in+Flink+SQL)
 
 ## Materialized Table - Making Your Data Pipeline Easier
 
