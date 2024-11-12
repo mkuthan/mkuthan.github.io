@@ -157,12 +157,12 @@ I defined 6 separate virtual local networks, known as VLANs, to achieve a balanc
 
 | Network | Name | Description |
 | ------- | ---- | ----------- |
-| `192.168.10.10` | Management | Network devices: gateway, switch, access points. Core homelab services: Proxmox, Traefik, Omada software controller, Prometheus, Grafana, Loki, Home Assistant, Vaultwarden. |
-| `192.168.10.15` | Services | Network for shared services, for example: Adguard DNS and Samba. All those services could be placed in the management VLAN but I need separated VLAN due to Omada access control list limitations. |
-| `192.168.10.20` | Home | This network includes devices that are under my full control, such as computers and phones. |
-| `192.168.10.30` | Cameras | Separated network for IP cameras only. |
-| `192.168.10.40` | IoT | Network with all devices vulnerable to security issues or data leakage. |
-| `192.168.10.50` | Guests | Dedicated network for my guests with rate limit. |
+| `192.168.10.x` | Management | Network devices: gateway, switch, access points. Core homelab services: Proxmox, Traefik, Omada software controller, Prometheus, Grafana, Loki, Home Assistant, Vaultwarden. |
+| `192.168.15.x` | Services | Network for shared services, for example: Adguard DNS and Samba. All those services could be placed in the management VLAN but I need separated VLAN due to Omada access control list limitations. |
+| `192.168.20.x` | Home | This network includes devices that are under my full control, such as computers and phones. |
+| `192.168.30.x` | Cameras | Separated network for IP cameras only. |
+| `192.168.40.x` | IoT | Network with all devices vulnerable to security issues or data leakage. |
+| `192.168.50.x` | Guests | Dedicated network for my guests with rate limit. |
 
 The screen from Omada controller with wired networks setup:
 
