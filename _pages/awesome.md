@@ -5,6 +5,9 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Cost optimization of Dataflow pipelines](https://beamsummit.org/slides/2024/CostoptimizationofDataflowpipelines.pdf) - 
+beyond optimization, a collection of references to valuable materials
+
 * [How we built a new powerful JSON data type for ClickHouse](https://clickhouse.com/blog/a-new-powerful-json-data-type-for-clickhouse) - variant and dynamic types, dense storage, arbitrary nesting.
 
 * [Consistency Models](https://jepsen.io/consistency) - consistency models for concurrent systems.
