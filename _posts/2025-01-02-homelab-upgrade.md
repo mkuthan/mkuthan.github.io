@@ -9,7 +9,7 @@ header:
 ---
 
 I built my homelab at the beginning of 2024, see [Building your ultimate Homelab](https://mkuthan.github.io/blog/2024/06/30/homlab-hardware/) blog post.
-I hosted many services on it, for example: Home Assistant for home automation, Frigate for surveillance, Vaultwarden for password management, Paperless for document management, Omada Software Controller, Prometheus, Grafana and many more.
+I hosted many services on it, for example: Home Assistant for home automation, Frigate for surveillance, Vaultwarden for password management, Paperless for document management, Omada Software Controller, Prometheus, Grafana, and many more.
 I wanted to make my homelab more reliable and more powerful, so I decided to configure Proxmox cluster.
 
 ## Yet another Dell Optiplex Micro
