@@ -49,7 +49,7 @@ Hazelcast
 HDD
 HDFS
 Hikvision
-homelabs?
+homelab
 HPjmeter
 IGMP
 [Ii]nstallability
