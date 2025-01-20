@@ -57,6 +57,18 @@ I slapped in some RTL8125B network cards using PCIe M.2 A+E adapters, and boom, 
 ![2.5GbE network card](/assets/images/2025-01-02-homelab-upgrade/network_card.jpg)
 
 This dedicated network is now the express lane for Proxmox cluster chatter and storage traffic.
+
+```bash
+$ iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size:  128 KByte (default)
+------------------------------------------------------------
+[  1] local 10.0.10.30 port 5001 connected with 10.0.10.31 port 41416 (icwnd/mss/irtt=14/1448/99)
+[ ID] Interval       Transfer     Bandwidth
+[  1] 0.0000-10.0134 sec  2.74 GBytes  2.35 Gbits/sec
+```
+
 Check out the final datacenter installed in my rack:
 
 ![Rack](/assets/images/2025-01-02-homelab-upgrade/rack.jpg)
