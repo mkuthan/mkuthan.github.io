@@ -5,6 +5,10 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [BIRD-SQL](https://bird-bench.github.io/) -
+BIg Bench for LaRge-scale Database Grounded Text-to-SQL Evaluation, over 12,751 unique question-SQL pairs,
+95 big databases. It also covers more than 37 professional domains.
+
 * [Inner Source Patters](https://patterns.innersourcecommons.org/) -
 how to use of open source principles and practices for software development within the confines of an organization.
 
