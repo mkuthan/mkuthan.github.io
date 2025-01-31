@@ -5,8 +5,11 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Inner Source Patters](https://patterns.innersourcecommons.org/) -
+how to use of open source principles and practices for software development within the confines of an organization.
+
 * [Cost optimization of Dataflow pipelines](https://beamsummit.org/slides/2024/CostoptimizationofDataflowpipelines.pdf) - 
-beyond optimization, a collection of references to valuable materials
+beyond optimization, a collection of references to valuable materials.
 
 * [How we built a new powerful JSON data type for ClickHouse](https://clickhouse.com/blog/a-new-powerful-json-data-type-for-clickhouse) - variant and dynamic types, dense storage, arbitrary nesting.
 
