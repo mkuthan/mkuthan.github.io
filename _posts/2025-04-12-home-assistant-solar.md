@@ -82,6 +82,8 @@ However, under specific conditions, automation switches the inverter to **In-Fee
 
 In all other scenarios, the inverter reverts to **Self-Use** mode to optimize energy usage and storage.
 
+{% raw %}
+
 ```yaml
 - alias: Solar - mode optimization
   id: solar_01
@@ -172,6 +174,8 @@ In all other scenarios, the inverter reverts to **Self-Use** mode to optimize en
             value: "{{ export_power }}"
 ```
 
+{% endraw %}
+
 ## Selling energy during peak hour
 
 The second automation schedules the inverter to sell energy during peak hour, when the following conditions are met:
@@ -185,6 +189,8 @@ The second automation schedules the inverter to sell energy during peak hour, wh
 
 The most tricky part is to calculate the amount of energy that can be sold.
 Ask LLM if you need more details about the alghoritm 😜
+
+{% raw %}
 
 ```yaml
 - alias: Solar - schedule discharge slot
@@ -286,11 +292,15 @@ Ask LLM if you need more details about the alghoritm 😜
           entity_id: switch.inverter_control_slot1_discharge
 ```
 
+{% endraw %}
+
 ## Expose excess energy mode
 
 The third automation introduces an "excess energy" mode, which can be utilized by other automations to determine when surplus energy is available for consumption. For instance, a bathroom heater automation can leverage this mode to activate the electric heater only when excess energy is detected.
 
 Excess power sensor is calculated as follows:
+
+{% raw %}
 
 ```yaml
 template:
@@ -307,7 +317,11 @@ template:
           {{ [excess, 0] | max }}
 ```
 
+{% endraw %}
+
 Automation for setting the excess energy mode is triggered by the following conditions:
+
+{% raw %}
 
 ```yaml
 - alias: Solar - set excess energy mode "on"
@@ -348,6 +362,8 @@ Automation for setting the excess energy mode is triggered by the following cond
     - action: input_boolean.turn_off
       entity_id: input_boolean.solar_excess_energy_mode
 ```
+
+{% endraw %}
 
 ## Summary
 
