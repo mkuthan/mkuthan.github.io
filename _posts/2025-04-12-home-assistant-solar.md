@@ -187,7 +187,9 @@ The second automation schedules the inverter to sell energy during peak hour, wh
 - Baterry is fully charged.
 - There will be enough energy for sale considering typical nighttime consumption.
 
-The most tricky part is to calculate the amount of energy that can be sold.
+![Time Slots](/assets/images/2025-04-12-home-assistant-solar/time_slots.png)
+
+The most tricky part of the automation is to calculate the amount of energy that can be sold.
 Ask LLM if you need more details about the alghoritm 😜
 
 {% raw %}
