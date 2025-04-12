@@ -30,7 +30,7 @@ Charts below show the hourly rates for today and tomorrow, in PLN/MHh (to get th
 
 To make the most of my solar energy system, I have outlined the following key requirements for efficient energy management and automation:
 
-⚡️ **Prioritize self-consumption** over exporting energy to the grid, as it is the most cost-effective approach for my setup.
+⚡️ **Prioritize self-consumption** over exporting energy to the grid, as it's the most cost-effective approach for my setup.
 
 🌍 **Export energy to the grid** only when the current and forecasted household consumption is fully covered by on-site generation.
 
@@ -66,7 +66,7 @@ Solis inverters support three primary modes of operation:
 
 ⚡ **In-Feed Priority**: This mode prioritizes selling energy to the grid. The battery will neither charge nor discharge unless "Time Charging" is enabled and properly configured.
 
-🌐 **Off-Grid**: Designed for installations without grid power, this mode is not relevant to this project.
+🌐 **Off-Grid**: Designed for installations without grid power, this mode isn't relevant to this project.
 
 ## Automation for inverter mode
 
@@ -180,7 +180,7 @@ In all other scenarios, the inverter reverts to **Self-Use** mode to optimize en
 
 The second automation schedules the inverter to sell energy during peak hour, when the following conditions are met:
 
-- The house is working in eco mode. I have excess energy only when there is no one at home, or we are going to leave soon.
+- The house is working in eco mode. I have excess energy only when there is no one at home, or we're going to leave soon.
 - The price is decent and maximum of the day.
 - Energy production forecast for tommorrow is excellent.
 - Temperature forecast for tomorrow is high enough to minimize excessive power consumption for heating.
