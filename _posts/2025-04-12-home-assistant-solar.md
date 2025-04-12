@@ -369,5 +369,7 @@ Automation for setting the excess energy mode is triggered by the following cond
 
 With a PV system of this size, I could have simply left the inverter in "Self-Use" mode, and the overall results wouldn't differ significantly. However, I approached this entire experiment as an excellent opportunity to learn and have fun. By diving into the intricacies of energy management and automation, I gained valuable insights and hands-on experience that not only enhanced my technical skills but also made my home smarter and more efficient.
 
+![Energy Dashboard](/assets/images/2025-04-12-home-assistant-solar/energy_dashboard.png)
+
 Don't forget to add a ⭐️ to my project on GitHub if you find it useful!
 <https://github.com/mkuthan/solis-cloud-control>
