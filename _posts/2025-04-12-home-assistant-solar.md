@@ -106,8 +106,8 @@ In all other scenarios, the inverter reverts to **Self-Use** mode to optimize en
     # Prices [PLN/kWh]
     price: "{{ states('sensor.solar_electricity_price_hourly_rate') | float }}"
     price_min: "{{ states('sensor.solar_electricity_price_hourly_rate_min') | float }}"
-    price_valley_treshold: "{{ states('input_number.solar_electricity_price_valley_trehsold') | float }}"
-    price_threshold: "{{ [price_min, price_valley_treshold] | max }}"
+    price_valley_threshold: "{{ states('input_number.solar_electricity_price_valley_threshold') | float }}"
+    price_threshold: "{{ [price_min, price_valley_threshold] | max }}"
 
     # PV forecast [kWh]
     pv_forecast: "{{ states('sensor.solcast_pv_forecast_forecast_remaining_today') | float }}"
@@ -116,7 +116,7 @@ In all other scenarios, the inverter reverts to **Self-Use** mode to optimize en
 
     # Temperature forecast [°C]
     temp_forecast: "{{ states('sensor.weather_temperature_today') | float }}"
-    temp_forecast_treshold: 5
+    temp_forecast_threshold: 5
 
     # Power consumption [W]
     power_consumption: "{{ states('sensor.solar_load_power') | float }}"
@@ -147,8 +147,8 @@ In all other scenarios, the inverter reverts to **Self-Use** mode to optimize en
           - condition: template
             alias: If temperature meets battery SOC criteria
             value_template: >
-              {{ (temp_forecast > temp_forecast_treshold and battery_soc > battery_threshold_low) or
-                  (temp_forecast <= temp_forecast_treshold and battery_soc > battery_threshold_high) }}
+              {{ (temp_forecast > temp_forecast_threshold and battery_soc > battery_threshold_low) or
+                  (temp_forecast <= temp_forecast_threshold and battery_soc > battery_threshold_high) }}
           - condition: template
             alias: If power consumption meets battery SOC criteria
             value_template:
@@ -219,14 +219,14 @@ Ask LLM if you need more details about the alghoritm 😜
 
     # Temperature forecast [°C]
     temp_forecast: "{{ states('sensor.weather_temperature_tomorrow') | float }}"
-    temp_forecast_treshold: 5
+    temp_forecast_threshold: 5
 
     # Peak price and time
     peak_raw: "{{ states('sensor.solar_electricity_price_hourly_rate_max_next_raw') | from_json }}"
 
     peak_price: "{{ peak_raw.price }}"
     peak_price_threshold: >
-      {{ states('input_number.solar_electricity_price_peak_trehsold') | float }}
+      {{ states('input_number.solar_electricity_price_peak_threshold') | float }}
 
     peak_time_hours: 1
     peak_time: >
@@ -329,7 +329,7 @@ Automation for setting the excess energy mode is triggered by the following cond
   triggers:
     - trigger: numeric_state
       entity_id: sensor.solar_electricity_price_hourly_rate
-      below: input_number.solar_electricity_price_valley_trehsold
+      below: input_number.solar_electricity_price_valley_threshold
     - trigger: numeric_state
       entity_id: sensor.solar_excess_power
       above: 500
@@ -338,7 +338,7 @@ Automation for setting the excess energy mode is triggered by the following cond
   conditions:
     - condition: numeric_state
       entity_id: sensor.solar_electricity_price_hourly_rate
-      below: input_number.solar_electricity_price_valley_trehsold
+      below: input_number.solar_electricity_price_valley_threshold
   actions:
     - action: input_boolean.turn_on
       entity_id: input_boolean.solar_excess_energy_mode
@@ -348,7 +348,7 @@ Automation for setting the excess energy mode is triggered by the following cond
   triggers:
     - trigger: numeric_state
       entity_id: sensor.solar_electricity_price_hourly_rate
-      above: input_number.solar_electricity_price_valley_trehsold
+      above: input_number.solar_electricity_price_valley_threshold
     - trigger: numeric_state
       entity_id: sensor.solar_excess_power
       below: 100
@@ -357,7 +357,7 @@ Automation for setting the excess energy mode is triggered by the following cond
   conditions:
     - condition: numeric_state
       entity_id: sensor.solar_electricity_price_hourly_rate
-      above: input_number.solar_electricity_price_valley_trehsold
+      above: input_number.solar_electricity_price_valley_threshold
   actions:
     - action: input_boolean.turn_off
       entity_id: input_boolean.solar_excess_energy_mode
