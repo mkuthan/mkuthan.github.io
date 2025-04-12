@@ -1,5 +1,5 @@
 ---
-title: "Home Assistant Solar Energy Management"
+title: "Home Assistant solar energy management"
 date: 2025-04-12
 categories: [DIY]
 tags: [Homelab]
