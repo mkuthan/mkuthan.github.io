@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Vision language models are blind](https://vlmsareblind.github.io/) - VLMs are surprisingly still struggling with low-level vision tasks that are easy to humans.
+
 * [Git configuration](https://blog.gitbutler.com/how-git-core-devs-configure-git/) - How core git developers configure git.
 
 * [BIRD-SQL](https://bird-bench.github.io/) -
