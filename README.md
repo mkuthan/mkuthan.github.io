@@ -12,15 +12,3 @@ This work is licensed under a
 
 1. Install `bundle install` or update `bundle update` dependencies
 2. Run `bundle exec jekyll serve --livereload --future`
-
-## Markdownlint
-
-1. Check markdown `markdownlint file_to_check.md`
-
-## Vale
-
-1. Install or update `vale sync` dictionaries
-2. Check the spelling `vale  file_to_check.md`
-
-See: [Microsoft Style Guide](https://docs.microsoft.com/en-us/style-guide) and
-[proselint](https://github.com/amperser/proselint/) for rules explanation and examples.
