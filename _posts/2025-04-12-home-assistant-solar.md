@@ -8,7 +8,7 @@ header:
     caption: ""
 ---
 
-🌞🔋 Since I last [blogged](/blog/2024/12/08/home-assistant-automations/) about Home Assistant automations, I have taken a big step forward in sustainable living by installing a photo voltaic (PV) system with an energy storage unit. 🌱
+🌞🔋 Since I last [blogged](/blog/2024/12/08/home-assistant-automations/) about Home Assistant automations, I have taken a big step forward in sustainable living by installing a photovoltaic (PV) system with an energy storage unit. 🌱
 This exciting upgrade has unlocked incredible opportunities for automating and optimizing energy usage in my home, making it smarter and greener than ever! 🏡✨
 
 ![Energy Distribution](/assets/images/2025-04-12-home-assistant-solar/energy_distribution.gif)
@@ -22,7 +22,7 @@ I have a 6.3 kWp PV system with a 10 kWh battery storage unit installed in my ut
 At the moment I am buying electricity at a flat rate of 1.2 PLN/kWh (0.28 €/kWh) including all taxes and fees.
 I can also sell excess energy back to the grid at dynamic hourly rates.
 The selling price depends on the time of the day and the current demand for energy.
-Charts below show the hourly rates for today and tomorrow, in PLN/MHh (to get the price in EUR or USD, just divide by ~4.3).
+Charts below show the hourly rates for today and tomorrow, in PLN/MWh (to get the price in EUR or USD, just divide by ~4.3).
 
 ![Price Forecast](/assets/images/2025-04-12-home-assistant-solar/price_forecast.png)
 
@@ -40,7 +40,7 @@ To make the most of my solar energy system, I have outlined the following key re
 
 The most important part of the setup is the ability to control the inverter remotely.
 I have a Solis hybrid inverter, which is compatible with the Solis Cloud API.
-Unfortunatelly, the existing [solis-sensor](https://github.com/hultenvp/solis-sensor) integration covers only the monitoring part, the control part is experimental and unstable, see [#437](https://github.com/hultenvp/solis-sensor/issues/437).
+Unfortunately, the existing [solis-sensor](https://github.com/hultenvp/solis-sensor) integration covers only the monitoring part, the control part is experimental and unstable, see [#437](https://github.com/hultenvp/solis-sensor/issues/437).
 
 This project also provided an excellent opportunity to develop my own custom integration for Home Assistant, tailored specifically for controlling the Solis inverter. You can find the source code and detailed documentation here:
 
@@ -182,15 +182,15 @@ The second automation schedules the inverter to sell energy during peak hour, wh
 
 - The house is working in eco mode. I have excess energy only when there is no one at home, or we're going to leave soon.
 - The price is decent and maximum of the day.
-- Energy production forecast for tommorrow is excellent.
+- Energy production forecast for tomorrow is excellent.
 - Temperature forecast for tomorrow is high enough to minimize excessive power consumption for heating.
-- Baterry is fully charged.
+- Battery is fully charged.
 - There will be enough energy for sale considering typical nighttime consumption.
 
 ![Time Slots](/assets/images/2025-04-12-home-assistant-solar/time_slots.png)
 
 The most tricky part of the automation is to calculate the amount of energy that can be sold.
-Ask LLM if you need more details about the alghoritm 😜
+Ask LLM if you need more details about the algorithm 😜
 
 {% raw %}
 

@@ -12,7 +12,7 @@ Check it out here: <https://github.com/mkuthan/homelab-public>
 
 What is a main challenge in a homelab? For me it's the same as in a production environment - keeping everything up to date, secure, and reliable while minimizing manual work.
 
-I'm a software engineer, so I'm used to writing beatiful, testable code. In the infrastructure world, it's not that easy.
+I'm a software engineer, so I'm used to writing beautiful, testable code. In the infrastructure world, it's not that easy.
 Fortunately, IaaC tools like Terraform and Ansible help me to write infrastructure code in a way I'm used to.
 
 ## Terraform
