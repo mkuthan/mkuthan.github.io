@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Beyond Indexes: How Open Table Formats Optimize Query Performance](https://jack-vanlightly.com/blog/2025/10/8/beyond-indexes-how-open-table-formats-optimize-query-performance) - Compares traditional relational database indexing with open table formats like Iceberg, Delta, and Hudi, explaining why analytical systems rely on data layout rather than B-tree indexes for performance.
+
 * [Smart Home LLM leaderboard](https://github.com/allenporter/home-assistant-datasets/tree/main/reports) - LLM models evaluation for Home Assistant assists, questions and automations.
 
 * [How I Scanned all of GitHub’s “Oops Commits” for Leaked Secrets](https://trufflesecurity.com/blog/guest-post-how-i-scanned-all-of-github-s-oops-commits-for-leaked-secrets) - Github never forgets commits.
