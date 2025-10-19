@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Fluent Python](https://www.fluentpython.com/) - Companion website for the lizard book.
+
 * [The Zen of Python](https://www.python.org/doc/humor/#the-zen-of-python) - beatiful design rules.
 
 * [Beyond Indexes: How Open Table Formats Optimize Query Performance](https://jack-vanlightly.com/blog/2025/10/8/beyond-indexes-how-open-table-formats-optimize-query-performance) - Compares traditional relational database indexing with open table formats like Iceberg, Delta, and Hudi, explaining why analytical systems rely on data layout rather than B-tree indexes for performance.
