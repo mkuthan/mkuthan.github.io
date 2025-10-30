@@ -17,7 +17,7 @@ He started with [W3Schools](https://www.w3schools.com/) video tutorials, switche
 It was his way of learning by doing—typical for his generation, I assume.
 
 But recently he asked me to recommend some books 📚 that would help him understand programming concepts better.
-I was super happy 😊 because I know that reading books is the best way to learn programming fundamentals deeply.
+I was super happy 😊 because **I know that reading books is the best way to learn programming fundamentals deeply**.
 
 I started searching for books, but most of them were... just boring 😴 (at least for a teenager).
 Then I remembered the *Head First* series from O'Reilly.
