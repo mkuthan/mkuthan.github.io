@@ -3,6 +3,10 @@ title: "Head First Python, Head First JavaScript -- books review"
 date: 2025-10-30
 tags: [Software Engineering]
 categories: [Books]
+header:
+    overlay_image: /assets/images/2025-10-30-head-first-python-js/overlay.jpg
+    overlay_filter: 0.4
+    caption: ""
 ---
 
 A few months ago, my 13-year-old son and I were discussing his future high school options.
@@ -31,7 +35,8 @@ Then I remembered the *Head First* series from O'Reilly.
 My son started with *Head First JavaScript* and I started leafing through *Head First Python*.
 First, you read about learning psychology and why these books are a bit different from typical programming books: lots of pictures, funny stories, quizzes, exercises, etc.
 Then you dive into the project-based learning approach, building simple applications step by step.
-In the JavaScript book, you create a ship battle game; in the Python book, you build a web app for swimming club training management.
+In the JavaScript book, you create a ship battle game; in the Python book, you build a web app for swimming club training recordings.
+
 I'm really impressed by how cleverly the books smuggle in programming concepts and best practices I usually apply in my daily work as a software engineer.
 For example: make small iterations, prefer readability over cleverness, or apply the YAGNI principle.
 
