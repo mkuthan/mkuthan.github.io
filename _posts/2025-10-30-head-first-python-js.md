@@ -1,8 +1,8 @@
 ---
 title: "Head First Python, Head First JavaScript -- books review"
 date: 2025-10-30
-tags: [Software Engineering]
 categories: [Books]
+tags: [Software Engineering]
 header:
     overlay_image: /assets/images/2025-10-30-head-first-python-js/overlay.jpg
     overlay_filter: 0.4
