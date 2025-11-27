@@ -17,14 +17,18 @@ I wanted something more challenging with complex domain logic and real-world dat
 
 ## Introduction
 
-This spring I installed a photovoltaic (PV) system on my roof to generate renewable energy for my home. Soon after, I wrote a Home Assistant automation to optimize solar use. You can read more in my previous post [Home Assistant solar energy management](/blog/2025/04/12/home-assistant-solar/).
+This spring I installed a photovoltaic (PV) system on my roof to generate renewable energy for my home.
+Soon after, I wrote a Home Assistant automation to optimize solar use.
+You can read more in my previous post [Home Assistant solar energy management](/blog/2025/04/12/home-assistant-solar/).
 
-Summer, with plenty of sunshine, didn't challenge that YAML-based setup. As autumn and winter approached with shorter days, less predictable weather, and heating energy consumption, I realized I needed something more robust than a collection of YAML automations.
+Summer, with plenty of sunshine, didn’t really challenge the YAML-based setup.
+But as autumn and winter approached — with shorter days, less predictable weather, and increasing heating energy consumption — I realized I needed something more robust than a collection of YAML automations.
 
 {: .notice--info}
-I found an excellent opportunity to apply lessons from Fluent Python 😂
+It was the perfect chance to put lessons from Fluent Python into practice. 😂
 
-After two to three months of tinkering in my spare time, I implemented a new solar and heating energy management system using [AppDaemon](https://github.com/AppDaemon/appdaemon), a sandboxed execution environment for Home Assistant. Here are some stats about the project:
+After two to three months of tinkering in my spare time, I implemented a new solar and heating energy management system using [AppDaemon](https://github.com/AppDaemon/appdaemon).
+Here are some stats about the project:
 
 - 📦 2,529 lines of production code across 55 Python files
 - 🧪 4,248 lines of test code in 37 test files
@@ -33,13 +37,64 @@ After two to three months of tinkering in my spare time, I implemented a new sol
 
 I originally planned to describe every part of the project, but that would be too much for most readers. So I split the post into three parts:
 
-1. Configuration snippets that reveal the system's complexity.
-2. A closer look at a few Python techniques I used.
+1. Configuration snippets that reveal the system's complexity without overwhelming.
+2. A closer look at a few Python techniques I used, could be useful even if you aren't interested in renewable energy.
 3. Selected algorithms and how they work in practice.
 
-## AppDaemon Solar and HVAC applications configuration
+## AppDaemon applications
 
-The first snippet covers configuration needed for implementing solar energy management logic:
+AppDaemon is a lightweight Python daemon I use alongside Home Assistant.
+It listens to events and instantiates small Python classes (apps) that register callbacks, read state, and call services.
+I installed AppDaemon as [Home Assistant add-on](https://github.com/hassio-addons/addon-appdaemon) so it runs in a docker container inside Home Assistant.
+
+### Solar
+
+The first app is responsible for solar energy management:
+
+- Setting up battery reserve SoC control every 5 minutes
+- Setting up storage mode control triggers
+- Setting up battery discharge schedule
+
+```python
+import appdaemon.plugins.hass.hassapi as hass
+
+class SolarApp(hass.Hass):
+    def initialize(self) -> None:
+        self.solar = Solar(
+            configuration=configuration,
+            state_factory=state_factory,
+            battery_discharge_slot_estimator=BatteryDischargeSlotEstimator(...),
+            battery_reserve_soc_estimator=BatteryReserveSocEstimator(...),
+            storage_mode_estimator=StorageModeEstimator(...),
+        )
+
+        self.run_every(self.control_battery_reserve_soc, "00:00:00", 5 * 60)
+        self.listen_state(
+            self.control_storage_mode, 
+            [BATTERY_SOC_ENTITY, PRICE_FORECAST_ENTITY],
+            constrain_start_time="sunrise +01:00:00",
+            constrain_end_time="sunset -01:00:00",
+        )
+        self.run_daily(self.schedule_battery_discharge, "15:30:00")
+        self.run_daily(self.disable_battery_discharge, "22:00:00")
+
+    def control_battery_reserve_soc(self, **kwargs: object) -> None:
+        self.solar.control_battery_reserve_soc(self.get_now())
+
+    def control_storage_mode(self, entity, attribute, old, new, **kwargs) -> None:
+        self.solar.control_storage_mode(self.get_now())
+
+    def schedule_battery_discharge(self, **kwargs: object) -> None:
+        self.solar.schedule_battery_discharge(self.get_now())
+
+    def disable_battery_discharge(self, **kwargs: object) -> None:
+        self.solar.disable_battery_discharge()
+```
+
+As you can see, the app mostly wires AppDaemon framework with the core `Solar` class that implements the actual logic.
+This is a design strategy because AppDaemon has limited support for testing.
+
+The interesting part is the configuration of the `Solar` class to externalize all domain-specific parameters.
 
 ```python
 configuration = SolarConfiguration(
@@ -110,7 +165,42 @@ class SolarState:
     price_forecast: list | None # energy price forecast
 ```
 
-HVAC (Heating, Ventilation, and Air Conditioning) control is another complex part of the system. Here is a snippet of the configuration:
+Like a tip of the iceberg, configuration and state should give you an idea what the system takes into account when making autonomous decisions 🤔
+The only manual input is the eco/away mode toggles.
+
+### Heating, cooling and domestic hot water
+
+The second app manages my heat pump: domestic hot water and heating or cooling.
+Nothing too fancy, just periodic control and reaction to eco mode and heating/cooling mode changes.
+
+```python
+import appdaemon.plugins.hass.hassapi as hass
+
+class HvacApp(hass.Hass):
+    def initialize(self) -> None:
+        self.hvac = Hvac(
+            configuration=configuration,
+            state_factory=state_factory,
+            dhw_estimator=DhwEstimator(...),
+            heating_estimator=HeatingEstimator(...),
+            cooling_estimator=CoolingEstimator(...),
+        )
+        self.run_every(self.control_scheduled, "00:00:00", 5 * 60)
+
+        self.listen_state(
+            self.control_triggered,
+            [ECO_MODE_ENTITY, HEATING_ENTITY,  COOLING_ENTITY],
+        )
+
+    def control_scheduled(self, **kwargs: dict) -> None:
+        self.hvac.control(self.get_now())
+
+    def control_triggered(self, entity, attribute, old, new, **kwargs) -> None:
+        self.hvac.control(self.get_now())        
+```
+
+Again the most interesting part is the static configuration and dynamic state of the `Hvac` class.
+Everything is automated, the only manual input are the eco mode toggle and temperature adjustment (+/- 1 degree).
 
 ```python
 configuration = HvacConfiguration(
@@ -156,8 +246,6 @@ configuration = HvacConfiguration(
     cooling_boost_time_end_eco_off=time.fromisoformat("18:00:00"),
 )
 ```
-
-And here is a snippet of the dynamic HVAC state:
 
 ```python
 class HvacState:
@@ -311,7 +399,8 @@ With value classes I gained several benefits:
 
 ### Protocols
 
-AppDeamon support for testing is limited, so I had to extract logic from the framework-specific code and make it testable in isolation. I decided to use duck typing with `Protocol` classes to define AppDaemon interfaces, for example:
+AppDeamon support for testing is limited, so I had to extract logic from the framework-specific code and make it testable in isolation.
+I decided to use duck typing with `Protocol` classes to define AppDaemon interfaces, for example:
 
 ```python
 class AppdaemonService(Protocol):
@@ -359,7 +448,9 @@ def mock_appdaemon_service() -> Mock:
 
 ### For comprehensions
 
-I love Scala's for-comprehensions, and I also enjoy their Python equivalent. I implemented separate classes for different consumption-forecast strategies and combined them with a composite class. Using a nested for clause inside a single list comprehension is an elegant way to implement the composite design pattern.
+I love Scala's for-comprehensions, and I also enjoy their Python equivalent. 
+For example, I implemented separate classes for different consumption-forecast strategies and combined them with a composite class.
+Using a nested for clause inside a single list comprehension is an elegant way to implement the composite design pattern.
 
 ```python
 class ConsumptionForecast(Protocol):
@@ -375,15 +466,18 @@ class ConsumptionForecastComposite:
 
 ## Interesting algorithms
 
-Algorithms have never been my strength but with help from GitHub Copilot and a basic grasp of intuition, math and physics, I implemented a few useful ones.
+Algorithms have never been my top strength but with help from GitHub Copilot and a basic grasp of intuition, math and physics, I implemented a few useful ones.
 
 ### Find the continuous time window with maximum revenue
 
 This algorithm evaluates all possible starting minutes to find the optimal battery discharge window with maximum revenue.
-It uses a variable-length sliding window approach with time complexity `O(n * m)` where `n` is number of periods and `m` is minutes per period.
+It uses a variable-length sliding window approach with time complexity `O(n * d)` where "n" is the number of periods and "d" is max_duration_minutes.
 
 ```python
-if max_duration_minutes < 1:
+def find_max_revenue_period(
+    hourly_prices: list[HourlyPrice], min_price_threshold: EnergyPrice, max_duration_minutes: int
+) -> tuple[EnergyPrice, datetime, datetime] | None:
+    if max_duration_minutes < 1:
         raise ValueError(f"max_duration_minutes must be at least 1, got {max_duration_minutes}")
 
     if not hourly_prices:
@@ -398,13 +492,11 @@ if max_duration_minutes < 1:
     best_start_time = None
     best_end_time = None
 
-    # Use variable-length sliding window algorithm, optimized two-pointer sliding window approach is not applicable here
     for start_hour_idx, start_hour in enumerate(hourly_prices):
         # Skip if period doesn't meet price threshold
         if start_hour.price < min_price_threshold:
             continue
 
-        # Try starting at each minute within this period
         for start_offset_minutes in range(period_duration_minutes):
             start_time = start_hour.period.start + timedelta(minutes=start_offset_minutes)
 
@@ -463,7 +555,7 @@ For the following hourly prices:
 ]
 ```
 
-The maximum revenue for a 105 minutes window with minimum price threshold of 100 is `150 * 45 / 60 + 200 = 312.5`, starting at "01:15:00" and ending at "03:00:00".
+The maximum revenue for a 105 minutes window with minimum price threshold of "100" is `150 * 45 / 60 + 200 = 312.5`, starting at "01:15:00" and ending at "03:00:00".
 
 ### Estimate heating energy consumption
 
@@ -542,7 +634,8 @@ def _frosting_penalty(
 
 ### Calculate maximum cumulative energy deficit
 
-To calculate the battery reserve SOC in the morning, I need to find the maximum cumulative energy deficit before next low tariff period. For example, to survive this hypothetical morning the battery needs to cover 1.25 kWh deficit:
+To calculate the battery reserve SOC in the morning, I need to find the maximum cumulative energy deficit before next low tariff period.
+For example, to survive this hypothetical morning the battery needs to cover 1.25 kWh deficit:
 
 | hour | production (kWh) | consumption (kWh) | cumulative deficit (kWh) |
 |------|------------------|-------------------|--------------------------|
@@ -586,7 +679,8 @@ def maximum_cumulative_deficit(
 
 ### Estimate time for indoor temperature to decay from start to end temperature
 
-This function estimates the time required for indoor temperature to decay from a starting temperature to an ending temperature, considering varying outdoor temperatures over time. It uses Newton's Law of Cooling with a decay rate constant derived from the building's thermal properties.
+This function estimates the time required for indoor temperature to decay from a starting temperature to an ending temperature, considering varying outdoor temperatures over time.
+It uses Newton's Law of Cooling with a decay rate constant derived from the building's thermal properties.
 
 ```python
 def estimate_temperature_decay_time(
