@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Google Zanzibar](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/) - Google system for storing and evaluating ACLs.
+
 * [Fluent Python](https://www.fluentpython.com/) - Companion website for the lizard book.
 
 * [The Zen of Python](https://www.python.org/doc/humor/#the-zen-of-python) - beatiful design rules.
