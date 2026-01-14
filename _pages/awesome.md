@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [BigQuery under the hood](https://cloud.google.com/blog/products/bigquery/bigquery-under-the-hood) - Colossus (filesystem), Dremel (query engine), Borg (compute) and Jupiter (network).
+
 * [A Deep Dive into Common Open Formats for Analytical DBMSs](https://www.vldb.org/pvldb/vol16/p3044-liu.pdf) - Parquet, ORC, Arrow, Arrow/Feather.
 
 * [Google Zanzibar](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/) - Google system for storing and evaluating ACLs.
