@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [How Google SREs Use Gemini CLI to Solve Real-World Outages](https://cloud.google.com/blog/topics/developers-practitioners/how-google-sres-use-gemini-cli-to-solve-real-world-outages/) - Incident handling at Google.
+
 * [Mean time to mitigation](https://www.oreilly.com/content/generic-mitigations/) - Generic mitigations (rollback, degrade, upsize, block, drain, quarantine) to shorten mean time to mitigation during outage.
 
 * [BigQuery under the hood](https://cloud.google.com/blog/products/bigquery/bigquery-under-the-hood) - Colossus (filesystem), Dremel (query engine), Borg (compute) and Jupiter (network).
