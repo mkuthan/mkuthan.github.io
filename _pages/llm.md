@@ -24,6 +24,8 @@ My journey with LLMs, agents, tools and more.
 * [Home Assistant MCP](https://github.com/homeassistant-ai/ha-mcp)
 * [Home Assistant Skills](https://github.com/homeassistant-ai/skills)
 
+* [RTK](https://github.com/rtk-ai/rtk) - CLI proxy that reduces LLM token consumption
+
 ## Documentation
 
 * [AGENTS.md](https://agents.md)
