@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [SQL Differential Privacy](https://www.vldb.org/pvldb/vol11/p526-johnson.pdf) - Add some noise to query result to protect individual privacy.
+
 * [How Google SREs Use Gemini CLI to Solve Real-World Outages](https://cloud.google.com/blog/topics/developers-practitioners/how-google-sres-use-gemini-cli-to-solve-real-world-outages/) - Incident handling at Google.
 
 * [Mean time to mitigation](https://www.oreilly.com/content/generic-mitigations/) - Generic mitigations (rollback, degrade, upsize, block, drain, quarantine) to shorten mean time to mitigation during outage.
