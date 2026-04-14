@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [GC: From First Principles to Modern Collectors in Java, Go and Python](https://shbhmrzd.github.io/systems/garbage-collection/memory-management/2026/04/01/garbage-collectors-deep-dive.html) - GC recap from McCarthy (1960) and Wilson (1992) papers to Java ZGC. 
+
 * [SQL Differential Privacy](https://www.vldb.org/pvldb/vol11/p526-johnson.pdf) - Add some noise to query result to protect individual privacy.
 
 * [How Google SREs Use Gemini CLI to Solve Real-World Outages](https://cloud.google.com/blog/topics/developers-practitioners/how-google-sres-use-gemini-cli-to-solve-real-world-outages/) - Incident handling at Google.
