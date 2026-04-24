@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Java Almanac](https://javaalmanac.io/) - Systematic collection of information about the history and the future of Java.
+
 * [The Power of Data Sketches](https://luminousmen.com/post/the-power-of-data-sketches-a-comprehensive-guide) - summary of Theta Sketches, HyperLogLog, Compressed Probabilistic Counting, HyperLogLog Map, Tuple Sketches, Classic Quantiles Sketches, KLL Sketches, REQ Sketches, Frequent Items Sketches and Frequent Distinct Tuples Sketch.
 
 * [GC: From First Principles to Modern Collectors in Java, Go and Python](https://shbhmrzd.github.io/systems/garbage-collection/memory-management/2026/04/01/garbage-collectors-deep-dive.html) - GC recap from McCarthy (1960) and Wilson (1992) papers to Java ZGC. 
