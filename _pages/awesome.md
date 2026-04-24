@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Java Evolved](https://javaevolved.github.io/) - A collection of modern Java code snippets. Every old Java pattern next to its clean, modern replacement — side by side.
+
 * [Java Almanac](https://javaalmanac.io/) - Systematic collection of information about the history and the future of Java.
 
 * [The Power of Data Sketches](https://luminousmen.com/post/the-power-of-data-sketches-a-comprehensive-guide) - summary of Theta Sketches, HyperLogLog, Compressed Probabilistic Counting, HyperLogLog Map, Tuple Sketches, Classic Quantiles Sketches, KLL Sketches, REQ Sketches, Frequent Items Sketches and Frequent Distinct Tuples Sketch.
