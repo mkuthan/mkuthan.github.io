@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Java Compact Header Layout](https://www.baeldung.com/java-object-header-reduced-size-save-memory) - Java 25 (JEP 519) to reduce the size of object headers in the Hotspot JVM on 64-bit architectures.
+
 * [Java Evolved](https://javaevolved.github.io/) - A collection of modern Java code snippets. Every old Java pattern next to its clean, modern replacement — side by side.
 
 * [Java Almanac](https://javaalmanac.io/) - Systematic collection of information about the history and the future of Java.
