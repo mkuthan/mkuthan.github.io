@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Spaced Repetition](https://en.wikipedia.org/wiki/Spaced_repetition) - Learning technique with flashcards to align to forgetting curves.
+
 * [Email Addresses](https://lasans.blog/articles/misc/email-addresses-deep-dive) - Deep dive into email addresses, a lot more than a username and a domain.
 
 * [Java Compact Header Layout](https://www.baeldung.com/java-object-header-reduced-size-save-memory) - Java 25 (JEP 519) to reduce the size of object headers in the Hotspot JVM on 64-bit architectures.
