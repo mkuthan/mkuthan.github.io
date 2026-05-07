@@ -30,3 +30,7 @@ My journey with LLMs, agents, tools and more.
 
 * [AGENTS.md](https://agents.md)
 * [Agent Skills](https://agentskills.io)
+
+## Second Brain
+
+* [How We Built an AI Second Brain for 60K Knowledge Workers](https://medium.com/@AnalyticsAtMeta/how-we-built-an-ai-second-brain-for-60k-knowledge-workers-78c507dd795b)
