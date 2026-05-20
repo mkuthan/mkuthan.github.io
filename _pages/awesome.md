@@ -5,7 +5,7 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
-* [JVM Anatomy Quarks](https://shipilev.net/jvm/anatomy-quarks/) - mini-post series, where every post is describing some elementary piece of knowledge about JVM internals by Aleksey Shipilëv
+* [JVM Anatomy Quarks](https://shipilev.net/jvm/anatomy-quarks/) - mini-post series, where every post is describing some elementary piece of knowledge about JVM internals by Aleksey Shipilëv.
 
 * [Spaced Repetition](https://en.wikipedia.org/wiki/Spaced_repetition) - Learning technique with flashcards to align to forgetting curves.
 
