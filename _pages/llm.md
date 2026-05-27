@@ -8,6 +8,7 @@ My journey with LLMs, agents, tools and more.
 
 ## Agents
 
+* [Code doctrine](https://kamil.chm.ski/code-doctrine-the-reusable-version-of-my-ai-coding-constitution) - The Reusable Version of Kamil Chmielewski AI Coding Constitution
 * [Plannotator](https://github.com/backnotprop/plannotator) - Interactive plan annotation and colaborative sharing.
 * [Obra Superpowers](https://github.com/obra/superpowers) - A complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
 * [Pi Dev](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) - Minimal terminal coding harness, that adapts to a developer's specific workflow. Unlike more rigid agents, it provides a powerful foundation (with read, write, edit, and bash tools) and expects users to extend it through custom "Skills," "Extensions," and "Packages."
