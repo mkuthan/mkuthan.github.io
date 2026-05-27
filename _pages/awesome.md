@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [SEDA](https://pages.cs.wisc.edu/~remzi/Classes/739/Fall2016/Papers/seda.pdf) - staged event-driven architecture.
+
 * [Stop Using Pull Requests](https://a4al6a.substack.com/p/stop-using-pull-requests) - pull requests are an antipattern for private software teams.
 
 * [JVM Anatomy Quarks](https://shipilev.net/jvm/anatomy-quarks/) - mini-post series, where every post is describing some elementary piece of knowledge about JVM internals by Aleksey Shipilëv.
