@@ -8,6 +8,7 @@ My journey with LLMs, agents, tools and more.
 
 ## Agents
 
+* [Opencode Memory](https://github.com/tickernelz/opencode-mem) - Long-term context retention across sessions using local vector database
 * [Code doctrine](https://kamil.chm.ski/code-doctrine-the-reusable-version-of-my-ai-coding-constitution) - The Reusable Version of Kamil Chmielewski AI Coding Constitution
 * [Plannotator](https://github.com/backnotprop/plannotator) - Interactive plan annotation and colaborative sharing.
 * [Obra Superpowers](https://github.com/obra/superpowers) - A complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
@@ -26,6 +27,7 @@ My journey with LLMs, agents, tools and more.
 * [Home Assistant Skills](https://github.com/homeassistant-ai/skills)
 
 * [RTK](https://github.com/rtk-ai/rtk) - CLI proxy that reduces LLM token consumption
+* [Coding (Agent) CLI Usage Analysis](https://github.com/ryoppippi/ccusage) - Analyze coding (agent) CLI token usage and costs from local data
 
 ## Documentation
 
