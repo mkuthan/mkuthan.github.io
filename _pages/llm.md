@@ -21,14 +21,20 @@ My journey with LLMs, agents, tools and more.
 * [GitHub MCP](https://github.com/github/github-mcp-server)
 * [Context7 MCP](https://github.com/upstash/context7)
 
+---
+
 * [The Open Agent Skills Ecosystem](https://skills.sh/)
+* [Coding (Agent) CLI Usage Analysis](https://github.com/ryoppippi/ccusage) - Analyze coding (agent) CLI token usage and costs from local data
+
+--- 
 
 * [Home Assistant MCP](https://github.com/homeassistant-ai/ha-mcp)
 * [Home Assistant Skills](https://github.com/homeassistant-ai/skills)
 
+---
+
 * [RTK](https://github.com/rtk-ai/rtk) - CLI proxy that reduces LLM token consumption
 * [Caveman](https://github.com/juliusbrussee/caveman) - Talk like a caveman and save the tokens
-* [Coding (Agent) CLI Usage Analysis](https://github.com/ryoppippi/ccusage) - Analyze coding (agent) CLI token usage and costs from local data
 
 ## Documentation
 
