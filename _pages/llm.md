@@ -37,3 +37,4 @@ My journey with LLMs, agents, tools and more.
 ## Second Brain
 
 * [How We Built an AI Second Brain for 60K Knowledge Workers](https://medium.com/@AnalyticsAtMeta/how-we-built-an-ai-second-brain-for-60k-knowledge-workers-78c507dd795b)
+* [Local-first AI journal](https://github.com/memex-lab/memex)
