@@ -8,6 +8,7 @@ My journey with LLMs, agents, tools and more.
 
 ## Agents
 
+* [Matt Pocock skills](https://github.com/mattpocock/skills) - grill-me, grill-with-docs, tdd, diagnose, etc.
 * [Opencode Memory](https://github.com/tickernelz/opencode-mem) - Long-term context retention across sessions using local vector database
 * [Code doctrine](https://kamil.chm.ski/code-doctrine-the-reusable-version-of-my-ai-coding-constitution) - The Reusable Version of Kamil Chmielewski AI Coding Constitution
 * [Plannotator](https://github.com/backnotprop/plannotator) - Interactive plan annotation and colaborative sharing.
