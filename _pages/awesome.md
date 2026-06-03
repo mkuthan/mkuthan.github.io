@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [WebAssebly Java runtime](https://github.com/bytecodealliance/endive) - run native code without JNI in a portable way using Endive.
+
 * [SEDA](https://pages.cs.wisc.edu/~remzi/Classes/739/Fall2016/Papers/seda.pdf) - staged event-driven architecture.
 
 * [Stop Using Pull Requests](https://a4al6a.substack.com/p/stop-using-pull-requests) - pull requests are an antipattern for private software teams.
