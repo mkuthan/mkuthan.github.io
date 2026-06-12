@@ -40,6 +40,7 @@ My journey with LLMs, agents, tools and more.
 * [Coding (Agent) CLI Usage Analysis](https://github.com/ryoppippi/ccusage) - Analyze coding (agent) CLI token usage and costs from local data
 * [RTK](https://github.com/rtk-ai/rtk) - CLI proxy that reduces LLM token consumption
 * [Caveman](https://github.com/juliusbrussee/caveman) - Talk like a caveman and save the tokens
+* [llmfit](https://github.com/AlexsJones/llmfit) - One command to find what runs on your hardware
 
 ## Agent documentation standards
 
