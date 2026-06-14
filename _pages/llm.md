@@ -15,6 +15,7 @@ My journey with LLMs, agents, tools and more.
 * [The Open Agent Skills Ecosystem](https://skills.sh/)
 * [Agent Skills](https://agentskills.io)
 * [Home Assistant Skills](https://github.com/homeassistant-ai/skills)
+* [Fabric](https://github.com/danielmiessler/fabric) - AI-powered prompts and patterns for everyday tasks
 
 ## Agent harnesses and orchestration
 
