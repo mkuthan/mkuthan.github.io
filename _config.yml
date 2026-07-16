@@ -13,8 +13,8 @@ author:
   name: "Marcin Kuthan"
   avatar: "https://www.gravatar.com/avatar/71e9ba5350f53c3416b7ed2617d04ab5?s=400"
   bio:
-    Big data engineer leading @allegro real-time, highly scalable and fault-tolerant data ingestion platform.
-    It processes a few billion events every day with e2e latency below one minute.
+    Software engineer working on Trino at Starburst.
+    Previously led real-time, highly scalable and fault-tolerant data ingestion platform at Allegro.
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github-square"
