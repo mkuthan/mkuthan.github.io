@@ -46,3 +46,7 @@ My journey with LLMs, agents, tools and more.
 ## Agent documentation standards
 
 * [AGENTS.md](https://agents.md)
+
+## Organizations and labs
+
+* [Moonshot AI](https://www.moonshot.ai/) - One of China's most prominent and valuable artificial intelligence startups, see [Kimi](kimi.com).
