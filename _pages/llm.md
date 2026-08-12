@@ -23,6 +23,7 @@ My journey with LLMs, agents, tools and more.
 * [Oh My OpenCode](https://github.com/code-yeongyu/oh-my-opencode) - Multi-agent orchestration layer for the OpenCode platform that uniquely transforms single-stream AI coding into a parallelized team[...]
 * [Open Agents Control](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework built specifically for the OpenCode ecosystem that prioritizes human-in-the-loop control and production-g[...]
 * [Plannotator](https://github.com/backnotprop/plannotator) - Interactive plan annotation and colaborative sharing.
+* [Strands](https://strandsagents.com/) - Toolkit for building production agents.
 
 ## Context, memory, and knowledge
 
