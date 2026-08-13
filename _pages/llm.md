@@ -24,6 +24,7 @@ My journey with LLMs, agents, tools and more.
 * [Open Agents Control](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework built specifically for the OpenCode ecosystem that prioritizes human-in-the-loop control and production-g[...]
 * [Plannotator](https://github.com/backnotprop/plannotator) - Interactive plan annotation and colaborative sharing.
 * [Strands](https://strandsagents.com/) - Toolkit for building production agents.
+* [NeuBird AI](https://neubird.ai/) - Production operations agent that detects, investigates, and resolves production incidents on its own.
 
 ## Context, memory, and knowledge
 
