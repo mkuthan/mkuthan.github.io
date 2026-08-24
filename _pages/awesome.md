@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+* [Temporal Logic of Actions](https://pron.github.io/posts/tlaplus_part1) - TLA is a logic for specifying and reasoning about concurrent and reactive systems by Leslie Lamport.
+
 * [How to Write a Git Commit Message](https://chris.beams.io/git-commit) - commit messages matter, how to write them well.
 
 * [Chinchilla](https://arxiv.org/abs/2203.15556) - how to estimate optimal model size and number of tokens for training a transformer language model under a given compute budget.
