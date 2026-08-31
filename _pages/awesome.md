@@ -5,6 +5,8 @@ permalink: /awesome/
 
 When I found an interesting article or resource, if something opened my eyes I documented it here.
 
+*[The AI-Native Software Development Lifecycle](https://arxiv.org/pdf/2408.03416) - White paper proposes the emergence of a fully AI-native SDLC, where AI is integrated seamlessly into every phase of development, from planning to deployment.
+
 * [Temporal Logic of Actions](https://pron.github.io/posts/tlaplus_part1) - TLA is a logic for specifying and reasoning about concurrent and reactive systems by Leslie Lamport.
 
 * [How to Write a Git Commit Message](https://chris.beams.io/git-commit) - commit messages matter, how to write them well.
