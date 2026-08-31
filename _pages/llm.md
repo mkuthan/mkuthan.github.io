@@ -25,6 +25,7 @@ My journey with LLMs, agents, tools and more.
 * [Plannotator](https://github.com/backnotprop/plannotator) - Interactive plan annotation and colaborative sharing.
 * [Strands](https://strandsagents.com/) - Toolkit for building production agents.
 * [NeuBird AI](https://neubird.ai/) - Production operations agent that detects, investigates, and resolves production incidents on its own.
+* [AI Native SDLC Playbook](https://claude.com/blog/the-ai-native-sdlc-playbook) - A playbook for building software with AI agents, including a sample agent architecture and a list of recommended tools.
 
 ## Context, memory, and knowledge
 
