@@ -17,6 +17,7 @@ My journey with LLMs, agents, tools and more.
 * [Fabric](https://github.com/danielmiessler/fabric) - AI-powered prompts and patterns for everyday tasks
 * [Plannotator](https://github.com/backnotprop/plannotator) - Interactive plan annotation and colaborative sharing.
 * [AI Native SDLC Playbook](https://claude.com/blog/the-ai-native-sdlc-playbook) - A playbook for building software with AI agents, including a sample agent architecture and a list of recommended tools.
+* [Spec Kit](https://github.com/github/spec-kit) - GitHub's toolkit for spec-driven development, turning specifications into executable artifacts that drive implementation.
 
 ## Agent harnesses and orchestration
 
