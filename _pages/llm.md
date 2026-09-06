@@ -19,6 +19,7 @@ My journey with LLMs, agents, tools and more.
 * [AI Native SDLC Playbook](https://claude.com/blog/the-ai-native-sdlc-playbook) - A playbook for building software with AI agents, including a sample agent architecture and a list of recommended tools.
 * [Spec Kit](https://github.com/github/spec-kit) - GitHub's toolkit for spec-driven development, turning specifications into executable artifacts that drive implementation.
 * [Claude Code Best Practices](https://github.com/shanraisshan/claude-code-best-practice) - command -> subagent -> skill architecture; and more
+* [Claude Code Built-in Skills](https://batsov.com/articles/2026/03/11/essential-claude-code-skills-and-commands/) - /plan, /review, /debug, /loop, /batch and more
 
 ## Agent harnesses and orchestration
 
