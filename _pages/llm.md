@@ -53,6 +53,8 @@ My journey with LLMs, agents, tools and more.
 ## Agent documentation standards
 
 * [AGENTS.md](https://agents.md)
+* [SKILLS.md](https://agentskills.io/home)
+* [Agent Client Protocol](https://agentclientprotocol.com/get-started/introduction)
 
 ## Benchmarks and evaluation
 
