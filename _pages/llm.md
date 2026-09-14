@@ -63,3 +63,4 @@ My journey with LLMs, agents, tools and more.
 ## Organizations and labs
 
 * [Moonshot AI](https://www.moonshot.ai/) - One of China's most prominent and valuable artificial intelligence startups, see [Kimi](kimi.com).
+* [Pathway](https://pathway.com/) - BDH (Dragon Hatchling), a brain-inspired post-transformer architecture that integrates memory, continual learning, and latent reasoning into a single framework for extreme efficiency and long-horizon problem-solving.
