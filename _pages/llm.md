@@ -6,6 +6,8 @@ toc: true
 
 My journey with LLMs, agents, tools and more.
 
+* [TypeSafe AI](https://docs.typesafe.ai/introduction) - TypeSafe AI's documentation introduces Jev, a machine-native system designed to output type-safe, calibrated decisions for software automation instead of generating freeform natural language text.
+
 ## Agent workflows and skills
 
 * [Matt Pocock skills](https://github.com/mattpocock/skills) - grill-me, grill-with-docs, tdd, diagnose, etc.
